@@ -115,6 +115,8 @@ Current implementation:
 
 ## Stage 4 - Content Expansion
 
+Status: started.
+
 Goal:
 Grow from starter content into a usable educational catalog.
 
@@ -124,6 +126,15 @@ Targets:
 - age bands for 4-5, 6-7, and 8+,
 - hints and explanations for every puzzle,
 - stable localization keys for every user-visible text.
+
+Current implementation:
+
+- added `shadow-match` spatial outline task,
+- added `balance-scale` comparison/math task,
+- added `shape-rotation` spatial rotation task,
+- connected new tasks to starter lessons and visual renderers.
+- expanded starter courses to at least 4 lessons each,
+- added lessons `lesson.009` through `lesson.012` with 4 ordered steps each.
 
 ## Stage 5 - Rewards And Motivation
 
@@ -150,6 +161,8 @@ Current implementation:
 
 ## Stage 6 - Parent Analytics
 
+Status: started.
+
 Goal:
 Give parents a clear picture of progress and weak areas.
 
@@ -161,6 +174,13 @@ Parent data:
 - hard puzzle families,
 - internal skill tag trends,
 - recommended next practice.
+
+Current implementation:
+
+- weekly skill insights panel,
+- strongest practiced area,
+- focus area based on least-practiced weekly skill,
+- parent-facing next-practice recommendation.
 
 ## Stage 7 - Adaptive Difficulty
 

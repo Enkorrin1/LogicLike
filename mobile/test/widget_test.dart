@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:logic_like/src/app/logic_like_app.dart';
 import 'package:logic_like/src/data/family_profile_store.dart';
 import 'package:logic_like/src/domain/family_profile.dart';
+import 'package:logic_like/src/features/parent/parent_screen.dart';
+import 'package:logic_like/src/l10n/l10n.dart';
+import 'package:logic_like/src/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -118,8 +121,38 @@ void main() {
     await tester.tap(find.text('Logic'));
     await tester.pumpAndSettle();
 
-    expect(find.text('0 of 3 lessons complete'), findsOneWidget);
+    expect(find.text('0 of 4 lessons complete'), findsOneWidget);
     expect(find.text('Lesson 1'), findsOneWidget);
+  });
+
+  testWidgets('shows parent skill insights panel', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildAppTheme(),
+        home: ParentScreen(
+          profile: _testProfile(),
+          onChildSelected: (_) async {},
+          onChildAdded: ({
+            required childAge,
+            required childName,
+            required learningGoal,
+          }) async {},
+          onSubscriptionPlanChanged: (_) async {},
+          onResetProfile: () async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.dragFrom(const Offset(400, 520), const Offset(0, -1200));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Skills and recommendations'), findsOneWidget);
+    expect(find.text('Strong area'), findsOneWidget);
+    expect(find.text('Practice next'), findsOneWidget);
   });
 }
 

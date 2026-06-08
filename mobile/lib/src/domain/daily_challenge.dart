@@ -158,6 +158,24 @@ List<DailyChallenge> _allChallengesForAge(ChildAge age) {
             ChallengeChoice(id: 'banana', label: 'Банан'),
           ],
         ),
+        DailyChallenge(
+          id: 'shadow-match',
+          title: 'Подбери тень',
+          prompt: 'Найди предмет, который подходит к тени.',
+          question: 'У тени высокий корпус и два маленьких крыла. Что это?',
+          skill: 'Пространственное мышление',
+          goal: LearningGoal.logic,
+          minutes: 4,
+          correctChoiceId: 'rocket',
+          hint: 'Смотри на общий контур предмета.',
+          explanation:
+              'Ракета подходит к тени: у нее высокий корпус и два боковых крыла.',
+          choices: [
+            ChallengeChoice(id: 'rocket', label: 'Ракета'),
+            ChallengeChoice(id: 'planet', label: 'Планета'),
+            ChallengeChoice(id: 'star', label: 'Звезда'),
+          ],
+        ),
       ];
     case ChildAge.six:
       return const [
@@ -213,6 +231,24 @@ List<DailyChallenge> _allChallengesForAge(ChildAge age) {
             ChallengeChoice(id: 'lock', label: 'Замок'),
             ChallengeChoice(id: 'shoe', label: 'Ботинок'),
             ChallengeChoice(id: 'cloud', label: 'Облако'),
+          ],
+        ),
+        DailyChallenge(
+          id: 'balance-scale',
+          title: 'Весы',
+          prompt: 'Сравни стороны и выбери, чего не хватает.',
+          question: 'Слева 2 яблока. Справа 1 яблоко и ?. Что добавить?',
+          skill: 'Сравнение',
+          goal: LearningGoal.math,
+          minutes: 5,
+          correctChoiceId: 'apple',
+          hint: 'На обеих сторонах должно быть одинаковое количество яблок.',
+          explanation:
+              'Еще одно яблоко делает правую сторону равной левой: 2 и 2.',
+          choices: [
+            ChallengeChoice(id: 'apple', label: 'Яблоко'),
+            ChallengeChoice(id: 'star', label: 'Звезда'),
+            ChallengeChoice(id: 'ball', label: 'Мяч'),
           ],
         ),
       ];
@@ -272,6 +308,24 @@ List<DailyChallenge> _allChallengesForAge(ChildAge age) {
             ChallengeChoice(id: 'blue-squares', label: 'Синих квадратов'),
             ChallengeChoice(id: 'red-circles', label: 'Красных кругов'),
             ChallengeChoice(id: 'green-stars', label: 'Зеленых звезд'),
+          ],
+        ),
+        DailyChallenge(
+          id: 'shape-rotation',
+          title: 'Поворот фигуры',
+          prompt: 'Представь, как фигура поворачивается.',
+          question: 'Треугольник повернули вправо. Какая карточка показывает ту же фигуру?',
+          skill: 'Пространственное мышление',
+          goal: LearningGoal.logic,
+          minutes: 6,
+          correctChoiceId: 'same',
+          hint: 'Поворот меняет направление, но не саму фигуру.',
+          explanation:
+              'Это тот же треугольник: он повернулся, но не стал другой фигурой.',
+          choices: [
+            ChallengeChoice(id: 'same', label: 'Тот же треугольник'),
+            ChallengeChoice(id: 'circle', label: 'Круг'),
+            ChallengeChoice(id: 'square', label: 'Квадрат'),
           ],
         ),
       ];

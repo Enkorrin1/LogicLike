@@ -71,6 +71,8 @@ class ParentScreen extends StatelessWidget {
                   practiceDays: practiceDays,
                 ),
                 const SizedBox(height: 14),
+                _SkillInsightsPanel(sessions: weeklySessions),
+                const SizedBox(height: 14),
                 _SubscriptionPanel(
                   profile: profile,
                   onPlanChanged: onSubscriptionPlanChanged,
@@ -767,6 +769,193 @@ class _SubscriptionPanel extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SkillInsightsPanel extends StatelessWidget {
+  const _SkillInsightsPanel({required this.sessions});
+
+  final List<PracticeSession> sessions;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final insights = _SkillInsights.fromSessions(sessions);
+    final strongest = insights.strongestSkill;
+    final focus = insights.focusSkill;
+
+    return DecoratedBox(
+      decoration: _softPanelDecoration(color: const Color(0xFFEFFAF8)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _SectionHeader(
+              icon: Icons.psychology_rounded,
+              title: l10n.skillInsightsTitle,
+              color: const Color(0xFF18B7AE),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _InsightCard(
+                    icon: Icons.emoji_events_rounded,
+                    label: l10n.strongestAreaLabel,
+                    value: strongest == null
+                        ? l10n.noSkillDataLabel
+                        : l10n.localizedSkill(strongest),
+                    color: const Color(0xFFFFA93B),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _InsightCard(
+                    icon: Icons.flag_rounded,
+                    label: l10n.practiceFocusLabel,
+                    value: focus == null
+                        ? l10n.noSkillDataLabel
+                        : l10n.localizedSkill(focus),
+                    color: const Color(0xFF8B63E8),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const _IconBubble(
+                    icon: Icons.lightbulb_rounded,
+                    color: Color(0xFF44A8F2),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.recommendedPracticeLabel,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          focus == null
+                              ? l10n.recommendationKeepGoing
+                              : l10n.recommendationPracticeFocus,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SkillInsights {
+  const _SkillInsights({
+    required this.strongestSkill,
+    required this.focusSkill,
+  });
+
+  final String? strongestSkill;
+  final String? focusSkill;
+
+  static _SkillInsights fromSessions(List<PracticeSession> sessions) {
+    if (sessions.isEmpty) {
+      return const _SkillInsights(
+        strongestSkill: null,
+        focusSkill: null,
+      );
+    }
+
+    final counts = <String, int>{};
+    for (final session in sessions) {
+      counts.update(session.skill, (count) => count + 1, ifAbsent: () => 1);
+    }
+
+    final sorted = counts.entries.toList()
+      ..sort((first, second) {
+        final countCompare = second.value.compareTo(first.value);
+        if (countCompare != 0) {
+          return countCompare;
+        }
+        return first.key.compareTo(second.key);
+      });
+
+    final leastPracticed = counts.entries.toList()
+      ..sort((first, second) {
+        final countCompare = first.value.compareTo(second.value);
+        if (countCompare != 0) {
+          return countCompare;
+        }
+        return first.key.compareTo(second.key);
+      });
+
+    return _SkillInsights(
+      strongestSkill: sorted.first.key,
+      focusSkill: leastPracticed.first.key,
+    );
+  }
+}
+
+class _InsightCard extends StatelessWidget {
+  const _InsightCard({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 124),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 10),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        ],
       ),
     );
   }

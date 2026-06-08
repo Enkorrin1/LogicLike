@@ -1484,6 +1484,162 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Серия растет'**
   String get lessonRewardStreak;
+
+  /// No description provided for @challengeShadowMatchTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подбери тень'**
+  String get challengeShadowMatchTitle;
+
+  /// No description provided for @challengeShadowMatchPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Найди предмет, который подходит к тени.'**
+  String get challengeShadowMatchPrompt;
+
+  /// No description provided for @challengeShadowMatchQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'У тени высокий корпус и два маленьких крыла. Что это?'**
+  String get challengeShadowMatchQuestion;
+
+  /// No description provided for @challengeShadowMatchHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Смотри на общий контур предмета.'**
+  String get challengeShadowMatchHint;
+
+  /// No description provided for @challengeShadowMatchExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ракета подходит к тени: у нее высокий корпус и два боковых крыла.'**
+  String get challengeShadowMatchExplanation;
+
+  /// No description provided for @challengeBalanceScaleTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Весы'**
+  String get challengeBalanceScaleTitle;
+
+  /// No description provided for @challengeBalanceScalePrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сравни стороны и выбери, чего не хватает.'**
+  String get challengeBalanceScalePrompt;
+
+  /// No description provided for @challengeBalanceScaleQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Слева 2 яблока. Справа 1 яблоко и ?. Что добавить?'**
+  String get challengeBalanceScaleQuestion;
+
+  /// No description provided for @challengeBalanceScaleHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'На обеих сторонах должно быть одинаковое количество яблок.'**
+  String get challengeBalanceScaleHint;
+
+  /// No description provided for @challengeBalanceScaleExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Еще одно яблоко делает правую сторону равной левой: 2 и 2.'**
+  String get challengeBalanceScaleExplanation;
+
+  /// No description provided for @challengeShapeRotationTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Поворот фигуры'**
+  String get challengeShapeRotationTitle;
+
+  /// No description provided for @challengeShapeRotationPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Представь, как фигура поворачивается.'**
+  String get challengeShapeRotationPrompt;
+
+  /// No description provided for @challengeShapeRotationQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Треугольник повернули вправо. Какая карточка показывает ту же фигуру?'**
+  String get challengeShapeRotationQuestion;
+
+  /// No description provided for @challengeShapeRotationHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Поворот меняет направление, но не саму фигуру.'**
+  String get challengeShapeRotationHint;
+
+  /// No description provided for @challengeShapeRotationExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Это тот же треугольник: он повернулся, но не стал другой фигурой.'**
+  String get challengeShapeRotationExplanation;
+
+  /// No description provided for @choiceRocket.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ракета'**
+  String get choiceRocket;
+
+  /// No description provided for @choicePlanet.
+  ///
+  /// In ru, this message translates to:
+  /// **'Планета'**
+  String get choicePlanet;
+
+  /// No description provided for @choiceSameTriangle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тот же треугольник'**
+  String get choiceSameTriangle;
+
+  /// No description provided for @choiceSquare.
+  ///
+  /// In ru, this message translates to:
+  /// **'Квадрат'**
+  String get choiceSquare;
+
+  /// No description provided for @skillInsightsTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Навыки и рекомендации'**
+  String get skillInsightsTitle;
+
+  /// No description provided for @strongestAreaLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сильная зона'**
+  String get strongestAreaLabel;
+
+  /// No description provided for @practiceFocusLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Зона фокуса'**
+  String get practiceFocusLabel;
+
+  /// No description provided for @recommendedPracticeLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Что тренировать дальше'**
+  String get recommendedPracticeLabel;
+
+  /// No description provided for @noSkillDataLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пока мало данных'**
+  String get noSkillDataLabel;
+
+  /// No description provided for @recommendationKeepGoing.
+  ///
+  /// In ru, this message translates to:
+  /// **'Продолжайте короткие уроки: после нескольких занятий рекомендация станет точнее.'**
+  String get recommendationKeepGoing;
+
+  /// No description provided for @recommendationPracticeFocus.
+  ///
+  /// In ru, this message translates to:
+  /// **'Добавьте 1-2 коротких урока по этой зоне на неделе.'**
+  String get recommendationPracticeFocus;
 }
 
 class _AppLocalizationsDelegate

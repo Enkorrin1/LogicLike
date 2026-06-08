@@ -851,4 +851,96 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get lessonRewardStreak => 'Streak grows';
+
+  @override
+  String get challengeShadowMatchTitle => 'Shadow match';
+
+  @override
+  String get challengeShadowMatchPrompt =>
+      'Find the object that fits the shadow.';
+
+  @override
+  String get challengeShadowMatchQuestion =>
+      'The shadow has a tall body and two small wings. What is it?';
+
+  @override
+  String get challengeShadowMatchHint =>
+      'Look at the whole outline of the object.';
+
+  @override
+  String get challengeShadowMatchExplanation =>
+      'The rocket matches the shadow: it has a tall body and two side wings.';
+
+  @override
+  String get challengeBalanceScaleTitle => 'Balance scale';
+
+  @override
+  String get challengeBalanceScalePrompt =>
+      'Compare the sides and choose what is missing.';
+
+  @override
+  String get challengeBalanceScaleQuestion =>
+      'Left side has 2 apples. Right side has 1 apple and ?. What should you add?';
+
+  @override
+  String get challengeBalanceScaleHint =>
+      'Both sides need the same number of apples.';
+
+  @override
+  String get challengeBalanceScaleExplanation =>
+      'One more apple makes the right side equal to the left: 2 and 2.';
+
+  @override
+  String get challengeShapeRotationTitle => 'Shape turn';
+
+  @override
+  String get challengeShapeRotationPrompt =>
+      'Imagine the shape turning around.';
+
+  @override
+  String get challengeShapeRotationQuestion =>
+      'A triangle turns to the right. Which card shows the same shape?';
+
+  @override
+  String get challengeShapeRotationHint =>
+      'Turning changes direction, but not the shape itself.';
+
+  @override
+  String get challengeShapeRotationExplanation =>
+      'It is the same triangle: it turned, but did not become a different shape.';
+
+  @override
+  String get choiceRocket => 'Rocket';
+
+  @override
+  String get choicePlanet => 'Planet';
+
+  @override
+  String get choiceSameTriangle => 'Same triangle';
+
+  @override
+  String get choiceSquare => 'Square';
+
+  @override
+  String get skillInsightsTitle => 'Skills and recommendations';
+
+  @override
+  String get strongestAreaLabel => 'Strong area';
+
+  @override
+  String get practiceFocusLabel => 'Focus area';
+
+  @override
+  String get recommendedPracticeLabel => 'Practice next';
+
+  @override
+  String get noSkillDataLabel => 'Not enough data yet';
+
+  @override
+  String get recommendationKeepGoing =>
+      'Keep doing short lessons: recommendations get sharper after a few sessions.';
+
+  @override
+  String get recommendationPracticeFocus =>
+      'Add 1-2 short lessons for this area during the week.';
 }

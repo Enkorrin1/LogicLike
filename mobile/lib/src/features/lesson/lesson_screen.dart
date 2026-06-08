@@ -587,6 +587,15 @@ class _ChoiceVisual extends StatelessWidget {
       'memory-pairs:lock' => Icon(Icons.lock_rounded, color: color),
       'memory-pairs:shoe' => Icon(Icons.hiking_rounded, color: color),
       'memory-pairs:cloud' => Icon(Icons.cloud_rounded, color: color),
+      'shadow-match:rocket' => Icon(Icons.rocket_launch_rounded, color: color),
+      'shadow-match:planet' => Icon(Icons.public_rounded, color: color),
+      'shadow-match:star' => Icon(Icons.star_rounded, color: color),
+      'balance-scale:apple' => Icon(Icons.apple_rounded, color: color),
+      'balance-scale:star' => Icon(Icons.star_rounded, color: color),
+      'balance-scale:ball' => Icon(Icons.sports_basketball_rounded, color: color),
+      'shape-rotation:same' => Icon(Icons.change_history_rounded, color: color),
+      'shape-rotation:circle' => Icon(Icons.circle, color: color),
+      'shape-rotation:square' => Icon(Icons.square_rounded, color: color),
       'detail-count:blue-squares' => Icon(Icons.square_rounded, color: color),
       'detail-count:red-circles' => Icon(Icons.circle, color: color),
       'detail-count:green-stars' => Icon(Icons.star_rounded, color: color),
@@ -622,6 +631,8 @@ class _ChoiceVisual extends StatelessWidget {
       'apple' => const Color(0xFFFF6F6B),
       'ball' => const Color(0xFFFF9F43),
       'banana' => const Color(0xFFFFC739),
+      'rocket' || 'same' => const Color(0xFF18B7AE),
+      'planet' || 'square' => const Color(0xFF5C8EF7),
       'lock' || '4+2+1' => const Color(0xFF18B7AE),
       'shoe' || '4+1' => const Color(0xFF9C6AF2),
       'cloud' || '2+1' => const Color(0xFF5C8EF7),
@@ -652,6 +663,9 @@ class _PuzzleVisual extends StatelessWidget {
         'logic-train' => const _LogicTrainVisual(),
         'sticker-sum' => const _StickerSumVisual(),
         'memory-pairs' => const _MemoryPairsVisual(),
+        'shadow-match' => const _ShadowMatchVisual(),
+        'balance-scale' => const _BalanceScaleVisual(),
+        'shape-rotation' => const _ShapeRotationVisual(),
         'code-grid' => const _CodeGridVisual(),
         'number-bridge' => const _NumberBridgeVisual(),
         'detail-count' => const _DetailCountVisual(),
@@ -759,6 +773,59 @@ class _MemoryPairsVisual extends StatelessWidget {
   }
 }
 
+class _ShadowMatchVisual extends StatelessWidget {
+  const _ShadowMatchVisual();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _VisualRow(
+      children: [
+        _ShadowToken(),
+        _MathSign('->'),
+        _ObjectCard(icon: Icons.rocket_launch_rounded, color: Color(0xFF18B7AE)),
+      ],
+    );
+  }
+}
+
+class _BalanceScaleVisual extends StatelessWidget {
+  const _BalanceScaleVisual();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      children: [
+        _VisualRow(
+          children: [
+            _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
+            _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
+            _MathSign('='),
+            _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
+            _QuestionToken(),
+          ],
+        ),
+        SizedBox(height: 8),
+        Icon(Icons.balance_rounded, color: Color(0xFF18B7AE), size: 42),
+      ],
+    );
+  }
+}
+
+class _ShapeRotationVisual extends StatelessWidget {
+  const _ShapeRotationVisual();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _VisualRow(
+      children: [
+        _ShapeToken.triangle(color: Color(0xFF9C6AF2)),
+        _MathSign('->'),
+        _RotatedTriangleToken(),
+      ],
+    );
+  }
+}
+
 class _CodeGridVisual extends StatelessWidget {
   const _CodeGridVisual();
 
@@ -857,6 +924,8 @@ class _ShapeToken extends StatelessWidget {
   const _ShapeToken.circle({required this.color}) : shape = _TokenShape.circle;
   const _ShapeToken.square({required this.color}) : shape = _TokenShape.square;
   const _ShapeToken.star({required this.color}) : shape = _TokenShape.star;
+  const _ShapeToken.triangle({required this.color})
+      : shape = _TokenShape.triangle;
 
   final Color color;
   final _TokenShape shape;
@@ -867,6 +936,7 @@ class _ShapeToken extends StatelessWidget {
       _TokenShape.circle => Icons.circle,
       _TokenShape.square => Icons.square_rounded,
       _TokenShape.star => Icons.star_rounded,
+      _TokenShape.triangle => Icons.change_history_rounded,
     };
 
     return Container(
@@ -888,7 +958,40 @@ class _ShapeToken extends StatelessWidget {
   }
 }
 
-enum _TokenShape { circle, square, star }
+enum _TokenShape { circle, square, star, triangle }
+
+class _ShadowToken extends StatelessWidget {
+  const _ShadowToken();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 62,
+      height: 62,
+      decoration: BoxDecoration(
+        color: const Color(0xFF164C55).withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: const Icon(
+        Icons.rocket_launch_rounded,
+        color: Color(0xFF164C55),
+        size: 38,
+      ),
+    );
+  }
+}
+
+class _RotatedTriangleToken extends StatelessWidget {
+  const _RotatedTriangleToken();
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: 1.5708,
+      child: const _ShapeToken.triangle(color: Color(0xFF9C6AF2)),
+    );
+  }
+}
 
 class _QuestionToken extends StatelessWidget {
   const _QuestionToken();

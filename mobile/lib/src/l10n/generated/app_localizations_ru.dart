@@ -868,4 +868,95 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get lessonRewardStreak => 'Серия растет';
+
+  @override
+  String get challengeShadowMatchTitle => 'Подбери тень';
+
+  @override
+  String get challengeShadowMatchPrompt =>
+      'Найди предмет, который подходит к тени.';
+
+  @override
+  String get challengeShadowMatchQuestion =>
+      'У тени высокий корпус и два маленьких крыла. Что это?';
+
+  @override
+  String get challengeShadowMatchHint => 'Смотри на общий контур предмета.';
+
+  @override
+  String get challengeShadowMatchExplanation =>
+      'Ракета подходит к тени: у нее высокий корпус и два боковых крыла.';
+
+  @override
+  String get challengeBalanceScaleTitle => 'Весы';
+
+  @override
+  String get challengeBalanceScalePrompt =>
+      'Сравни стороны и выбери, чего не хватает.';
+
+  @override
+  String get challengeBalanceScaleQuestion =>
+      'Слева 2 яблока. Справа 1 яблоко и ?. Что добавить?';
+
+  @override
+  String get challengeBalanceScaleHint =>
+      'На обеих сторонах должно быть одинаковое количество яблок.';
+
+  @override
+  String get challengeBalanceScaleExplanation =>
+      'Еще одно яблоко делает правую сторону равной левой: 2 и 2.';
+
+  @override
+  String get challengeShapeRotationTitle => 'Поворот фигуры';
+
+  @override
+  String get challengeShapeRotationPrompt =>
+      'Представь, как фигура поворачивается.';
+
+  @override
+  String get challengeShapeRotationQuestion =>
+      'Треугольник повернули вправо. Какая карточка показывает ту же фигуру?';
+
+  @override
+  String get challengeShapeRotationHint =>
+      'Поворот меняет направление, но не саму фигуру.';
+
+  @override
+  String get challengeShapeRotationExplanation =>
+      'Это тот же треугольник: он повернулся, но не стал другой фигурой.';
+
+  @override
+  String get choiceRocket => 'Ракета';
+
+  @override
+  String get choicePlanet => 'Планета';
+
+  @override
+  String get choiceSameTriangle => 'Тот же треугольник';
+
+  @override
+  String get choiceSquare => 'Квадрат';
+
+  @override
+  String get skillInsightsTitle => 'Навыки и рекомендации';
+
+  @override
+  String get strongestAreaLabel => 'Сильная зона';
+
+  @override
+  String get practiceFocusLabel => 'Зона фокуса';
+
+  @override
+  String get recommendedPracticeLabel => 'Что тренировать дальше';
+
+  @override
+  String get noSkillDataLabel => 'Пока мало данных';
+
+  @override
+  String get recommendationKeepGoing =>
+      'Продолжайте короткие уроки: после нескольких занятий рекомендация станет точнее.';
+
+  @override
+  String get recommendationPracticeFocus =>
+      'Добавьте 1-2 коротких урока по этой зоне на неделе.';
 }

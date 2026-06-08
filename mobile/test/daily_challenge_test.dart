@@ -66,5 +66,20 @@ void main() {
         LearningGoal.attention,
       });
     });
+
+    test('contains expanded catalog challenge ids', () {
+      expect(
+        dailyChallengeById('shadow-match', age: ChildAge.five).id,
+        'shadow-match',
+      );
+      expect(
+        dailyChallengeById('balance-scale', age: ChildAge.five).id,
+        'balance-scale',
+      );
+      expect(
+        dailyChallengeById('shape-rotation', age: ChildAge.five).id,
+        'shape-rotation',
+      );
+    });
   });
 }
