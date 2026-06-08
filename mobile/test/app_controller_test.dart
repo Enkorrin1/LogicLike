@@ -28,11 +28,63 @@ void main() {
       await controller.completeOnboarding(
         childName: 'Лев',
         childAge: ChildAge.five,
+        learningGoal: LearningGoal.math,
       );
 
       expect(store.savedProfile?.childName, 'Лев');
       expect(store.savedProfile?.childAge, ChildAge.five);
+      expect(store.savedProfile?.learningGoal, LearningGoal.math);
       expect(controller.familyProfile, store.savedProfile);
+    });
+
+    test('records completion metrics for a daily challenge', () async {
+      final yesterday = _today().subtract(const Duration(days: 1));
+      final profile = FamilyProfile(
+        childName: 'Мира',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedChallenges: 2,
+        currentStreak: 2,
+        bestStreak: 2,
+        totalPracticeMinutes: 8,
+        lastChallengeDate: yesterday,
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completeDailyChallenge(_challenge);
+
+      final savedProfile = controller.familyProfile;
+      expect(savedProfile?.completedChallenges, 3);
+      expect(savedProfile?.currentStreak, 3);
+      expect(savedProfile?.bestStreak, 3);
+      expect(savedProfile?.totalPracticeMinutes, 9);
+      expect(savedProfile?.lastChallengeId, _challenge.id);
+      expect(savedProfile?.lastChallengeSkill, _challenge.skill);
+      expect(savedProfile?.practiceSessions, hasLength(1));
+      expect(savedProfile?.lastSession?.challengeTitle, _challenge.title);
+    });
+
+    test('starts a new streak when yesterday was missed', () async {
+      final twoDaysAgo = _today().subtract(const Duration(days: 2));
+      final profile = FamilyProfile(
+        childName: 'Мира',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedChallenges: 4,
+        currentStreak: 4,
+        bestStreak: 4,
+        lastChallengeDate: twoDaysAgo,
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completeDailyChallenge(_challenge);
+
+      expect(controller.familyProfile?.currentStreak, 1);
+      expect(controller.familyProfile?.bestStreak, 4);
     });
 
     test('counts only one daily challenge completion per day', () async {
@@ -42,6 +94,9 @@ void main() {
         childAge: ChildAge.six,
         createdAt: DateTime(2026, 6, 8),
         completedChallenges: 2,
+        currentStreak: 2,
+        bestStreak: 2,
+        totalPracticeMinutes: 8,
         lastChallengeDate: today,
       );
       final store = _InMemoryFamilyProfileStore(profile);
@@ -51,6 +106,9 @@ void main() {
       await controller.completeDailyChallenge(_challenge);
 
       expect(controller.familyProfile?.completedChallenges, 2);
+      expect(controller.familyProfile?.currentStreak, 2);
+      expect(controller.familyProfile?.totalPracticeMinutes, 8);
+      expect(controller.familyProfile?.practiceSessions, isEmpty);
       expect(controller.familyProfile?.lastChallengeDate, today);
     });
   });
@@ -58,10 +116,18 @@ void main() {
 
 const _challenge = DailyChallenge(
   id: 'test',
-  title: 'Test',
-  prompt: 'Test',
-  skill: 'Test',
+  title: 'Тестовое задание',
+  prompt: 'Выберите ответ.',
+  question: 'Что подходит?',
+  skill: 'Логика',
   minutes: 1,
+  correctChoiceId: 'a',
+  hint: 'Нужен первый вариант.',
+  explanation: 'Первый вариант подходит по правилу.',
+  choices: [
+    ChallengeChoice(id: 'a', label: 'A'),
+    ChallengeChoice(id: 'b', label: 'B'),
+  ],
 );
 
 DateTime _today() {

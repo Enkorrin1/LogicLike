@@ -5,6 +5,7 @@ import '../../domain/family_profile.dart';
 typedef CompleteOnboarding = Future<void> Function({
   required String childName,
   required ChildAge childAge,
+  required LearningGoal learningGoal,
 });
 
 class OnboardingScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _nameController = TextEditingController();
 
   ChildAge _selectedAge = ChildAge.six;
+  LearningGoal _selectedGoal = LearningGoal.logic;
   bool _showNameError = false;
   bool _isSaving = false;
 
@@ -49,6 +51,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await widget.onComplete(
       childName: childName,
       childAge: _selectedAge,
+      learningGoal: _selectedGoal,
     );
 
     if (!mounted) {
@@ -76,7 +79,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 10),
             Text(
-              'Создайте семейный профиль, чтобы ежедневные задания подходили по возрасту.',
+              'Создайте семейный профиль, чтобы ежедневные задания подходили по возрасту и цели занятий.',
               style: textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
@@ -112,7 +115,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
+            Text(
+              'Цель занятий',
+              style: textTheme.titleMedium,
+            ),
+            const SizedBox(height: 10),
+            for (final goal in LearningGoal.values) ...[
+              _GoalOption(
+                goal: goal,
+                selected: _selectedGoal == goal,
+                onTap: () {
+                  setState(() {
+                    _selectedGoal = goal;
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+            const SizedBox(height: 22),
             FilledButton.icon(
               onPressed: _isSaving ? null : _submit,
               icon: const Icon(Icons.arrow_forward_rounded),
@@ -122,5 +143,79 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       ),
     );
+  }
+}
+
+class _GoalOption extends StatelessWidget {
+  const _GoalOption({
+    required this.goal,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final LearningGoal goal;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+          border: Border.all(
+            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            width: selected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              _goalIcon(goal),
+              color: selected ? colorScheme.primary : colorScheme.outline,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    goal.label,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(goal.description),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              selected
+                  ? Icons.radio_button_checked_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              color: selected ? colorScheme.primary : colorScheme.outline,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  IconData _goalIcon(LearningGoal goal) {
+    switch (goal) {
+      case LearningGoal.logic:
+        return Icons.psychology_alt_rounded;
+      case LearningGoal.math:
+        return Icons.calculate_rounded;
+      case LearningGoal.attention:
+        return Icons.center_focus_strong_rounded;
+    }
   }
 }

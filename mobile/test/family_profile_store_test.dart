@@ -25,8 +25,23 @@ void main() {
         childName: 'Мира',
         childAge: ChildAge.six,
         createdAt: DateTime(2026, 6, 8),
+        learningGoal: LearningGoal.logic,
         completedChallenges: 3,
+        currentStreak: 2,
+        bestStreak: 3,
+        totalPracticeMinutes: 14,
         lastChallengeDate: DateTime(2026, 6, 8),
+        lastChallengeId: 'logic-train',
+        lastChallengeSkill: 'Последовательности',
+        practiceSessions: [
+          PracticeSession(
+            completedAt: DateTime(2026, 6, 8, 19),
+            challengeId: 'logic-train',
+            challengeTitle: 'Логический поезд',
+            skill: 'Последовательности',
+            minutes: 5,
+          ),
+        ],
       );
 
       await store.save(profile);

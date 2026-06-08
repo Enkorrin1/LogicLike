@@ -17,5 +17,6 @@ void main() {
 
     expect(find.text('Настроим LogicLike'), findsOneWidget);
     expect(find.text('Возраст'), findsOneWidget);
+    expect(find.text('Цель занятий'), findsOneWidget);
   });
 }

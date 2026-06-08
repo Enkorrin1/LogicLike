@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 
 import '../data/family_profile_store.dart';
@@ -24,10 +26,12 @@ class AppController extends ChangeNotifier {
   Future<void> completeOnboarding({
     required String childName,
     required ChildAge childAge,
+    required LearningGoal learningGoal,
   }) async {
     final profile = FamilyProfile(
       childName: childName,
       childAge: childAge,
+      learningGoal: learningGoal,
       createdAt: DateTime.now(),
     );
 
@@ -36,7 +40,7 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> completeDailyChallenge(DailyChallenge _) async {
+  Future<void> completeDailyChallenge(DailyChallenge challenge) async {
     final currentProfile = _familyProfile;
     if (currentProfile == null) {
       return;
@@ -44,13 +48,35 @@ class AppController extends ChangeNotifier {
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final alreadyCompletedToday = currentProfile.completedOn(today);
+    if (currentProfile.completedOn(today)) {
+      return;
+    }
+
+    final yesterday = today.subtract(const Duration(days: 1));
+    final currentStreak = currentProfile.completedOn(yesterday)
+        ? currentProfile.currentStreak + 1
+        : 1;
+    final nextSession = PracticeSession(
+      completedAt: now,
+      challengeId: challenge.id,
+      challengeTitle: challenge.title,
+      skill: challenge.skill,
+      minutes: challenge.minutes,
+    );
 
     final nextProfile = currentProfile.copyWith(
-      completedChallenges: alreadyCompletedToday
-          ? currentProfile.completedChallenges
-          : currentProfile.completedChallenges + 1,
+      completedChallenges: currentProfile.completedChallenges + 1,
+      currentStreak: currentStreak,
+      bestStreak: math.max(currentProfile.bestStreak, currentStreak),
+      totalPracticeMinutes:
+          currentProfile.totalPracticeMinutes + challenge.minutes,
       lastChallengeDate: today,
+      lastChallengeId: challenge.id,
+      lastChallengeSkill: challenge.skill,
+      practiceSessions: [
+        ...currentProfile.practiceSessions,
+        nextSession,
+      ],
     );
 
     await _familyProfileStore.save(nextProfile);
