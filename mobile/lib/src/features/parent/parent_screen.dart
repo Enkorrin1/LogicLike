@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
 
+typedef AddChildProfile = Future<void> Function({
+  required String childName,
+  required ChildAge childAge,
+  required LearningGoal learningGoal,
+});
+
 class ParentScreen extends StatelessWidget {
   const ParentScreen({
     required this.profile,
+    required this.onChildSelected,
+    required this.onChildAdded,
     required this.onSubscriptionPlanChanged,
     required this.onResetProfile,
     super.key,
   });
 
   final FamilyProfile profile;
+  final Future<void> Function(String childId) onChildSelected;
+  final AddChildProfile onChildAdded;
   final Future<void> Function(FamilySubscriptionPlan plan)
       onSubscriptionPlanChanged;
   final Future<void> Function() onResetProfile;
@@ -32,6 +42,12 @@ class ParentScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           _FamilyProfileCard(profile: profile),
+          const SizedBox(height: 16),
+          _ChildrenCard(
+            profile: profile,
+            onChildSelected: onChildSelected,
+            onChildAdded: onChildAdded,
+          ),
           const SizedBox(height: 16),
           _WeeklyProgressCard(
             profile: profile,
@@ -103,7 +119,7 @@ class _FamilyProfileCard extends StatelessWidget {
             const SizedBox(height: 16),
             _InfoRow(
               icon: Icons.child_care_rounded,
-              label: 'Ребенок',
+              label: 'Активный ребенок',
               value: profile.childName,
             ),
             _InfoRow(
@@ -120,6 +136,328 @@ class _FamilyProfileCard extends StatelessWidget {
               icon: Icons.task_alt_rounded,
               label: 'Всего заданий',
               value: '${profile.completedChallenges}',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ChildrenCard extends StatelessWidget {
+  const _ChildrenCard({
+    required this.profile,
+    required this.onChildSelected,
+    required this.onChildAdded,
+  });
+
+  final FamilyProfile profile;
+  final Future<void> Function(String childId) onChildSelected;
+  final AddChildProfile onChildAdded;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = profile.children;
+    final limit = profile.subscriptionPlan.childProfileLimit;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Детские профили',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                Text(
+                  '${children.length} / $limit',
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            for (final child in children) ...[
+              _ChildProfileTile(
+                child: child,
+                selected: child.id == profile.activeChild.id,
+                onTap: () => onChildSelected(child.id),
+              ),
+              const SizedBox(height: 10),
+            ],
+            const SizedBox(height: 4),
+            if (profile.canAddChild)
+              FilledButton.icon(
+                onPressed: () => _showAddChildDialog(context),
+                icon: const Icon(Icons.person_add_alt_rounded),
+                label: const Text('Добавить ребенка'),
+              )
+            else
+              Text(
+                profile.subscriptionPlan.isPaid
+                    ? 'Все семейные места уже заняты.'
+                    : 'Еще профили доступны на семейном плане.',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showAddChildDialog(BuildContext context) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) {
+        return _AddChildDialog(onChildAdded: onChildAdded);
+      },
+    );
+  }
+}
+
+class _ChildProfileTile extends StatelessWidget {
+  const _ChildProfileTile({
+    required this.child,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final ChildProfile child;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(16),
+      onTap: selected ? null : onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+          border: Border.all(
+            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            width: selected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              color: selected ? colorScheme.primary : colorScheme.outline,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    child.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 3),
+                  Text('${child.age.label} • ${child.learningGoal.label}'),
+                  const SizedBox(height: 6),
+                  Text(
+                    '${child.completedChallenges} заданий • серия ${child.currentStreak} дн.',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AddChildDialog extends StatefulWidget {
+  const _AddChildDialog({required this.onChildAdded});
+
+  final AddChildProfile onChildAdded;
+
+  @override
+  State<_AddChildDialog> createState() => _AddChildDialogState();
+}
+
+class _AddChildDialogState extends State<_AddChildDialog> {
+  final _nameController = TextEditingController();
+
+  ChildAge _selectedAge = ChildAge.six;
+  LearningGoal _selectedGoal = LearningGoal.logic;
+  bool _showNameError = false;
+  bool _isSaving = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final childName = _nameController.text.trim();
+    if (childName.isEmpty) {
+      setState(() {
+        _showNameError = true;
+      });
+      return;
+    }
+
+    setState(() {
+      _showNameError = false;
+      _isSaving = true;
+    });
+
+    await widget.onChildAdded(
+      childName: childName,
+      childAge: _selectedAge,
+      learningGoal: _selectedGoal,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    Navigator.of(context).pop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Новый ребенок'),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _nameController,
+              textInputAction: TextInputAction.done,
+              decoration: InputDecoration(
+                labelText: 'Имя ребенка',
+                errorText: _showNameError ? 'Введите имя' : null,
+              ),
+              onSubmitted: (_) => _submit(),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              'Возраст',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final age in ChildAge.values)
+                  ChoiceChip(
+                    label: Text(age.label),
+                    selected: _selectedAge == age,
+                    onSelected: (_) {
+                      setState(() {
+                        _selectedAge = age;
+                      });
+                    },
+                  ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Text(
+              'Цель',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            for (final goal in LearningGoal.values) ...[
+              _GoalOption(
+                goal: goal,
+                selected: _selectedGoal == goal,
+                onTap: () {
+                  setState(() {
+                    _selectedGoal = goal;
+                  });
+                },
+              ),
+              const SizedBox(height: 8),
+            ],
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
+          child: const Text('Отмена'),
+        ),
+        FilledButton(
+          onPressed: _isSaving ? null : _submit,
+          child: Text(_isSaving ? 'Сохраняем' : 'Добавить'),
+        ),
+      ],
+    );
+  }
+}
+
+class _GoalOption extends StatelessWidget {
+  const _GoalOption({
+    required this.goal,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final LearningGoal goal;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+          border: Border.all(
+            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+          ),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              selected
+                  ? Icons.radio_button_checked_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              color: selected ? colorScheme.primary : colorScheme.outline,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    goal.label,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(goal.description),
+                ],
+              ),
             ),
           ],
         ),

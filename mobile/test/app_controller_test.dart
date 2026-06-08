@@ -34,7 +34,58 @@ void main() {
       expect(store.savedProfile?.childName, 'Лев');
       expect(store.savedProfile?.childAge, ChildAge.five);
       expect(store.savedProfile?.learningGoal, LearningGoal.math);
+      expect(store.savedProfile?.children, hasLength(1));
+      expect(store.savedProfile?.activeChild.name, 'Лев');
       expect(controller.familyProfile, store.savedProfile);
+    });
+
+    test('adds and switches child profiles on a family plan', () async {
+      final profile = FamilyProfile(
+        childName: 'Мира',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedChallenges: 2,
+        subscriptionPlan: FamilySubscriptionPlan.annual,
+      );
+      final firstChildId = profile.activeChild.id;
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.addChildProfile(
+        childName: 'Лев',
+        childAge: ChildAge.five,
+        learningGoal: LearningGoal.math,
+      );
+
+      expect(controller.familyProfile?.children, hasLength(2));
+      expect(controller.familyProfile?.childName, 'Лев');
+      expect(controller.familyProfile?.completedChallenges, 0);
+
+      await controller.selectChildProfile(firstChildId);
+
+      expect(controller.familyProfile?.childName, 'Мира');
+      expect(controller.familyProfile?.completedChallenges, 2);
+    });
+
+    test('does not add a second child on the starter plan', () async {
+      final profile = FamilyProfile(
+        childName: 'Мира',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.addChildProfile(
+        childName: 'Лев',
+        childAge: ChildAge.five,
+        learningGoal: LearningGoal.math,
+      );
+
+      expect(controller.familyProfile?.children, hasLength(1));
+      expect(controller.familyProfile?.childName, 'Мира');
     });
 
     test('updates and saves family subscription plan', () async {

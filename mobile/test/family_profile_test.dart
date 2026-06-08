@@ -32,6 +32,8 @@ void main() {
       final restored = FamilyProfile.fromJson(profile.toJson());
 
       expect(restored, profile);
+      expect(restored.children, hasLength(1));
+      expect(restored.activeChild.name, profile.childName);
     });
 
     test('restores old saved profile with default progress fields', () {
@@ -47,8 +49,47 @@ void main() {
       expect(restored.bestStreak, 0);
       expect(restored.totalPracticeMinutes, 0);
       expect(restored.practiceSessions, isEmpty);
+      expect(restored.children, hasLength(1));
+      expect(restored.activeChild.name, 'Мира');
       expect(restored.subscriptionPlan, FamilySubscriptionPlan.starter);
       expect(restored.subscriptionUpdatedAt, isNull);
+    });
+
+    test('switches active child without carrying previous progress', () {
+      final firstChild = ChildProfile(
+        id: 'first',
+        name: 'Мира',
+        age: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedChallenges: 2,
+        currentStreak: 2,
+        lastChallengeDate: DateTime(2026, 6, 8),
+      );
+      final secondChild = ChildProfile(
+        id: 'second',
+        name: 'Лев',
+        age: ChildAge.five,
+        createdAt: DateTime(2026, 6, 9),
+        learningGoal: LearningGoal.math,
+      );
+      final profile = FamilyProfile(
+        childName: firstChild.name,
+        childAge: firstChild.age,
+        createdAt: firstChild.createdAt,
+        completedChallenges: firstChild.completedChallenges,
+        currentStreak: firstChild.currentStreak,
+        lastChallengeDate: firstChild.lastChallengeDate,
+        childProfiles: [firstChild, secondChild],
+        activeChildId: firstChild.id,
+      );
+
+      final switchedProfile = profile.withActiveChild(secondChild);
+
+      expect(switchedProfile.childName, 'Лев');
+      expect(switchedProfile.learningGoal, LearningGoal.math);
+      expect(switchedProfile.completedChallenges, 0);
+      expect(switchedProfile.currentStreak, 0);
+      expect(switchedProfile.lastChallengeDate, isNull);
     });
 
     test('detects challenge completion by calendar date', () {
