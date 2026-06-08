@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 import '../data/family_profile_store.dart';
 import '../features/home/family_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import 'app_controller.dart';
 
 class LogicLikeApp extends StatefulWidget {
   const LogicLikeApp({
     required this.familyProfileStore,
+    this.locale,
     super.key,
   });
 
   final FamilyProfileStore familyProfileStore;
+  final Locale? locale;
 
   @override
   State<LogicLikeApp> createState() => _LogicLikeAppState();
@@ -37,7 +40,10 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'LogicLike',
+      onGenerateTitle: (context) => context.l10n.appTitle,
+      locale: widget.locale ?? const Locale('ru'),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: buildAppTheme(),
       home: AnimatedBuilder(
         animation: _controller,

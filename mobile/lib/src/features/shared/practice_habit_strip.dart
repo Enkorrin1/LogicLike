@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
+import '../../l10n/l10n.dart';
 
 class PracticeHabitStrip extends StatelessWidget {
   const PracticeHabitStrip({
@@ -59,13 +60,14 @@ class _PracticeDayDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     final completed = day.completed;
 
     return Column(
       children: [
         Text(
-          _weekdayLabel(day.date),
+          l10n.weekdayShort(day.date),
           style: Theme.of(context).textTheme.labelMedium,
         ),
         const SizedBox(height: 8),
@@ -88,31 +90,11 @@ class _PracticeDayDot extends StatelessWidget {
         if (showMinutes) ...[
           const SizedBox(height: 6),
           Text(
-            day.minutes == 0 ? '-' : '${day.minutes} м',
+            day.minutes == 0 ? '-' : l10n.minutesNarrow(day.minutes),
             style: Theme.of(context).textTheme.labelSmall,
           ),
         ],
       ],
     );
-  }
-}
-
-String _weekdayLabel(DateTime date) {
-  switch (date.weekday) {
-    case DateTime.monday:
-      return 'Пн';
-    case DateTime.tuesday:
-      return 'Вт';
-    case DateTime.wednesday:
-      return 'Ср';
-    case DateTime.thursday:
-      return 'Чт';
-    case DateTime.friday:
-      return 'Пт';
-    case DateTime.saturday:
-      return 'Сб';
-    case DateTime.sunday:
-    default:
-      return 'Вс';
   }
 }

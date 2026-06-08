@@ -1,6 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
+import '../../l10n/l10n.dart';
 import '../shared/practice_habit_strip.dart';
 
 typedef AddChildProfile = Future<void> Function({
@@ -37,36 +40,45 @@ class ParentScreen extends StatelessWidget {
     final practiceDays = profile.practiceDays(days: 7, now: now);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Родительский контур'),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
+      body: Stack(
         children: [
-          _FamilyProfileCard(profile: profile),
-          const SizedBox(height: 16),
-          _ChildrenCard(
-            profile: profile,
-            onChildSelected: onChildSelected,
-            onChildAdded: onChildAdded,
+          const Positioned.fill(
+            child: CustomPaint(
+              painter: _ParentBackdropPainter(),
+            ),
           ),
-          const SizedBox(height: 16),
-          _WeeklyProgressCard(
-            profile: profile,
-            weeklySessionsCount: weeklySessions.length,
-            weeklyMinutes: weeklyMinutes,
-            practiceDays: practiceDays,
-          ),
-          const SizedBox(height: 16),
-          _SubscriptionCard(
-            profile: profile,
-            onPlanChanged: onSubscriptionPlanChanged,
-          ),
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () => _confirmReset(context),
-            icon: const Icon(Icons.restart_alt_rounded),
-            label: const Text('Сбросить профиль'),
+          SafeArea(
+            bottom: false,
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(14, 10, 14, 132),
+              children: [
+                _ParentHero(
+                  profile: profile,
+                  weeklySessionsCount: weeklySessions.length,
+                  weeklyMinutes: weeklyMinutes,
+                ),
+                const SizedBox(height: 14),
+                _ChildrenPanel(
+                  profile: profile,
+                  onChildSelected: onChildSelected,
+                  onChildAdded: onChildAdded,
+                ),
+                const SizedBox(height: 14),
+                _WeeklyProgressPanel(
+                  profile: profile,
+                  weeklySessionsCount: weeklySessions.length,
+                  weeklyMinutes: weeklyMinutes,
+                  practiceDays: practiceDays,
+                ),
+                const SizedBox(height: 14),
+                _SubscriptionPanel(
+                  profile: profile,
+                  onPlanChanged: onSubscriptionPlanChanged,
+                ),
+                const SizedBox(height: 14),
+                _ResetProfilePanel(onReset: () => _confirmReset(context)),
+              ],
+            ),
           ),
         ],
       ),
@@ -74,22 +86,24 @@ class ParentScreen extends StatelessWidget {
   }
 
   Future<void> _confirmReset(BuildContext context) async {
+    final l10n = context.l10n;
     final shouldReset = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Сбросить профиль?'),
-          content: const Text(
-            'Onboarding откроется заново, а локальный прогресс будет очищен.',
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
           ),
+          title: Text(l10n.resetDialogTitle),
+          content: Text(l10n.resetDialogBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Отмена'),
+              child: Text(l10n.cancelButton),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Сбросить'),
+              child: Text(l10n.resetConfirmButton),
             ),
           ],
         );
@@ -102,53 +116,144 @@ class ParentScreen extends StatelessWidget {
   }
 }
 
-class _FamilyProfileCard extends StatelessWidget {
-  const _FamilyProfileCard({required this.profile});
+class _ParentHero extends StatelessWidget {
+  const _ParentHero({
+    required this.profile,
+    required this.weeklySessionsCount,
+    required this.weeklyMinutes,
+  });
 
   final FamilyProfile profile;
+  final int weeklySessionsCount;
+  final int weeklyMinutes;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Семейный профиль',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            _InfoRow(
-              icon: Icons.child_care_rounded,
-              label: 'Активный ребенок',
-              value: profile.childName,
-            ),
-            _InfoRow(
-              icon: Icons.cake_rounded,
-              label: 'Возраст',
-              value: profile.childAge.label,
-            ),
-            _InfoRow(
-              icon: Icons.flag_rounded,
-              label: 'Цель',
-              value: profile.learningGoal.label,
-            ),
-            _InfoRow(
-              icon: Icons.task_alt_rounded,
-              label: 'Всего заданий',
-              value: '${profile.completedChallenges}',
-            ),
+    final l10n = context.l10n;
+
+    return Container(
+      height: 246,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFDAFFF8),
+            Color(0xFFFFF4CF),
           ],
         ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF7ABDB8).withValues(alpha: 0.22),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        children: [
+          Positioned(
+            right: -18,
+            top: -18,
+            child: Container(
+              width: 122,
+              height: 122,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          const Positioned(
+            right: 8,
+            top: 20,
+            child: SizedBox(
+              width: 104,
+              height: 104,
+              child: Image(
+                image: AssetImage('assets/images/generated/sticker.png'),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 20,
+            top: 20,
+            right: 122,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _TinyPill(
+                  icon: Icons.supervisor_account_rounded,
+                  label: l10n.parentTag,
+                  color: const Color(0xFF8B63E8),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  l10n.parentDashboardTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  l10n.familyProfileSummary(
+                    profile.childName,
+                    l10n.labelForAge(profile.childAge),
+                    l10n.labelForGoal(profile.learningGoal),
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            left: 20,
+            right: 20,
+            bottom: 20,
+            child: Row(
+              children: [
+                Expanded(
+                  child: _HeroMetric(
+                    icon: Icons.local_fire_department_rounded,
+                    value: l10n.dayCountShort(profile.currentStreak),
+                    label: l10n.currentStreakMetric,
+                    color: const Color(0xFFFFA93B),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _HeroMetric(
+                    icon: Icons.assignment_turned_in_rounded,
+                    value: '$weeklySessionsCount',
+                    label: l10n.sessionsMetric,
+                    color: const Color(0xFF18B7AE),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _HeroMetric(
+                    icon: Icons.timer_rounded,
+                    value: '$weeklyMinutes',
+                    label: l10n.minutesMetric,
+                    color: const Color(0xFF8B63E8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _ChildrenCard extends StatelessWidget {
-  const _ChildrenCard({
+class _ChildrenPanel extends StatelessWidget {
+  const _ChildrenPanel({
     required this.profile,
     required this.onChildSelected,
     required this.onChildAdded,
@@ -160,30 +265,24 @@ class _ChildrenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final children = profile.children;
     final limit = profile.subscriptionPlan.childProfileLimit;
 
-    return Card(
+    return DecoratedBox(
+      decoration: _softPanelDecoration(),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Детские профили',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                Text(
-                  '${children.length} / $limit',
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-              ],
+            _SectionHeader(
+              icon: Icons.child_care_rounded,
+              title: l10n.childrenProfilesTitle,
+              trailing: '${children.length} / $limit',
+              color: const Color(0xFF18B7AE),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
             for (final child in children) ...[
               _ChildProfileTile(
                 child: child,
@@ -192,20 +291,14 @@ class _ChildrenCard extends StatelessWidget {
               ),
               const SizedBox(height: 10),
             ],
-            const SizedBox(height: 4),
             if (profile.canAddChild)
               FilledButton.icon(
                 onPressed: () => _showAddChildDialog(context),
                 icon: const Icon(Icons.person_add_alt_rounded),
-                label: const Text('Добавить ребенка'),
+                label: Text(l10n.addChildButton),
               )
             else
-              Text(
-                profile.subscriptionPlan.isPaid
-                    ? 'Все семейные места уже заняты.'
-                    : 'Еще профили доступны на семейном плане.',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+              _LimitMessage(plan: profile.subscriptionPlan),
           ],
         ),
       ),
@@ -235,30 +328,38 @@ class _ChildProfileTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       onTap: selected ? null : onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
+        duration: const Duration(milliseconds: 170),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+          color: selected ? const Color(0xFFDDF8F4) : const Color(0xFFFFFBF2),
           border: Border.all(
-            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: selected ? const Color(0xFF18B7AE) : Colors.white,
             width: selected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF7ABDB8).withValues(alpha: 0.10),
+              blurRadius: 14,
+              offset: const Offset(0, 7),
+            ),
+          ],
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              selected
+            _IconBubble(
+              icon: selected
                   ? Icons.radio_button_checked_rounded
-                  : Icons.radio_button_unchecked_rounded,
-              color: selected ? colorScheme.primary : colorScheme.outline,
+                  : Icons.face_retouching_natural_rounded,
+              color:
+                  selected ? const Color(0xFF18B7AE) : const Color(0xFFFFA93B),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -267,14 +368,40 @@ class _ChildProfileTile extends StatelessWidget {
                 children: [
                   Text(
                     child.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  const SizedBox(height: 3),
-                  Text('${child.age.label} • ${child.learningGoal.label}'),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
-                    '${child.completedChallenges} заданий • серия ${child.currentStreak} дн.',
-                    style: Theme.of(context).textTheme.labelMedium,
+                    l10n.ageGoalSummary(
+                      l10n.labelForAge(child.age),
+                      l10n.labelForGoal(child.learningGoal),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 7),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: [
+                      _TinyPill(
+                        icon: Icons.task_alt_rounded,
+                        label: l10n.childProgressChallengeCount(
+                          child.completedChallenges,
+                        ),
+                        color: const Color(0xFF18B7AE),
+                        compact: true,
+                      ),
+                      _TinyPill(
+                        icon: Icons.local_fire_department_rounded,
+                        label: l10n.dayCountShort(child.currentStreak),
+                        color: const Color(0xFFFFA93B),
+                        compact: true,
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -338,8 +465,13 @@ class _AddChildDialogState extends State<_AddChildDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return AlertDialog(
-      title: const Text('Новый ребенок'),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(28),
+      ),
+      title: Text(l10n.newChildTitle),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -349,14 +481,15 @@ class _AddChildDialogState extends State<_AddChildDialog> {
               controller: _nameController,
               textInputAction: TextInputAction.done,
               decoration: InputDecoration(
-                labelText: 'Имя ребенка',
-                errorText: _showNameError ? 'Введите имя' : null,
+                labelText: l10n.childNameLabel,
+                errorText: _showNameError ? l10n.childNameError : null,
+                prefixIcon: const Icon(Icons.child_care_rounded),
               ),
               onSubmitted: (_) => _submit(),
             ),
             const SizedBox(height: 18),
             Text(
-              'Возраст',
+              l10n.ageSectionTitle,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -366,7 +499,7 @@ class _AddChildDialogState extends State<_AddChildDialog> {
               children: [
                 for (final age in ChildAge.values)
                   ChoiceChip(
-                    label: Text(age.label),
+                    label: Text(l10n.labelForAge(age)),
                     selected: _selectedAge == age,
                     onSelected: (_) {
                       setState(() {
@@ -378,7 +511,7 @@ class _AddChildDialogState extends State<_AddChildDialog> {
             ),
             const SizedBox(height: 18),
             Text(
-              'Цель',
+              l10n.learningGoalShortTitle,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
@@ -400,11 +533,11 @@ class _AddChildDialogState extends State<_AddChildDialog> {
       actions: [
         TextButton(
           onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
-          child: const Text('Отмена'),
+          child: Text(l10n.cancelButton),
         ),
         FilledButton(
           onPressed: _isSaving ? null : _submit,
-          child: Text(_isSaving ? 'Сохраняем' : 'Добавить'),
+          child: Text(_isSaving ? l10n.savingButton : l10n.addButton),
         ),
       ],
     );
@@ -424,20 +557,21 @@ class _GoalOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return InkWell(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(18),
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+          color: selected ? const Color(0xFFDDF8F4) : const Color(0xFFFFFBF2),
           border: Border.all(
-            color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: selected ? const Color(0xFF18B7AE) : const Color(0xFFE4F1EE),
+            width: selected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,7 +580,8 @@ class _GoalOption extends StatelessWidget {
               selected
                   ? Icons.radio_button_checked_rounded
                   : Icons.radio_button_unchecked_rounded,
-              color: selected ? colorScheme.primary : colorScheme.outline,
+              color:
+                  selected ? const Color(0xFF18B7AE) : const Color(0xFF9AB3B4),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -454,11 +589,11 @@ class _GoalOption extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    goal.label,
+                    l10n.labelForGoal(goal),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 2),
-                  Text(goal.description),
+                  Text(l10n.descriptionForGoal(goal)),
                 ],
               ),
             ),
@@ -469,8 +604,8 @@ class _GoalOption extends StatelessWidget {
   }
 }
 
-class _WeeklyProgressCard extends StatelessWidget {
-  const _WeeklyProgressCard({
+class _WeeklyProgressPanel extends StatelessWidget {
+  const _WeeklyProgressPanel({
     required this.profile,
     required this.weeklySessionsCount,
     required this.weeklyMinutes,
@@ -484,32 +619,37 @@ class _WeeklyProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final lastSession = profile.lastSession;
 
-    return Card(
+    return DecoratedBox(
+      decoration: _softPanelDecoration(),
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Аналитика занятий',
-              style: Theme.of(context).textTheme.titleLarge,
+            _SectionHeader(
+              icon: Icons.insights_rounded,
+              title: l10n.analyticsTitle,
+              color: const Color(0xFF8B63E8),
             ),
             const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
                   child: _SummaryStat(
-                    label: 'Серия',
-                    value: '${profile.currentStreak} дн.',
+                    label: l10n.streakMetricLabel,
+                    value: l10n.dayCountShort(profile.currentStreak),
+                    color: const Color(0xFFFFA93B),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _SummaryStat(
-                    label: 'Лучшее',
-                    value: '${profile.bestStreak} дн.',
+                    label: l10n.bestStreakLabel,
+                    value: l10n.dayCountShort(profile.bestStreak),
+                    color: const Color(0xFF18B7AE),
                   ),
                 ),
               ],
@@ -519,15 +659,17 @@ class _WeeklyProgressCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: _SummaryStat(
-                    label: 'За 7 дней',
-                    value: '$weeklySessionsCount сесс.',
+                    label: l10n.last7DaysLabel,
+                    value: l10n.sessionsCountShort(weeklySessionsCount),
+                    color: const Color(0xFF44A8F2),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _SummaryStat(
-                    label: 'Минуты',
-                    value: '$weeklyMinutes мин',
+                    label: l10n.weeklyMinutesLabel,
+                    value: l10n.minutesShort(weeklyMinutes),
+                    color: const Color(0xFF8B63E8),
                   ),
                 ),
               ],
@@ -535,22 +677,31 @@ class _WeeklyProgressCard extends StatelessWidget {
             const SizedBox(height: 16),
             _InfoRow(
               icon: Icons.school_rounded,
-              label: 'Последний навык',
-              value: lastSession?.skill ?? 'Пока нет',
+              label: l10n.lastSkillLabel,
+              value: lastSession == null
+                  ? l10n.notAvailable
+                  : l10n.localizedSkill(lastSession.skill),
             ),
             _InfoRow(
               icon: Icons.event_available_rounded,
-              label: 'Последняя сессия',
+              label: l10n.lastSessionLabel,
               value: lastSession == null
-                  ? 'Пока нет'
-                  : _formatDate(lastSession.completedAt),
+                  ? l10n.notAvailable
+                  : l10n.formatShortDate(lastSession.completedAt),
             ),
-            const SizedBox(height: 10),
-            PracticeHabitStrip(
-              title: 'Ритм недели',
-              subtitle: 'Дни с практикой и минуты по каждому дню.',
-              days: practiceDays,
-              showMinutes: true,
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFBF2),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: PracticeHabitStrip(
+                title: l10n.weeklyRhythmTitle,
+                subtitle: l10n.weeklyRhythmSubtitle,
+                days: practiceDays,
+                showMinutes: true,
+              ),
             ),
           ],
         ),
@@ -559,42 +710,8 @@ class _WeeklyProgressCard extends StatelessWidget {
   }
 }
 
-class _SummaryStat extends StatelessWidget {
-  const _SummaryStat({
-    required this.label,
-    required this.value,
-  });
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            value,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 2),
-          Text(label),
-        ],
-      ),
-    );
-  }
-}
-
-class _SubscriptionCard extends StatelessWidget {
-  const _SubscriptionCard({
+class _SubscriptionPanel extends StatelessWidget {
+  const _SubscriptionPanel({
     required this.profile,
     required this.onPlanChanged,
   });
@@ -604,86 +721,51 @@ class _SubscriptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
     final currentPlan = profile.subscriptionPlan;
 
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(Icons.workspace_premium_rounded, color: colorScheme.primary),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Семейная подписка',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-              _PlanStatus(plan: currentPlan),
-            ],
-          ),
-          const SizedBox(height: 14),
-          _InfoRow(
-            icon: Icons.credit_card_rounded,
-            label: 'Текущий план',
-            value: currentPlan.label,
-          ),
-          _InfoRow(
-            icon: Icons.group_rounded,
-            label: 'Семейные места',
-            value: currentPlan.capacityLabel,
-          ),
-          _InfoRow(
-            icon: Icons.update_rounded,
-            label: 'Обновлен',
-            value: profile.subscriptionUpdatedAt == null
-                ? 'Пока нет'
-                : _formatDate(profile.subscriptionUpdatedAt!),
-          ),
-          const SizedBox(height: 8),
-          for (final plan in FamilySubscriptionPlan.values) ...[
-            _PlanOption(
-              plan: plan,
-              selected: plan == currentPlan,
-              recommended: plan == FamilySubscriptionPlan.annual,
-              onSelect: () => onPlanChanged(plan),
-            ),
-            const SizedBox(height: 10),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _PlanStatus extends StatelessWidget {
-  const _PlanStatus({required this.plan});
-
-  final FamilySubscriptionPlan plan;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color:
-            plan.isPaid ? colorScheme.tertiaryContainer : colorScheme.surface,
-        borderRadius: BorderRadius.circular(999),
-      ),
+      decoration: _softPanelDecoration(color: const Color(0xFFF4E9FF)),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        child: Text(
-          plan.statusLabel,
-          style: Theme.of(context).textTheme.labelMedium,
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _SectionHeader(
+              icon: Icons.workspace_premium_rounded,
+              title: l10n.subscriptionTitle,
+              trailing: l10n.statusForPlan(currentPlan),
+              color: const Color(0xFF8B63E8),
+            ),
+            const SizedBox(height: 14),
+            _InfoRow(
+              icon: Icons.credit_card_rounded,
+              label: l10n.currentPlanLabel,
+              value: l10n.labelForPlan(currentPlan),
+            ),
+            _InfoRow(
+              icon: Icons.group_rounded,
+              label: l10n.familySeatsLabel,
+              value: l10n.capacityForPlan(currentPlan),
+            ),
+            _InfoRow(
+              icon: Icons.update_rounded,
+              label: l10n.updatedLabel,
+              value: profile.subscriptionUpdatedAt == null
+                  ? l10n.notAvailable
+                  : l10n.formatShortDate(profile.subscriptionUpdatedAt!),
+            ),
+            const SizedBox(height: 8),
+            for (final plan in FamilySubscriptionPlan.values) ...[
+              _PlanOption(
+                plan: plan,
+                selected: plan == currentPlan,
+                recommended: plan == FamilySubscriptionPlan.annual,
+                onSelect: () => onPlanChanged(plan),
+              ),
+              const SizedBox(height: 10),
+            ],
+          ],
         ),
       ),
     );
@@ -705,18 +787,27 @@ class _PlanOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    final l10n = context.l10n;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 160),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+        color: selected ? Colors.white : Colors.white.withValues(alpha: 0.72),
         border: Border.all(
-          color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+          color: selected ? const Color(0xFF8B63E8) : Colors.white,
           width: selected ? 2 : 1,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: selected
+            ? [
+                BoxShadow(
+                  color: const Color(0xFF8B63E8).withValues(alpha: 0.13),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
+                ),
+              ]
+            : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -726,38 +817,233 @@ class _PlanOption extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  plan.label,
+                  l10n.labelForPlan(plan),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
               if (recommended)
-                Text(
-                  'Выгодно',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: colorScheme.primary,
-                      ),
+                _TinyPill(
+                  icon: Icons.star_rounded,
+                  label: l10n.recommendedLabel,
+                  color: const Color(0xFFFFA93B),
+                  compact: true,
                 ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
-            plan.priceLabel,
-            style: Theme.of(context).textTheme.titleLarge,
+            l10n.priceForPlan(plan),
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: const Color(0xFF6D4AD8),
+                ),
           ),
           const SizedBox(height: 4),
-          Text(plan.description),
+          Text(l10n.descriptionForPlan(plan)),
           const SizedBox(height: 12),
           selected
               ? OutlinedButton.icon(
                   onPressed: null,
                   icon: const Icon(Icons.check_circle_rounded),
-                  label: const Text('Текущий план'),
+                  label: Text(l10n.currentPlanButton),
                 )
               : FilledButton.icon(
                   onPressed: onSelect,
                   icon: const Icon(Icons.check_rounded),
-                  label: const Text('Выбрать'),
+                  label: Text(l10n.chooseButton),
                 ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ResetProfilePanel extends StatelessWidget {
+  const _ResetProfilePanel({required this.onReset});
+
+  final Future<void> Function() onReset;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return DecoratedBox(
+      decoration: _softPanelDecoration(color: Colors.white),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const _IconBubble(
+              icon: Icons.restart_alt_rounded,
+              color: Color(0xFFFF8A42),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l10n.resetProfilePanel,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            const SizedBox(width: 10),
+            OutlinedButton(
+              onPressed: onReset,
+              child: Text(l10n.resetButton),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LimitMessage extends StatelessWidget {
+  const _LimitMessage({required this.plan});
+
+  final FamilySubscriptionPlan plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3D1),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.info_rounded,
+            color: Color(0xFFFF9D2E),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              plan.isPaid ? l10n.limitPaidMessage : l10n.limitStarterMessage,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({
+    required this.icon,
+    required this.title,
+    required this.color,
+    this.trailing,
+  });
+
+  final IconData icon;
+  final String title;
+  final Color color;
+  final String? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final trailingText = trailing;
+
+    return Row(
+      children: [
+        _IconBubble(icon: icon, color: color),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+        ),
+        if (trailingText != null) ...[
+          const SizedBox(width: 10),
+          Text(
+            trailingText,
+            style: Theme.of(context).textTheme.labelLarge,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _HeroMetric extends StatelessWidget {
+  const _HeroMetric({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.82),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SummaryStat extends StatelessWidget {
+  const _SummaryStat({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.13),
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 3),
+          Text(label),
         ],
       ),
     );
@@ -780,16 +1066,23 @@ class _InfoRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon),
+          Icon(icon, color: const Color(0xFF18B7AE)),
           const SizedBox(width: 12),
-          Expanded(child: Text(label)),
-          const SizedBox(width: 12),
-          Flexible(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: Theme.of(context).textTheme.titleMedium,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label),
+                const SizedBox(height: 3),
+                Text(
+                  value,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ],
             ),
           ),
         ],
@@ -798,10 +1091,146 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-String _formatDate(DateTime date) {
-  return '${_twoDigits(date.day)}.${_twoDigits(date.month)}.${date.year}';
+class _IconBubble extends StatelessWidget {
+  const _IconBubble({
+    required this.icon,
+    required this.color,
+  });
+
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 46,
+      height: 46,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.22),
+            blurRadius: 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Icon(icon, color: Colors.white, size: 25),
+    );
+  }
 }
 
-String _twoDigits(int value) {
-  return value.toString().padLeft(2, '0');
+class _TinyPill extends StatelessWidget {
+  const _TinyPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.compact = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: compact ? 0.14 : 1),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 9 : 12,
+          vertical: compact ? 6 : 8,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: compact ? color : Colors.white,
+              size: compact ? 15 : 18,
+            ),
+            const SizedBox(width: 5),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: compact ? const Color(0xFF164C55) : Colors.white,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ParentBackdropPainter extends CustomPainter {
+  const _ParentBackdropPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..color = const Color(0xFFFFFBF2),
+    );
+
+    final mintPaint = Paint()..color = const Color(0xFFE2FBF5);
+    final lavenderPaint = Paint()..color = const Color(0xFFF1E7FF);
+    canvas.drawCircle(
+        Offset(size.width * 0.92, size.height * 0.14), 88, mintPaint);
+    canvas.drawCircle(
+      Offset(size.width * 0.06, size.height * 0.55),
+      78,
+      lavenderPaint,
+    );
+
+    final starPaint = Paint()..color = const Color(0xFFFFE05E);
+    _drawStar(
+        canvas, Offset(size.width * 0.16, size.height * 0.16), 8, starPaint);
+    _drawStar(
+        canvas, Offset(size.width * 0.86, size.height * 0.42), 9, starPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+BoxDecoration _softPanelDecoration({Color color = Colors.white}) {
+  return BoxDecoration(
+    color: color.withValues(alpha: 0.96),
+    borderRadius: BorderRadius.circular(30),
+    border: Border.all(color: Colors.white, width: 2),
+    boxShadow: [
+      BoxShadow(
+        color: const Color(0xFF7ABDB8).withValues(alpha: 0.17),
+        blurRadius: 24,
+        offset: const Offset(0, 12),
+      ),
+    ],
+  );
+}
+
+void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
+  final path = Path();
+  for (var index = 0; index < 10; index += 1) {
+    final angle = -math.pi / 2 + index * math.pi / 5;
+    final currentRadius = index.isEven ? radius : radius * 0.45;
+    final point = Offset(
+      center.dx + math.cos(angle) * currentRadius,
+      center.dy + math.sin(angle) * currentRadius,
+    );
+    if (index == 0) {
+      path.moveTo(point.dx, point.dy);
+    } else {
+      path.lineTo(point.dx, point.dy);
+    }
+  }
+  path.close();
+  canvas.drawPath(path, paint);
 }

@@ -74,6 +74,33 @@ List<DailyChallenge> dailyChallengesForAge(
   return focusedChallenges.isEmpty ? challenges : focusedChallenges;
 }
 
+DailyChallenge dailyChallengeById(String id, {required ChildAge age}) {
+  final ageChallenges = _allChallengesForAge(age);
+  final ageMatch = ageChallenges.where((challenge) => challenge.id == id);
+  if (ageMatch.isNotEmpty) {
+    return ageMatch.first;
+  }
+
+  for (final candidateAge in ChildAge.values) {
+    final match = _allChallengesForAge(candidateAge)
+        .where((challenge) => challenge.id == id);
+    if (match.isNotEmpty) {
+      return match.first;
+    }
+  }
+
+  return ageChallenges.first;
+}
+
+List<DailyChallenge> dailyChallengesByIds(
+  List<String> ids, {
+  required ChildAge age,
+}) {
+  return [
+    for (final id in ids) dailyChallengeById(id, age: age),
+  ];
+}
+
 List<DailyChallenge> _allChallengesForAge(ChildAge age) {
   switch (age) {
     case ChildAge.four:

@@ -218,6 +218,10 @@ class ChildProfile {
     this.lastChallengeId,
     this.lastChallengeSkill,
     this.practiceSessions = const [],
+    this.completedMapNodeIds = const [],
+    this.mapStars = 0,
+    this.mapXp = 0,
+    this.hearts = 5,
   });
 
   final String id;
@@ -233,6 +237,10 @@ class ChildProfile {
   final String? lastChallengeId;
   final String? lastChallengeSkill;
   final List<PracticeSession> practiceSessions;
+  final List<String> completedMapNodeIds;
+  final int mapStars;
+  final int mapXp;
+  final int hearts;
 
   PracticeSession? get lastSession {
     return practiceSessions.isEmpty ? null : practiceSessions.last;
@@ -323,6 +331,10 @@ class ChildProfile {
     String? lastChallengeId,
     String? lastChallengeSkill,
     List<PracticeSession>? practiceSessions,
+    List<String>? completedMapNodeIds,
+    int? mapStars,
+    int? mapXp,
+    int? hearts,
   }) {
     return ChildProfile(
       id: id ?? this.id,
@@ -338,6 +350,10 @@ class ChildProfile {
       lastChallengeId: lastChallengeId ?? this.lastChallengeId,
       lastChallengeSkill: lastChallengeSkill ?? this.lastChallengeSkill,
       practiceSessions: practiceSessions ?? this.practiceSessions,
+      completedMapNodeIds: completedMapNodeIds ?? this.completedMapNodeIds,
+      mapStars: mapStars ?? this.mapStars,
+      mapXp: mapXp ?? this.mapXp,
+      hearts: hearts ?? this.hearts,
     );
   }
 
@@ -358,6 +374,10 @@ class ChildProfile {
       'practiceSessions': [
         for (final session in practiceSessions) session.toJson(),
       ],
+      'completedMapNodeIds': completedMapNodeIds,
+      'mapStars': mapStars,
+      'mapXp': mapXp,
+      'hearts': hearts,
     };
   }
 
@@ -372,6 +392,9 @@ class ChildProfile {
               Map<String, Object?>.from(session),
             ))
         .toList(growable: false);
+    final completedChallenges = _intFromJson(json['completedChallenges']);
+    final mapStars = _intFromJson(json['mapStars']);
+    final hearts = _intFromJson(json['hearts']);
 
     return ChildProfile(
       id: json['id'] as String? ?? _childIdFromName(name, createdAt),
@@ -379,7 +402,7 @@ class ChildProfile {
       age: ChildAge.fromName(json['age'] as String),
       createdAt: createdAt,
       learningGoal: LearningGoal.fromName(json['learningGoal'] as String?),
-      completedChallenges: _intFromJson(json['completedChallenges']),
+      completedChallenges: completedChallenges,
       currentStreak: _intFromJson(json['currentStreak']),
       bestStreak: _intFromJson(json['bestStreak']),
       totalPracticeMinutes: _intFromJson(json['totalPracticeMinutes']),
@@ -388,6 +411,13 @@ class ChildProfile {
       lastChallengeId: json['lastChallengeId'] as String?,
       lastChallengeSkill: json['lastChallengeSkill'] as String?,
       practiceSessions: practiceSessions,
+      completedMapNodeIds:
+          (json['completedMapNodeIds'] as List<Object?>? ?? const [])
+              .whereType<String>()
+              .toList(growable: false),
+      mapStars: mapStars == 0 ? completedChallenges : mapStars,
+      mapXp: _intFromJson(json['mapXp']),
+      hearts: hearts == 0 ? 5 : hearts,
     );
   }
 
@@ -408,7 +438,11 @@ class ChildProfile {
             lastChallengeDate == other.lastChallengeDate &&
             lastChallengeId == other.lastChallengeId &&
             lastChallengeSkill == other.lastChallengeSkill &&
-            _listEquals(practiceSessions, other.practiceSessions);
+            _listEquals(practiceSessions, other.practiceSessions) &&
+            _listEquals(completedMapNodeIds, other.completedMapNodeIds) &&
+            mapStars == other.mapStars &&
+            mapXp == other.mapXp &&
+            hearts == other.hearts;
   }
 
   @override
@@ -427,6 +461,10 @@ class ChildProfile {
       lastChallengeId,
       lastChallengeSkill,
       Object.hashAll(practiceSessions),
+      Object.hashAll(completedMapNodeIds),
+      mapStars,
+      mapXp,
+      hearts,
     );
   }
 }
@@ -660,6 +698,17 @@ class FamilyProfile {
       lastChallengeId: json['lastChallengeId'] as String?,
       lastChallengeSkill: json['lastChallengeSkill'] as String?,
       practiceSessions: practiceSessions,
+      completedMapNodeIds:
+          (json['completedMapNodeIds'] as List<Object?>? ?? const [])
+              .whereType<String>()
+              .toList(growable: false),
+      mapStars: _intFromJson(json['mapStars']) == 0
+          ? _intFromJson(json['completedChallenges'])
+          : _intFromJson(json['mapStars']),
+      mapXp: _intFromJson(json['mapXp']),
+      hearts: _intFromJson(json['hearts']) == 0
+          ? 5
+          : _intFromJson(json['hearts']),
     );
     final children = parsedChildren.isEmpty ? [fallbackChild] : parsedChildren;
     final activeChildId = json['activeChildId'] as String?;
@@ -706,6 +755,10 @@ class FamilyProfile {
       lastChallengeId: lastChallengeId,
       lastChallengeSkill: lastChallengeSkill,
       practiceSessions: practiceSessions,
+      completedMapNodeIds: const [],
+      mapStars: completedChallenges,
+      mapXp: completedChallenges * 20,
+      hearts: 5,
     );
   }
 
