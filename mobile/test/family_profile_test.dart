@@ -13,6 +13,8 @@ void main() {
         currentStreak: 2,
         bestStreak: 3,
         totalPracticeMinutes: 9,
+        subscriptionPlan: FamilySubscriptionPlan.annual,
+        subscriptionUpdatedAt: DateTime(2026, 6, 8, 20),
         lastChallengeDate: DateTime(2026, 6, 8),
         lastChallengeId: 'shape-path',
         lastChallengeSkill: 'Внимание и закономерности',
@@ -45,6 +47,8 @@ void main() {
       expect(restored.bestStreak, 0);
       expect(restored.totalPracticeMinutes, 0);
       expect(restored.practiceSessions, isEmpty);
+      expect(restored.subscriptionPlan, FamilySubscriptionPlan.starter);
+      expect(restored.subscriptionUpdatedAt, isNull);
     });
 
     test('detects challenge completion by calendar date', () {

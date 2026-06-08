@@ -5,11 +5,14 @@ import '../../domain/family_profile.dart';
 class ParentScreen extends StatelessWidget {
   const ParentScreen({
     required this.profile,
+    required this.onSubscriptionPlanChanged,
     required this.onResetProfile,
     super.key,
   });
 
   final FamilyProfile profile;
+  final Future<void> Function(FamilySubscriptionPlan plan)
+      onSubscriptionPlanChanged;
   final Future<void> Function() onResetProfile;
 
   @override
@@ -36,7 +39,10 @@ class ParentScreen extends StatelessWidget {
             weeklyMinutes: weeklyMinutes,
           ),
           const SizedBox(height: 16),
-          const _SubscriptionCard(),
+          _SubscriptionCard(
+            profile: profile,
+            onPlanChanged: onSubscriptionPlanChanged,
+          ),
           const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: () => _confirmReset(context),
@@ -238,11 +244,18 @@ class _SummaryStat extends StatelessWidget {
 }
 
 class _SubscriptionCard extends StatelessWidget {
-  const _SubscriptionCard();
+  const _SubscriptionCard({
+    required this.profile,
+    required this.onPlanChanged,
+  });
+
+  final FamilyProfile profile;
+  final Future<void> Function(FamilySubscriptionPlan plan) onPlanChanged;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final currentPlan = profile.subscriptionPlan;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -254,57 +267,147 @@ class _SubscriptionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(Icons.workspace_premium_rounded, color: colorScheme.primary),
               const SizedBox(width: 10),
-              Text(
-                'Семейная подписка',
-                style: Theme.of(context).textTheme.titleLarge,
+              Expanded(
+                child: Text(
+                  'Семейная подписка',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
               ),
+              _PlanStatus(plan: currentPlan),
             ],
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Здесь будет parent-paid контур: статус оплаты, семейные места и управление планом.',
-          ),
           const SizedBox(height: 14),
-          const _SubscriptionBenefit(
+          _InfoRow(
+            icon: Icons.credit_card_rounded,
+            label: 'Текущий план',
+            value: currentPlan.label,
+          ),
+          _InfoRow(
             icon: Icons.group_rounded,
-            text: 'До 3 детских профилей в семье',
+            label: 'Семейные места',
+            value: currentPlan.capacityLabel,
           ),
-          const _SubscriptionBenefit(
-            icon: Icons.insights_rounded,
-            text: 'Прогресс и недельная динамика для родителя',
+          _InfoRow(
+            icon: Icons.update_rounded,
+            label: 'Обновлен',
+            value: profile.subscriptionUpdatedAt == null
+                ? 'Пока нет'
+                : _formatDate(profile.subscriptionUpdatedAt!),
           ),
-          const _SubscriptionBenefit(
-            icon: Icons.no_accounts_rounded,
-            text: 'Короткие задания без рекламы',
-          ),
+          const SizedBox(height: 8),
+          for (final plan in FamilySubscriptionPlan.values) ...[
+            _PlanOption(
+              plan: plan,
+              selected: plan == currentPlan,
+              recommended: plan == FamilySubscriptionPlan.annual,
+              onSelect: () => onPlanChanged(plan),
+            ),
+            const SizedBox(height: 10),
+          ],
         ],
       ),
     );
   }
 }
 
-class _SubscriptionBenefit extends StatelessWidget {
-  const _SubscriptionBenefit({
-    required this.icon,
-    required this.text,
-  });
+class _PlanStatus extends StatelessWidget {
+  const _PlanStatus({required this.plan});
 
-  final IconData icon;
-  final String text;
+  final FamilySubscriptionPlan plan;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Row(
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color:
+            plan.isPaid ? colorScheme.tertiaryContainer : colorScheme.surface,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: Text(
+          plan.statusLabel,
+          style: Theme.of(context).textTheme.labelMedium,
+        ),
+      ),
+    );
+  }
+}
+
+class _PlanOption extends StatelessWidget {
+  const _PlanOption({
+    required this.plan,
+    required this.selected,
+    required this.recommended,
+    required this.onSelect,
+  });
+
+  final FamilySubscriptionPlan plan;
+  final bool selected;
+  final bool recommended;
+  final Future<void> Function() onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: selected ? colorScheme.primaryContainer : colorScheme.surface,
+        border: Border.all(
+          color: selected ? colorScheme.primary : colorScheme.outlineVariant,
+          width: selected ? 2 : 1,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20),
-          const SizedBox(width: 10),
-          Expanded(child: Text(text)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  plan.label,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              if (recommended)
+                Text(
+                  'Выгодно',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: colorScheme.primary,
+                      ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            plan.priceLabel,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 4),
+          Text(plan.description),
+          const SizedBox(height: 12),
+          selected
+              ? OutlinedButton.icon(
+                  onPressed: null,
+                  icon: const Icon(Icons.check_circle_rounded),
+                  label: const Text('Текущий план'),
+                )
+              : FilledButton.icon(
+                  onPressed: onSelect,
+                  icon: const Icon(Icons.check_rounded),
+                  label: const Text('Выбрать'),
+                ),
         ],
       ),
     );

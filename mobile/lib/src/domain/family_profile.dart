@@ -49,6 +49,58 @@ enum LearningGoal {
   }
 }
 
+enum FamilySubscriptionPlan {
+  starter(
+    'Стартовый',
+    '0 ₽',
+    '1 детский профиль',
+    'Короткий daily loop и локальный прогресс.',
+  ),
+  monthly(
+    'Семейный месяц',
+    '399 ₽/мес',
+    'до 3 детских профилей',
+    'Полный доступ, семейные профили и родительская аналитика.',
+  ),
+  annual(
+    'Семейный год',
+    '2990 ₽/год',
+    'до 3 детских профилей',
+    'То же, но выгоднее при оплате за год.',
+  );
+
+  const FamilySubscriptionPlan(
+    this.label,
+    this.priceLabel,
+    this.capacityLabel,
+    this.description,
+  );
+
+  final String label;
+  final String priceLabel;
+  final String capacityLabel;
+  final String description;
+
+  bool get isPaid {
+    return this != FamilySubscriptionPlan.starter;
+  }
+
+  String get statusLabel {
+    return isPaid ? 'Активна' : 'Не оформлена';
+  }
+
+  static FamilySubscriptionPlan fromName(String? name) {
+    if (name == null) {
+      return FamilySubscriptionPlan.starter;
+    }
+
+    return FamilySubscriptionPlan.values.firstWhere(
+      (plan) => plan.name == name,
+      orElse: () => FamilySubscriptionPlan.starter,
+    );
+  }
+}
+
 class PracticeSession {
   const PracticeSession({
     required this.completedAt,
@@ -130,6 +182,8 @@ class FamilyProfile {
     this.lastChallengeId,
     this.lastChallengeSkill,
     this.practiceSessions = const [],
+    this.subscriptionPlan = FamilySubscriptionPlan.starter,
+    this.subscriptionUpdatedAt,
   });
 
   final String childName;
@@ -144,6 +198,8 @@ class FamilyProfile {
   final String? lastChallengeId;
   final String? lastChallengeSkill;
   final List<PracticeSession> practiceSessions;
+  final FamilySubscriptionPlan subscriptionPlan;
+  final DateTime? subscriptionUpdatedAt;
 
   PracticeSession? get lastSession {
     return practiceSessions.isEmpty ? null : practiceSessions.last;
@@ -188,6 +244,8 @@ class FamilyProfile {
     String? lastChallengeId,
     String? lastChallengeSkill,
     List<PracticeSession>? practiceSessions,
+    FamilySubscriptionPlan? subscriptionPlan,
+    DateTime? subscriptionUpdatedAt,
   }) {
     return FamilyProfile(
       childName: childName ?? this.childName,
@@ -202,6 +260,9 @@ class FamilyProfile {
       lastChallengeId: lastChallengeId ?? this.lastChallengeId,
       lastChallengeSkill: lastChallengeSkill ?? this.lastChallengeSkill,
       practiceSessions: practiceSessions ?? this.practiceSessions,
+      subscriptionPlan: subscriptionPlan ?? this.subscriptionPlan,
+      subscriptionUpdatedAt:
+          subscriptionUpdatedAt ?? this.subscriptionUpdatedAt,
     );
   }
 
@@ -221,11 +282,14 @@ class FamilyProfile {
       'practiceSessions': [
         for (final session in practiceSessions) session.toJson(),
       ],
+      'subscriptionPlan': subscriptionPlan.name,
+      'subscriptionUpdatedAt': subscriptionUpdatedAt?.toIso8601String(),
     };
   }
 
   factory FamilyProfile.fromJson(Map<String, Object?> json) {
     final lastChallengeDate = json['lastChallengeDate'] as String?;
+    final subscriptionUpdatedAt = json['subscriptionUpdatedAt'] as String?;
     final rawSessions = json['practiceSessions'] as List<Object?>? ?? const [];
     final practiceSessions = rawSessions
         .whereType<Map>()
@@ -248,6 +312,11 @@ class FamilyProfile {
       lastChallengeId: json['lastChallengeId'] as String?,
       lastChallengeSkill: json['lastChallengeSkill'] as String?,
       practiceSessions: practiceSessions,
+      subscriptionPlan:
+          FamilySubscriptionPlan.fromName(json['subscriptionPlan'] as String?),
+      subscriptionUpdatedAt: subscriptionUpdatedAt == null
+          ? null
+          : DateTime.parse(subscriptionUpdatedAt),
     );
   }
 
@@ -271,7 +340,9 @@ class FamilyProfile {
             lastChallengeDate == other.lastChallengeDate &&
             lastChallengeId == other.lastChallengeId &&
             lastChallengeSkill == other.lastChallengeSkill &&
-            _listEquals(practiceSessions, other.practiceSessions);
+            _listEquals(practiceSessions, other.practiceSessions) &&
+            subscriptionPlan == other.subscriptionPlan &&
+            subscriptionUpdatedAt == other.subscriptionUpdatedAt;
   }
 
   @override
@@ -289,6 +360,8 @@ class FamilyProfile {
       lastChallengeId,
       lastChallengeSkill,
       Object.hashAll(practiceSessions),
+      subscriptionPlan,
+      subscriptionUpdatedAt,
     );
   }
 

@@ -38,6 +38,7 @@ class _FamilyShellState extends State<FamilyShell> {
           ),
           ParentScreen(
             profile: profile,
+            onSubscriptionPlanChanged: widget.controller.updateSubscriptionPlan,
             onResetProfile: widget.controller.resetFamilyProfile,
           ),
         ];

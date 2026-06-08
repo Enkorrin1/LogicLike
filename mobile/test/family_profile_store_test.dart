@@ -30,6 +30,8 @@ void main() {
         currentStreak: 2,
         bestStreak: 3,
         totalPracticeMinutes: 14,
+        subscriptionPlan: FamilySubscriptionPlan.monthly,
+        subscriptionUpdatedAt: DateTime(2026, 6, 8, 20),
         lastChallengeDate: DateTime(2026, 6, 8),
         lastChallengeId: 'logic-train',
         lastChallengeSkill: 'Последовательности',

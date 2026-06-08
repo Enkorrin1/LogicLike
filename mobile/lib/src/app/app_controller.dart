@@ -84,6 +84,22 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateSubscriptionPlan(FamilySubscriptionPlan plan) async {
+    final currentProfile = _familyProfile;
+    if (currentProfile == null || currentProfile.subscriptionPlan == plan) {
+      return;
+    }
+
+    final nextProfile = currentProfile.copyWith(
+      subscriptionPlan: plan,
+      subscriptionUpdatedAt: DateTime.now(),
+    );
+
+    await _familyProfileStore.save(nextProfile);
+    _familyProfile = nextProfile;
+    notifyListeners();
+  }
+
   Future<void> resetFamilyProfile() async {
     await _familyProfileStore.clear();
     _familyProfile = null;

@@ -37,6 +37,26 @@ void main() {
       expect(controller.familyProfile, store.savedProfile);
     });
 
+    test('updates and saves family subscription plan', () async {
+      final profile = FamilyProfile(
+        childName: 'Мира',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.updateSubscriptionPlan(FamilySubscriptionPlan.annual);
+
+      expect(
+        controller.familyProfile?.subscriptionPlan,
+        FamilySubscriptionPlan.annual,
+      );
+      expect(controller.familyProfile?.subscriptionUpdatedAt, isNotNull);
+      expect(store.savedProfile, controller.familyProfile);
+    });
+
     test('records completion metrics for a daily challenge', () async {
       final yesterday = _today().subtract(const Duration(days: 1));
       final profile = FamilyProfile(
