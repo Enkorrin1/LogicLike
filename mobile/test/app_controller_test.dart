@@ -120,6 +120,7 @@ const _challenge = DailyChallenge(
   prompt: 'Выберите ответ.',
   question: 'Что подходит?',
   skill: 'Логика',
+  goal: LearningGoal.logic,
   minutes: 1,
   correctChoiceId: 'a',
   hint: 'Нужен первый вариант.',

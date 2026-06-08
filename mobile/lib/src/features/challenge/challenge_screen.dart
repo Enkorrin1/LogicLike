@@ -29,6 +29,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     final challenge = dailyChallengeForDate(
       widget.profile.childAge,
       DateTime.now(),
+      goal: widget.profile.learningGoal,
     );
     final completedToday = widget.profile.completedOn(DateTime.now());
     _syncChallenge(challenge);

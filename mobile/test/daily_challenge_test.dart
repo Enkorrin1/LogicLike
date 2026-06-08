@@ -16,9 +16,16 @@ void main() {
       final firstDate = DateTime(2026, 6, 8);
       final sameDateLater = DateTime(2026, 6, 8, 18, 30);
 
-      final firstChallenge = dailyChallengeForDate(ChildAge.six, firstDate);
-      final sameDayChallenge =
-          dailyChallengeForDate(ChildAge.six, sameDateLater);
+      final firstChallenge = dailyChallengeForDate(
+        ChildAge.six,
+        firstDate,
+        goal: LearningGoal.math,
+      );
+      final sameDayChallenge = dailyChallengeForDate(
+        ChildAge.six,
+        sameDateLater,
+        goal: LearningGoal.math,
+      );
 
       expect(sameDayChallenge.id, firstChallenge.id);
     });
@@ -34,6 +41,30 @@ void main() {
       );
 
       expect(nextChallenge.id, isNot(firstChallenge.id));
+    });
+
+    test('filters challenge content by selected learning goal', () {
+      for (final age in ChildAge.values) {
+        for (final goal in LearningGoal.values) {
+          final challenge = dailyChallengeForDate(
+            age,
+            DateTime(2026, 6, 8),
+            goal: goal,
+          );
+
+          expect(challenge.goal, goal);
+        }
+      }
+    });
+
+    test('exposes the full age bank when goal is not specified', () {
+      final allChallenges = dailyChallengesForAge(ChildAge.seven);
+
+      expect(allChallenges.map((challenge) => challenge.goal).toSet(), {
+        LearningGoal.logic,
+        LearningGoal.math,
+        LearningGoal.attention,
+      });
     });
   });
 }
