@@ -134,5 +134,45 @@ void main() {
 
       expect(sessions.map((session) => session.challengeId), ['recent']);
     });
+
+    test('builds ordered practice day summaries', () {
+      final profile = FamilyProfile(
+        childName: 'Лев',
+        childAge: ChildAge.five,
+        createdAt: DateTime(2026, 6, 1),
+        lastChallengeDate: DateTime(2026, 6, 8),
+        practiceSessions: [
+          PracticeSession(
+            completedAt: DateTime(2026, 6, 7, 17),
+            challengeId: 'first',
+            challengeTitle: 'Первое задание',
+            skill: 'Логика',
+            minutes: 3,
+          ),
+          PracticeSession(
+            completedAt: DateTime(2026, 6, 8, 17),
+            challengeId: 'second',
+            challengeTitle: 'Второе задание',
+            skill: 'Внимание',
+            minutes: 4,
+          ),
+        ],
+      );
+
+      final days = profile.practiceDays(
+        days: 3,
+        now: DateTime(2026, 6, 8),
+      );
+
+      expect(days.map((day) => day.date), [
+        DateTime(2026, 6, 6),
+        DateTime(2026, 6, 7),
+        DateTime(2026, 6, 8),
+      ]);
+      expect(days.map((day) => day.completed), [false, true, true]);
+      expect(days.map((day) => day.minutes), [0, 3, 4]);
+      expect(profile.practicedOn(DateTime(2026, 6, 7)), isTrue);
+      expect(profile.practiceMinutesOn(DateTime(2026, 6, 8)), 4);
+    });
   });
 }

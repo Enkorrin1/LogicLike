@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
+import '../shared/practice_habit_strip.dart';
 
 typedef AddChildProfile = Future<void> Function({
   required String childName,
@@ -33,6 +34,7 @@ class ParentScreen extends StatelessWidget {
       0,
       (total, session) => total + session.minutes,
     );
+    final practiceDays = profile.practiceDays(days: 7, now: now);
 
     return Scaffold(
       appBar: AppBar(
@@ -53,6 +55,7 @@ class ParentScreen extends StatelessWidget {
             profile: profile,
             weeklySessionsCount: weeklySessions.length,
             weeklyMinutes: weeklyMinutes,
+            practiceDays: practiceDays,
           ),
           const SizedBox(height: 16),
           _SubscriptionCard(
@@ -471,11 +474,13 @@ class _WeeklyProgressCard extends StatelessWidget {
     required this.profile,
     required this.weeklySessionsCount,
     required this.weeklyMinutes,
+    required this.practiceDays,
   });
 
   final FamilyProfile profile;
   final int weeklySessionsCount;
   final int weeklyMinutes;
+  final List<PracticeDaySummary> practiceDays;
 
   @override
   Widget build(BuildContext context) {
@@ -539,6 +544,13 @@ class _WeeklyProgressCard extends StatelessWidget {
               value: lastSession == null
                   ? 'Пока нет'
                   : _formatDate(lastSession.completedAt),
+            ),
+            const SizedBox(height: 10),
+            PracticeHabitStrip(
+              title: 'Ритм недели',
+              subtitle: 'Дни с практикой и минуты по каждому дню.',
+              days: practiceDays,
+              showMinutes: true,
             ),
           ],
         ),

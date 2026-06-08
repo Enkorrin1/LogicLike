@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
+import '../shared/practice_habit_strip.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({
@@ -19,6 +20,7 @@ class HomeScreen extends StatelessWidget {
       0,
       (total, session) => total + session.minutes,
     );
+    final practiceDays = profile.practiceDays(days: 7, now: now);
 
     return Scaffold(
       appBar: AppBar(
@@ -40,6 +42,8 @@ class HomeScreen extends StatelessWidget {
             weeklySessionsCount: weeklySessions.length,
           ),
           const SizedBox(height: 16),
+          _HabitCard(practiceDays: practiceDays),
+          const SizedBox(height: 16),
           _TodayCard(
             completedToday: completedToday,
             lastSession: profile.lastSession,
@@ -47,6 +51,26 @@ class HomeScreen extends StatelessWidget {
           const SizedBox(height: 16),
           const _RoutineCard(),
         ],
+      ),
+    );
+  }
+}
+
+class _HabitCard extends StatelessWidget {
+  const _HabitCard({required this.practiceDays});
+
+  final List<PracticeDaySummary> practiceDays;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: PracticeHabitStrip(
+          title: 'Ритм недели',
+          subtitle: 'Маленькая отметка за каждый день с занятием.',
+          days: practiceDays,
+        ),
       ),
     );
   }

@@ -168,6 +168,41 @@ class PracticeSession {
   }
 }
 
+class PracticeDaySummary {
+  const PracticeDaySummary({
+    required this.date,
+    required this.completed,
+    required this.minutes,
+    required this.sessionsCount,
+  });
+
+  final DateTime date;
+  final bool completed;
+  final int minutes;
+  final int sessionsCount;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is PracticeDaySummary &&
+            runtimeType == other.runtimeType &&
+            date == other.date &&
+            completed == other.completed &&
+            minutes == other.minutes &&
+            sessionsCount == other.sessionsCount;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      date,
+      completed,
+      minutes,
+      sessionsCount,
+    );
+  }
+}
+
 class ChildProfile {
   const ChildProfile({
     required this.id,
@@ -212,6 +247,34 @@ class ChildProfile {
     return _dateOnly(lastDate) == _dateOnly(date);
   }
 
+  bool practicedOn(DateTime date) {
+    return completedOn(date) ||
+        practiceSessions.any((session) => session.completedOn(date));
+  }
+
+  int practiceMinutesOn(DateTime date) {
+    return practiceSessions
+        .where((session) => session.completedOn(date))
+        .fold<int>(0, (total, session) => total + session.minutes);
+  }
+
+  List<PracticeDaySummary> practiceDays({
+    required int days,
+    required DateTime now,
+  }) {
+    if (days <= 0) {
+      return const [];
+    }
+
+    final today = _dateOnly(now);
+    final firstDay = today.subtract(Duration(days: days - 1));
+
+    return [
+      for (var offset = 0; offset < days; offset += 1)
+        _practiceDaySummary(firstDay.add(Duration(days: offset))),
+    ];
+  }
+
   List<PracticeSession> sessionsInLastDays({
     required int days,
     required DateTime now,
@@ -227,6 +290,23 @@ class ChildProfile {
       final completedAt = _dateOnly(session.completedAt);
       return !completedAt.isBefore(firstDay) && !completedAt.isAfter(today);
     }).toList(growable: false);
+  }
+
+  PracticeDaySummary _practiceDaySummary(DateTime date) {
+    final sessions = practiceSessions
+        .where((session) => session.completedOn(date))
+        .toList(growable: false);
+    final minutes = sessions.fold<int>(
+      0,
+      (total, session) => total + session.minutes,
+    );
+
+    return PracticeDaySummary(
+      date: _dateOnly(date),
+      completed: sessions.isNotEmpty || completedOn(date),
+      minutes: minutes,
+      sessionsCount: sessions.length,
+    );
   }
 
   ChildProfile copyWith({
@@ -425,6 +505,21 @@ class FamilyProfile {
     }
 
     return _dateOnly(lastDate) == _dateOnly(date);
+  }
+
+  bool practicedOn(DateTime date) {
+    return activeChild.practicedOn(date);
+  }
+
+  int practiceMinutesOn(DateTime date) {
+    return activeChild.practiceMinutesOn(date);
+  }
+
+  List<PracticeDaySummary> practiceDays({
+    required int days,
+    required DateTime now,
+  }) {
+    return activeChild.practiceDays(days: days, now: now);
   }
 
   List<PracticeSession> sessionsInLastDays({
