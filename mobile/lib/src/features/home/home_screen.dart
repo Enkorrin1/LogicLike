@@ -21,12 +21,16 @@ class HomeScreen extends StatelessWidget {
     required this.profile,
     this.onStartMission,
     this.onCourseSelected,
+    this.onLessonSelected,
+    this.onCollectionSelected,
     super.key,
   });
 
   final FamilyProfile profile;
   final VoidCallback? onStartMission;
   final ValueChanged<CourseDefinition>? onCourseSelected;
+  final ValueChanged<String>? onLessonSelected;
+  final VoidCallback? onCollectionSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +38,8 @@ class HomeScreen extends StatelessWidget {
     final stars = 125 + child.mapStars * 5;
     final hearts = child.hearts;
     final streak = math.max(1, child.currentStreak);
-    final completedLessons = child.completedMapNodeIds.length;
+    final completedLessons = child.completedLessonIds.length;
+    final recommendedLesson = _recommendedLessonFor(child);
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E8),
@@ -54,6 +59,11 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _DailyMissionCard(onStartMission: onStartMission),
+                const SizedBox(height: 14),
+                _RecommendedLessonCard(
+                  lesson: recommendedLesson,
+                  onLessonSelected: onLessonSelected,
+                ),
                 const SizedBox(height: 18),
                 _CourseCatalog(
                   completedLessons: completedLessons,
@@ -67,12 +77,45 @@ class HomeScreen extends StatelessWidget {
                   ),
                   stars: stars,
                   stickerCount: math.max(15, completedLessons + 15),
+                  onCollectionSelected: onCollectionSelected,
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Lesson? _recommendedLessonFor(ChildProfile child) {
+    final preferredCourse = _preferredCourseFor(child.learningGoal);
+    for (final lessonId in preferredCourse.lessonIds) {
+      if (!child.completedLessonIds.contains(lessonId)) {
+        return FoundationCatalog.lessonForId(lessonId);
+      }
+    }
+
+    for (final course in FoundationCatalog.starterCourses) {
+      for (final lessonId in course.lessonIds) {
+        if (!child.completedLessonIds.contains(lessonId)) {
+          return FoundationCatalog.lessonForId(lessonId);
+        }
+      }
+    }
+
+    return null;
+  }
+
+  CourseDefinition _preferredCourseFor(LearningGoal goal) {
+    final track = switch (goal) {
+      LearningGoal.logic => CourseTrack.logic,
+      LearningGoal.math => CourseTrack.math,
+      LearningGoal.attention => CourseTrack.attention,
+    };
+
+    return FoundationCatalog.starterCourses.firstWhere(
+      (course) => course.track == track,
+      orElse: () => FoundationCatalog.starterCourses.first,
     );
   }
 }
@@ -340,7 +383,8 @@ class _MissionTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.event_available_rounded, color: Colors.white, size: 18),
+          const Icon(Icons.event_available_rounded,
+              color: Colors.white, size: 18),
           const SizedBox(width: 6),
           Text(
             label,
@@ -352,6 +396,120 @@ class _MissionTag extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _RecommendedLessonCard extends StatelessWidget {
+  const _RecommendedLessonCard({
+    required this.lesson,
+    required this.onLessonSelected,
+  });
+
+  final Lesson? lesson;
+  final ValueChanged<String>? onLessonSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final selectedLesson = lesson;
+    final title = selectedLesson == null
+        ? l10n.homeRecommendedLessonCompleted
+        : l10n.courseLessonTitle(_lessonNumber(selectedLesson.id));
+    final meta = selectedLesson == null
+        ? l10n.collectionAllRewardsUnlocked
+        : l10n.courseLessonMeta(
+            selectedLesson.stepIds.length,
+            selectedLesson.xpReward,
+          );
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppPalette.ink.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 58,
+            height: 58,
+            decoration: BoxDecoration(
+              color: const Color(0xFFE6FAF3),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Icon(
+              Icons.auto_awesome_rounded,
+              color: AppPalette.teal,
+              size: 30,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.homeRecommendedLessonTitle,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppPalette.muted,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  selectedLesson == null
+                      ? l10n.homeRecommendedLessonSubtitle
+                      : meta,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppPalette.muted,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppPalette.teal,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(104, 48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+            onPressed: selectedLesson == null || onLessonSelected == null
+                ? null
+                : () => onLessonSelected?.call(selectedLesson.id),
+            child: Text(l10n.homeRecommendedLessonButton),
+          ),
+        ],
+      ),
+    );
+  }
+
+  int _lessonNumber(String lessonId) {
+    final rawNumber = lessonId.split('.').last;
+    return int.tryParse(rawNumber) ?? 1;
   }
 }
 
@@ -559,11 +717,13 @@ class _ProgressGrid extends StatelessWidget {
     required this.level,
     required this.stars,
     required this.stickerCount,
+    required this.onCollectionSelected,
   });
 
   final int level;
   final int stars;
   final int stickerCount;
+  final VoidCallback? onCollectionSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -588,6 +748,7 @@ class _ProgressGrid extends StatelessWidget {
             icon: Icons.rocket_launch_rounded,
             color: const Color(0xFF9C6AF2),
             asset: 'assets/images/generated/rocket.png',
+            onTap: onCollectionSelected,
           ),
         ),
       ],
@@ -602,6 +763,7 @@ class _SummaryCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.asset,
+    this.onTap,
   });
 
   final String title;
@@ -609,76 +771,85 @@ class _SummaryCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String asset;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(minHeight: 164),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
         borderRadius: BorderRadius.circular(22),
-        boxShadow: [
-          BoxShadow(
-            color: AppPalette.ink.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -8,
-            bottom: -8,
-            width: 88,
-            height: 88,
-            child: Image(image: AssetImage(asset), fit: BoxFit.contain),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: AppPalette.ink,
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                  ),
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: 0.16),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: color, size: 22),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              SizedBox(
-                width: 112,
-                child: Text(
-                  body,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppPalette.ink,
-                        fontWeight: FontWeight.w900,
-                        height: 1.12,
-                      ),
-                ),
+        onTap: onTap,
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 164),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(22),
+            boxShadow: [
+              BoxShadow(
+                color: AppPalette.ink.withValues(alpha: 0.08),
+                blurRadius: 16,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
-        ],
+          child: Stack(
+            children: [
+              Positioned(
+                right: -8,
+                bottom: -8,
+                width: 88,
+                height: 88,
+                child: Image(image: AssetImage(asset), fit: BoxFit.contain),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: AppPalette.ink,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                        ),
+                      ),
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: color.withValues(alpha: 0.16),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(icon, color: color, size: 22),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  SizedBox(
+                    width: 112,
+                    child: Text(
+                      body,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: AppPalette.ink,
+                            fontWeight: FontWeight.w900,
+                            height: 1.12,
+                          ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

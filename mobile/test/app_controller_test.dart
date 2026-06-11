@@ -137,6 +137,43 @@ void main() {
       expect(savedProfile?.lastSession?.challengeTitle, _challenge.title);
     });
 
+    test('records concrete lesson progress without duplicating repeats',
+        () async {
+      final profile = FamilyProfile(
+        childName: 'Leo',
+        childAge: ChildAge.five,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completeLesson(
+        lessonId: 'lesson.001',
+        challenge: _challenge,
+        correctAnswers: 2,
+        totalQuestions: 3,
+        usedHints: 1,
+        wrongAttempts: 2,
+      );
+      await controller.completeLesson(
+        lessonId: 'lesson.001',
+        challenge: _challenge,
+      );
+
+      final savedProfile = controller.familyProfile;
+      expect(savedProfile?.completedChallenges, 1);
+      expect(savedProfile?.activeChild.completedLessonIds, ['lesson.001']);
+      expect(savedProfile?.activeChild.completedMapNodeIds, ['node.001']);
+      expect(savedProfile?.practiceSessions, hasLength(2));
+      expect(savedProfile?.lastChallengeId, 'lesson.001');
+      expect(savedProfile?.lastSession?.correctAnswers, 1);
+      expect(savedProfile?.practiceSessions.first.correctAnswers, 2);
+      expect(savedProfile?.practiceSessions.first.totalQuestions, 3);
+      expect(savedProfile?.practiceSessions.first.usedHints, 1);
+      expect(savedProfile?.practiceSessions.first.wrongAttempts, 2);
+    });
+
     test('starts a new streak when yesterday was missed', () async {
       final twoDaysAgo = _today().subtract(const Duration(days: 2));
       final profile = FamilyProfile(

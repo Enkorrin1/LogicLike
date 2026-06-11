@@ -943,4 +943,118 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recommendationPracticeFocus =>
       'Add 1-2 short lessons for this area during the week.';
+
+  @override
+  String get courseNextMetricLabel => 'Next';
+
+  @override
+  String get courseStarsMetricLabel => 'Stars';
+
+  @override
+  String get courseXpMetricLabel => 'XP';
+
+  @override
+  String get courseCompletedState => 'done';
+
+  @override
+  String get courseOpenState => 'open';
+
+  @override
+  String get courseLockedState => 'locked';
+
+  @override
+  String get collectionScreenTitle => 'Sticker collection';
+
+  @override
+  String get collectionScreenSubtitle =>
+      'Collect rewards by completing lessons and keeping practice going.';
+
+  @override
+  String collectionUnlockedCount(Object total, Object unlocked) {
+    return '$unlocked of $total unlocked';
+  }
+
+  @override
+  String get collectionNextReward => 'Next reward';
+
+  @override
+  String get collectionAllRewardsUnlocked => 'All rewards unlocked';
+
+  @override
+  String get collectionBackHome => 'Back home';
+
+  @override
+  String collectionLockedHint(Object stars) {
+    return 'Unlocks after $stars stars';
+  }
+
+  @override
+  String get rewardAstronautTitle => 'Star helper';
+
+  @override
+  String get rewardAstronautBody => 'For finishing the first mission.';
+
+  @override
+  String get rewardRocketTitle => 'Brave rocket';
+
+  @override
+  String get rewardRocketBody => 'For opening a learning course.';
+
+  @override
+  String get rewardPlanetTitle => 'Tiny planet';
+
+  @override
+  String get rewardPlanetBody => 'For completing two lessons.';
+
+  @override
+  String get rewardLionTitle => 'Logic lion';
+
+  @override
+  String get rewardLionBody => 'For building a practice streak.';
+
+  @override
+  String get rewardPuzzleTitle => 'Puzzle badge';
+
+  @override
+  String get rewardPuzzleBody => 'For solving mixed puzzles.';
+
+  @override
+  String get rewardChampionTitle => 'Space champion';
+
+  @override
+  String get rewardChampionBody => 'For steady weekly practice.';
+
+  @override
+  String get accuracyMetricLabel => 'Accuracy';
+
+  @override
+  String get hintsMetricLabel => 'Hints';
+
+  @override
+  String recommendationImproveAccuracy(Object skill) {
+    return 'Practice $skill slowly this week: accuracy is the main signal to improve.';
+  }
+
+  @override
+  String recommendationReduceHints(Object skill) {
+    return 'Repeat $skill with fewer hints: pause before opening help.';
+  }
+
+  @override
+  String recommendationRepeatAttempts(Object skill) {
+    return 'Give $skill one short repeat session to reduce wrong attempts.';
+  }
+
+  @override
+  String get homeRecommendedLessonTitle => 'Next lesson';
+
+  @override
+  String get homeRecommendedLessonSubtitle =>
+      'Next short lesson on the learning route.';
+
+  @override
+  String get homeRecommendedLessonButton => 'Continue';
+
+  @override
+  String get homeRecommendedLessonCompleted => 'Route complete';
 }

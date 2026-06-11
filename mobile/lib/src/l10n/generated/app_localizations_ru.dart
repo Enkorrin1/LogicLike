@@ -959,4 +959,118 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get recommendationPracticeFocus =>
       'Добавьте 1-2 коротких урока по этой зоне на неделе.';
+
+  @override
+  String get courseNextMetricLabel => 'Дальше';
+
+  @override
+  String get courseStarsMetricLabel => 'Звезды';
+
+  @override
+  String get courseXpMetricLabel => 'XP';
+
+  @override
+  String get courseCompletedState => 'пройдено';
+
+  @override
+  String get courseOpenState => 'доступно';
+
+  @override
+  String get courseLockedState => 'закрыто';
+
+  @override
+  String get collectionScreenTitle => 'Коллекция наклеек';
+
+  @override
+  String get collectionScreenSubtitle =>
+      'Собирай награды за уроки и регулярные занятия.';
+
+  @override
+  String collectionUnlockedCount(Object total, Object unlocked) {
+    return 'Открыто $unlocked из $total';
+  }
+
+  @override
+  String get collectionNextReward => 'Следующая награда';
+
+  @override
+  String get collectionAllRewardsUnlocked => 'Все награды открыты';
+
+  @override
+  String get collectionBackHome => 'На главную';
+
+  @override
+  String collectionLockedHint(Object stars) {
+    return 'Откроется после $stars звезд';
+  }
+
+  @override
+  String get rewardAstronautTitle => 'Звёздный помощник';
+
+  @override
+  String get rewardAstronautBody => 'За первую пройденную миссию.';
+
+  @override
+  String get rewardRocketTitle => 'Смелая ракета';
+
+  @override
+  String get rewardRocketBody => 'За открытие учебного курса.';
+
+  @override
+  String get rewardPlanetTitle => 'Маленькая планета';
+
+  @override
+  String get rewardPlanetBody => 'За два пройденных урока.';
+
+  @override
+  String get rewardLionTitle => 'Логический лев';
+
+  @override
+  String get rewardLionBody => 'За серию занятий.';
+
+  @override
+  String get rewardPuzzleTitle => 'Значок головоломок';
+
+  @override
+  String get rewardPuzzleBody => 'За смешанные задачки.';
+
+  @override
+  String get rewardChampionTitle => 'Космический чемпион';
+
+  @override
+  String get rewardChampionBody => 'За регулярную практику на неделе.';
+
+  @override
+  String get accuracyMetricLabel => 'Точность';
+
+  @override
+  String get hintsMetricLabel => 'Подсказки';
+
+  @override
+  String recommendationImproveAccuracy(Object skill) {
+    return 'На этой неделе позанимайтесь темой ?$skill? без спешки: главный сигнал сейчас - точность.';
+  }
+
+  @override
+  String recommendationReduceHints(Object skill) {
+    return 'Повторите тему ?$skill? с меньшим числом подсказок: дайте ребенку паузу перед помощью.';
+  }
+
+  @override
+  String recommendationRepeatAttempts(Object skill) {
+    return 'Дайте теме ?$skill? одно короткое повторение, чтобы снизить число ошибок.';
+  }
+
+  @override
+  String get homeRecommendedLessonTitle => 'Следующий урок';
+
+  @override
+  String get homeRecommendedLessonSubtitle =>
+      'Следующий короткий урок на учебном маршруте.';
+
+  @override
+  String get homeRecommendedLessonButton => 'Продолжить';
+
+  @override
+  String get homeRecommendedLessonCompleted => 'Маршрут пройден';
 }

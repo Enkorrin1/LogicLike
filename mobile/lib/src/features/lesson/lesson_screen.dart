@@ -15,7 +15,14 @@ class LessonScreen extends StatefulWidget {
   });
 
   final FamilyProfile profile;
-  final Future<void> Function(DailyChallenge challenge) onLessonComplete;
+  final Future<void> Function({
+    required String lessonId,
+    required DailyChallenge challenge,
+    int correctAnswers,
+    int totalQuestions,
+    int usedHints,
+    int wrongAttempts,
+  }) onLessonComplete;
   final VoidCallback onBackToMap;
   final String? lessonId;
 
@@ -31,6 +38,8 @@ class _LessonScreenState extends State<LessonScreen> {
   bool _isComplete = false;
   bool _isSaving = false;
   bool _showHint = false;
+  final Set<int> _hintedStepIndexes = <int>{};
+  int _wrongAttempts = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +83,7 @@ class _LessonScreenState extends State<LessonScreen> {
             FilledButton.icon(
               onPressed: _selectedChoiceId == null || _isSaving
                   ? null
-                  : () => _submitAnswer(challenge, challenges),
+                  : () => _submitAnswer(lesson, challenge, challenges),
               icon: Icon(
                 _hasSubmitted && _isCorrect
                     ? Icons.arrow_forward_rounded
@@ -137,6 +146,7 @@ class _LessonScreenState extends State<LessonScreen> {
   }
 
   Future<void> _submitAnswer(
+    Lesson lesson,
     DailyChallenge challenge,
     List<DailyChallenge> challenges,
   ) async {
@@ -145,7 +155,14 @@ class _LessonScreenState extends State<LessonScreen> {
         setState(() {
           _isSaving = true;
         });
-        await widget.onLessonComplete(challenge);
+        await widget.onLessonComplete(
+          lessonId: lesson.id,
+          challenge: challenge,
+          correctAnswers: challenges.length,
+          totalQuestions: challenges.length,
+          usedHints: _hintedStepIndexes.length,
+          wrongAttempts: _wrongAttempts,
+        );
         if (!mounted) {
           return;
         }
@@ -171,15 +188,23 @@ class _LessonScreenState extends State<LessonScreen> {
       return;
     }
 
+    final isCorrect = challenge.isCorrectChoice(choiceId);
     setState(() {
       _hasSubmitted = true;
-      _isCorrect = challenge.isCorrectChoice(choiceId);
+      _isCorrect = isCorrect;
+      if (!isCorrect) {
+        _wrongAttempts += 1;
+      }
     });
   }
 
   void _toggleHint() {
     setState(() {
-      _showHint = !_showHint;
+      final nextShowHint = !_showHint;
+      _showHint = nextShowHint;
+      if (nextShowHint) {
+        _hintedStepIndexes.add(_stepIndex);
+      }
     });
   }
 }
@@ -376,7 +401,8 @@ class _LessonQuestionCard extends StatelessWidget {
                   index: index,
                   selected: selectedChoiceId == challenge.choices[index].id,
                   submitted: hasSubmitted,
-                  correct: challenge.isCorrectChoice(challenge.choices[index].id),
+                  correct:
+                      challenge.isCorrectChoice(challenge.choices[index].id),
                   onTap: () => onChoiceSelected(challenge.choices[index].id),
                 ),
               ),
@@ -452,9 +478,8 @@ class _LessonChoiceTile extends StatelessWidget {
               const SizedBox(width: 8),
               Icon(
                 correct ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                color: correct
-                    ? const Color(0xFF18B7AE)
-                    : const Color(0xFFFF6F6B),
+                color:
+                    correct ? const Color(0xFF18B7AE) : const Color(0xFFFF6F6B),
               ),
             ],
           ],
@@ -573,7 +598,8 @@ class _ChoiceVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? const Color(0xFF18B7AE) : _colorForChoice(choice.id);
+    final color =
+        selected ? const Color(0xFF18B7AE) : _colorForChoice(choice.id);
     final child = switch ('${challenge.id}:${choice.id}') {
       'shape-path:triangle' => Icon(Icons.change_history_rounded, color: color),
       'shape-path:circle' => Icon(Icons.circle, color: color),
@@ -592,7 +618,8 @@ class _ChoiceVisual extends StatelessWidget {
       'shadow-match:star' => Icon(Icons.star_rounded, color: color),
       'balance-scale:apple' => Icon(Icons.apple_rounded, color: color),
       'balance-scale:star' => Icon(Icons.star_rounded, color: color),
-      'balance-scale:ball' => Icon(Icons.sports_basketball_rounded, color: color),
+      'balance-scale:ball' =>
+        Icon(Icons.sports_basketball_rounded, color: color),
       'shape-rotation:same' => Icon(Icons.change_history_rounded, color: color),
       'shape-rotation:circle' => Icon(Icons.circle, color: color),
       'shape-rotation:square' => Icon(Icons.square_rounded, color: color),
@@ -716,7 +743,8 @@ class _OddCardVisual extends StatelessWidget {
       children: [
         _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
         _ObjectCard(icon: Icons.spa_rounded, color: Color(0xFF35B37E)),
-        _ObjectCard(icon: Icons.sports_basketball_rounded, color: Color(0xFFFF9F43)),
+        _ObjectCard(
+            icon: Icons.sports_basketball_rounded, color: Color(0xFFFF9F43)),
         _ObjectCard(icon: Icons.eco_rounded, color: Color(0xFFFFC739)),
       ],
     );
@@ -782,7 +810,8 @@ class _ShadowMatchVisual extends StatelessWidget {
       children: [
         _ShadowToken(),
         _MathSign('->'),
-        _ObjectCard(icon: Icons.rocket_launch_rounded, color: Color(0xFF18B7AE)),
+        _ObjectCard(
+            icon: Icons.rocket_launch_rounded, color: Color(0xFF18B7AE)),
       ],
     );
   }
@@ -1291,7 +1320,8 @@ class _LessonFeedback extends StatelessWidget {
         children: [
           Icon(
             isCorrect ? Icons.emoji_events_rounded : Icons.tips_and_updates,
-            color: isCorrect ? const Color(0xFF18B7AE) : const Color(0xFFFF8A42),
+            color:
+                isCorrect ? const Color(0xFF18B7AE) : const Color(0xFFFF8A42),
           ),
           const SizedBox(width: 10),
           Expanded(

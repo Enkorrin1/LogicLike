@@ -26,8 +26,10 @@ class CourseScreen extends StatelessWidget {
       for (final lessonId in course.lessonIds)
         FoundationCatalog.lessonForId(lessonId),
     ];
-    final completedCount = profile.activeChild.completedMapNodeIds.length
-        .clamp(0, lessons.length);
+    final progress = _CourseProgress.fromLessons(
+      lessons: lessons,
+      completedLessonIds: profile.activeChild.completedLessonIds,
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBF2),
@@ -39,8 +41,11 @@ class CourseScreen extends StatelessWidget {
             _CourseHeader(
               title: l10n.titleForCourse(course),
               subtitle: l10n.subtitleForCourse(course),
-              completedCount: completedCount,
+              completedCount: progress.completedCount,
               totalCount: lessons.length,
+              stars: progress.completedCount,
+              xp: progress.completedXp,
+              currentLessonIndex: progress.currentIndex,
               onBackHome: onBackHome,
             ),
             const SizedBox(height: 16),
@@ -50,9 +55,8 @@ class CourseScreen extends StatelessWidget {
                 child: _LessonCard(
                   lesson: lessons[index],
                   index: index,
-                  completed: index < completedCount,
-                  current: index == completedCount,
-                  onStart: index <= completedCount
+                  state: progress.stateFor(index),
+                  onStart: progress.stateFor(index) != _CourseLessonState.locked
                       ? () => onStartLesson(lessons[index].id)
                       : null,
                 ),
@@ -70,6 +74,9 @@ class _CourseHeader extends StatelessWidget {
     required this.subtitle,
     required this.completedCount,
     required this.totalCount,
+    required this.stars,
+    required this.xp,
+    required this.currentLessonIndex,
     required this.onBackHome,
   });
 
@@ -77,12 +84,19 @@ class _CourseHeader extends StatelessWidget {
   final String subtitle;
   final int completedCount;
   final int totalCount;
+  final int stars;
+  final int xp;
+  final int currentLessonIndex;
   final VoidCallback onBackHome;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final progress = totalCount == 0 ? 0.0 : (completedCount / totalCount).clamp(0.0, 1.0);
+    final progress =
+        totalCount == 0 ? 0.0 : (completedCount / totalCount).clamp(0.0, 1.0);
+    final nextLessonLabel = completedCount >= totalCount
+        ? l10n.courseCompletedState
+        : l10n.courseLessonTitle(currentLessonIndex + 1);
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -154,6 +168,37 @@ class _CourseHeader extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
           ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _CourseMetric(
+                  icon: Icons.flag_rounded,
+                  label: l10n.courseNextMetricLabel,
+                  value: nextLessonLabel,
+                  color: AppPalette.coral,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _CourseMetric(
+                  icon: Icons.star_rounded,
+                  label: l10n.courseStarsMetricLabel,
+                  value: '$stars',
+                  color: const Color(0xFFFFC739),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _CourseMetric(
+                  icon: Icons.bolt_rounded,
+                  label: l10n.courseXpMetricLabel,
+                  value: '$xp',
+                  color: AppPalette.teal,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -164,20 +209,21 @@ class _LessonCard extends StatelessWidget {
   const _LessonCard({
     required this.lesson,
     required this.index,
-    required this.completed,
-    required this.current,
+    required this.state,
     required this.onStart,
   });
 
   final Lesson lesson;
   final int index;
-  final bool completed;
-  final bool current;
+  final _CourseLessonState state;
   final VoidCallback? onStart;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final completed = state == _CourseLessonState.completed;
+    final current = state == _CourseLessonState.current;
+    final locked = state == _CourseLessonState.locked;
     final color = completed
         ? AppPalette.teal
         : current
@@ -207,7 +253,11 @@ class _LessonCard extends StatelessWidget {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              completed ? Icons.star_rounded : Icons.psychology_alt_rounded,
+              completed
+                  ? Icons.star_rounded
+                  : locked
+                      ? Icons.lock_rounded
+                      : Icons.psychology_alt_rounded,
               color: color,
               size: 31,
             ),
@@ -236,6 +286,11 @@ class _LessonCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                 ),
+                const SizedBox(height: 8),
+                _StatusPill(
+                  label: _labelForState(l10n, state),
+                  color: color,
+                ),
               ],
             ),
           ),
@@ -250,9 +305,165 @@ class _LessonCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(18),
               ),
             ),
-            child: Text(completed ? l10n.courseRepeatButton : l10n.courseStartLessonButton),
+            child: Text(
+              completed ? l10n.courseRepeatButton : l10n.courseStartLessonButton,
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  String _labelForState(
+    AppLocalizations l10n,
+    _CourseLessonState state,
+  ) {
+    return switch (state) {
+      _CourseLessonState.completed => l10n.courseCompletedState,
+      _CourseLessonState.current => l10n.courseOpenState,
+      _CourseLessonState.locked => l10n.courseLockedState,
+    };
+  }
+}
+
+enum _CourseLessonState {
+  completed,
+  current,
+  locked,
+}
+
+class _CourseProgress {
+  const _CourseProgress({
+    required this.lessons,
+    required this.completedLessonIds,
+    required this.currentIndex,
+  });
+
+  final List<Lesson> lessons;
+  final Set<String> completedLessonIds;
+  final int currentIndex;
+
+  int get completedCount {
+    return lessons
+        .where((lesson) => completedLessonIds.contains(lesson.id))
+        .length;
+  }
+
+  int get completedXp {
+    return lessons
+        .where((lesson) => completedLessonIds.contains(lesson.id))
+        .fold<int>(0, (total, lesson) => total + lesson.xpReward);
+  }
+
+  _CourseLessonState stateFor(int index) {
+    final lesson = lessons[index];
+    if (completedLessonIds.contains(lesson.id)) {
+      return _CourseLessonState.completed;
+    }
+    if (index == currentIndex) {
+      return _CourseLessonState.current;
+    }
+    return _CourseLessonState.locked;
+  }
+
+  static _CourseProgress fromLessons({
+    required List<Lesson> lessons,
+    required List<String> completedLessonIds,
+  }) {
+    final completed = completedLessonIds.toSet();
+    var currentIndex = lessons.length;
+    for (var index = 0; index < lessons.length; index += 1) {
+      if (!completed.contains(lessons[index].id)) {
+        currentIndex = index;
+        break;
+      }
+    }
+
+    return _CourseProgress(
+      lessons: lessons,
+      completedLessonIds: completed,
+      currentIndex: currentIndex,
+    );
+  }
+}
+
+class _CourseMetric extends StatelessWidget {
+  const _CourseMetric({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 82),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppPalette.ink,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppPalette.muted,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({
+    required this.label,
+    required this.color,
+  });
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.13),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w900,
+              ),
+        ),
       ),
     );
   }

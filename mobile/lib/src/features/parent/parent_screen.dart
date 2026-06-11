@@ -66,6 +66,7 @@ class ParentScreen extends StatelessWidget {
                 const SizedBox(height: 14),
                 _WeeklyProgressPanel(
                   profile: profile,
+                  weeklySessions: weeklySessions,
                   weeklySessionsCount: weeklySessions.length,
                   weeklyMinutes: weeklyMinutes,
                   practiceDays: practiceDays,
@@ -609,12 +610,14 @@ class _GoalOption extends StatelessWidget {
 class _WeeklyProgressPanel extends StatelessWidget {
   const _WeeklyProgressPanel({
     required this.profile,
+    required this.weeklySessions,
     required this.weeklySessionsCount,
     required this.weeklyMinutes,
     required this.practiceDays,
   });
 
   final FamilyProfile profile;
+  final List<PracticeSession> weeklySessions;
   final int weeklySessionsCount;
   final int weeklyMinutes;
   final List<PracticeDaySummary> practiceDays;
@@ -623,6 +626,17 @@ class _WeeklyProgressPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final lastSession = profile.lastSession;
+    final correctAnswers = weeklySessions.fold<int>(
+      0,
+      (total, session) => total + session.correctAnswers,
+    );
+    final totalQuestions = weeklySessions.fold<int>(
+      0,
+      (total, session) => total + session.totalQuestions,
+    );
+    final weeklyAccuracy = totalQuestions == 0
+        ? l10n.notAvailable
+        : '${(correctAnswers / totalQuestions * 100).round()}%';
 
     return DecoratedBox(
       decoration: _softPanelDecoration(),
@@ -672,6 +686,29 @@ class _WeeklyProgressPanel extends StatelessWidget {
                     label: l10n.weeklyMinutesLabel,
                     value: l10n.minutesShort(weeklyMinutes),
                     color: const Color(0xFF8B63E8),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: _SummaryStat(
+                    label: l10n.accuracyMetricLabel,
+                    value: weeklyAccuracy,
+                    color: const Color(0xFF18B7AE),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _SummaryStat(
+                    label: l10n.hintsMetricLabel,
+                    value: '${weeklySessions.fold<int>(
+                      0,
+                      (total, session) => total + session.usedHints,
+                    )}',
+                    color: const Color(0xFFFF6F61),
                   ),
                 ),
               ],
@@ -850,9 +887,7 @@ class _SkillInsightsPanel extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          focus == null
-                              ? l10n.recommendationKeepGoing
-                              : l10n.recommendationPracticeFocus,
+                          insights.recommendationFor(l10n),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -872,46 +907,121 @@ class _SkillInsights {
   const _SkillInsights({
     required this.strongestSkill,
     required this.focusSkill,
+    required this.focusAccuracy,
+    required this.focusHints,
+    required this.focusWrongAttempts,
   });
 
   final String? strongestSkill;
   final String? focusSkill;
+  final double? focusAccuracy;
+  final int focusHints;
+  final int focusWrongAttempts;
+
+  String recommendationFor(AppLocalizations l10n) {
+    final skill = focusSkill;
+    if (skill == null) {
+      return l10n.recommendationKeepGoing;
+    }
+
+    final localizedSkill = l10n.localizedSkill(skill);
+    final accuracy = focusAccuracy;
+    if (accuracy != null && accuracy < 0.8) {
+      return l10n.recommendationImproveAccuracy(localizedSkill);
+    }
+    if (focusHints > 1) {
+      return l10n.recommendationReduceHints(localizedSkill);
+    }
+    if (focusWrongAttempts > 1) {
+      return l10n.recommendationRepeatAttempts(localizedSkill);
+    }
+
+    return l10n.recommendationPracticeFocus;
+  }
 
   static _SkillInsights fromSessions(List<PracticeSession> sessions) {
     if (sessions.isEmpty) {
       return const _SkillInsights(
         strongestSkill: null,
         focusSkill: null,
+        focusAccuracy: null,
+        focusHints: 0,
+        focusWrongAttempts: 0,
       );
     }
 
-    final counts = <String, int>{};
+    final summaries = <String, _SkillQualitySummary>{};
     for (final session in sessions) {
-      counts.update(session.skill, (count) => count + 1, ifAbsent: () => 1);
+      summaries
+          .putIfAbsent(session.skill, () => _SkillQualitySummary(session.skill))
+          .add(session);
     }
 
-    final sorted = counts.entries.toList()
+    final sorted = summaries.values.toList()
       ..sort((first, second) {
-        final countCompare = second.value.compareTo(first.value);
-        if (countCompare != 0) {
-          return countCompare;
+        final scoreCompare = second.qualityScore.compareTo(first.qualityScore);
+        if (scoreCompare != 0) {
+          return scoreCompare;
         }
-        return first.key.compareTo(second.key);
+        return first.skill.compareTo(second.skill);
       });
 
-    final leastPracticed = counts.entries.toList()
+    final focusCandidates = summaries.values.toList()
       ..sort((first, second) {
-        final countCompare = first.value.compareTo(second.value);
-        if (countCompare != 0) {
-          return countCompare;
+        final scoreCompare = first.qualityScore.compareTo(second.qualityScore);
+        if (scoreCompare != 0) {
+          return scoreCompare;
         }
-        return first.key.compareTo(second.key);
+        final sessionCompare = first.sessionsCount.compareTo(
+          second.sessionsCount,
+        );
+        if (sessionCompare != 0) {
+          return sessionCompare;
+        }
+        return first.skill.compareTo(second.skill);
       });
+    final focus = focusCandidates.first;
 
     return _SkillInsights(
-      strongestSkill: sorted.first.key,
-      focusSkill: leastPracticed.first.key,
+      strongestSkill: sorted.first.skill,
+      focusSkill: focus.skill,
+      focusAccuracy: focus.accuracy,
+      focusHints: focus.usedHints,
+      focusWrongAttempts: focus.wrongAttempts,
     );
+  }
+}
+
+class _SkillQualitySummary {
+  _SkillQualitySummary(this.skill);
+
+  final String skill;
+  int sessionsCount = 0;
+  int correctAnswers = 0;
+  int totalQuestions = 0;
+  int usedHints = 0;
+  int wrongAttempts = 0;
+
+  double? get accuracy {
+    if (totalQuestions == 0) {
+      return null;
+    }
+    return correctAnswers / totalQuestions;
+  }
+
+  double get qualityScore {
+    final accuracyScore = accuracy ?? 1;
+    final hintPenalty = usedHints * 0.06;
+    final wrongPenalty = wrongAttempts * 0.08;
+    return accuracyScore - hintPenalty - wrongPenalty + sessionsCount * 0.01;
+  }
+
+  void add(PracticeSession session) {
+    sessionsCount += 1;
+    correctAnswers += session.correctAnswers;
+    totalQuestions += session.totalQuestions;
+    usedHints += session.usedHints;
+    wrongAttempts += session.wrongAttempts;
   }
 }
 

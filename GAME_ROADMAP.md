@@ -184,6 +184,8 @@ Current implementation:
 
 ## Stage 7 - Adaptive Difficulty
 
+Status: started.
+
 Goal:
 Adjust difficulty inside courses based on attempts.
 
@@ -194,7 +196,17 @@ Rules:
 - recommendations use skill tags and age band,
 - adaptation stays explainable for parents.
 
+Current implementation:
+
+- course progress now uses concrete completed lesson ids instead of only map node count,
+- course lessons show completed/current/locked states,
+- course header highlights the next recommended lesson, earned stars, and completed XP,
+- finishing a course lesson records that exact lesson id and avoids duplicate completion rewards on repeats,
+- legacy saved map progress migrates into lesson progress.
+
 ## Stage 8 - Localization And QA
+
+Status: started.
 
 Scope:
 
@@ -202,3 +214,105 @@ Scope:
 - Android emulator smoke checks,
 - Flutter analyze/test/build checks,
 - iOS handoff checklist for macOS/Xcode.
+
+Current implementation:
+
+- added widget coverage for concrete course lesson progress states,
+- split course progress metric/status copy into dedicated localized keys,
+- verified `flutter analyze`,
+- verified full Flutter test suite,
+- built debug APK,
+- installed and launched the app on Android Emulator,
+- captured an emulator smoke screenshot.
+
+## Stage 9 - Collection And Rewards
+
+Status: started.
+
+Goal:
+Turn rewards into a visible child motivation loop instead of a static home card.
+
+Scope:
+
+- collection screen opened from the home hub,
+- unlocked and locked sticker cards,
+- reward thresholds based on earned stars,
+- localized reward titles, descriptions, and locked states,
+- widget coverage for opening the collection from home.
+
+Current implementation:
+
+- added a sticker collection screen,
+- made the home collection summary card tappable,
+- added six starter rewards with star unlock thresholds,
+- added localized RU/EN collection copy,
+- added widget coverage for the collection flow.
+
+## Stage 10 - Accuracy And Attempts
+
+Status: started.
+
+Goal:
+Make lesson completion useful for parent analytics and future adaptive
+difficulty, not only for unlocking rewards.
+
+Scope:
+
+- track correct answers and total questions per lesson session,
+- track wrong attempts during a lesson,
+- track hint usage per lesson step,
+- show weekly accuracy and hint usage in the parent analytics screen,
+- keep legacy saved profiles compatible with the new session fields.
+
+Current implementation:
+
+- extended practice sessions with quality metrics,
+- lesson flow now reports completed questions, hints, and wrong attempts,
+- parent analytics includes weekly accuracy and hints,
+- added RU/EN localization keys for the new metrics,
+- added model/controller tests for session quality data and migration.
+
+## Stage 11 - Adaptive Recommendations
+
+Status: started.
+
+Goal:
+Use lesson quality data to explain what the child should practice next.
+
+Scope:
+
+- rank practiced skills by quality, not only by session count,
+- detect low accuracy, hint reliance, and repeated wrong attempts,
+- show parent-facing recommendations with a concrete reason,
+- localize adaptive recommendation copy,
+- keep the recommendation explainable and gentle.
+
+Current implementation:
+
+- skill insights now score each skill with accuracy, hints, wrong attempts, and practice volume,
+- focus area uses the lowest quality score,
+- parent recommendation changes when accuracy is low, hints are high, or wrong attempts repeat,
+- added localized EN/RU adaptive recommendation messages,
+- added widget coverage for an accuracy-based recommendation.
+
+## Stage 12 - Recommended Lesson Route
+
+Status: started.
+
+Goal:
+Turn recommendations into an immediate child-facing action on the home screen.
+
+Scope:
+
+- show the next recommended lesson on the home screen,
+- pick the first unfinished lesson from the child's learning goal route,
+- fall back to the first unfinished starter lesson,
+- open the recommended lesson directly without forcing the child through the catalog,
+- keep the route localized and covered by widget tests.
+
+Current implementation:
+
+- added a home recommended lesson card under the daily mission,
+- wired the card to open a concrete `LessonScreen`,
+- added RU/EN copy for the recommended lesson card,
+- added widget coverage for opening the recommended lesson from home.

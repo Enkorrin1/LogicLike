@@ -1640,6 +1640,210 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Добавьте 1-2 коротких урока по этой зоне на неделе.'**
   String get recommendationPracticeFocus;
+
+  /// No description provided for @courseNextMetricLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Дальше'**
+  String get courseNextMetricLabel;
+
+  /// No description provided for @courseStarsMetricLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Звезды'**
+  String get courseStarsMetricLabel;
+
+  /// No description provided for @courseXpMetricLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'XP'**
+  String get courseXpMetricLabel;
+
+  /// No description provided for @courseCompletedState.
+  ///
+  /// In ru, this message translates to:
+  /// **'пройдено'**
+  String get courseCompletedState;
+
+  /// No description provided for @courseOpenState.
+  ///
+  /// In ru, this message translates to:
+  /// **'доступно'**
+  String get courseOpenState;
+
+  /// No description provided for @courseLockedState.
+  ///
+  /// In ru, this message translates to:
+  /// **'закрыто'**
+  String get courseLockedState;
+
+  /// No description provided for @collectionScreenTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Коллекция наклеек'**
+  String get collectionScreenTitle;
+
+  /// No description provided for @collectionScreenSubtitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Собирай награды за уроки и регулярные занятия.'**
+  String get collectionScreenSubtitle;
+
+  /// No description provided for @collectionUnlockedCount.
+  ///
+  /// In ru, this message translates to:
+  /// **'Открыто {unlocked} из {total}'**
+  String collectionUnlockedCount(Object total, Object unlocked);
+
+  /// No description provided for @collectionNextReward.
+  ///
+  /// In ru, this message translates to:
+  /// **'Следующая награда'**
+  String get collectionNextReward;
+
+  /// No description provided for @collectionAllRewardsUnlocked.
+  ///
+  /// In ru, this message translates to:
+  /// **'Все награды открыты'**
+  String get collectionAllRewardsUnlocked;
+
+  /// No description provided for @collectionBackHome.
+  ///
+  /// In ru, this message translates to:
+  /// **'На главную'**
+  String get collectionBackHome;
+
+  /// No description provided for @collectionLockedHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Откроется после {stars} звезд'**
+  String collectionLockedHint(Object stars);
+
+  /// No description provided for @rewardAstronautTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Звёздный помощник'**
+  String get rewardAstronautTitle;
+
+  /// No description provided for @rewardAstronautBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'За первую пройденную миссию.'**
+  String get rewardAstronautBody;
+
+  /// No description provided for @rewardRocketTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Смелая ракета'**
+  String get rewardRocketTitle;
+
+  /// No description provided for @rewardRocketBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'За открытие учебного курса.'**
+  String get rewardRocketBody;
+
+  /// No description provided for @rewardPlanetTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Маленькая планета'**
+  String get rewardPlanetTitle;
+
+  /// No description provided for @rewardPlanetBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'За два пройденных урока.'**
+  String get rewardPlanetBody;
+
+  /// No description provided for @rewardLionTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Логический лев'**
+  String get rewardLionTitle;
+
+  /// No description provided for @rewardLionBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'За серию занятий.'**
+  String get rewardLionBody;
+
+  /// No description provided for @rewardPuzzleTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Значок головоломок'**
+  String get rewardPuzzleTitle;
+
+  /// No description provided for @rewardPuzzleBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'За смешанные задачки.'**
+  String get rewardPuzzleBody;
+
+  /// No description provided for @rewardChampionTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Космический чемпион'**
+  String get rewardChampionTitle;
+
+  /// No description provided for @rewardChampionBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'За регулярную практику на неделе.'**
+  String get rewardChampionBody;
+
+  /// No description provided for @accuracyMetricLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Точность'**
+  String get accuracyMetricLabel;
+
+  /// No description provided for @hintsMetricLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подсказки'**
+  String get hintsMetricLabel;
+
+  /// No description provided for @recommendationImproveAccuracy.
+  ///
+  /// In ru, this message translates to:
+  /// **'На этой неделе позанимайтесь темой ?{skill}? без спешки: главный сигнал сейчас - точность.'**
+  String recommendationImproveAccuracy(Object skill);
+
+  /// No description provided for @recommendationReduceHints.
+  ///
+  /// In ru, this message translates to:
+  /// **'Повторите тему ?{skill}? с меньшим числом подсказок: дайте ребенку паузу перед помощью.'**
+  String recommendationReduceHints(Object skill);
+
+  /// No description provided for @recommendationRepeatAttempts.
+  ///
+  /// In ru, this message translates to:
+  /// **'Дайте теме ?{skill}? одно короткое повторение, чтобы снизить число ошибок.'**
+  String recommendationRepeatAttempts(Object skill);
+
+  /// No description provided for @homeRecommendedLessonTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Следующий урок'**
+  String get homeRecommendedLessonTitle;
+
+  /// No description provided for @homeRecommendedLessonSubtitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Следующий короткий урок на учебном маршруте.'**
+  String get homeRecommendedLessonSubtitle;
+
+  /// No description provided for @homeRecommendedLessonButton.
+  ///
+  /// In ru, this message translates to:
+  /// **'Продолжить'**
+  String get homeRecommendedLessonButton;
+
+  /// No description provided for @homeRecommendedLessonCompleted.
+  ///
+  /// In ru, this message translates to:
+  /// **'Маршрут пройден'**
+  String get homeRecommendedLessonCompleted;
 }
 
 class _AppLocalizationsDelegate

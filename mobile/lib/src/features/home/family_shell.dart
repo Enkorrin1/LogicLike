@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/app_controller.dart';
 import '../../domain/learning_foundation.dart';
 import '../../l10n/l10n.dart';
+import '../collection/collection_screen.dart';
 import '../course/course_screen.dart';
 import '../lesson/lesson_screen.dart';
 import '../parent/parent_screen.dart';
@@ -24,6 +25,7 @@ class _FamilyShellState extends State<FamilyShell> {
   int _selectedIndex = 0;
   CourseDefinition? _selectedCourse;
   String? _activeLessonId;
+  bool _showCollection = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,23 +38,48 @@ class _FamilyShellState extends State<FamilyShell> {
         }
 
         final pages = [
-          HomeScreen(
-            profile: profile,
-            onStartMission: () {
-              setState(() {
-                _selectedCourse = null;
-                _activeLessonId = null;
-                _selectedIndex = 1;
-              });
-            },
-            onCourseSelected: (course) {
-              setState(() {
-                _selectedCourse = course;
-                _activeLessonId = null;
-                _selectedIndex = 1;
-              });
-            },
-          ),
+          _showCollection
+              ? CollectionScreen(
+                  profile: profile,
+                  onBackHome: () {
+                    setState(() {
+                      _showCollection = false;
+                    });
+                  },
+                )
+              : HomeScreen(
+                  profile: profile,
+                  onStartMission: () {
+                    setState(() {
+                      _selectedCourse = null;
+                      _activeLessonId = null;
+                      _showCollection = false;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onCourseSelected: (course) {
+                    setState(() {
+                      _selectedCourse = course;
+                      _activeLessonId = null;
+                      _showCollection = false;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onLessonSelected: (lessonId) {
+                    setState(() {
+                      _selectedCourse = null;
+                      _activeLessonId = lessonId;
+                      _showCollection = false;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onCollectionSelected: () {
+                    setState(() {
+                      _showCollection = true;
+                      _selectedIndex = 0;
+                    });
+                  },
+                ),
           _selectedCourse != null && _activeLessonId == null
               ? CourseScreen(
                   profile: profile,
@@ -72,7 +99,7 @@ class _FamilyShellState extends State<FamilyShell> {
               : LessonScreen(
                   profile: profile,
                   lessonId: _activeLessonId,
-                  onLessonComplete: widget.controller.completeCurrentMapLesson,
+                  onLessonComplete: widget.controller.completeLesson,
                   onBackToMap: () {
                     setState(() {
                       if (_selectedCourse != null) {
@@ -102,6 +129,9 @@ class _FamilyShellState extends State<FamilyShell> {
             onDestinationSelected: (index) {
               setState(() {
                 _selectedIndex = index;
+                if (index != 0) {
+                  _showCollection = false;
+                }
               });
             },
           ),

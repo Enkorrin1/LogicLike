@@ -25,6 +25,10 @@ void main() {
             challengeTitle: 'Дорожка фигур',
             skill: 'Внимание и закономерности',
             minutes: 4,
+            correctAnswers: 3,
+            totalQuestions: 4,
+            usedHints: 1,
+            wrongAttempts: 2,
           ),
         ],
       );
@@ -34,6 +38,10 @@ void main() {
       expect(restored, profile);
       expect(restored.children, hasLength(1));
       expect(restored.activeChild.name, profile.childName);
+      expect(restored.lastSession?.correctAnswers, 3);
+      expect(restored.lastSession?.totalQuestions, 4);
+      expect(restored.lastSession?.usedHints, 1);
+      expect(restored.lastSession?.wrongAttempts, 2);
     });
 
     test('restores old saved profile with default progress fields', () {
@@ -53,6 +61,35 @@ void main() {
       expect(restored.activeChild.name, 'Мира');
       expect(restored.subscriptionPlan, FamilySubscriptionPlan.starter);
       expect(restored.subscriptionUpdatedAt, isNull);
+    });
+
+    test('restores old practice session with default quality metrics', () {
+      final session = PracticeSession.fromJson({
+        'completedAt': DateTime(2026, 6, 8, 18).toIso8601String(),
+        'challengeId': 'legacy',
+        'challengeTitle': 'Legacy lesson',
+        'skill': 'Logic',
+        'minutes': 4,
+      });
+
+      expect(session.correctAnswers, 1);
+      expect(session.totalQuestions, 1);
+      expect(session.usedHints, 0);
+      expect(session.wrongAttempts, 0);
+    });
+
+    test('migrates legacy map nodes into completed lesson ids', () {
+      final restored = FamilyProfile.fromJson({
+        'childName': 'Leo',
+        'childAge': 'five',
+        'createdAt': DateTime(2026, 6, 8).toIso8601String(),
+        'completedMapNodeIds': ['node.001', 'node.002'],
+      });
+
+      expect(restored.activeChild.completedLessonIds, [
+        'lesson.001',
+        'lesson.002',
+      ]);
     });
 
     test('switches active child without carrying previous progress', () {

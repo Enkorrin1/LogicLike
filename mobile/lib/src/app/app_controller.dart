@@ -73,6 +73,8 @@ class AppController extends ChangeNotifier {
       challengeTitle: challenge.title,
       skill: challenge.skill,
       minutes: challenge.minutes,
+      correctAnswers: 1,
+      totalQuestions: 1,
     );
     final currentNode = _currentMapNodeFor(activeChild);
     final completedMapNodeIds = [
@@ -80,6 +82,12 @@ class AppController extends ChangeNotifier {
       if (currentNode != null &&
           !activeChild.completedMapNodeIds.contains(currentNode.id))
         currentNode.id,
+    ];
+    final completedLessonIds = [
+      ...activeChild.completedLessonIds,
+      if (currentNode != null &&
+          !activeChild.completedLessonIds.contains(currentNode.lessonId))
+        currentNode.lessonId,
     ];
     final nextChild = activeChild.copyWith(
       completedChallenges: activeChild.completedChallenges + 1,
@@ -95,8 +103,10 @@ class AppController extends ChangeNotifier {
         nextSession,
       ],
       completedMapNodeIds: completedMapNodeIds,
+      completedLessonIds: completedLessonIds,
       mapStars: activeChild.mapStars + 1,
-      mapXp: activeChild.mapXp + (currentNode == null ? 20 : 20 + currentNode.order * 2),
+      mapXp: activeChild.mapXp +
+          (currentNode == null ? 20 : 20 + currentNode.order * 2),
       hearts: math.min(5, activeChild.hearts + 1),
     );
 
@@ -107,7 +117,14 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> completeCurrentMapLesson(DailyChallenge challenge) async {
+  Future<void> completeLesson({
+    required String lessonId,
+    required DailyChallenge challenge,
+    int correctAnswers = 1,
+    int totalQuestions = 1,
+    int usedHints = 0,
+    int wrongAttempts = 0,
+  }) async {
     final currentProfile = _familyProfile;
     if (currentProfile == null) {
       return;
@@ -116,42 +133,52 @@ class AppController extends ChangeNotifier {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final activeChild = currentProfile.activeChild;
-    final currentNode = _currentMapNodeFor(activeChild);
-    if (currentNode == null) {
-      return;
-    }
+    final currentNode = _nodeForLesson(lessonId);
+    final lesson = FoundationCatalog.lessonForId(lessonId);
+    final wasCompleted = activeChild.completedLessonIds.contains(lessonId);
 
     final yesterday = today.subtract(const Duration(days: 1));
     final currentStreak =
         activeChild.completedOn(yesterday) ? activeChild.currentStreak + 1 : 1;
-    final lesson = FoundationCatalog.lessonForNode(currentNode);
     final nextSession = PracticeSession(
       completedAt: now,
-      challengeId: currentNode.lessonId,
+      challengeId: lessonId,
       challengeTitle: challenge.title,
       skill: challenge.skill,
       minutes: challenge.minutes,
+      correctAnswers: correctAnswers,
+      totalQuestions: totalQuestions,
+      usedHints: usedHints,
+      wrongAttempts: wrongAttempts,
     );
+    final completedMapNodeIds = [
+      ...activeChild.completedMapNodeIds,
+      if (currentNode != null &&
+          !activeChild.completedMapNodeIds.contains(currentNode.id))
+        currentNode.id,
+    ];
+    final completedLessonIds = [
+      ...activeChild.completedLessonIds,
+      if (!activeChild.completedLessonIds.contains(lessonId)) lessonId,
+    ];
     final nextChild = activeChild.copyWith(
-      completedChallenges: activeChild.completedChallenges + 1,
+      completedChallenges:
+          activeChild.completedChallenges + (wasCompleted ? 0 : 1),
       currentStreak: currentStreak,
       bestStreak: math.max(activeChild.bestStreak, currentStreak),
       totalPracticeMinutes:
           activeChild.totalPracticeMinutes + challenge.minutes,
       lastChallengeDate: today,
-      lastChallengeId: currentNode.lessonId,
+      lastChallengeId: lessonId,
       lastChallengeSkill: challenge.skill,
       practiceSessions: [
         ...activeChild.practiceSessions,
         nextSession,
       ],
-      completedMapNodeIds: [
-        ...activeChild.completedMapNodeIds,
-        if (!activeChild.completedMapNodeIds.contains(currentNode.id))
-          currentNode.id,
-      ],
-      mapStars: activeChild.mapStars + 1,
-      mapXp: activeChild.mapXp + lesson.xpReward,
+      completedMapNodeIds: completedMapNodeIds,
+      completedLessonIds: completedLessonIds,
+      mapStars: activeChild.mapStars + (wasCompleted ? 0 : 1),
+      mapXp: activeChild.mapXp + (wasCompleted ? 8 : lesson.xpReward),
       hearts: math.min(5, activeChild.hearts + 1),
     );
 
@@ -165,6 +192,16 @@ class AppController extends ChangeNotifier {
   MapNode? _currentMapNodeFor(ChildProfile child) {
     for (final node in FoundationCatalog.starterMap.nodes) {
       if (!child.completedMapNodeIds.contains(node.id)) {
+        return node;
+      }
+    }
+
+    return null;
+  }
+
+  MapNode? _nodeForLesson(String lessonId) {
+    for (final node in FoundationCatalog.starterMap.nodes) {
+      if (node.lessonId == lessonId) {
         return node;
       }
     }
