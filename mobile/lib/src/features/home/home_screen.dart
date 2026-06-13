@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../domain/family_profile.dart';
 import '../../domain/learning_foundation.dart';
+import '../../domain/motivation_plan.dart';
 import '../../l10n/l10n.dart';
 
 class AppPalette {
@@ -40,6 +42,10 @@ class HomeScreen extends StatelessWidget {
     final streak = math.max(1, child.currentStreak);
     final completedLessons = child.completedLessonIds.length;
     final recommendedLesson = _recommendedLessonFor(child);
+    final motivationPlan = MotivationPlan.forChild(
+      child,
+      now: DateTime.now(),
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFF8E8),
@@ -58,18 +64,20 @@ class HomeScreen extends StatelessWidget {
                   streak: streak,
                 ),
                 const SizedBox(height: 16),
+                _CourseCatalog(
+                  completedLessons: completedLessons,
+                  onCourseSelected: onCourseSelected,
+                ),
+                const SizedBox(height: 16),
                 _DailyMissionCard(onStartMission: onStartMission),
+                const SizedBox(height: 14),
+                _DailyBonusCard(plan: motivationPlan),
                 const SizedBox(height: 14),
                 _RecommendedLessonCard(
                   lesson: recommendedLesson,
                   onLessonSelected: onLessonSelected,
                 ),
                 const SizedBox(height: 18),
-                _CourseCatalog(
-                  completedLessons: completedLessons,
-                  onCourseSelected: onCourseSelected,
-                ),
-                const SizedBox(height: 16),
                 _ProgressGrid(
                   level: math.max(
                     1,
@@ -399,6 +407,153 @@ class _MissionTag extends StatelessWidget {
   }
 }
 
+class _DailyBonusCard extends StatelessWidget {
+  const _DailyBonusCard({required this.plan});
+
+  final MotivationPlan plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final color =
+        plan.dailyGoalComplete ? const Color(0xFFFFC739) : AppPalette.teal;
+
+    return Container(
+      key: const ValueKey('daily-bonus-card'),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppPalette.ink.withValues(alpha: 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Icon(
+                  plan.dailyGoalComplete
+                      ? Icons.workspace_premium_rounded
+                      : Icons.card_giftcard_rounded,
+                  color: color,
+                  size: 31,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.motivationTitle(plan),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: AppPalette.ink,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      l10n.motivationBody(plan),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppPalette.muted,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: plan.dailyProgress,
+              minHeight: 10,
+              color: color,
+              backgroundColor: color.withValues(alpha: 0.16),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _BonusChip(
+                icon: Icons.today_rounded,
+                label: l10n.motivationProgressLabel(plan),
+                color: color,
+              ),
+              _BonusChip(
+                icon: Icons.collections_bookmark_rounded,
+                label: l10n.motivationRewardLabel(plan),
+                color: const Color(0xFF9C6AF2),
+              ),
+              _BonusChip(
+                icon: Icons.local_fire_department_rounded,
+                label: l10n.motivationStreakLabel(plan),
+                color: AppPalette.coral,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BonusChip extends StatelessWidget {
+  const _BonusChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.13),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 17),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppPalette.ink,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _RecommendedLessonCard extends StatelessWidget {
   const _RecommendedLessonCard({
     required this.lesson,
@@ -525,54 +680,58 @@ class _CourseCatalog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    double progressFor(CourseDefinition course) {
+      return math.min(1, completedLessons / course.lessonIds.length);
+    }
+
     final courses = [
       _CourseCardData(
         course: FoundationCatalog.starterCourses[0],
         title: l10n.titleForCourse(FoundationCatalog.starterCourses[0]),
         subtitle: l10n.subtitleForCourse(FoundationCatalog.starterCourses[0]),
-        icon: Icons.psychology_rounded,
+        asset: _HomeSvgAssets.puzzleCard,
         color: AppPalette.teal,
-        progress: math.min(1, completedLessons / 4),
+        progress: progressFor(FoundationCatalog.starterCourses[0]),
       ),
       _CourseCardData(
         course: FoundationCatalog.starterCourses[1],
         title: l10n.titleForCourse(FoundationCatalog.starterCourses[1]),
         subtitle: l10n.subtitleForCourse(FoundationCatalog.starterCourses[1]),
-        icon: Icons.calculate_rounded,
+        asset: _HomeSvgAssets.scale,
         color: const Color(0xFF5C8EF7),
-        progress: math.min(1, completedLessons / 5),
+        progress: progressFor(FoundationCatalog.starterCourses[1]),
       ),
       _CourseCardData(
         course: FoundationCatalog.starterCourses[2],
         title: l10n.titleForCourse(FoundationCatalog.starterCourses[2]),
         subtitle: l10n.subtitleForCourse(FoundationCatalog.starterCourses[2]),
-        icon: Icons.category_rounded,
+        asset: _HomeSvgAssets.triangle,
         color: const Color(0xFFFF9F43),
-        progress: math.min(1, completedLessons / 6),
+        progress: progressFor(FoundationCatalog.starterCourses[2]),
       ),
       _CourseCardData(
         course: FoundationCatalog.starterCourses[3],
         title: l10n.titleForCourse(FoundationCatalog.starterCourses[3]),
         subtitle: l10n.subtitleForCourse(FoundationCatalog.starterCourses[3]),
-        icon: Icons.visibility_rounded,
+        asset: _HomeSvgAssets.star,
         color: const Color(0xFF9C6AF2),
-        progress: math.min(1, completedLessons / 7),
+        progress: progressFor(FoundationCatalog.starterCourses[3]),
       ),
       _CourseCardData(
         course: FoundationCatalog.starterCourses[4],
         title: l10n.titleForCourse(FoundationCatalog.starterCourses[4]),
         subtitle: l10n.subtitleForCourse(FoundationCatalog.starterCourses[4]),
-        icon: Icons.extension_rounded,
+        asset: _HomeSvgAssets.lock,
         color: const Color(0xFFFF6F91),
-        progress: math.min(1, completedLessons / 8),
+        progress: progressFor(FoundationCatalog.starterCourses[4]),
       ),
       _CourseCardData(
         course: FoundationCatalog.starterCourses[5],
         title: l10n.titleForCourse(FoundationCatalog.starterCourses[5]),
         subtitle: l10n.subtitleForCourse(FoundationCatalog.starterCourses[5]),
-        icon: Icons.auto_awesome_rounded,
+        asset: _HomeSvgAssets.rocket,
         color: const Color(0xFF35B37E),
-        progress: math.min(1, completedLessons / 3),
+        progress: progressFor(FoundationCatalog.starterCourses[5]),
       ),
     ];
 
@@ -612,7 +771,7 @@ class _CourseCardData {
     required this.title,
     required this.subtitle,
     required this.course,
-    required this.icon,
+    required this.asset,
     required this.color,
     required this.progress,
   });
@@ -620,9 +779,39 @@ class _CourseCardData {
   final CourseDefinition course;
   final String title;
   final String subtitle;
-  final IconData icon;
+  final String asset;
   final Color color;
   final double progress;
+}
+
+class _HomeSvgAssets {
+  static const puzzleCard = 'assets/images/puzzles/puzzle_card.svg';
+  static const scale = 'assets/images/puzzles/scale.svg';
+  static const triangle = 'assets/images/puzzles/shape_triangle.svg';
+  static const star = 'assets/images/puzzles/shape_star.svg';
+  static const lock = 'assets/images/puzzles/lock.svg';
+  static const rocket = 'assets/images/puzzles/rocket.svg';
+  static const planet = 'assets/images/puzzles/planet.svg';
+}
+
+class _HomeSvg extends StatelessWidget {
+  const _HomeSvg({
+    required this.asset,
+    required this.size,
+  });
+
+  final String asset;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
 }
 
 class _CourseCard extends StatelessWidget {
@@ -667,7 +856,7 @@ class _CourseCard extends StatelessWidget {
                       color: data.color.withValues(alpha: 0.16),
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Icon(data.icon, color: data.color, size: 25),
+                    child: _HomeSvg(asset: data.asset, size: 34),
                   ),
                   const Spacer(),
                   Icon(Icons.chevron_right_rounded, color: data.color),
@@ -735,7 +924,7 @@ class _ProgressGrid extends StatelessWidget {
           child: _SummaryCard(
             title: l10n.myProgressTitle,
             body: l10n.progressCardBody(level, stars),
-            icon: Icons.bar_chart_rounded,
+            iconAsset: _HomeSvgAssets.planet,
             color: AppPalette.teal,
             asset: 'assets/images/generated/planet.png',
           ),
@@ -745,7 +934,7 @@ class _ProgressGrid extends StatelessWidget {
           child: _SummaryCard(
             title: l10n.myCollectionTitle,
             body: l10n.collectionCardBody(stickerCount),
-            icon: Icons.rocket_launch_rounded,
+            iconAsset: _HomeSvgAssets.rocket,
             color: const Color(0xFF9C6AF2),
             asset: 'assets/images/generated/rocket.png',
             onTap: onCollectionSelected,
@@ -760,7 +949,7 @@ class _SummaryCard extends StatelessWidget {
   const _SummaryCard({
     required this.title,
     required this.body,
-    required this.icon,
+    required this.iconAsset,
     required this.color,
     required this.asset,
     this.onTap,
@@ -768,7 +957,7 @@ class _SummaryCard extends StatelessWidget {
 
   final String title;
   final String body;
-  final IconData icon;
+  final String iconAsset;
   final Color color;
   final String asset;
   final VoidCallback? onTap;
@@ -827,7 +1016,7 @@ class _SummaryCard extends StatelessWidget {
                           color: color.withValues(alpha: 0.16),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(icon, color: color, size: 22),
+                        child: _HomeSvg(asset: iconAsset, size: 28),
                       ),
                     ],
                   ),

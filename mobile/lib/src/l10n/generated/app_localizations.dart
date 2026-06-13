@@ -1806,19 +1806,19 @@ abstract class AppLocalizations {
   /// No description provided for @recommendationImproveAccuracy.
   ///
   /// In ru, this message translates to:
-  /// **'На этой неделе позанимайтесь темой ?{skill}? без спешки: главный сигнал сейчас - точность.'**
+  /// **'На этой неделе позанимайтесь темой {skill} без спешки: главный сигнал сейчас - точность.'**
   String recommendationImproveAccuracy(Object skill);
 
   /// No description provided for @recommendationReduceHints.
   ///
   /// In ru, this message translates to:
-  /// **'Повторите тему ?{skill}? с меньшим числом подсказок: дайте ребенку паузу перед помощью.'**
+  /// **'Повторите тему {skill} с меньшим числом подсказок: дайте ребенку паузу перед помощью.'**
   String recommendationReduceHints(Object skill);
 
   /// No description provided for @recommendationRepeatAttempts.
   ///
   /// In ru, this message translates to:
-  /// **'Дайте теме ?{skill}? одно короткое повторение, чтобы снизить число ошибок.'**
+  /// **'Дайте теме {skill} одно короткое повторение, чтобы снизить число ошибок.'**
   String recommendationRepeatAttempts(Object skill);
 
   /// No description provided for @homeRecommendedLessonTitle.
@@ -1844,6 +1844,636 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Маршрут пройден'**
   String get homeRecommendedLessonCompleted;
+
+  /// No description provided for @lessonReviewTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Итог урока'**
+  String get lessonReviewTitle;
+
+  /// No description provided for @lessonReviewPerfectBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'Отличный фокус: без подсказок и ошибок.'**
+  String get lessonReviewPerfectBody;
+
+  /// No description provided for @lessonReviewSupportBody.
+  ///
+  /// In ru, this message translates to:
+  /// **'Хороший финиш. В следующий раз попробуй один шаг без помощи.'**
+  String get lessonReviewSupportBody;
+
+  /// No description provided for @lessonReviewQuestionsLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вопросы'**
+  String get lessonReviewQuestionsLabel;
+
+  /// No description provided for @lessonReviewHintsLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подсказки'**
+  String get lessonReviewHintsLabel;
+
+  /// No description provided for @lessonReviewMistakesLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ошибки'**
+  String get lessonReviewMistakesLabel;
+
+  /// No description provided for @lessonNextRecommendedButton.
+  ///
+  /// In ru, this message translates to:
+  /// **'Следующий урок'**
+  String get lessonNextRecommendedButton;
+
+  /// No description provided for @practiceHistoryTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'История занятий'**
+  String get practiceHistoryTitle;
+
+  /// No description provided for @practiceHistorySubtitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Последние уроки с точностью, подсказками и ошибками.'**
+  String get practiceHistorySubtitle;
+
+  /// No description provided for @practiceHistoryEmpty.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пройденных уроков пока нет.'**
+  String get practiceHistoryEmpty;
+
+  /// No description provided for @practiceHistorySessionMeta.
+  ///
+  /// In ru, this message translates to:
+  /// **'{date} - {minutes} мин'**
+  String practiceHistorySessionMeta(Object date, Object minutes);
+
+  /// No description provided for @practiceHistoryMistakesLabel.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ошибки'**
+  String get practiceHistoryMistakesLabel;
+
+  /// No description provided for @lessonTryAgainButton.
+  ///
+  /// In ru, this message translates to:
+  /// **'Попробовать еще'**
+  String get lessonTryAgainButton;
+
+  /// No description provided for @lessonHintTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Подумай по шагам'**
+  String get lessonHintTitle;
+
+  /// No description provided for @lessonRetryFeedback.
+  ///
+  /// In ru, this message translates to:
+  /// **'Хорошая попытка. Прочитай подсказку и выбери еще раз.'**
+  String get lessonRetryFeedback;
+
+  /// No description provided for @languageSettingsTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Язык приложения'**
+  String get languageSettingsTitle;
+
+  /// No description provided for @languageSettingsSubtitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выберите язык для детских и родительских экранов.'**
+  String get languageSettingsSubtitle;
+
+  /// No description provided for @languageRussian.
+  ///
+  /// In ru, this message translates to:
+  /// **'Русский'**
+  String get languageRussian;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In ru, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
+
+  /// No description provided for @choicePear.
+  ///
+  /// In ru, this message translates to:
+  /// **'Груша'**
+  String get choicePear;
+
+  /// No description provided for @challengeFruitPatternTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Фруктовый ряд'**
+  String get challengeFruitPatternTitle;
+
+  /// No description provided for @challengeFruitPatternPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Продолжи фруктовую закономерность.'**
+  String get challengeFruitPatternPrompt;
+
+  /// No description provided for @challengeFruitPatternQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Яблоко, банан, яблоко, банан. Что дальше?'**
+  String get challengeFruitPatternQuestion;
+
+  /// No description provided for @challengeFruitPatternHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Фрукты повторяются по очереди: яблоко, потом банан.'**
+  String get challengeFruitPatternHint;
+
+  /// No description provided for @challengeFruitPatternExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'После банана снова идет яблоко, потому что ряд повторяется.'**
+  String get challengeFruitPatternExplanation;
+
+  /// No description provided for @challengeLockKeyTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Волшебная пара'**
+  String get challengeLockKeyTitle;
+
+  /// No description provided for @challengeLockKeyPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбери предмет, который образует пару.'**
+  String get challengeLockKeyPrompt;
+
+  /// No description provided for @challengeLockKeyQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ключ что-то открывает. Что к нему подходит?'**
+  String get challengeLockKeyQuestion;
+
+  /// No description provided for @challengeLockKeyHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вспомни, для чего нужен ключ.'**
+  String get challengeLockKeyHint;
+
+  /// No description provided for @challengeLockKeyExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ключ и замок работают вместе, поэтому это пара.'**
+  String get challengeLockKeyExplanation;
+
+  /// No description provided for @challengeSpaceSequenceTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Космический маршрут'**
+  String get challengeSpaceSequenceTitle;
+
+  /// No description provided for @challengeSpaceSequencePrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Найди следующий космический предмет.'**
+  String get challengeSpaceSequencePrompt;
+
+  /// No description provided for @challengeSpaceSequenceQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ракета, планета, ракета, планета. Что дальше?'**
+  String get challengeSpaceSequenceQuestion;
+
+  /// No description provided for @challengeSpaceSequenceHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Маршрут повторяется: ракета, потом планета.'**
+  String get challengeSpaceSequenceHint;
+
+  /// No description provided for @challengeSpaceSequenceExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'После планеты снова идет ракета.'**
+  String get challengeSpaceSequenceExplanation;
+
+  /// No description provided for @challengeShapeStackTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Башня фигур'**
+  String get challengeShapeStackTitle;
+
+  /// No description provided for @challengeShapeStackPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Продолжи правило башни.'**
+  String get challengeShapeStackPrompt;
+
+  /// No description provided for @challengeShapeStackQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Квадрат, круг, квадрат, круг. Какая фигура дальше?'**
+  String get challengeShapeStackQuestion;
+
+  /// No description provided for @challengeShapeStackHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Башня чередует две фигуры.'**
+  String get challengeShapeStackHint;
+
+  /// No description provided for @challengeShapeStackExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'После круга снова идет квадрат.'**
+  String get challengeShapeStackExplanation;
+
+  /// No description provided for @challengePathMazeTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Найди путь'**
+  String get challengePathMazeTitle;
+
+  /// No description provided for @challengePathMazePrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проследи дорожку от старта до цели.'**
+  String get challengePathMazePrompt;
+
+  /// No description provided for @challengePathMazeQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Помоги герою добраться до цели. Куда идти?'**
+  String get challengePathMazeQuestion;
+
+  /// No description provided for @challengePathMazeHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Проследи дорожку от старта до цели и выбери направление на развилке.'**
+  String get challengePathMazeHint;
+
+  /// No description provided for @challengePathMazeExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правильная дорожка идет по открытому пути к цели.'**
+  String get challengePathMazeExplanation;
+
+  /// No description provided for @lesson_001_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Дорожка фигур'**
+  String get lesson_001_title;
+
+  /// No description provided for @lesson_002_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Счет игрушек'**
+  String get lesson_002_title;
+
+  /// No description provided for @lesson_003_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Лишняя карточка'**
+  String get lesson_003_title;
+
+  /// No description provided for @lesson_004_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Логический поезд'**
+  String get lesson_004_title;
+
+  /// No description provided for @lesson_005_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Суммы и ряды'**
+  String get lesson_005_title;
+
+  /// No description provided for @lesson_006_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Память и коды'**
+  String get lesson_006_title;
+
+  /// No description provided for @lesson_007_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Числовой мост'**
+  String get lesson_007_title;
+
+  /// No description provided for @lesson_008_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Карта деталей'**
+  String get lesson_008_title;
+
+  /// No description provided for @lesson_009_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тени и баланс'**
+  String get lesson_009_title;
+
+  /// No description provided for @lesson_010_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сложение и сравнение'**
+  String get lesson_010_title;
+
+  /// No description provided for @lesson_011_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Повороты и путь'**
+  String get lesson_011_title;
+
+  /// No description provided for @lesson_012_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Память и внимание'**
+  String get lesson_012_title;
+
+  /// No description provided for @lesson_013_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Фруктовый паттерн'**
+  String get lesson_013_title;
+
+  /// No description provided for @lesson_014_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Математическая полка'**
+  String get lesson_014_title;
+
+  /// No description provided for @lesson_015_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Башня фигур'**
+  String get lesson_015_title;
+
+  /// No description provided for @lesson_016_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Замки и детали'**
+  String get lesson_016_title;
+
+  /// No description provided for @lesson_017_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Код и числа'**
+  String get lesson_017_title;
+
+  /// No description provided for @lesson_018_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Космический ряд'**
+  String get lesson_018_title;
+
+  /// No description provided for @lesson_019_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Фокус на отличиях'**
+  String get lesson_019_title;
+
+  /// No description provided for @lesson_020_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Мост решений'**
+  String get lesson_020_title;
+
+  /// No description provided for @lesson_021_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правила подряд'**
+  String get lesson_021_title;
+
+  /// No description provided for @lesson_022_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Фигуры в пространстве'**
+  String get lesson_022_title;
+
+  /// No description provided for @lesson_023_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Память и счет'**
+  String get lesson_023_title;
+
+  /// No description provided for @lesson_024_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Финальная связка'**
+  String get lesson_024_title;
+
+  /// No description provided for @lesson_025_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Детектив деталей'**
+  String get lesson_025_title;
+
+  /// No description provided for @lesson_026_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Весы и числа'**
+  String get lesson_026_title;
+
+  /// No description provided for @lesson_027_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Лишнее и пары'**
+  String get lesson_027_title;
+
+  /// No description provided for @lesson_028_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Космические формы'**
+  String get lesson_028_title;
+
+  /// No description provided for @lesson_029_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Суммы на внимательность'**
+  String get lesson_029_title;
+
+  /// No description provided for @lesson_030_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правило и код'**
+  String get lesson_030_title;
+
+  /// No description provided for @lesson_031_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тени, формы и память'**
+  String get lesson_031_title;
+
+  /// No description provided for @lesson_032_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Числа и детали'**
+  String get lesson_032_title;
+
+  /// No description provided for @lesson_033_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Цепочка правил'**
+  String get lesson_033_title;
+
+  /// No description provided for @lesson_034_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Повороты в космосе'**
+  String get lesson_034_title;
+
+  /// No description provided for @lesson_035_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Большой числовой маршрут'**
+  String get lesson_035_title;
+
+  /// No description provided for @lesson_036_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Финал наблюдателя'**
+  String get lesson_036_title;
+
+  /// No description provided for @lesson_037_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Поворот и память'**
+  String get lesson_037_title;
+
+  /// No description provided for @lesson_038_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Счетный рывок'**
+  String get lesson_038_title;
+
+  /// No description provided for @lesson_039_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правило и пара'**
+  String get lesson_039_title;
+
+  /// No description provided for @lesson_040_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Космическая башня'**
+  String get lesson_040_title;
+
+  /// No description provided for @lesson_041_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Весы и внимание'**
+  String get lesson_041_title;
+
+  /// No description provided for @lesson_042_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Кодовый поезд'**
+  String get lesson_042_title;
+
+  /// No description provided for @lesson_043_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тени и замки'**
+  String get lesson_043_title;
+
+  /// No description provided for @lesson_044_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Числа и память'**
+  String get lesson_044_title;
+
+  /// No description provided for @lesson_045_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Длинная цепочка'**
+  String get lesson_045_title;
+
+  /// No description provided for @lesson_046_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Пространственный маршрут'**
+  String get lesson_046_title;
+
+  /// No description provided for @lesson_047_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Суммы и детали'**
+  String get lesson_047_title;
+
+  /// No description provided for @lesson_048_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Логический фокус'**
+  String get lesson_048_title;
+
+  /// No description provided for @lesson_049_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Формы под лупой'**
+  String get lesson_049_title;
+
+  /// No description provided for @lesson_050_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Точная арифметика'**
+  String get lesson_050_title;
+
+  /// No description provided for @lesson_051_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Паттерны мастера'**
+  String get lesson_051_title;
+
+  /// No description provided for @lesson_052_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Тени в пространстве'**
+  String get lesson_052_title;
+
+  /// No description provided for @lesson_053_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Числовая загадка'**
+  String get lesson_053_title;
+
+  /// No description provided for @lesson_054_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Код наблюдателя'**
+  String get lesson_054_title;
+
+  /// No description provided for @lesson_055_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Башня и ключ'**
+  String get lesson_055_title;
+
+  /// No description provided for @lesson_056_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Детали и весы'**
+  String get lesson_056_title;
+
+  /// No description provided for @lesson_057_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сложные правила'**
+  String get lesson_057_title;
+
+  /// No description provided for @lesson_058_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Финал фигур'**
+  String get lesson_058_title;
+
+  /// No description provided for @lesson_059_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Большая задача чисел'**
+  String get lesson_059_title;
+
+  /// No description provided for @lesson_060_title.
+  ///
+  /// In ru, this message translates to:
+  /// **'Супермикс логики'**
+  String get lesson_060_title;
 }
 
 class _AppLocalizationsDelegate

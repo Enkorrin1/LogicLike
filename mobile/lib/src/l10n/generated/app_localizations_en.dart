@@ -1057,4 +1057,339 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeRecommendedLessonCompleted => 'Route complete';
+
+  @override
+  String get lessonReviewTitle => 'Lesson summary';
+
+  @override
+  String get lessonReviewPerfectBody => 'Great focus: no hints or mistakes.';
+
+  @override
+  String get lessonReviewSupportBody =>
+      'Good finish. Next time try one step with less help.';
+
+  @override
+  String get lessonReviewQuestionsLabel => 'Questions';
+
+  @override
+  String get lessonReviewHintsLabel => 'Hints';
+
+  @override
+  String get lessonReviewMistakesLabel => 'Mistakes';
+
+  @override
+  String get lessonNextRecommendedButton => 'Next lesson';
+
+  @override
+  String get practiceHistoryTitle => 'Practice history';
+
+  @override
+  String get practiceHistorySubtitle =>
+      'Recent lessons with accuracy, hints, and mistakes.';
+
+  @override
+  String get practiceHistoryEmpty => 'No completed lessons yet.';
+
+  @override
+  String practiceHistorySessionMeta(Object date, Object minutes) {
+    return '$date - $minutes min';
+  }
+
+  @override
+  String get practiceHistoryMistakesLabel => 'Mistakes';
+
+  @override
+  String get lessonTryAgainButton => 'Try again';
+
+  @override
+  String get lessonHintTitle => 'Think step by step';
+
+  @override
+  String get lessonRetryFeedback =>
+      'Good try. Read the hint, then choose again.';
+
+  @override
+  String get languageSettingsTitle => 'App language';
+
+  @override
+  String get languageSettingsSubtitle =>
+      'Choose the language for child and parent screens.';
+
+  @override
+  String get languageRussian => 'Russian';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get choicePear => 'Pear';
+
+  @override
+  String get challengeFruitPatternTitle => 'Fruit row';
+
+  @override
+  String get challengeFruitPatternPrompt => 'Continue the fruit pattern.';
+
+  @override
+  String get challengeFruitPatternQuestion =>
+      'Apple, banana, apple, banana. What comes next?';
+
+  @override
+  String get challengeFruitPatternHint =>
+      'The fruits repeat one by one: apple, then banana.';
+
+  @override
+  String get challengeFruitPatternExplanation =>
+      'After banana comes apple again, because the pattern repeats.';
+
+  @override
+  String get challengeLockKeyTitle => 'Magic pair';
+
+  @override
+  String get challengeLockKeyPrompt => 'Choose the object that makes a pair.';
+
+  @override
+  String get challengeLockKeyQuestion =>
+      'A key opens something. What does it go with?';
+
+  @override
+  String get challengeLockKeyHint => 'Think about what a key is used for.';
+
+  @override
+  String get challengeLockKeyExplanation =>
+      'A key and a lock work together, so they form the pair.';
+
+  @override
+  String get challengeSpaceSequenceTitle => 'Space route';
+
+  @override
+  String get challengeSpaceSequencePrompt => 'Find the next space object.';
+
+  @override
+  String get challengeSpaceSequenceQuestion =>
+      'Rocket, planet, rocket, planet. What comes next?';
+
+  @override
+  String get challengeSpaceSequenceHint =>
+      'The route repeats: rocket, then planet.';
+
+  @override
+  String get challengeSpaceSequenceExplanation =>
+      'After the planet comes a rocket again.';
+
+  @override
+  String get challengeShapeStackTitle => 'Shape tower';
+
+  @override
+  String get challengeShapeStackPrompt => 'Continue the tower rule.';
+
+  @override
+  String get challengeShapeStackQuestion =>
+      'Square, circle, square, circle. Which shape is next?';
+
+  @override
+  String get challengeShapeStackHint =>
+      'The tower alternates between two shapes.';
+
+  @override
+  String get challengeShapeStackExplanation =>
+      'After a circle comes a square again.';
+
+  @override
+  String get challengePathMazeTitle => 'Path finder';
+
+  @override
+  String get challengePathMazePrompt => 'Follow the road from start to finish.';
+
+  @override
+  String get challengePathMazeQuestion =>
+      'Help the hero reach the goal. Which way should it go?';
+
+  @override
+  String get challengePathMazeHint =>
+      'Trace the road from start to finish and choose the direction at the fork.';
+
+  @override
+  String get challengePathMazeExplanation =>
+      'The correct road follows the open path to the goal.';
+
+  @override
+  String get lesson_001_title => 'Shape path';
+
+  @override
+  String get lesson_002_title => 'Toy counting';
+
+  @override
+  String get lesson_003_title => 'Odd card out';
+
+  @override
+  String get lesson_004_title => 'Logic train';
+
+  @override
+  String get lesson_005_title => 'Sums and rows';
+
+  @override
+  String get lesson_006_title => 'Memory and codes';
+
+  @override
+  String get lesson_007_title => 'Number bridge';
+
+  @override
+  String get lesson_008_title => 'Detail map';
+
+  @override
+  String get lesson_009_title => 'Shadows and balance';
+
+  @override
+  String get lesson_010_title => 'Adding and comparing';
+
+  @override
+  String get lesson_011_title => 'Turns and paths';
+
+  @override
+  String get lesson_012_title => 'Memory and focus';
+
+  @override
+  String get lesson_013_title => 'Fruit pattern';
+
+  @override
+  String get lesson_014_title => 'Math shelf';
+
+  @override
+  String get lesson_015_title => 'Shape tower';
+
+  @override
+  String get lesson_016_title => 'Locks and details';
+
+  @override
+  String get lesson_017_title => 'Code and numbers';
+
+  @override
+  String get lesson_018_title => 'Space sequence';
+
+  @override
+  String get lesson_019_title => 'Focus on differences';
+
+  @override
+  String get lesson_020_title => 'Solution bridge';
+
+  @override
+  String get lesson_021_title => 'Rules in a row';
+
+  @override
+  String get lesson_022_title => 'Shapes in space';
+
+  @override
+  String get lesson_023_title => 'Memory and counting';
+
+  @override
+  String get lesson_024_title => 'Final mix';
+
+  @override
+  String get lesson_025_title => 'Detail detective';
+
+  @override
+  String get lesson_026_title => 'Scales and numbers';
+
+  @override
+  String get lesson_027_title => 'Odd ones and pairs';
+
+  @override
+  String get lesson_028_title => 'Space shapes';
+
+  @override
+  String get lesson_029_title => 'Careful sums';
+
+  @override
+  String get lesson_030_title => 'Rule and code';
+
+  @override
+  String get lesson_031_title => 'Shadows, shapes, memory';
+
+  @override
+  String get lesson_032_title => 'Numbers and details';
+
+  @override
+  String get lesson_033_title => 'Rule chain';
+
+  @override
+  String get lesson_034_title => 'Space turns';
+
+  @override
+  String get lesson_035_title => 'Big number route';
+
+  @override
+  String get lesson_036_title => 'Observer finale';
+
+  @override
+  String get lesson_037_title => 'Turns and memory';
+
+  @override
+  String get lesson_038_title => 'Counting sprint';
+
+  @override
+  String get lesson_039_title => 'Rule and pair';
+
+  @override
+  String get lesson_040_title => 'Space tower';
+
+  @override
+  String get lesson_041_title => 'Scales and focus';
+
+  @override
+  String get lesson_042_title => 'Code train';
+
+  @override
+  String get lesson_043_title => 'Shadows and locks';
+
+  @override
+  String get lesson_044_title => 'Numbers and memory';
+
+  @override
+  String get lesson_045_title => 'Long chain';
+
+  @override
+  String get lesson_046_title => 'Spatial route';
+
+  @override
+  String get lesson_047_title => 'Sums and details';
+
+  @override
+  String get lesson_048_title => 'Logic focus';
+
+  @override
+  String get lesson_049_title => 'Shapes up close';
+
+  @override
+  String get lesson_050_title => 'Careful arithmetic';
+
+  @override
+  String get lesson_051_title => 'Pattern master';
+
+  @override
+  String get lesson_052_title => 'Shadows in space';
+
+  @override
+  String get lesson_053_title => 'Number riddle';
+
+  @override
+  String get lesson_054_title => 'Observer code';
+
+  @override
+  String get lesson_055_title => 'Tower and key';
+
+  @override
+  String get lesson_056_title => 'Details and scales';
+
+  @override
+  String get lesson_057_title => 'Harder rules';
+
+  @override
+  String get lesson_058_title => 'Shape finale';
+
+  @override
+  String get lesson_059_title => 'Big number task';
+
+  @override
+  String get lesson_060_title => 'Logic supermix';
 }

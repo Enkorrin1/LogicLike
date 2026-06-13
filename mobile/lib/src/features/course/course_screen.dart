@@ -5,6 +5,140 @@ import '../../domain/learning_foundation.dart';
 import '../../l10n/l10n.dart';
 import '../home/home_screen.dart';
 
+class AllLevelsScreen extends StatelessWidget {
+  const AllLevelsScreen({
+    required this.profile,
+    required this.onStartLesson,
+    required this.onBackHome,
+    super.key,
+  });
+
+  final FamilyProfile profile;
+  final ValueChanged<String> onStartLesson;
+  final VoidCallback onBackHome;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    const courses = FoundationCatalog.starterCourses;
+    final allLessonIds = [
+      for (final course in courses) ...course.lessonIds,
+    ];
+    final uniqueLessonIds = allLessonIds.toSet();
+    final completedCount = uniqueLessonIds
+        .where(profile.activeChild.completedLessonIds.contains)
+        .length;
+    final totalSteps = FoundationCatalog.starterLessonSteps.length;
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFFBF2),
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 112),
+          children: [
+            _CourseHeader(
+              title: l10n.courseCatalogTitle,
+              subtitle: l10n.courseLessonMeta(totalSteps, totalSteps * 10),
+              completedCount: completedCount,
+              totalCount: uniqueLessonIds.length,
+              stars: completedCount,
+              xp: completedCount * 20,
+              currentLessonIndex: completedCount,
+              onBackHome: onBackHome,
+            ),
+            const SizedBox(height: 16),
+            for (final course in courses) ...[
+              _CourseSectionHeader(
+                course: course,
+                completedCount: course.lessonIds
+                    .where(profile.activeChild.completedLessonIds.contains)
+                    .length,
+              ),
+              const SizedBox(height: 10),
+              for (var index = 0; index < course.lessonIds.length; index += 1)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _LessonCard(
+                    lesson: FoundationCatalog.lessonForId(
+                      course.lessonIds[index],
+                    ),
+                    course: course,
+                    index: _lessonNumber(course.lessonIds[index]) - 1,
+                    state: _stateForLesson(course.lessonIds[index]),
+                    onStart: () => onStartLesson(course.lessonIds[index]),
+                  ),
+                ),
+              const SizedBox(height: 8),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  _CourseLessonState _stateForLesson(String lessonId) {
+    if (profile.activeChild.completedLessonIds.contains(lessonId)) {
+      return _CourseLessonState.completed;
+    }
+
+    String? nextLessonId;
+    for (final lesson in FoundationCatalog.starterLessons) {
+      if (!profile.activeChild.completedLessonIds.contains(lesson.id)) {
+        nextLessonId = lesson.id;
+        break;
+      }
+    }
+
+    return lessonId == nextLessonId
+        ? _CourseLessonState.current
+        : _CourseLessonState.open;
+  }
+
+  int _lessonNumber(String lessonId) {
+    return int.tryParse(lessonId.split('.').last) ?? 1;
+  }
+}
+
+class _CourseSectionHeader extends StatelessWidget {
+  const _CourseSectionHeader({
+    required this.course,
+    required this.completedCount,
+  });
+
+  final CourseDefinition course;
+  final int completedCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              l10n.titleForCourse(course),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: AppPalette.ink,
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          _StatusPill(
+            label: l10n.courseProgress(completedCount, course.lessonIds.length),
+            color: AppPalette.teal,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class CourseScreen extends StatelessWidget {
   const CourseScreen({
     required this.profile,
@@ -40,7 +174,8 @@ class CourseScreen extends StatelessWidget {
           children: [
             _CourseHeader(
               title: l10n.titleForCourse(course),
-              subtitle: l10n.subtitleForCourse(course),
+              subtitle:
+                  '${l10n.subtitleForCourse(course)}\n${l10n.courseArcSummary(course)}',
               completedCount: progress.completedCount,
               totalCount: lessons.length,
               stars: progress.completedCount,
@@ -54,11 +189,10 @@ class CourseScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: _LessonCard(
                   lesson: lessons[index],
+                  course: course,
                   index: index,
                   state: progress.stateFor(index),
-                  onStart: progress.stateFor(index) != _CourseLessonState.locked
-                      ? () => onStartLesson(lessons[index].id)
-                      : null,
+                  onStart: () => onStartLesson(lessons[index].id),
                 ),
               ),
           ],
@@ -162,7 +296,8 @@ class _CourseHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            l10n.courseProgress(completedCount.clamp(0, totalCount), totalCount),
+            l10n.courseProgress(
+                completedCount.clamp(0, totalCount), totalCount),
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
                   color: AppPalette.muted,
                   fontWeight: FontWeight.w800,
@@ -208,12 +343,14 @@ class _CourseHeader extends StatelessWidget {
 class _LessonCard extends StatelessWidget {
   const _LessonCard({
     required this.lesson,
+    required this.course,
     required this.index,
     required this.state,
     required this.onStart,
   });
 
   final Lesson lesson;
+  final CourseDefinition course;
   final int index;
   final _CourseLessonState state;
   final VoidCallback? onStart;
@@ -223,12 +360,14 @@ class _LessonCard extends StatelessWidget {
     final l10n = context.l10n;
     final completed = state == _CourseLessonState.completed;
     final current = state == _CourseLessonState.current;
-    final locked = state == _CourseLessonState.locked;
+    final difficulty =
+        FoundationCatalog.difficultyForCourseLesson(course, lesson);
+    final skillTags = FoundationCatalog.primarySkillTagsForLesson(lesson);
     final color = completed
         ? AppPalette.teal
         : current
             ? AppPalette.coral
-            : const Color(0xFFB9CACD);
+            : const Color(0xFF5C8EF7);
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -255,9 +394,9 @@ class _LessonCard extends StatelessWidget {
             child: Icon(
               completed
                   ? Icons.star_rounded
-                  : locked
-                      ? Icons.lock_rounded
-                      : Icons.psychology_alt_rounded,
+                  : current
+                      ? Icons.psychology_alt_rounded
+                      : Icons.play_arrow_rounded,
               color: color,
               size: 31,
             ),
@@ -268,8 +407,8 @@ class _LessonCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.courseLessonTitle(index + 1),
-                  maxLines: 1,
+                  l10n.titleForLesson(lesson, fallbackNumber: index + 1),
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: AppPalette.ink,
@@ -291,6 +430,21 @@ class _LessonCard extends StatelessWidget {
                   label: _labelForState(l10n, state),
                   color: color,
                 ),
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    _StatusPill(
+                      label: l10n.lessonDifficultyLabel(difficulty),
+                      color: AppPalette.coral,
+                    ),
+                    _StatusPill(
+                      label: l10n.lessonSkillMixLabel(skillTags),
+                      color: const Color(0xFF5C8EF7),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -306,7 +460,9 @@ class _LessonCard extends StatelessWidget {
               ),
             ),
             child: Text(
-              completed ? l10n.courseRepeatButton : l10n.courseStartLessonButton,
+              completed
+                  ? l10n.courseRepeatButton
+                  : l10n.courseStartLessonButton,
             ),
           ),
         ],
@@ -321,7 +477,7 @@ class _LessonCard extends StatelessWidget {
     return switch (state) {
       _CourseLessonState.completed => l10n.courseCompletedState,
       _CourseLessonState.current => l10n.courseOpenState,
-      _CourseLessonState.locked => l10n.courseLockedState,
+      _CourseLessonState.open => l10n.courseOpenState,
     };
   }
 }
@@ -329,7 +485,7 @@ class _LessonCard extends StatelessWidget {
 enum _CourseLessonState {
   completed,
   current,
-  locked,
+  open,
 }
 
 class _CourseProgress {
@@ -363,7 +519,7 @@ class _CourseProgress {
     if (index == currentIndex) {
       return _CourseLessonState.current;
     }
-    return _CourseLessonState.locked;
+    return _CourseLessonState.open;
   }
 
   static _CourseProgress fromLessons({

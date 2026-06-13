@@ -1048,17 +1048,17 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String recommendationImproveAccuracy(Object skill) {
-    return 'На этой неделе позанимайтесь темой ?$skill? без спешки: главный сигнал сейчас - точность.';
+    return 'На этой неделе позанимайтесь темой $skill без спешки: главный сигнал сейчас - точность.';
   }
 
   @override
   String recommendationReduceHints(Object skill) {
-    return 'Повторите тему ?$skill? с меньшим числом подсказок: дайте ребенку паузу перед помощью.';
+    return 'Повторите тему $skill с меньшим числом подсказок: дайте ребенку паузу перед помощью.';
   }
 
   @override
   String recommendationRepeatAttempts(Object skill) {
-    return 'Дайте теме ?$skill? одно короткое повторение, чтобы снизить число ошибок.';
+    return 'Дайте теме $skill одно короткое повторение, чтобы снизить число ошибок.';
   }
 
   @override
@@ -1073,4 +1073,341 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeRecommendedLessonCompleted => 'Маршрут пройден';
+
+  @override
+  String get lessonReviewTitle => 'Итог урока';
+
+  @override
+  String get lessonReviewPerfectBody =>
+      'Отличный фокус: без подсказок и ошибок.';
+
+  @override
+  String get lessonReviewSupportBody =>
+      'Хороший финиш. В следующий раз попробуй один шаг без помощи.';
+
+  @override
+  String get lessonReviewQuestionsLabel => 'Вопросы';
+
+  @override
+  String get lessonReviewHintsLabel => 'Подсказки';
+
+  @override
+  String get lessonReviewMistakesLabel => 'Ошибки';
+
+  @override
+  String get lessonNextRecommendedButton => 'Следующий урок';
+
+  @override
+  String get practiceHistoryTitle => 'История занятий';
+
+  @override
+  String get practiceHistorySubtitle =>
+      'Последние уроки с точностью, подсказками и ошибками.';
+
+  @override
+  String get practiceHistoryEmpty => 'Пройденных уроков пока нет.';
+
+  @override
+  String practiceHistorySessionMeta(Object date, Object minutes) {
+    return '$date - $minutes мин';
+  }
+
+  @override
+  String get practiceHistoryMistakesLabel => 'Ошибки';
+
+  @override
+  String get lessonTryAgainButton => 'Попробовать еще';
+
+  @override
+  String get lessonHintTitle => 'Подумай по шагам';
+
+  @override
+  String get lessonRetryFeedback =>
+      'Хорошая попытка. Прочитай подсказку и выбери еще раз.';
+
+  @override
+  String get languageSettingsTitle => 'Язык приложения';
+
+  @override
+  String get languageSettingsSubtitle =>
+      'Выберите язык для детских и родительских экранов.';
+
+  @override
+  String get languageRussian => 'Русский';
+
+  @override
+  String get languageEnglish => 'English';
+
+  @override
+  String get choicePear => 'Груша';
+
+  @override
+  String get challengeFruitPatternTitle => 'Фруктовый ряд';
+
+  @override
+  String get challengeFruitPatternPrompt =>
+      'Продолжи фруктовую закономерность.';
+
+  @override
+  String get challengeFruitPatternQuestion =>
+      'Яблоко, банан, яблоко, банан. Что дальше?';
+
+  @override
+  String get challengeFruitPatternHint =>
+      'Фрукты повторяются по очереди: яблоко, потом банан.';
+
+  @override
+  String get challengeFruitPatternExplanation =>
+      'После банана снова идет яблоко, потому что ряд повторяется.';
+
+  @override
+  String get challengeLockKeyTitle => 'Волшебная пара';
+
+  @override
+  String get challengeLockKeyPrompt => 'Выбери предмет, который образует пару.';
+
+  @override
+  String get challengeLockKeyQuestion =>
+      'Ключ что-то открывает. Что к нему подходит?';
+
+  @override
+  String get challengeLockKeyHint => 'Вспомни, для чего нужен ключ.';
+
+  @override
+  String get challengeLockKeyExplanation =>
+      'Ключ и замок работают вместе, поэтому это пара.';
+
+  @override
+  String get challengeSpaceSequenceTitle => 'Космический маршрут';
+
+  @override
+  String get challengeSpaceSequencePrompt =>
+      'Найди следующий космический предмет.';
+
+  @override
+  String get challengeSpaceSequenceQuestion =>
+      'Ракета, планета, ракета, планета. Что дальше?';
+
+  @override
+  String get challengeSpaceSequenceHint =>
+      'Маршрут повторяется: ракета, потом планета.';
+
+  @override
+  String get challengeSpaceSequenceExplanation =>
+      'После планеты снова идет ракета.';
+
+  @override
+  String get challengeShapeStackTitle => 'Башня фигур';
+
+  @override
+  String get challengeShapeStackPrompt => 'Продолжи правило башни.';
+
+  @override
+  String get challengeShapeStackQuestion =>
+      'Квадрат, круг, квадрат, круг. Какая фигура дальше?';
+
+  @override
+  String get challengeShapeStackHint => 'Башня чередует две фигуры.';
+
+  @override
+  String get challengeShapeStackExplanation =>
+      'После круга снова идет квадрат.';
+
+  @override
+  String get challengePathMazeTitle => 'Найди путь';
+
+  @override
+  String get challengePathMazePrompt => 'Проследи дорожку от старта до цели.';
+
+  @override
+  String get challengePathMazeQuestion =>
+      'Помоги герою добраться до цели. Куда идти?';
+
+  @override
+  String get challengePathMazeHint =>
+      'Проследи дорожку от старта до цели и выбери направление на развилке.';
+
+  @override
+  String get challengePathMazeExplanation =>
+      'Правильная дорожка идет по открытому пути к цели.';
+
+  @override
+  String get lesson_001_title => 'Дорожка фигур';
+
+  @override
+  String get lesson_002_title => 'Счет игрушек';
+
+  @override
+  String get lesson_003_title => 'Лишняя карточка';
+
+  @override
+  String get lesson_004_title => 'Логический поезд';
+
+  @override
+  String get lesson_005_title => 'Суммы и ряды';
+
+  @override
+  String get lesson_006_title => 'Память и коды';
+
+  @override
+  String get lesson_007_title => 'Числовой мост';
+
+  @override
+  String get lesson_008_title => 'Карта деталей';
+
+  @override
+  String get lesson_009_title => 'Тени и баланс';
+
+  @override
+  String get lesson_010_title => 'Сложение и сравнение';
+
+  @override
+  String get lesson_011_title => 'Повороты и путь';
+
+  @override
+  String get lesson_012_title => 'Память и внимание';
+
+  @override
+  String get lesson_013_title => 'Фруктовый паттерн';
+
+  @override
+  String get lesson_014_title => 'Математическая полка';
+
+  @override
+  String get lesson_015_title => 'Башня фигур';
+
+  @override
+  String get lesson_016_title => 'Замки и детали';
+
+  @override
+  String get lesson_017_title => 'Код и числа';
+
+  @override
+  String get lesson_018_title => 'Космический ряд';
+
+  @override
+  String get lesson_019_title => 'Фокус на отличиях';
+
+  @override
+  String get lesson_020_title => 'Мост решений';
+
+  @override
+  String get lesson_021_title => 'Правила подряд';
+
+  @override
+  String get lesson_022_title => 'Фигуры в пространстве';
+
+  @override
+  String get lesson_023_title => 'Память и счет';
+
+  @override
+  String get lesson_024_title => 'Финальная связка';
+
+  @override
+  String get lesson_025_title => 'Детектив деталей';
+
+  @override
+  String get lesson_026_title => 'Весы и числа';
+
+  @override
+  String get lesson_027_title => 'Лишнее и пары';
+
+  @override
+  String get lesson_028_title => 'Космические формы';
+
+  @override
+  String get lesson_029_title => 'Суммы на внимательность';
+
+  @override
+  String get lesson_030_title => 'Правило и код';
+
+  @override
+  String get lesson_031_title => 'Тени, формы и память';
+
+  @override
+  String get lesson_032_title => 'Числа и детали';
+
+  @override
+  String get lesson_033_title => 'Цепочка правил';
+
+  @override
+  String get lesson_034_title => 'Повороты в космосе';
+
+  @override
+  String get lesson_035_title => 'Большой числовой маршрут';
+
+  @override
+  String get lesson_036_title => 'Финал наблюдателя';
+
+  @override
+  String get lesson_037_title => 'Поворот и память';
+
+  @override
+  String get lesson_038_title => 'Счетный рывок';
+
+  @override
+  String get lesson_039_title => 'Правило и пара';
+
+  @override
+  String get lesson_040_title => 'Космическая башня';
+
+  @override
+  String get lesson_041_title => 'Весы и внимание';
+
+  @override
+  String get lesson_042_title => 'Кодовый поезд';
+
+  @override
+  String get lesson_043_title => 'Тени и замки';
+
+  @override
+  String get lesson_044_title => 'Числа и память';
+
+  @override
+  String get lesson_045_title => 'Длинная цепочка';
+
+  @override
+  String get lesson_046_title => 'Пространственный маршрут';
+
+  @override
+  String get lesson_047_title => 'Суммы и детали';
+
+  @override
+  String get lesson_048_title => 'Логический фокус';
+
+  @override
+  String get lesson_049_title => 'Формы под лупой';
+
+  @override
+  String get lesson_050_title => 'Точная арифметика';
+
+  @override
+  String get lesson_051_title => 'Паттерны мастера';
+
+  @override
+  String get lesson_052_title => 'Тени в пространстве';
+
+  @override
+  String get lesson_053_title => 'Числовая загадка';
+
+  @override
+  String get lesson_054_title => 'Код наблюдателя';
+
+  @override
+  String get lesson_055_title => 'Башня и ключ';
+
+  @override
+  String get lesson_056_title => 'Детали и весы';
+
+  @override
+  String get lesson_057_title => 'Сложные правила';
+
+  @override
+  String get lesson_058_title => 'Финал фигур';
+
+  @override
+  String get lesson_059_title => 'Большая задача чисел';
+
+  @override
+  String get lesson_060_title => 'Супермикс логики';
 }

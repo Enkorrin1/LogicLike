@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../domain/adaptive_learning.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
 import '../../domain/learning_foundation.dart';
@@ -10,6 +12,7 @@ class LessonScreen extends StatefulWidget {
     required this.profile,
     required this.onLessonComplete,
     required this.onBackToMap,
+    required this.onNextLessonSelected,
     this.lessonId,
     super.key,
   });
@@ -24,6 +27,7 @@ class LessonScreen extends StatefulWidget {
     int wrongAttempts,
   }) onLessonComplete;
   final VoidCallback onBackToMap;
+  final ValueChanged<String> onNextLessonSelected;
   final String? lessonId;
 
   @override
@@ -44,15 +48,28 @@ class _LessonScreenState extends State<LessonScreen> {
   @override
   Widget build(BuildContext context) {
     final child = widget.profile.activeChild;
+    final adaptivePlan = AdaptiveLessonPlan.forChild(
+      child,
+      now: DateTime.now(),
+    );
     final lesson = widget.lessonId == null
         ? FoundationCatalog.lessonForNode(_currentNode(child))
         : FoundationCatalog.lessonForId(widget.lessonId!);
-    final challenges = _lessonChallenges(child, lesson);
+    final lessonSteps = FoundationCatalog.stepsForLesson(lesson);
+    final challenges = _lessonChallenges(child, lesson, adaptivePlan);
     final challenge = challenges[_stepIndex];
+    final stepRole = lessonSteps.isEmpty
+        ? LessonStepRole.core
+        : FoundationCatalog.roleForStep(lessonSteps[_stepIndex]);
 
     if (_isComplete) {
       return _LessonCompleteView(
         lesson: lesson,
+        totalQuestions: challenges.length,
+        usedHints: _hintedStepIndexes.length,
+        wrongAttempts: _wrongAttempts,
+        nextLessonId: _nextLessonIdAfter(lesson.id, child),
+        onNextLessonSelected: widget.onNextLessonSelected,
         onBackToMap: widget.onBackToMap,
       );
     }
@@ -67,6 +84,8 @@ class _LessonScreenState extends State<LessonScreen> {
             _LessonHeader(
               currentStep: _stepIndex + 1,
               totalSteps: challenges.length,
+              stepRole: stepRole,
+              adaptivePlan: adaptivePlan,
               hearts: child.hearts,
             ),
             const SizedBox(height: 16),
@@ -106,14 +125,22 @@ class _LessonScreenState extends State<LessonScreen> {
     );
   }
 
-  List<DailyChallenge> _lessonChallenges(ChildProfile child, Lesson lesson) {
+  List<DailyChallenge> _lessonChallenges(
+    ChildProfile child,
+    Lesson lesson,
+    AdaptiveLessonPlan adaptivePlan,
+  ) {
     final lessonSteps = FoundationCatalog.stepsForLesson(lesson);
     if (lessonSteps.isNotEmpty) {
-      final challengeIds = [
+      return [
         for (final step in lessonSteps)
-          FoundationCatalog.puzzleForStep(step).payloadRef,
+          dailyChallengeForLessonStep(
+            step,
+            FoundationCatalog.puzzleForStep(step),
+            age: child.age,
+            adaptivePlan: adaptivePlan,
+          ),
       ];
-      return dailyChallengesByIds(challengeIds, age: child.age);
     }
 
     final baseChallenges = dailyChallengesForAge(child.age);
@@ -123,12 +150,48 @@ class _LessonScreenState extends State<LessonScreen> {
     ];
   }
 
+  String? _nextLessonIdAfter(String lessonId, ChildProfile child) {
+    final completedLessonIds = {
+      ...child.completedLessonIds,
+      lessonId,
+    };
+
+    for (final course in FoundationCatalog.starterCourses) {
+      final lessonIndex = course.lessonIds.indexOf(lessonId);
+      if (lessonIndex == -1) {
+        continue;
+      }
+
+      for (var index = lessonIndex + 1;
+          index < course.lessonIds.length;
+          index += 1) {
+        final candidateId = course.lessonIds[index];
+        if (!completedLessonIds.contains(candidateId)) {
+          return candidateId;
+        }
+      }
+    }
+
+    for (final course in FoundationCatalog.starterCourses) {
+      for (final candidateId in course.lessonIds) {
+        if (!completedLessonIds.contains(candidateId)) {
+          return candidateId;
+        }
+      }
+    }
+
+    return null;
+  }
+
   String _buttonLabel(BuildContext context, int totalSteps) {
     final l10n = context.l10n;
     if (_isSaving) {
       return l10n.checkingButton;
     }
-    if (!_hasSubmitted || !_isCorrect) {
+    if (_hasSubmitted && !_isCorrect) {
+      return l10n.lessonTryAgainButton;
+    }
+    if (!_hasSubmitted) {
       return l10n.checkAnswerButton;
     }
     if (_stepIndex == totalSteps - 1) {
@@ -150,6 +213,17 @@ class _LessonScreenState extends State<LessonScreen> {
     DailyChallenge challenge,
     List<DailyChallenge> challenges,
   ) async {
+    if (_hasSubmitted && !_isCorrect) {
+      setState(() {
+        _selectedChoiceId = null;
+        _hasSubmitted = false;
+        _isCorrect = false;
+        _showHint = true;
+        _hintedStepIndexes.add(_stepIndex);
+      });
+      return;
+    }
+
     if (_hasSubmitted && _isCorrect) {
       if (_stepIndex == challenges.length - 1) {
         setState(() {
@@ -194,6 +268,8 @@ class _LessonScreenState extends State<LessonScreen> {
       _isCorrect = isCorrect;
       if (!isCorrect) {
         _wrongAttempts += 1;
+        _showHint = true;
+        _hintedStepIndexes.add(_stepIndex);
       }
     });
   }
@@ -213,11 +289,15 @@ class _LessonHeader extends StatelessWidget {
   const _LessonHeader({
     required this.currentStep,
     required this.totalSteps,
+    required this.stepRole,
+    required this.adaptivePlan,
     required this.hearts,
   });
 
   final int currentStep;
   final int totalSteps;
+  final LessonStepRole stepRole;
+  final AdaptiveLessonPlan adaptivePlan;
   final int hearts;
 
   @override
@@ -238,6 +318,16 @@ class _LessonHeader extends StatelessWidget {
                     l10n.lessonProgress(currentStep, totalSteps),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.lessonStepRoleLabel(stepRole),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: const Color(0xFF18B7AE),
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                  const SizedBox(height: 6),
+                  _AdaptiveModePill(plan: adaptivePlan),
                   const SizedBox(height: 10),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(999),
@@ -254,6 +344,40 @@ class _LessonHeader extends StatelessWidget {
             const SizedBox(width: 14),
             _HeartPill(hearts: hearts),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AdaptiveModePill extends StatelessWidget {
+  const _AdaptiveModePill({required this.plan});
+
+  final AdaptiveLessonPlan plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final color = switch (plan.mode) {
+      AdaptiveDifficultyMode.warmUp => const Color(0xFF44A8F2),
+      AdaptiveDifficultyMode.steady => const Color(0xFF18B7AE),
+      AdaptiveDifficultyMode.stretch => const Color(0xFFFF9D2E),
+    };
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.14),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Text(
+          l10n.adaptiveModeLabel(plan.mode),
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w900,
+              ),
         ),
       ),
     );
@@ -323,6 +447,7 @@ class _LessonQuestionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const _PolishMarker(),
             Row(
               children: [
                 Container(
@@ -332,10 +457,9 @@ class _LessonQuestionCard extends StatelessWidget {
                     color: Color(0xFFFFECA8),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.psychology_alt_rounded,
-                    color: Color(0xFFFFB000),
-                    size: 32,
+                  child: const _PuzzleSvg(
+                    asset: _PuzzleAssets.puzzleCard,
+                    size: 42,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -383,7 +507,7 @@ class _LessonQuestionCard extends StatelessWidget {
               expanded: showHint,
               onPressed: onToggleHint,
             ),
-            if (showHint && !hasSubmitted) ...[
+            if (showHint && (!hasSubmitted || !isCorrect)) ...[
               const SizedBox(height: 10),
               _HintPanel(challenge: challenge),
             ],
@@ -443,46 +567,87 @@ class _LessonChoiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(22),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 170),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: _backgroundColor,
-          border: Border.all(
-            color: _borderColor,
-            width: selected || (submitted && correct) ? 2 : 1,
-          ),
+    final wrongSelected = submitted && selected && !correct;
+
+    return AnimatedSlide(
+      offset: wrongSelected ? const Offset(0.012, 0) : Offset.zero,
+      duration: const Duration(milliseconds: 110),
+      curve: Curves.easeOut,
+      child: AnimatedScale(
+        scale: selected || (submitted && correct) ? 1.015 : 1,
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOutBack,
+        child: InkWell(
           borderRadius: BorderRadius.circular(22),
-        ),
-        child: Row(
-          children: [
-            _ChoiceVisual(
-              challenge: challenge,
-              choice: choice,
-              index: index,
-              selected: selected,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium,
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 190),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: _backgroundColor,
+              border: Border.all(
+                color: _borderColor,
+                width: selected || (submitted && correct) ? 2 : 1,
               ),
+              borderRadius: BorderRadius.circular(22),
+              boxShadow: [
+                if (selected || (submitted && correct))
+                  BoxShadow(
+                    color: _borderColor.withValues(alpha: 0.20),
+                    blurRadius: 16,
+                    offset: const Offset(0, 8),
+                  ),
+              ],
             ),
-            if (submitted && (selected || correct)) ...[
-              const SizedBox(width: 8),
-              Icon(
-                correct ? Icons.check_circle_rounded : Icons.cancel_rounded,
-                color:
-                    correct ? const Color(0xFF18B7AE) : const Color(0xFFFF6F6B),
-              ),
-            ],
-          ],
+            child: Row(
+              children: [
+                _ChoiceVisual(
+                  challenge: challenge,
+                  choice: choice,
+                  index: index,
+                  selected: selected,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: submitted && (selected || correct)
+                      ? Padding(
+                          key: ValueKey(
+                            correct ? 'choice-correct' : 'choice-wrong',
+                          ),
+                          padding: const EdgeInsets.only(left: 8),
+                          child: Icon(
+                            correct
+                                ? Icons.check_circle_rounded
+                                : Icons.cancel_rounded,
+                            color: correct
+                                ? const Color(0xFF18B7AE)
+                                : const Color(0xFFFF6F6B),
+                          ),
+                        )
+                      : const SizedBox.shrink(key: ValueKey('choice-empty')),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -569,12 +734,25 @@ class _HintPanel extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(
-              l10n.hintForChallenge(challenge),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6B5316),
-                    fontWeight: FontWeight.w700,
-                  ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.lessonHintTitle,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: const Color(0xFF6B5316),
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  l10n.hintForChallenge(challenge),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF6B5316),
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
             ),
           ),
         ],
@@ -600,53 +778,30 @@ class _ChoiceVisual extends StatelessWidget {
   Widget build(BuildContext context) {
     final color =
         selected ? const Color(0xFF18B7AE) : _colorForChoice(choice.id);
-    final child = switch ('${challenge.id}:${choice.id}') {
-      'shape-path:triangle' => Icon(Icons.change_history_rounded, color: color),
-      'shape-path:circle' => Icon(Icons.circle, color: color),
-      'shape-path:star' => Icon(Icons.star_rounded, color: color),
-      'odd-card:apple' => Icon(Icons.apple_rounded, color: color),
-      'odd-card:ball' => Icon(Icons.sports_basketball_rounded, color: color),
-      'odd-card:banana' => Icon(Icons.eco_rounded, color: color),
-      'logic-train:blue' => Icon(Icons.train_rounded, color: color),
-      'logic-train:red' => Icon(Icons.train_rounded, color: color),
-      'logic-train:green' => Icon(Icons.train_rounded, color: color),
-      'memory-pairs:lock' => Icon(Icons.lock_rounded, color: color),
-      'memory-pairs:shoe' => Icon(Icons.hiking_rounded, color: color),
-      'memory-pairs:cloud' => Icon(Icons.cloud_rounded, color: color),
-      'shadow-match:rocket' => Icon(Icons.rocket_launch_rounded, color: color),
-      'shadow-match:planet' => Icon(Icons.public_rounded, color: color),
-      'shadow-match:star' => Icon(Icons.star_rounded, color: color),
-      'balance-scale:apple' => Icon(Icons.apple_rounded, color: color),
-      'balance-scale:star' => Icon(Icons.star_rounded, color: color),
-      'balance-scale:ball' =>
-        Icon(Icons.sports_basketball_rounded, color: color),
-      'shape-rotation:same' => Icon(Icons.change_history_rounded, color: color),
-      'shape-rotation:circle' => Icon(Icons.circle, color: color),
-      'shape-rotation:square' => Icon(Icons.square_rounded, color: color),
-      'detail-count:blue-squares' => Icon(Icons.square_rounded, color: color),
-      'detail-count:red-circles' => Icon(Icons.circle, color: color),
-      'detail-count:green-stars' => Icon(Icons.star_rounded, color: color),
-      _ => Text(
-          choice.id.contains('+') ? '+' : choice.id,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w900,
-              ),
-        ),
-    };
+    final asset = _assetForChoice(challenge.visualId, choice.id);
+    final child = _ChoiceArt(
+      asset: asset,
+      choiceId: choice.id,
+      color: color,
+    );
 
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: selected
-            ? const Color(0xFF18B7AE).withValues(alpha: 0.16)
-            : color.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(17),
+    return AnimatedScale(
+      scale: selected ? 1.08 : 1,
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOutBack,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: selected
+              ? const Color(0xFF18B7AE).withValues(alpha: 0.16)
+              : color.withValues(alpha: 0.14),
+          borderRadius: BorderRadius.circular(17),
+        ),
+        alignment: Alignment.center,
+        child: child,
       ),
-      alignment: Alignment.center,
-      child: child,
     );
   }
 
@@ -655,9 +810,14 @@ class _ChoiceVisual extends StatelessWidget {
       'circle' || 'red' || 'red-circles' => const Color(0xFFFF6F6B),
       'triangle' || 'blue' || 'blue-squares' => const Color(0xFF5C8EF7),
       'star' || 'green' || 'green-stars' => const Color(0xFF35B37E),
+      'left' => const Color(0xFF5C8EF7),
+      'right' => const Color(0xFF18B7AE),
+      'up' => const Color(0xFF9C6AF2),
+      'down' => const Color(0xFFFF9D2E),
       'apple' => const Color(0xFFFF6F6B),
       'ball' => const Color(0xFFFF9F43),
       'banana' => const Color(0xFFFFC739),
+      'pear' => const Color(0xFF35B37E),
       'rocket' || 'same' => const Color(0xFF18B7AE),
       'planet' || 'square' => const Color(0xFF5C8EF7),
       'lock' || '4+2+1' => const Color(0xFF18B7AE),
@@ -665,6 +825,254 @@ class _ChoiceVisual extends StatelessWidget {
       'cloud' || '2+1' => const Color(0xFF5C8EF7),
       _ => const Color(0xFFFF9D2E),
     };
+  }
+}
+
+String? _assetForChoice(String challengeId, String choiceId) {
+  return switch ('$challengeId:$choiceId') {
+    'shape-path:triangle' => _PuzzleAssets.triangle,
+    'shape-path:circle' => _PuzzleAssets.circle,
+    'shape-path:square' => _PuzzleAssets.square,
+    'shape-path:star' => _PuzzleAssets.star,
+    'fruit-pattern:apple' => _PuzzleAssets.apple,
+    'fruit-pattern:banana' => _PuzzleAssets.banana,
+    'fruit-pattern:pear' => _PuzzleAssets.pear,
+    'odd-card:apple' => _PuzzleAssets.apple,
+    'odd-card:pear' => _PuzzleAssets.pear,
+    'odd-card:ball' => _PuzzleAssets.ball,
+    'odd-card:banana' => _PuzzleAssets.banana,
+    'odd-card:cloud' => _PuzzleAssets.cloud,
+    'odd-card:shoe' => _PuzzleAssets.shoe,
+    'odd-card:rocket' => _PuzzleAssets.rocket,
+    'odd-card:planet' => _PuzzleAssets.planet,
+    'odd-card:star' => _PuzzleAssets.star,
+    'odd-card:circle' => _PuzzleAssets.circle,
+    'odd-card:square' => _PuzzleAssets.square,
+    'odd-card:triangle' => _PuzzleAssets.triangle,
+    'logic-train:blue' => _PuzzleAssets.trainBlue,
+    'logic-train:red' => _PuzzleAssets.trainRed,
+    'logic-train:green' => _PuzzleAssets.trainGreen,
+    'memory-pairs:lock' => _PuzzleAssets.lock,
+    'memory-pairs:shoe' => _PuzzleAssets.shoe,
+    'memory-pairs:cloud' => _PuzzleAssets.cloud,
+    'lock-key:lock' => _PuzzleAssets.lock,
+    'lock-key:shoe' => _PuzzleAssets.shoe,
+    'lock-key:cloud' => _PuzzleAssets.cloud,
+    'shadow-match:rocket' => _PuzzleAssets.rocket,
+    'shadow-match:planet' => _PuzzleAssets.planet,
+    'shadow-match:star' => _PuzzleAssets.star,
+    'balance-scale:apple' => _PuzzleAssets.apple,
+    'balance-scale:star' => _PuzzleAssets.star,
+    'balance-scale:ball' => _PuzzleAssets.ball,
+    'shape-rotation:same' => _PuzzleAssets.triangle,
+    'shape-rotation:circle' => _PuzzleAssets.circle,
+    'shape-rotation:square' => _PuzzleAssets.square,
+    'detail-count:blue-squares' => _PuzzleAssets.square,
+    'detail-count:red-circles' => _PuzzleAssets.circle,
+    'detail-count:green-stars' => _PuzzleAssets.star,
+    'space-sequence:rocket' => _PuzzleAssets.rocket,
+    'space-sequence:planet' => _PuzzleAssets.planet,
+    'space-sequence:star' => _PuzzleAssets.star,
+    'shape-stack:square' => _PuzzleAssets.square,
+    'shape-stack:circle' => _PuzzleAssets.circle,
+    'shape-stack:triangle' => _PuzzleAssets.triangle,
+    'shape-stack:star' => _PuzzleAssets.star,
+    _ => null,
+  };
+}
+
+class _PuzzleAssets {
+  static const circle = 'assets/images/puzzles/shape_circle.svg';
+  static const square = 'assets/images/puzzles/shape_square.svg';
+  static const triangle = 'assets/images/puzzles/shape_triangle.svg';
+  static const star = 'assets/images/puzzles/shape_star.svg';
+  static const cubeOrange = 'assets/images/puzzles/toy_cube_orange.svg';
+  static const cubeBlue = 'assets/images/puzzles/toy_cube_blue.svg';
+  static const ball = 'assets/images/puzzles/ball.svg';
+  static const apple = 'assets/images/puzzles/apple.svg';
+  static const banana = 'assets/images/puzzles/banana.svg';
+  static const pear = 'assets/images/puzzles/pear.svg';
+  static const rocket = 'assets/images/puzzles/rocket.svg';
+  static const planet = 'assets/images/puzzles/planet.svg';
+  static const lock = 'assets/images/puzzles/lock.svg';
+  static const key = 'assets/images/puzzles/key.svg';
+  static const shoe = 'assets/images/puzzles/shoe.svg';
+  static const cloud = 'assets/images/puzzles/cloud.svg';
+  static const trainBlue = 'assets/images/puzzles/train_blue.svg';
+  static const trainRed = 'assets/images/puzzles/train_red.svg';
+  static const trainGreen = 'assets/images/puzzles/train_green.svg';
+  static const shadowRocket = 'assets/images/puzzles/shadow_rocket.svg';
+  static const scale = 'assets/images/puzzles/scale.svg';
+  static const puzzleCard = 'assets/images/puzzles/puzzle_card.svg';
+  static const plus = 'assets/images/puzzles/sign_plus.svg';
+  static const equals = 'assets/images/puzzles/sign_equals.svg';
+  static const arrow = 'assets/images/puzzles/sign_arrow.svg';
+  static const question = 'assets/images/puzzles/sign_question.svg';
+
+  static String number(int value) => 'assets/images/puzzles/number_$value.svg';
+}
+
+class _PuzzleSvg extends StatelessWidget {
+  const _PuzzleSvg({
+    required this.asset,
+    this.size = 48,
+  });
+
+  final String asset;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+class _ChoiceArt extends StatelessWidget {
+  const _ChoiceArt({
+    required this.asset,
+    required this.choiceId,
+    required this.color,
+  });
+
+  final String? asset;
+  final String choiceId;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    if (asset != null) {
+      return _PuzzleSvg(asset: asset!, size: 40);
+    }
+
+    if (_isPositiveNumber(choiceId)) {
+      return _NumberGlyph(
+        value: int.parse(choiceId),
+        size: 40,
+      );
+    }
+
+    if (_isSumExpression(choiceId)) {
+      return _ExpressionGlyph(
+        expression: choiceId,
+        color: color,
+      );
+    }
+
+    if (_isDirection(choiceId)) {
+      return _DirectionGlyph(
+        direction: choiceId,
+        color: color,
+        size: 34,
+      );
+    }
+
+    return const _PuzzleSvg(asset: _PuzzleAssets.puzzleCard, size: 40);
+  }
+}
+
+bool _isPositiveNumber(String value) {
+  final parsed = int.tryParse(value);
+  return parsed != null && parsed >= 0 && parsed <= 20;
+}
+
+bool _isSumExpression(String value) {
+  return RegExp(r'^\d+(\+\d+)+$').hasMatch(value);
+}
+
+bool _isDirection(String value) {
+  return value == 'left' ||
+      value == 'right' ||
+      value == 'up' ||
+      value == 'down';
+}
+
+class _NumberGlyph extends StatelessWidget {
+  const _NumberGlyph({
+    required this.value,
+    this.size = 42,
+  });
+
+  final int value;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      key: ValueKey('number-svg-$value'),
+      _PuzzleAssets.number(value.clamp(0, 20).toInt()),
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+}
+
+class _ExpressionGlyph extends StatelessWidget {
+  const _ExpressionGlyph({
+    required this.expression,
+    required this.color,
+  });
+
+  final String expression;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = expression.split('+');
+
+    return FittedBox(
+      key: ValueKey('expression-svg-$expression'),
+      fit: BoxFit.contain,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var index = 0; index < parts.length; index += 1) ...[
+            _NumberGlyph(value: int.parse(parts[index]), size: 28),
+            if (index < parts.length - 1)
+              _SignGlyph(
+                asset: _PuzzleAssets.plus,
+                color: color,
+                size: 18,
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DirectionGlyph extends StatelessWidget {
+  const _DirectionGlyph({
+    required this.direction,
+    required this.color,
+    required this.size,
+  });
+
+  final String direction;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: switch (direction) {
+        'up' => -1.5708,
+        'down' => 1.5708,
+        'left' => 3.1416,
+        _ => 0,
+      },
+      child: _SignGlyph(
+        key: ValueKey('direction-svg-$direction'),
+        asset: _PuzzleAssets.arrow,
+        color: color,
+        size: size,
+      ),
+    );
   }
 }
 
@@ -683,19 +1091,24 @@ class _PuzzleVisual extends StatelessWidget {
         borderRadius: BorderRadius.circular(26),
         border: Border.all(color: const Color(0xFFFFFFFF), width: 2),
       ),
-      child: switch (challenge.id) {
-        'shape-path' => const _ShapePatternVisual(),
-        'toy-count' => const _ToyCountVisual(),
-        'odd-card' => const _OddCardVisual(),
-        'logic-train' => const _LogicTrainVisual(),
-        'sticker-sum' => const _StickerSumVisual(),
-        'memory-pairs' => const _MemoryPairsVisual(),
-        'shadow-match' => const _ShadowMatchVisual(),
-        'balance-scale' => const _BalanceScaleVisual(),
+      child: switch (challenge.visualId) {
+        'shape-path' => _ShapePatternVisual(tokens: challenge.tokens),
+        'fruit-pattern' => _FruitPatternVisual(tokens: challenge.tokens),
+        'toy-count' => _ToyCountVisual(numbers: challenge.numbers),
+        'odd-card' => _OddCardVisual(tokens: challenge.tokens),
+        'logic-train' => _LogicTrainVisual(tokens: challenge.tokens),
+        'sticker-sum' => _StickerSumVisual(numbers: challenge.numbers),
+        'memory-pairs' => _MemoryPairsVisual(tokens: challenge.tokens),
+        'lock-key' => _LockKeyVisual(tokens: challenge.tokens),
+        'shadow-match' => _ShadowMatchVisual(tokens: challenge.tokens),
+        'balance-scale' => _BalanceScaleVisual(numbers: challenge.numbers),
         'shape-rotation' => const _ShapeRotationVisual(),
-        'code-grid' => const _CodeGridVisual(),
-        'number-bridge' => const _NumberBridgeVisual(),
-        'detail-count' => const _DetailCountVisual(),
+        'code-grid' => _CodeGridVisual(numbers: challenge.numbers),
+        'number-bridge' => _NumberBridgeVisual(numbers: challenge.numbers),
+        'detail-count' => _DetailCountVisual(numbers: challenge.numbers),
+        'space-sequence' => _SpaceSequenceVisual(tokens: challenge.tokens),
+        'shape-stack' => _ShapeStackVisual(tokens: challenge.tokens),
+        'path-maze' => _PathMazeVisual(tokens: challenge.tokens),
         _ => const _DefaultPuzzleVisual(),
       },
     );
@@ -703,138 +1116,218 @@ class _PuzzleVisual extends StatelessWidget {
 }
 
 class _ShapePatternVisual extends StatelessWidget {
-  const _ShapePatternVisual();
+  const _ShapePatternVisual({required this.tokens});
+
+  final List<String> tokens;
 
   @override
   Widget build(BuildContext context) {
-    return const _VisualRow(
+    final first = tokens.elementAtOrNull(0) ?? 'circle';
+    final second = tokens.elementAtOrNull(1) ?? 'square';
+
+    return _VisualRow(
       children: [
-        _ShapeToken.circle(color: Color(0xFF18B7AE)),
-        _ShapeToken.square(color: Color(0xFF5C8EF7)),
-        _ShapeToken.circle(color: Color(0xFF18B7AE)),
-        _ShapeToken.square(color: Color(0xFF5C8EF7)),
-        _QuestionToken(),
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        const _QuestionToken(),
+      ],
+    );
+  }
+}
+
+class _FruitPatternVisual extends StatelessWidget {
+  const _FruitPatternVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final first = tokens.elementAtOrNull(0) ?? 'apple';
+    final second = tokens.elementAtOrNull(1) ?? 'banana';
+
+    return _VisualRow(
+      children: [
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        const _QuestionToken(),
       ],
     );
   }
 }
 
 class _ToyCountVisual extends StatelessWidget {
-  const _ToyCountVisual();
+  const _ToyCountVisual({required this.numbers});
+
+  final List<int> numbers;
 
   @override
   Widget build(BuildContext context) {
-    return const _ShelfScene(
+    final cubes = numbers.elementAtOrNull(0) ?? 1;
+    final balls = numbers.elementAtOrNull(1) ?? 1;
+
+    return _ShelfScene(
       children: [
-        _CubeToy(color: Color(0xFFFFB84D)),
-        _CubeToy(color: Color(0xFF5C8EF7)),
-        _BallToy(color: Color(0xFFFF6F6B)),
+        for (var index = 0; index < cubes; index += 1)
+          _CubeToy(
+            color: index.isEven
+                ? const Color(0xFFFFB84D)
+                : const Color(0xFF5C8EF7),
+            asset: index.isEven
+                ? _PuzzleAssets.cubeOrange
+                : _PuzzleAssets.cubeBlue,
+          ),
+        for (var index = 0; index < balls; index += 1)
+          const _BallToy(color: Color(0xFFFF6F6B)),
       ],
     );
   }
 }
 
 class _OddCardVisual extends StatelessWidget {
-  const _OddCardVisual();
+  const _OddCardVisual({required this.tokens});
+
+  final List<String> tokens;
 
   @override
   Widget build(BuildContext context) {
-    return const _VisualRow(
+    final items = tokens.isEmpty
+        ? const ['apple', 'banana', 'pear', 'ball']
+        : tokens.take(4).toList(growable: false);
+
+    return _VisualRow(
       children: [
-        _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
-        _ObjectCard(icon: Icons.spa_rounded, color: Color(0xFF35B37E)),
-        _ObjectCard(
-            icon: Icons.sports_basketball_rounded, color: Color(0xFFFF9F43)),
-        _ObjectCard(icon: Icons.eco_rounded, color: Color(0xFFFFC739)),
+        for (final item in items) _TokenCard(token: item),
       ],
     );
   }
 }
 
 class _LogicTrainVisual extends StatelessWidget {
-  const _LogicTrainVisual();
+  const _LogicTrainVisual({required this.tokens});
+
+  final List<String> tokens;
 
   @override
   Widget build(BuildContext context) {
-    return const _TrainRow(
-      colors: [
-        Color(0xFFFF6F6B),
-        Color(0xFF5C8EF7),
-        Color(0xFF5C8EF7),
-        Color(0xFFFF6F6B),
-        Color(0xFF5C8EF7),
-        Color(0xFF5C8EF7),
-      ],
-    );
+    final first = tokens.elementAtOrNull(0) ?? 'red';
+    final second = tokens.elementAtOrNull(1) ?? 'blue';
+
+    return _TrainRow(tokens: [first, second, second, first, second, second]);
   }
 }
 
 class _StickerSumVisual extends StatelessWidget {
-  const _StickerSumVisual();
+  const _StickerSumVisual({required this.numbers});
+
+  final List<int> numbers;
 
   @override
   Widget build(BuildContext context) {
-    return const _VisualRow(
+    final first = numbers.elementAtOrNull(0) ?? 3;
+    final second = numbers.elementAtOrNull(1) ?? 2;
+
+    return _VisualRow(
       children: [
-        _StickerGroup(count: 3, color: Color(0xFFFFC739)),
-        _MathSign('+'),
-        _StickerGroup(count: 2, color: Color(0xFF9C6AF2)),
-        _MathSign('='),
-        _QuestionToken(),
+        _StickerGroup(count: first, color: const Color(0xFFFFC739)),
+        const _MathSign('+'),
+        _StickerGroup(count: second, color: const Color(0xFF9C6AF2)),
+        const _MathSign('='),
+        const _QuestionToken(),
       ],
     );
   }
 }
 
 class _MemoryPairsVisual extends StatelessWidget {
-  const _MemoryPairsVisual();
+  const _MemoryPairsVisual({required this.tokens});
+
+  final List<String> tokens;
 
   @override
   Widget build(BuildContext context) {
-    return const _VisualRow(
+    final clue = tokens.elementAtOrNull(0) ?? 'key';
+
+    return _VisualRow(
       children: [
-        _ObjectCard(icon: Icons.key_rounded, color: Color(0xFFFFB84D)),
-        _MathSign('+'),
-        _QuestionToken(),
+        _TokenCard(token: clue),
+        const _MathSign('+'),
+        const _QuestionToken(),
+      ],
+    );
+  }
+}
+
+class _LockKeyVisual extends StatelessWidget {
+  const _LockKeyVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final clue = tokens.elementAtOrNull(0) ?? 'key';
+    final answer = tokens.elementAtOrNull(1) ?? 'lock';
+
+    return _VisualRow(
+      children: [
+        _TokenCard(token: clue),
+        const _MathSign('+'),
+        _TokenCard(token: answer),
       ],
     );
   }
 }
 
 class _ShadowMatchVisual extends StatelessWidget {
-  const _ShadowMatchVisual();
+  const _ShadowMatchVisual({required this.tokens});
+
+  final List<String> tokens;
 
   @override
   Widget build(BuildContext context) {
-    return const _VisualRow(
+    final token = tokens.elementAtOrNull(0) ?? 'rocket';
+
+    return _VisualRow(
       children: [
-        _ShadowToken(),
-        _MathSign('->'),
-        _ObjectCard(
-            icon: Icons.rocket_launch_rounded, color: Color(0xFF18B7AE)),
+        _ShadowToken(token: token),
+        const _MathSign('->'),
+        _TokenCard(token: token),
       ],
     );
   }
 }
 
 class _BalanceScaleVisual extends StatelessWidget {
-  const _BalanceScaleVisual();
+  const _BalanceScaleVisual({required this.numbers});
+
+  final List<int> numbers;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final left = numbers.elementAtOrNull(0) ?? 2;
+    final known = numbers.elementAtOrNull(1) ?? 1;
+
+    return Column(
       children: [
         _VisualRow(
           children: [
-            _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
-            _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
-            _MathSign('='),
-            _ObjectCard(icon: Icons.apple_rounded, color: Color(0xFFFF6F6B)),
-            _QuestionToken(),
+            _MiniGroup(
+              token: 'apple',
+              count: left,
+            ),
+            const _MathSign('='),
+            _MiniGroup(
+              token: 'apple',
+              count: known,
+            ),
+            const _QuestionToken(),
           ],
         ),
-        SizedBox(height: 8),
-        Icon(Icons.balance_rounded, color: Color(0xFF18B7AE), size: 42),
+        const SizedBox(height: 8),
+        const _PuzzleSvg(asset: _PuzzleAssets.scale, size: 84),
       ],
     );
   }
@@ -856,61 +1349,273 @@ class _ShapeRotationVisual extends StatelessWidget {
 }
 
 class _CodeGridVisual extends StatelessWidget {
-  const _CodeGridVisual();
+  const _CodeGridVisual({required this.numbers});
+
+  final List<int> numbers;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final safeNumbers =
+        numbers.length >= 6 ? numbers : const [2, 4, 6, 3, 5, 7, 2];
+
+    return Column(
       children: [
-        _NumberGridRow(values: ['2', '4', '6'], color: Color(0xFF5C8EF7)),
-        SizedBox(height: 8),
-        _NumberGridRow(values: ['3', '5', '?'], color: Color(0xFF18B7AE)),
+        _NumberGridRow(
+          values: [
+            '${safeNumbers[0]}',
+            '${safeNumbers[1]}',
+            '${safeNumbers[2]}',
+          ],
+          color: const Color(0xFF5C8EF7),
+        ),
+        const SizedBox(height: 8),
+        _NumberGridRow(
+          values: ['${safeNumbers[3]}', '${safeNumbers[4]}', '?'],
+          color: const Color(0xFF18B7AE),
+        ),
       ],
     );
   }
 }
 
 class _NumberBridgeVisual extends StatelessWidget {
-  const _NumberBridgeVisual();
+  const _NumberBridgeVisual({required this.numbers});
+
+  final List<int> numbers;
 
   @override
   Widget build(BuildContext context) {
-    return const _VisualRow(
+    final safeNumbers = numbers.length >= 4 ? numbers : const [4, 2, 1, 7];
+
+    return _VisualRow(
       children: [
-        _NumberBubble('4', color: Color(0xFF5C8EF7)),
-        _NumberBubble('2', color: Color(0xFF18B7AE)),
-        _NumberBubble('1', color: Color(0xFFFFB84D)),
-        _MathSign('->'),
-        _NumberBubble('7', color: Color(0xFFFF6F6B)),
+        _NumberBubble('${safeNumbers[0]}', color: const Color(0xFF5C8EF7)),
+        _NumberBubble('${safeNumbers[1]}', color: const Color(0xFF18B7AE)),
+        _NumberBubble('${safeNumbers[2]}', color: const Color(0xFFFFB84D)),
+        const _MathSign('->'),
+        _NumberBubble('${safeNumbers[3]}', color: const Color(0xFFFF6F6B)),
       ],
     );
   }
 }
 
 class _DetailCountVisual extends StatelessWidget {
-  const _DetailCountVisual();
+  const _DetailCountVisual({required this.numbers});
+
+  final List<int> numbers;
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
+    final red = numbers.elementAtOrNull(0) ?? 3;
+    final blue = numbers.elementAtOrNull(1) ?? 2;
+    final green = numbers.elementAtOrNull(2) ?? 1;
+
+    return Column(
       children: [
         _VisualRow(
           children: [
-            _ShapeToken.circle(color: Color(0xFFFF6F6B)),
-            _ShapeToken.circle(color: Color(0xFFFF6F6B)),
-            _ShapeToken.circle(color: Color(0xFFFF6F6B)),
+            for (var index = 0; index < red; index += 1)
+              _ShapeToken.circle(
+                key: ValueKey('detail-red-circle-${index + 1}'),
+                color: const Color(0xFFFF6F6B),
+              ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         _VisualRow(
           children: [
-            _ShapeToken.square(color: Color(0xFF5C8EF7)),
-            _ShapeToken.square(color: Color(0xFF5C8EF7)),
-            _ShapeToken.star(color: Color(0xFF35B37E)),
+            for (var index = 0; index < blue; index += 1)
+              _ShapeToken.square(
+                key: ValueKey('detail-blue-square-${index + 1}'),
+                color: const Color(0xFF5C8EF7),
+              ),
+            for (var index = 0; index < green; index += 1)
+              const _ShapeToken.star(color: Color(0xFF35B37E)),
           ],
         ),
       ],
     );
+  }
+}
+
+class _SpaceSequenceVisual extends StatelessWidget {
+  const _SpaceSequenceVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final first = tokens.elementAtOrNull(0) ?? 'rocket';
+    final second = tokens.elementAtOrNull(1) ?? 'planet';
+
+    return _VisualRow(
+      children: [
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        const _QuestionToken(),
+      ],
+    );
+  }
+}
+
+class _ShapeStackVisual extends StatelessWidget {
+  const _ShapeStackVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final first = tokens.elementAtOrNull(0) ?? 'square';
+    final second = tokens.elementAtOrNull(1) ?? 'circle';
+
+    return _VisualRow(
+      children: [
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        _TokenCard(token: first),
+        _TokenCard(token: second),
+        const _QuestionToken(),
+      ],
+    );
+  }
+}
+
+class _PathMazeVisual extends StatelessWidget {
+  const _PathMazeVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final start = tokens.elementAtOrNull(0) ?? 'rocket';
+    final target = tokens.elementAtOrNull(1) ?? 'planet';
+    final direction = tokens.elementAtOrNull(2) ?? 'right';
+
+    return SizedBox(
+      key: const ValueKey('path-maze-visual'),
+      height: 138,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _MazePathPainter(direction: direction),
+            ),
+          ),
+          Positioned(
+            left: 8,
+            bottom: 18,
+            child: _TokenCard(token: start),
+          ),
+          Positioned(
+            right: _targetRight(direction),
+            top: _targetTop(direction),
+            bottom: _targetBottom(direction),
+            child: _TokenCard(token: target),
+          ),
+          Positioned(
+            left: 80,
+            bottom: 34,
+            child: _MazeFork(direction: direction),
+          ),
+        ],
+      ),
+    );
+  }
+
+  double _targetRight(String direction) => direction == 'left' ? 110 : 10;
+
+  double? _targetTop(String direction) => switch (direction) {
+        'up' => 4,
+        'left' || 'right' => 14,
+        _ => null,
+      };
+
+  double? _targetBottom(String direction) => direction == 'down' ? 4 : null;
+}
+
+class _MazeFork extends StatelessWidget {
+  const _MazeFork({required this.direction});
+
+  final String direction;
+
+  @override
+  Widget build(BuildContext context) {
+    final directions = ['up', 'right', 'down', 'left'];
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (final item in directions)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: item == direction
+                    ? const Color(0xFF18B7AE).withValues(alpha: 0.18)
+                    : Colors.white.withValues(alpha: 0.76),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              alignment: Alignment.center,
+              child: _DirectionGlyph(
+                direction: item,
+                color: item == direction
+                    ? const Color(0xFF18B7AE)
+                    : const Color(0xFF9FB7BB),
+                size: 23,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _MazePathPainter extends CustomPainter {
+  const _MazePathPainter({required this.direction});
+
+  final String direction;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final basePaint = Paint()
+      ..color = const Color(0xFFBFEAE4)
+      ..strokeWidth = 13
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final activePaint = Paint()
+      ..color = const Color(0xFF18B7AE)
+      ..strokeWidth = 14
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final start = Offset(62, size.height - 44);
+    final fork = Offset(size.width * 0.42, size.height - 44);
+    final endpoints = {
+      'up': Offset(size.width - 62, 38),
+      'right': Offset(size.width - 62, 48),
+      'down': Offset(size.width - 62, size.height - 34),
+      'left': Offset(size.width * 0.58, 38),
+    };
+
+    for (final entry in endpoints.entries) {
+      final path = Path()
+        ..moveTo(start.dx, start.dy)
+        ..lineTo(fork.dx, fork.dy)
+        ..lineTo(entry.value.dx, entry.value.dy);
+      canvas.drawPath(path, entry.key == direction ? activePaint : basePaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_MazePathPainter oldDelegate) {
+    return oldDelegate.direction != direction;
   }
 }
 
@@ -922,11 +1627,7 @@ class _DefaultPuzzleVisual extends StatelessWidget {
     return const SizedBox(
       height: 82,
       child: Center(
-        child: Icon(
-          Icons.psychology_alt_rounded,
-          color: Color(0xFF18B7AE),
-          size: 54,
-        ),
+        child: _PuzzleSvg(asset: _PuzzleAssets.puzzleCard, size: 64),
       ),
     );
   }
@@ -949,9 +1650,97 @@ class _VisualRow extends StatelessWidget {
   }
 }
 
+class _TokenCard extends StatelessWidget {
+  const _TokenCard({required this.token});
+
+  final String token;
+
+  @override
+  Widget build(BuildContext context) {
+    final child = switch (token) {
+      'circle' => const _ShapeToken.circle(color: Color(0xFF18B7AE)),
+      'square' => const _ShapeToken.square(color: Color(0xFF5C8EF7)),
+      'triangle' => const _ShapeToken.triangle(color: Color(0xFF9C6AF2)),
+      'star' => const _ShapeToken.star(color: Color(0xFFFFC739)),
+      _ => _ObjectCard(
+          asset: _assetForToken(token) ?? _PuzzleAssets.puzzleCard,
+          color: _colorForToken(token),
+        ),
+    };
+
+    return KeyedSubtree(
+      key: ValueKey('visual-token-$token'),
+      child: child,
+    );
+  }
+}
+
+String? _assetForToken(String token) {
+  return switch (token) {
+    'apple' => _PuzzleAssets.apple,
+    'banana' => _PuzzleAssets.banana,
+    'pear' => _PuzzleAssets.pear,
+    'ball' => _PuzzleAssets.ball,
+    'rocket' => _PuzzleAssets.rocket,
+    'planet' => _PuzzleAssets.planet,
+    'lock' => _PuzzleAssets.lock,
+    'key' => _PuzzleAssets.key,
+    'shoe' || 'foot' => _PuzzleAssets.shoe,
+    'cloud' || 'rain' => _PuzzleAssets.cloud,
+    _ => null,
+  };
+}
+
+Color _colorForToken(String token) {
+  return switch (token) {
+    'apple' || 'red' => const Color(0xFFFF6F6B),
+    'banana' || 'star' => const Color(0xFFFFC739),
+    'pear' || 'green' => const Color(0xFF35B37E),
+    'ball' => const Color(0xFFFF9F43),
+    'rocket' || 'key' || 'lock' => const Color(0xFF18B7AE),
+    'planet' || 'blue' || 'square' => const Color(0xFF5C8EF7),
+    'shoe' || 'foot' || 'triangle' => const Color(0xFF9C6AF2),
+    'cloud' || 'rain' => const Color(0xFF8DD7FF),
+    'circle' => const Color(0xFF18B7AE),
+    _ => const Color(0xFFFFB84D),
+  };
+}
+
+class _MiniGroup extends StatelessWidget {
+  const _MiniGroup({
+    required this.token,
+    required this.count,
+  });
+
+  final String token;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final asset = _assetForToken(token) ?? _PuzzleAssets.puzzleCard;
+
+    return SizedBox(
+      width: 76,
+      height: 58,
+      child: Stack(
+        children: [
+          for (var index = 0; index < count; index += 1)
+            Positioned(
+              left: (index % 3) * 22,
+              top: (index ~/ 3) * 20,
+              child: _PuzzleSvg(asset: asset, size: 32),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ShapeToken extends StatelessWidget {
-  const _ShapeToken.circle({required this.color}) : shape = _TokenShape.circle;
-  const _ShapeToken.square({required this.color}) : shape = _TokenShape.square;
+  const _ShapeToken.circle({required this.color, super.key})
+      : shape = _TokenShape.circle;
+  const _ShapeToken.square({required this.color, super.key})
+      : shape = _TokenShape.square;
   const _ShapeToken.star({required this.color}) : shape = _TokenShape.star;
   const _ShapeToken.triangle({required this.color})
       : shape = _TokenShape.triangle;
@@ -961,11 +1750,13 @@ class _ShapeToken extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = switch (shape) {
-      _TokenShape.circle => Icons.circle,
-      _TokenShape.square => Icons.square_rounded,
-      _TokenShape.star => Icons.star_rounded,
-      _TokenShape.triangle => Icons.change_history_rounded,
+    final svgKey =
+        key is ValueKey ? ValueKey('${(key! as ValueKey).value}-svg') : null;
+    final asset = switch (shape) {
+      _TokenShape.circle => _PuzzleAssets.circle,
+      _TokenShape.square => _PuzzleAssets.square,
+      _TokenShape.star => _PuzzleAssets.star,
+      _TokenShape.triangle => _PuzzleAssets.triangle,
     };
 
     return Container(
@@ -982,7 +1773,14 @@ class _ShapeToken extends StatelessWidget {
           ),
         ],
       ),
-      child: Icon(icon, color: color, size: 32),
+      child: SvgPicture.asset(
+        key: svgKey,
+        asset,
+        width: 40,
+        height: 40,
+        fit: BoxFit.contain,
+        colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+      ),
     );
   }
 }
@@ -990,10 +1788,14 @@ class _ShapeToken extends StatelessWidget {
 enum _TokenShape { circle, square, star, triangle }
 
 class _ShadowToken extends StatelessWidget {
-  const _ShadowToken();
+  const _ShadowToken({required this.token});
+
+  final String token;
 
   @override
   Widget build(BuildContext context) {
+    final asset = _assetForToken(token) ?? _PuzzleAssets.shadowRocket;
+
     return Container(
       width: 62,
       height: 62,
@@ -1001,10 +1803,15 @@ class _ShadowToken extends StatelessWidget {
         color: const Color(0xFF164C55).withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Icon(
-        Icons.rocket_launch_rounded,
-        color: Color(0xFF164C55),
-        size: 38,
+      child: SvgPicture.asset(
+        asset,
+        width: 54,
+        height: 54,
+        fit: BoxFit.contain,
+        colorFilter: const ColorFilter.mode(
+          Color(0xFF164C55),
+          BlendMode.srcIn,
+        ),
       ),
     );
   }
@@ -1035,12 +1842,10 @@ class _QuestionToken extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
       ),
       alignment: Alignment.center,
-      child: Text(
-        '?',
-        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: const Color(0xFFFF9D2E),
-              fontWeight: FontWeight.w900,
-            ),
+      child: const _SignGlyph(
+        asset: _PuzzleAssets.question,
+        color: Color(0xFFFF9D2E),
+        size: 34,
       ),
     );
   }
@@ -1071,9 +1876,13 @@ class _ShelfScene extends StatelessWidget {
 }
 
 class _CubeToy extends StatelessWidget {
-  const _CubeToy({required this.color});
+  const _CubeToy({
+    required this.color,
+    required this.asset,
+  });
 
   final Color color;
+  final String asset;
 
   @override
   Widget build(BuildContext context) {
@@ -1093,7 +1902,7 @@ class _CubeToy extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(Icons.auto_awesome_rounded, color: Colors.white),
+        child: _PuzzleSvg(asset: asset, size: 44),
       ),
     );
   }
@@ -1120,18 +1929,18 @@ class _BallToy extends StatelessWidget {
           ),
         ],
       ),
-      child: const Icon(Icons.sports_basketball_rounded, color: Colors.white),
+      child: const _PuzzleSvg(asset: _PuzzleAssets.ball, size: 46),
     );
   }
 }
 
 class _ObjectCard extends StatelessWidget {
   const _ObjectCard({
-    required this.icon,
+    required this.asset,
     required this.color,
   });
 
-  final IconData icon;
+  final String asset;
   final Color color;
 
   @override
@@ -1143,15 +1952,15 @@ class _ObjectCard extends StatelessWidget {
         color: color.withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Icon(icon, color: color, size: 33),
+      child: _PuzzleSvg(asset: asset, size: 48),
     );
   }
 }
 
 class _TrainRow extends StatelessWidget {
-  const _TrainRow({required this.colors});
+  const _TrainRow({required this.tokens});
 
-  final List<Color> colors;
+  final List<String> tokens;
 
   @override
   Widget build(BuildContext context) {
@@ -1159,8 +1968,8 @@ class _TrainRow extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          for (final color in colors) ...[
-            _TrainCar(color: color),
+          for (final token in tokens) ...[
+            _TrainCar(color: _colorForToken(token)),
             const SizedBox(width: 6),
           ],
           const _QuestionToken(),
@@ -1192,12 +2001,28 @@ class _TrainCar extends StatelessWidget {
         const Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.circle, size: 9, color: Color(0xFF164C55)),
+            _TrainWheel(),
             SizedBox(width: 18),
-            Icon(Icons.circle, size: 9, color: Color(0xFF164C55)),
+            _TrainWheel(),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _TrainWheel extends StatelessWidget {
+  const _TrainWheel();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 9,
+      height: 9,
+      decoration: const BoxDecoration(
+        color: Color(0xFF164C55),
+        shape: BoxShape.circle,
+      ),
     );
   }
 }
@@ -1222,7 +2047,7 @@ class _StickerGroup extends StatelessWidget {
             Positioned(
               left: (index % 3) * 22,
               top: (index ~/ 3) * 20,
-              child: Icon(Icons.star_rounded, color: color, size: 32),
+              child: const _PuzzleSvg(asset: _PuzzleAssets.star, size: 32),
             ),
         ],
       ),
@@ -1237,12 +2062,41 @@ class _MathSign extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      sign,
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: const Color(0xFF164C55),
-            fontWeight: FontWeight.w900,
-          ),
+    final asset = switch (sign) {
+      '+' => _PuzzleAssets.plus,
+      '=' => _PuzzleAssets.equals,
+      '->' => _PuzzleAssets.arrow,
+      _ => _PuzzleAssets.question,
+    };
+
+    return _SignGlyph(
+      asset: asset,
+      color: const Color(0xFF164C55),
+      size: 32,
+    );
+  }
+}
+
+class _SignGlyph extends StatelessWidget {
+  const _SignGlyph({
+    required this.asset,
+    required this.color,
+    this.size = 32,
+    super.key,
+  });
+
+  final String asset;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SvgPicture.asset(
+      asset,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
     );
   }
 }
@@ -1285,13 +2139,16 @@ class _NumberBubble extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
       ),
       alignment: Alignment.center,
-      child: Text(
-        value,
-        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+      child: value == '?'
+          ? _SignGlyph(
+              asset: _PuzzleAssets.question,
               color: color,
-              fontWeight: FontWeight.w900,
+              size: 30,
+            )
+          : _NumberGlyph(
+              value: int.tryParse(value) ?? 0,
+              size: 40,
             ),
-      ),
     );
   }
 }
@@ -1309,30 +2166,57 @@ class _LessonFeedback extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isCorrect ? const Color(0xFFDDF8F4) : const Color(0xFFFFEFE4),
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            isCorrect ? Icons.emoji_events_rounded : Icons.tips_and_updates,
-            color:
-                isCorrect ? const Color(0xFF18B7AE) : const Color(0xFFFF8A42),
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: SizeTransition(
+            sizeFactor: animation,
+            alignment: Alignment.topCenter,
+            child: child,
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              isCorrect
-                  ? l10n.answerCorrect(l10n.explanationForChallenge(challenge))
-                  : l10n.answerAlmost(l10n.hintForChallenge(challenge)),
-              style: Theme.of(context).textTheme.bodyMedium,
+        );
+      },
+      child: Container(
+        key: ValueKey('lesson-feedback-$isCorrect'),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isCorrect ? const Color(0xFFDDF8F4) : const Color(0xFFFFEFE4),
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.82, end: 1),
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOutBack,
+              builder: (context, scale, child) {
+                return Transform.scale(
+                  scale: scale,
+                  child: child,
+                );
+              },
+              child: Icon(
+                isCorrect ? Icons.emoji_events_rounded : Icons.tips_and_updates,
+                color: isCorrect
+                    ? const Color(0xFF18B7AE)
+                    : const Color(0xFFFF8A42),
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                isCorrect
+                    ? l10n
+                        .answerCorrect(l10n.explanationForChallenge(challenge))
+                    : l10n.lessonRetryFeedback,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1341,10 +2225,20 @@ class _LessonFeedback extends StatelessWidget {
 class _LessonCompleteView extends StatelessWidget {
   const _LessonCompleteView({
     required this.lesson,
+    required this.totalQuestions,
+    required this.usedHints,
+    required this.wrongAttempts,
+    required this.nextLessonId,
+    required this.onNextLessonSelected,
     required this.onBackToMap,
   });
 
   final Lesson lesson;
+  final int totalQuestions;
+  final int usedHints;
+  final int wrongAttempts;
+  final String? nextLessonId;
+  final ValueChanged<String> onNextLessonSelected;
   final VoidCallback onBackToMap;
 
   @override
@@ -1363,6 +2257,7 @@ class _LessonCompleteView extends StatelessWidget {
                 padding: const EdgeInsets.all(22),
                 child: Column(
                   children: [
+                    const _RewardPolishMarker(),
                     const _StickerReward(),
                     const SizedBox(height: 18),
                     Text(
@@ -1383,6 +2278,12 @@ class _LessonCompleteView extends StatelessWidget {
                     _StickerUnlockCard(
                       title: l10n.lessonStickerUnlockedTitle,
                       body: l10n.lessonStickerUnlockedBody,
+                    ),
+                    const SizedBox(height: 18),
+                    _LessonReviewCard(
+                      totalQuestions: totalQuestions,
+                      usedHints: usedHints,
+                      wrongAttempts: wrongAttempts,
                     ),
                     const SizedBox(height: 18),
                     Row(
@@ -1425,9 +2326,20 @@ class _LessonCompleteView extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 22),
+                    if (nextLessonId != null) ...[
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: () => onNextLessonSelected(nextLessonId!),
+                          icon: const Icon(Icons.arrow_forward_rounded),
+                          label: Text(l10n.lessonNextRecommendedButton),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
                     SizedBox(
                       width: double.infinity,
-                      child: FilledButton.icon(
+                      child: OutlinedButton.icon(
                         onPressed: onBackToMap,
                         icon: const Icon(Icons.home_rounded),
                         label: Text(l10n.lessonBackToMap),
@@ -1449,50 +2361,77 @@ class _StickerReward extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 176,
-      height: 176,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 164,
-            height: 164,
-            decoration: const BoxDecoration(
-              color: Color(0xFFFFF3D1),
-              shape: BoxShape.circle,
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 620),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        final scale = 0.78 + (value * 0.22);
+        final turns = (1 - value) * -0.035;
+        return Opacity(
+          opacity: value.clamp(0.0, 1.0),
+          child: Transform.rotate(
+            angle: turns,
+            child: Transform.scale(
+              scale: scale,
+              child: child,
             ),
           ),
-          Container(
-            width: 132,
-            height: 132,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFFFC739).withValues(alpha: 0.25),
-                  blurRadius: 22,
-                  offset: const Offset(0, 10),
-                ),
-              ],
+        );
+      },
+      child: SizedBox(
+        width: 176,
+        height: 176,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              width: 164,
+              height: 164,
+              decoration: const BoxDecoration(
+                color: Color(0xFFFFF3D1),
+                shape: BoxShape.circle,
+              ),
             ),
-            child: const Image(
-              image: AssetImage('assets/images/generated/sticker.png'),
-              fit: BoxFit.contain,
+            Container(
+              width: 132,
+              height: 132,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(32),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFFFC739).withValues(alpha: 0.25),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: const Image(
+                image: AssetImage('assets/images/generated/sticker.png'),
+                fit: BoxFit.contain,
+              ),
             ),
-          ),
-          const Positioned(
-            top: 12,
-            right: 14,
-            child: Icon(Icons.star_rounded, color: Color(0xFFFFC739), size: 32),
-          ),
-          const Positioned(
-            left: 12,
-            bottom: 22,
-            child: Icon(Icons.star_rounded, color: Color(0xFFFFC739), size: 24),
-          ),
-        ],
+            const Positioned(
+              top: 12,
+              right: 14,
+              child: Icon(
+                Icons.star_rounded,
+                color: Color(0xFFFFC739),
+                size: 32,
+              ),
+            ),
+            const Positioned(
+              left: 12,
+              bottom: 22,
+              child: Icon(
+                Icons.star_rounded,
+                color: Color(0xFFFFC739),
+                size: 24,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1560,6 +2499,150 @@ class _StickerUnlockCard extends StatelessWidget {
   }
 }
 
+class _LessonReviewCard extends StatelessWidget {
+  const _LessonReviewCard({
+    required this.totalQuestions,
+    required this.usedHints,
+    required this.wrongAttempts,
+  });
+
+  final int totalQuestions;
+  final int usedHints;
+  final int wrongAttempts;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final perfectRun = usedHints == 0 && wrongAttempts == 0;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE8FAF8),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFC7F1EC)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: const BoxDecoration(
+                  color: Color(0xFF18B7AE),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.insights_rounded,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.lessonReviewTitle,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: const Color(0xFF164C55),
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      perfectRun
+                          ? l10n.lessonReviewPerfectBody
+                          : l10n.lessonReviewSupportBody,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF426A70),
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: _ReviewMetric(
+                  value: '$totalQuestions',
+                  label: l10n.lessonReviewQuestionsLabel,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ReviewMetric(
+                  value: '$usedHints',
+                  label: l10n.lessonReviewHintsLabel,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ReviewMetric(
+                  value: '$wrongAttempts',
+                  label: l10n.lessonReviewMistakesLabel,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReviewMetric extends StatelessWidget {
+  const _ReviewMetric({
+    required this.value,
+    required this.label,
+  });
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 72),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: const Color(0xFF164C55),
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: const Color(0xFF426A70),
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _RewardTile extends StatelessWidget {
   const _RewardTile({
     required this.icon,
@@ -1573,22 +2656,55 @@ class _RewardTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(22),
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.92, end: 1),
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutBack,
+      builder: (context, scale, child) {
+        return Transform.scale(
+          scale: scale,
+          child: child,
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(22),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 34),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 34),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-        ],
-      ),
+    );
+  }
+}
+
+class _PolishMarker extends StatelessWidget {
+  const _PolishMarker();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink(
+      key: ValueKey('lesson-polish-marker'),
+    );
+  }
+}
+
+class _RewardPolishMarker extends StatelessWidget {
+  const _RewardPolishMarker();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink(
+      key: ValueKey('reward-polish-marker'),
     );
   }
 }

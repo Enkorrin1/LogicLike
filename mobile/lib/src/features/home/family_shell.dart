@@ -12,10 +12,14 @@ import 'home_screen.dart';
 class FamilyShell extends StatefulWidget {
   const FamilyShell({
     required this.controller,
+    required this.currentLocale,
+    required this.onLocaleChanged,
     super.key,
   });
 
   final AppController controller;
+  final Locale currentLocale;
+  final Future<void> Function(Locale locale) onLocaleChanged;
 
   @override
   State<FamilyShell> createState() => _FamilyShellState();
@@ -26,6 +30,7 @@ class _FamilyShellState extends State<FamilyShell> {
   CourseDefinition? _selectedCourse;
   String? _activeLessonId;
   bool _showCollection = false;
+  bool _showDailyLesson = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +41,6 @@ class _FamilyShellState extends State<FamilyShell> {
         if (profile == null) {
           return const SizedBox.shrink();
         }
-
         final pages = [
           _showCollection
               ? CollectionScreen(
@@ -54,6 +58,7 @@ class _FamilyShellState extends State<FamilyShell> {
                       _selectedCourse = null;
                       _activeLessonId = null;
                       _showCollection = false;
+                      _showDailyLesson = true;
                       _selectedIndex = 1;
                     });
                   },
@@ -62,6 +67,7 @@ class _FamilyShellState extends State<FamilyShell> {
                       _selectedCourse = course;
                       _activeLessonId = null;
                       _showCollection = false;
+                      _showDailyLesson = false;
                       _selectedIndex = 1;
                     });
                   },
@@ -70,50 +76,101 @@ class _FamilyShellState extends State<FamilyShell> {
                       _selectedCourse = null;
                       _activeLessonId = lessonId;
                       _showCollection = false;
+                      _showDailyLesson = false;
                       _selectedIndex = 1;
                     });
                   },
                   onCollectionSelected: () {
                     setState(() {
                       _showCollection = true;
+                      _showDailyLesson = false;
                       _selectedIndex = 0;
                     });
                   },
                 ),
-          _selectedCourse != null && _activeLessonId == null
-              ? CourseScreen(
+          _showDailyLesson
+              ? LessonScreen(
+                  key: const ValueKey('daily-lesson'),
                   profile: profile,
-                  course: _selectedCourse!,
-                  onStartLesson: (lessonId) {
+                  lessonId: null,
+                  onLessonComplete: widget.controller.completeLesson,
+                  onNextLessonSelected: (lessonId) {
                     setState(() {
+                      _showDailyLesson = false;
                       _activeLessonId = lessonId;
+                      _showCollection = false;
+                      _selectedIndex = 1;
                     });
                   },
-                  onBackHome: () {
+                  onBackToMap: () {
                     setState(() {
-                      _selectedCourse = null;
+                      _showDailyLesson = false;
                       _selectedIndex = 0;
                     });
                   },
                 )
-              : LessonScreen(
-                  profile: profile,
-                  lessonId: _activeLessonId,
-                  onLessonComplete: widget.controller.completeLesson,
-                  onBackToMap: () {
-                    setState(() {
-                      if (_selectedCourse != null) {
-                        _activeLessonId = null;
-                      } else {
-                        _selectedIndex = 0;
-                      }
-                    });
-                  },
-                ),
+              : _selectedCourse != null && _activeLessonId == null
+                  ? CourseScreen(
+                      profile: profile,
+                      course: _selectedCourse!,
+                      onStartLesson: (lessonId) {
+                        setState(() {
+                          _activeLessonId = lessonId;
+                        });
+                      },
+                      onBackHome: () {
+                        setState(() {
+                          _selectedCourse = null;
+                          _selectedIndex = 0;
+                        });
+                      },
+                    )
+                  : _activeLessonId == null
+                      ? AllLevelsScreen(
+                          profile: profile,
+                          onStartLesson: (lessonId) {
+                            setState(() {
+                              _selectedCourse = null;
+                              _activeLessonId = lessonId;
+                              _showDailyLesson = false;
+                            });
+                          },
+                          onBackHome: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                            });
+                          },
+                        )
+                      : LessonScreen(
+                          key: ValueKey(_activeLessonId ?? 'daily-lesson'),
+                          profile: profile,
+                          lessonId: _activeLessonId,
+                          onLessonComplete: widget.controller.completeLesson,
+                          onNextLessonSelected: (lessonId) {
+                            setState(() {
+                              _activeLessonId = lessonId;
+                              _showCollection = false;
+                              _showDailyLesson = false;
+                              _selectedIndex = 1;
+                            });
+                          },
+                          onBackToMap: () {
+                            setState(() {
+                              if (_selectedCourse != null) {
+                                _activeLessonId = null;
+                              } else {
+                                _showDailyLesson = false;
+                                _selectedIndex = 0;
+                              }
+                            });
+                          },
+                        ),
           ParentScreen(
             profile: profile,
+            currentLocale: widget.currentLocale,
             onChildSelected: widget.controller.selectChildProfile,
             onChildAdded: widget.controller.addChildProfile,
+            onLocaleChanged: widget.onLocaleChanged,
             onSubscriptionPlanChanged: widget.controller.updateSubscriptionPlan,
             onResetProfile: widget.controller.resetFamilyProfile,
           ),
@@ -131,6 +188,9 @@ class _FamilyShellState extends State<FamilyShell> {
                 _selectedIndex = index;
                 if (index != 0) {
                   _showCollection = false;
+                }
+                if (index == 1 && _activeLessonId == null) {
+                  _showDailyLesson = false;
                 }
               });
             },

@@ -2,7 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../domain/adaptive_learning.dart';
 import '../../domain/family_profile.dart';
+import '../../domain/parent_weekly_report.dart';
 import '../../l10n/l10n.dart';
 import '../shared/practice_habit_strip.dart';
 
@@ -15,16 +17,20 @@ typedef AddChildProfile = Future<void> Function({
 class ParentScreen extends StatelessWidget {
   const ParentScreen({
     required this.profile,
+    required this.currentLocale,
     required this.onChildSelected,
     required this.onChildAdded,
+    required this.onLocaleChanged,
     required this.onSubscriptionPlanChanged,
     required this.onResetProfile,
     super.key,
   });
 
   final FamilyProfile profile;
+  final Locale currentLocale;
   final Future<void> Function(String childId) onChildSelected;
   final AddChildProfile onChildAdded;
+  final Future<void> Function(Locale locale) onLocaleChanged;
   final Future<void> Function(FamilySubscriptionPlan plan)
       onSubscriptionPlanChanged;
   final Future<void> Function() onResetProfile;
@@ -33,11 +39,16 @@ class ParentScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final weeklySessions = profile.sessionsInLastDays(days: 7, now: now);
+    final adaptivePlan = AdaptiveLessonPlan.forChild(
+      profile.activeChild,
+      now: now,
+    );
     final weeklyMinutes = weeklySessions.fold<int>(
       0,
       (total, session) => total + session.minutes,
     );
     final practiceDays = profile.practiceDays(days: 7, now: now);
+    final weeklyReport = ParentWeeklyReport.fromSessions(weeklySessions);
 
     return Scaffold(
       body: Stack(
@@ -64,6 +75,16 @@ class ParentScreen extends StatelessWidget {
                   onChildAdded: onChildAdded,
                 ),
                 const SizedBox(height: 14),
+                _SubscriptionPanel(
+                  profile: profile,
+                  onPlanChanged: onSubscriptionPlanChanged,
+                ),
+                const SizedBox(height: 14),
+                _LanguagePanel(
+                  currentLocale: currentLocale,
+                  onLocaleChanged: onLocaleChanged,
+                ),
+                const SizedBox(height: 14),
                 _WeeklyProgressPanel(
                   profile: profile,
                   weeklySessions: weeklySessions,
@@ -72,11 +93,14 @@ class ParentScreen extends StatelessWidget {
                   practiceDays: practiceDays,
                 ),
                 const SizedBox(height: 14),
+                _WeeklyActionPlanPanel(report: weeklyReport),
+                const SizedBox(height: 14),
                 _SkillInsightsPanel(sessions: weeklySessions),
                 const SizedBox(height: 14),
-                _SubscriptionPanel(
-                  profile: profile,
-                  onPlanChanged: onSubscriptionPlanChanged,
+                _AdaptivePlanPanel(plan: adaptivePlan),
+                const SizedBox(height: 14),
+                _RecentSessionsPanel(
+                  sessions: profile.activeChild.practiceSessions,
                 ),
                 const SizedBox(height: 14),
                 _ResetProfilePanel(onReset: () => _confirmReset(context)),
@@ -116,6 +140,77 @@ class ParentScreen extends StatelessWidget {
     if (shouldReset == true) {
       await onResetProfile();
     }
+  }
+}
+
+class _AdaptivePlanPanel extends StatelessWidget {
+  const _AdaptivePlanPanel({required this.plan});
+
+  final AdaptiveLessonPlan plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final color = switch (plan.mode) {
+      AdaptiveDifficultyMode.warmUp => const Color(0xFF44A8F2),
+      AdaptiveDifficultyMode.steady => const Color(0xFF18B7AE),
+      AdaptiveDifficultyMode.stretch => const Color(0xFFFF9D2E),
+    };
+
+    return DecoratedBox(
+      decoration: _softPanelDecoration(),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _IconBubble(
+              icon: Icons.auto_graph_rounded,
+              color: color,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.adaptiveModeLabel(plan.mode),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.adaptiveReasonLabel(plan),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      _TinyPill(
+                        icon: Icons.history_rounded,
+                        label: '${plan.recentSessions}',
+                        color: color,
+                      ),
+                      _TinyPill(
+                        icon: Icons.lightbulb_rounded,
+                        label: '${plan.recentHints}',
+                        color: const Color(0xFFFF9D2E),
+                      ),
+                      _TinyPill(
+                        icon: Icons.replay_rounded,
+                        label: '${plan.recentWrongAttempts}',
+                        color: const Color(0xFFFF6F6B),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -811,6 +906,251 @@ class _SubscriptionPanel extends StatelessWidget {
   }
 }
 
+class _WeeklyActionPlanPanel extends StatelessWidget {
+  const _WeeklyActionPlanPanel({required this.report});
+
+  final ParentWeeklyReport report;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final color = switch (report.status) {
+      ParentWeeklyStatus.gettingStarted => const Color(0xFF44A8F2),
+      ParentWeeklyStatus.needsSupport => const Color(0xFFFF6F6B),
+      ParentWeeklyStatus.steady => const Color(0xFF18B7AE),
+      ParentWeeklyStatus.strong => const Color(0xFFFFA93B),
+    };
+    final actions = l10n.parentWeeklyActions(report);
+
+    return DecoratedBox(
+      decoration: _softPanelDecoration(color: const Color(0xFFFFFBF2)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _SectionHeader(
+              icon: Icons.event_note_rounded,
+              title: l10n.parentWeeklyReportTitle(),
+              trailing: l10n.parentWeeklyStatusLabel(report.status),
+              color: color,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              l10n.parentWeeklySummary(report),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF426A70),
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 14),
+            for (var index = 0; index < actions.length; index += 1) ...[
+              _ActionPlanRow(
+                index: index + 1,
+                text: actions[index],
+                color: color,
+              ),
+              if (index < actions.length - 1) const SizedBox(height: 8),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionPlanRow extends StatelessWidget {
+  const _ActionPlanRow({
+    required this.index,
+    required this.text,
+    required this.color,
+  });
+
+  final int index;
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.18)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$index',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF164C55),
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LanguagePanel extends StatelessWidget {
+  const _LanguagePanel({
+    required this.currentLocale,
+    required this.onLocaleChanged,
+  });
+
+  final Locale currentLocale;
+  final Future<void> Function(Locale locale) onLocaleChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return DecoratedBox(
+      decoration: _softPanelDecoration(color: const Color(0xFFEAF9FF)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _SectionHeader(
+              icon: Icons.language_rounded,
+              title: l10n.languageSettingsTitle,
+              color: const Color(0xFF44A8F2),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.languageSettingsSubtitle,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF426A70),
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: _LanguageOption(
+                    label: l10n.languageRussian,
+                    flag: 'RU',
+                    selected: currentLocale.languageCode == 'ru',
+                    onTap: () => onLocaleChanged(const Locale('ru')),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _LanguageOption(
+                    label: l10n.languageEnglish,
+                    flag: 'EN',
+                    selected: currentLocale.languageCode == 'en',
+                    onTap: () => onLocaleChanged(const Locale('en')),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  const _LanguageOption({
+    required this.label,
+    required this.flag,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String flag;
+  final bool selected;
+  final Future<void> Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? const Color(0xFF18B7AE) : const Color(0xFF7E98A0);
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFFDDF8F4) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: selected ? const Color(0xFF18B7AE) : const Color(0xFFE4F1EE),
+            width: selected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                flag,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: const Color(0xFF164C55),
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: const Color(0xFF164C55),
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+            ),
+            if (selected) ...[
+              const SizedBox(width: 6),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: Color(0xFF18B7AE),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _SkillInsightsPanel extends StatelessWidget {
   const _SkillInsightsPanel({required this.sessions});
 
@@ -1022,6 +1362,189 @@ class _SkillQualitySummary {
     totalQuestions += session.totalQuestions;
     usedHints += session.usedHints;
     wrongAttempts += session.wrongAttempts;
+  }
+}
+
+class _RecentSessionsPanel extends StatelessWidget {
+  const _RecentSessionsPanel({required this.sessions});
+
+  final List<PracticeSession> sessions;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final recentSessions = [
+      ...sessions
+    ]..sort((first, second) => second.completedAt.compareTo(first.completedAt));
+    final visibleSessions = recentSessions.take(5).toList();
+
+    return DecoratedBox(
+      decoration: _softPanelDecoration(color: const Color(0xFFFFF6E5)),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _SectionHeader(
+              icon: Icons.history_rounded,
+              title: l10n.practiceHistoryTitle,
+              color: const Color(0xFFFFA93B),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.practiceHistorySubtitle,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF426A70),
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 14),
+            if (visibleSessions.isEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Text(
+                  l10n.practiceHistoryEmpty,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF426A70),
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              )
+            else
+              for (final session in visibleSessions) ...[
+                _RecentSessionRow(session: session),
+                if (session != visibleSessions.last) const SizedBox(height: 10),
+              ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RecentSessionRow extends StatelessWidget {
+  const _RecentSessionRow({required this.session});
+
+  final PracticeSession session;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final totalQuestions = session.totalQuestions;
+    final accuracy = totalQuestions == 0
+        ? l10n.notAvailable
+        : '${(session.correctAnswers / totalQuestions * 100).round()}%';
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF1D4),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Icon(
+              Icons.task_alt_rounded,
+              color: Color(0xFFFFA93B),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.localizedSkill(session.skill),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.practiceHistorySessionMeta(
+                    l10n.formatShortDate(session.completedAt),
+                    session.minutes,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF426A70),
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _HistoryMetricChip(
+                      label: l10n.accuracyMetricLabel,
+                      value: accuracy,
+                      color: const Color(0xFF18B7AE),
+                    ),
+                    _HistoryMetricChip(
+                      label: l10n.hintsMetricLabel,
+                      value: '${session.usedHints}',
+                      color: const Color(0xFF8B63E8),
+                    ),
+                    _HistoryMetricChip(
+                      label: l10n.practiceHistoryMistakesLabel,
+                      value: '${session.wrongAttempts}',
+                      color: const Color(0xFFFF6F61),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HistoryMetricChip extends StatelessWidget {
+  const _HistoryMetricChip({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final String label;
+  final String value;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        '$label $value',
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: const Color(0xFF164C55),
+              fontWeight: FontWeight.w900,
+            ),
+      ),
+    );
   }
 }
 

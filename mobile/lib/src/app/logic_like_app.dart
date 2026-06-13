@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../data/app_locale_store.dart';
 import '../data/family_profile_store.dart';
 import '../features/home/family_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
@@ -10,11 +11,13 @@ import 'app_controller.dart';
 class LogicLikeApp extends StatefulWidget {
   const LogicLikeApp({
     required this.familyProfileStore,
+    this.appLocaleStore,
     this.locale,
     super.key,
   });
 
   final FamilyProfileStore familyProfileStore;
+  final AppLocaleStore? appLocaleStore;
   final Locale? locale;
 
   @override
@@ -23,11 +26,14 @@ class LogicLikeApp extends StatefulWidget {
 
 class _LogicLikeAppState extends State<LogicLikeApp> {
   late final AppController _controller;
+  Locale _locale = const Locale('ru');
 
   @override
   void initState() {
     super.initState();
+    _locale = widget.locale ?? const Locale('ru');
     _controller = AppController(widget.familyProfileStore)..load();
+    _loadSavedLocale();
   }
 
   @override
@@ -41,7 +47,7 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (context) => context.l10n.appTitle,
-      locale: widget.locale ?? const Locale('ru'),
+      locale: _locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       theme: buildAppTheme(),
@@ -59,10 +65,40 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
             );
           }
 
-          return FamilyShell(controller: _controller);
+          return FamilyShell(
+            controller: _controller,
+            currentLocale: _locale,
+            onLocaleChanged: _changeLocale,
+          );
         },
       ),
     );
+  }
+
+  Future<void> _loadSavedLocale() async {
+    if (widget.locale != null) {
+      return;
+    }
+
+    final savedLocale = await widget.appLocaleStore?.load();
+    if (!mounted || savedLocale == null) {
+      return;
+    }
+
+    setState(() {
+      _locale = savedLocale;
+    });
+  }
+
+  Future<void> _changeLocale(Locale locale) async {
+    if (_locale.languageCode == locale.languageCode) {
+      return;
+    }
+
+    setState(() {
+      _locale = locale;
+    });
+    await widget.appLocaleStore?.save(locale);
   }
 }
 
