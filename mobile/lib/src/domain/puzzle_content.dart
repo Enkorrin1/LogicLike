@@ -10,6 +10,8 @@ enum PuzzleContentType {
   spatialRotation,
   pathLogic,
   memoryRecall,
+  sortingRule,
+  missingPiece,
   visualMathStory,
   symbolCode,
   logicDeduction,
@@ -18,6 +20,7 @@ enum PuzzleContentType {
 enum PuzzleWorld {
   space,
   forest,
+  sea,
   toyCity,
   magicSchool,
   laboratory,
@@ -109,11 +112,88 @@ class PuzzleContent {
   }
 }
 
+class PuzzleWorldTheme {
+  const PuzzleWorldTheme({
+    required this.world,
+    required this.accentColor,
+    required this.textColor,
+    required this.gradientColors,
+    required this.sceneColors,
+    required this.ambientAsset,
+  });
+
+  final PuzzleWorld world;
+  final int accentColor;
+  final int textColor;
+  final List<int> gradientColors;
+  final List<int> sceneColors;
+  final String ambientAsset;
+}
+
 class PuzzleContentCatalog {
   const PuzzleContentCatalog._();
 
   static const puzzleAssetRoot = 'assets/images/puzzles';
   static const generatedAssetRoot = 'assets/images/generated';
+
+  static const worldThemes = <PuzzleWorldTheme>[
+    PuzzleWorldTheme(
+      world: PuzzleWorld.space,
+      accentColor: 0xFF4F7DF3,
+      textColor: 0xFF143763,
+      gradientColors: [0xFFE8F5FF, 0xFFDDF8F4],
+      sceneColors: [0xFFEAF4FF, 0xFFD9F9FF],
+      ambientAsset: '$puzzleAssetRoot/rocket.svg',
+    ),
+    PuzzleWorldTheme(
+      world: PuzzleWorld.forest,
+      accentColor: 0xFF35B37E,
+      textColor: 0xFF174E3C,
+      gradientColors: [0xFFEAF9EA, 0xFFFFF5D8],
+      sceneColors: [0xFFF1FAE7, 0xFFFFF2D6],
+      ambientAsset: '$puzzleAssetRoot/apple.svg',
+    ),
+    PuzzleWorldTheme(
+      world: PuzzleWorld.sea,
+      accentColor: 0xFF28A9E0,
+      textColor: 0xFF164C69,
+      gradientColors: [0xFFE2F8FF, 0xFFDFF8F4],
+      sceneColors: [0xFFE7FBFF, 0xFFDDF8F4],
+      ambientAsset: '$puzzleAssetRoot/cloud.svg',
+    ),
+    PuzzleWorldTheme(
+      world: PuzzleWorld.toyCity,
+      accentColor: 0xFFFF9D2E,
+      textColor: 0xFF6B3B11,
+      gradientColors: [0xFFFFF2D6, 0xFFFFE8EF],
+      sceneColors: [0xFFFFF6E6, 0xFFFFEAF2],
+      ambientAsset: '$puzzleAssetRoot/toy_cube_orange.svg',
+    ),
+    PuzzleWorldTheme(
+      world: PuzzleWorld.magicSchool,
+      accentColor: 0xFF9C6AF2,
+      textColor: 0xFF463176,
+      gradientColors: [0xFFF1E9FF, 0xFFFFEDF7],
+      sceneColors: [0xFFF6EEFF, 0xFFFFF0FA],
+      ambientAsset: '$puzzleAssetRoot/key.svg',
+    ),
+    PuzzleWorldTheme(
+      world: PuzzleWorld.laboratory,
+      accentColor: 0xFF18B7AE,
+      textColor: 0xFF164C55,
+      gradientColors: [0xFFE5FAF7, 0xFFEAF4FF],
+      sceneColors: [0xFFEAFBF8, 0xFFEFF6FF],
+      ambientAsset: '$puzzleAssetRoot/sign_question.svg',
+    ),
+    PuzzleWorldTheme(
+      world: PuzzleWorld.farm,
+      accentColor: 0xFFFF6F6B,
+      textColor: 0xFF743330,
+      gradientColors: [0xFFFFF2D8, 0xFFFFECE8],
+      sceneColors: [0xFFFFF8E7, 0xFFFFEFEA],
+      ambientAsset: '$puzzleAssetRoot/apple.svg',
+    ),
+  ];
 
   static const contents = <PuzzleContent>[
     PuzzleContent(
@@ -313,7 +393,7 @@ class PuzzleContentCatalog {
       id: 'content.memory_pairs.magic_pairs',
       familyId: 'memory-pairs',
       contentType: PuzzleContentType.pairMatching,
-      world: PuzzleWorld.magicSchool,
+      world: PuzzleWorld.sea,
       character: PuzzleCharacter.owlCoach,
       characterPose: CharacterPose.hint,
       ageBands: [AgeBandId.age6, AgeBandId.age7to8],
@@ -574,11 +654,11 @@ class PuzzleContentCatalog {
       requiredColorIds: ['red', 'blue', 'yellow'],
       requiredNumberSlots: 0,
       localizationKeys: PuzzleLocalizationKeys(
-        title: 'challengePathMazeTitle',
-        prompt: 'challengePathMazePrompt',
-        question: 'challengePathMazeQuestion',
-        hint: 'challengePathMazeHint',
-        explanation: 'challengePathMazeExplanation',
+        title: 'challengeSpaceSequenceTitle',
+        prompt: 'challengeSpaceSequencePrompt',
+        question: 'challengeSpaceSequenceQuestion',
+        hint: 'challengeSpaceSequenceHint',
+        explanation: 'challengeSpaceSequenceExplanation',
       ),
       animationCues: [
         PuzzleAnimationCue.pathMove,
@@ -639,14 +719,147 @@ class PuzzleContentCatalog {
       requiredColorIds: ['blue', 'red', 'yellow', 'purple'],
       requiredNumberSlots: 0,
       localizationKeys: PuzzleLocalizationKeys(
-        title: 'challengeSpaceSequenceTitle',
-        prompt: 'challengeSpaceSequencePrompt',
-        question: 'challengeSpaceSequenceQuestion',
-        hint: 'challengeSpaceSequenceHint',
-        explanation: 'challengeSpaceSequenceExplanation',
+        title: 'challengePathMazeTitle',
+        prompt: 'challengePathMazePrompt',
+        question: 'challengePathMazeQuestion',
+        hint: 'challengePathMazeHint',
+        explanation: 'challengePathMazeExplanation',
       ),
       animationCues: [
         PuzzleAnimationCue.pathMove,
+        PuzzleAnimationCue.answerBounce,
+      ],
+    ),
+    PuzzleContent(
+      id: 'content.memory_recall.hidden_cards',
+      familyId: 'memory-recall',
+      contentType: PuzzleContentType.memoryRecall,
+      world: PuzzleWorld.magicSchool,
+      character: PuzzleCharacter.owlCoach,
+      characterPose: CharacterPose.thinking,
+      ageBands: [AgeBandId.age6, AgeBandId.age7to8],
+      difficultyTier: LessonDifficultyTier.growing,
+      skillTags: [SkillTag.memory, SkillTag.attention],
+      sceneAsset: '$puzzleAssetRoot/puzzle_card.svg',
+      supportingAssets: [
+        '$puzzleAssetRoot/rocket.svg',
+        '$puzzleAssetRoot/planet.svg',
+        '$puzzleAssetRoot/shape_star.svg',
+        '$puzzleAssetRoot/key.svg',
+        '$puzzleAssetRoot/banana.svg',
+      ],
+      requiredObjectIds: ['card', 'rocket', 'planet', 'star', 'key', 'banana'],
+      requiredColorIds: ['blue', 'yellow', 'purple'],
+      requiredNumberSlots: 0,
+      localizationKeys: PuzzleLocalizationKeys(
+        title: 'challengeMemoryRecallTitle',
+        prompt: 'challengeMemoryRecallPrompt',
+        question: 'challengeMemoryRecallQuestion',
+        hint: 'challengeMemoryRecallHint',
+        explanation: 'challengeMemoryRecallExplanation',
+      ),
+      animationCues: [
+        PuzzleAnimationCue.objectReveal,
+        PuzzleAnimationCue.hintGlow,
+      ],
+    ),
+    PuzzleContent(
+      id: 'content.sorting_rule.rule_box',
+      familyId: 'sorting-rule',
+      contentType: PuzzleContentType.sortingRule,
+      world: PuzzleWorld.toyCity,
+      character: PuzzleCharacter.robi,
+      characterPose: CharacterPose.hint,
+      ageBands: [AgeBandId.age6, AgeBandId.age7to8],
+      difficultyTier: LessonDifficultyTier.confident,
+      skillTags: [SkillTag.classification, SkillTag.reasoning],
+      sceneAsset: '$puzzleAssetRoot/puzzle_card.svg',
+      supportingAssets: [
+        '$puzzleAssetRoot/apple.svg',
+        '$puzzleAssetRoot/banana.svg',
+        '$puzzleAssetRoot/pear.svg',
+        '$puzzleAssetRoot/rocket.svg',
+        '$puzzleAssetRoot/shape_star.svg',
+        '$puzzleAssetRoot/lock.svg',
+      ],
+      requiredObjectIds: ['box', 'apple', 'banana', 'pear', 'rocket', 'lock'],
+      requiredColorIds: ['red', 'yellow', 'green', 'blue'],
+      requiredNumberSlots: 0,
+      localizationKeys: PuzzleLocalizationKeys(
+        title: 'challengeSortingRuleTitle',
+        prompt: 'challengeSortingRulePrompt',
+        question: 'challengeSortingRuleQuestion',
+        hint: 'challengeSortingRuleHint',
+        explanation: 'challengeSortingRuleExplanation',
+      ),
+      animationCues: [
+        PuzzleAnimationCue.answerBounce,
+        PuzzleAnimationCue.wrongShake,
+      ],
+    ),
+    PuzzleContent(
+      id: 'content.missing_piece.picture_patch',
+      familyId: 'missing-piece',
+      contentType: PuzzleContentType.missingPiece,
+      world: PuzzleWorld.laboratory,
+      character: PuzzleCharacter.robi,
+      characterPose: CharacterPose.thinking,
+      ageBands: [AgeBandId.age7to8],
+      difficultyTier: LessonDifficultyTier.confident,
+      skillTags: [SkillTag.spatial, SkillTag.attention],
+      sceneAsset: '$puzzleAssetRoot/rocket.svg',
+      supportingAssets: [
+        '$puzzleAssetRoot/shape_circle.svg',
+        '$puzzleAssetRoot/shape_square.svg',
+        '$puzzleAssetRoot/shape_star.svg',
+        '$puzzleAssetRoot/key.svg',
+      ],
+      requiredObjectIds: ['rocket', 'planet', 'circle', 'star', 'key'],
+      requiredColorIds: ['teal', 'blue', 'yellow'],
+      requiredNumberSlots: 0,
+      localizationKeys: PuzzleLocalizationKeys(
+        title: 'challengeMissingPieceTitle',
+        prompt: 'challengeMissingPiecePrompt',
+        question: 'challengeMissingPieceQuestion',
+        hint: 'challengeMissingPieceHint',
+        explanation: 'challengeMissingPieceExplanation',
+      ),
+      animationCues: [
+        PuzzleAnimationCue.objectReveal,
+        PuzzleAnimationCue.answerBounce,
+      ],
+    ),
+    PuzzleContent(
+      id: 'content.logic_deduction.two_clues',
+      familyId: 'logic-deduction',
+      contentType: PuzzleContentType.logicDeduction,
+      world: PuzzleWorld.laboratory,
+      character: PuzzleCharacter.owlCoach,
+      characterPose: CharacterPose.hint,
+      ageBands: [AgeBandId.age7to8],
+      difficultyTier: LessonDifficultyTier.challenge,
+      skillTags: [SkillTag.reasoning, SkillTag.classification],
+      sceneAsset: '$puzzleAssetRoot/sign_question.svg',
+      supportingAssets: [
+        '$puzzleAssetRoot/rocket.svg',
+        '$puzzleAssetRoot/apple.svg',
+        '$puzzleAssetRoot/ball.svg',
+        '$puzzleAssetRoot/key.svg',
+        '$puzzleAssetRoot/cloud.svg',
+        '$puzzleAssetRoot/banana.svg',
+      ],
+      requiredObjectIds: ['clue', 'rocket', 'key', 'banana'],
+      requiredColorIds: ['yellow', 'teal', 'blue'],
+      requiredNumberSlots: 0,
+      localizationKeys: PuzzleLocalizationKeys(
+        title: 'challengeLogicDeductionTitle',
+        prompt: 'challengeLogicDeductionPrompt',
+        question: 'challengeLogicDeductionQuestion',
+        hint: 'challengeLogicDeductionHint',
+        explanation: 'challengeLogicDeductionExplanation',
+      ),
+      animationCues: [
+        PuzzleAnimationCue.hintGlow,
         PuzzleAnimationCue.answerBounce,
       ],
     ),
@@ -667,6 +880,17 @@ class PuzzleContentCatalog {
 
   static PuzzleContent forPuzzle(PuzzleDefinition puzzle) {
     return byFamilyId(puzzle.payloadRef);
+  }
+
+  static PuzzleWorldTheme themeForWorld(PuzzleWorld world) {
+    return worldThemes.firstWhere(
+      (theme) => theme.world == world,
+      orElse: () => worldThemes.first,
+    );
+  }
+
+  static String characterAsset(PuzzleCharacter character) {
+    return _characterAssets(character).first;
   }
 
   static List<String> assetsForChoice(String familyId, String choiceId) {
@@ -695,6 +919,7 @@ class PuzzleContentCatalog {
     return [
       content.sceneAsset,
       ...content.supportingAssets,
+      themeForWorld(content.world).ambientAsset,
       ..._characterAssets(content.character),
     ];
   }
@@ -737,5 +962,19 @@ class PuzzleContentCatalog {
     'detail-count:blue-squares': '$puzzleAssetRoot/shape_square.svg',
     'detail-count:red-circles': '$puzzleAssetRoot/shape_circle.svg',
     'detail-count:green-stars': '$puzzleAssetRoot/shape_star.svg',
+    'memory-recall:star': '$puzzleAssetRoot/shape_star.svg',
+    'memory-recall:key': '$puzzleAssetRoot/key.svg',
+    'memory-recall:banana': '$puzzleAssetRoot/banana.svg',
+    'memory-recall:triangle': '$puzzleAssetRoot/shape_triangle.svg',
+    'sorting-rule:pear': '$puzzleAssetRoot/pear.svg',
+    'sorting-rule:star': '$puzzleAssetRoot/shape_star.svg',
+    'sorting-rule:planet': '$puzzleAssetRoot/planet.svg',
+    'sorting-rule:lock': '$puzzleAssetRoot/lock.svg',
+    'missing-piece:circle': '$puzzleAssetRoot/shape_circle.svg',
+    'missing-piece:star': '$puzzleAssetRoot/shape_star.svg',
+    'missing-piece:key': '$puzzleAssetRoot/key.svg',
+    'logic-deduction:rocket': '$puzzleAssetRoot/rocket.svg',
+    'logic-deduction:key': '$puzzleAssetRoot/key.svg',
+    'logic-deduction:banana': '$puzzleAssetRoot/banana.svg',
   };
 }

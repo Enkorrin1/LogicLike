@@ -1053,6 +1053,126 @@ abstract class AppLocalizations {
   /// **'Больше всего красных кругов: их три.'**
   String get challengeDetailCountExplanation;
 
+  /// No description provided for @challengeMemoryRecallTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Запомни карточки'**
+  String get challengeMemoryRecallTitle;
+
+  /// No description provided for @challengeMemoryRecallPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Посмотри на ряд и найди спрятанную карточку.'**
+  String get challengeMemoryRecallPrompt;
+
+  /// No description provided for @challengeMemoryRecallQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Какая карточка спряталась?'**
+  String get challengeMemoryRecallQuestion;
+
+  /// No description provided for @challengeMemoryRecallHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Вспомни предметы слева направо и проверь последний.'**
+  String get challengeMemoryRecallHint;
+
+  /// No description provided for @challengeMemoryRecallExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Спрятанная карточка была в ряду, который нужно было запомнить.'**
+  String get challengeMemoryRecallExplanation;
+
+  /// No description provided for @challengeSortingRuleTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правило коробки'**
+  String get challengeSortingRuleTitle;
+
+  /// No description provided for @challengeSortingRulePrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Найди предмет, который подходит к остальным.'**
+  String get challengeSortingRulePrompt;
+
+  /// No description provided for @challengeSortingRuleQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Что подходит по тому же правилу?'**
+  String get challengeSortingRuleQuestion;
+
+  /// No description provided for @challengeSortingRuleHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сначала найди общее свойство у предметов в коробке.'**
+  String get challengeSortingRuleHint;
+
+  /// No description provided for @challengeSortingRuleExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правильный предмет подходит к общему правилу коробки.'**
+  String get challengeSortingRuleExplanation;
+
+  /// No description provided for @challengeMissingPieceTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Недостающая деталь'**
+  String get challengeMissingPieceTitle;
+
+  /// No description provided for @challengeMissingPiecePrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Выбери деталь, которая завершает картинку.'**
+  String get challengeMissingPiecePrompt;
+
+  /// No description provided for @challengeMissingPieceQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Какая деталь подходит в пустое место?'**
+  String get challengeMissingPieceQuestion;
+
+  /// No description provided for @challengeMissingPieceHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Сравни форму пустого места с вариантами ответа.'**
+  String get challengeMissingPieceHint;
+
+  /// No description provided for @challengeMissingPieceExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Эта деталь завершает картинку без лишних углов.'**
+  String get challengeMissingPieceExplanation;
+
+  /// No description provided for @challengeLogicDeductionTitle.
+  ///
+  /// In ru, this message translates to:
+  /// **'Две подсказки'**
+  String get challengeLogicDeductionTitle;
+
+  /// No description provided for @challengeLogicDeductionPrompt.
+  ///
+  /// In ru, this message translates to:
+  /// **'Используй обе подсказки и убери лишние варианты.'**
+  String get challengeLogicDeductionPrompt;
+
+  /// No description provided for @challengeLogicDeductionQuestion.
+  ///
+  /// In ru, this message translates to:
+  /// **'Что подходит ко всем подсказкам?'**
+  String get challengeLogicDeductionQuestion;
+
+  /// No description provided for @challengeLogicDeductionHint.
+  ///
+  /// In ru, this message translates to:
+  /// **'Каждая подсказка убирает хотя бы один неверный вариант.'**
+  String get challengeLogicDeductionHint;
+
+  /// No description provided for @challengeLogicDeductionExplanation.
+  ///
+  /// In ru, this message translates to:
+  /// **'Правильный ответ подходит сразу к двум подсказкам.'**
+  String get challengeLogicDeductionExplanation;
+
   /// No description provided for @choiceTriangle.
   ///
   /// In ru, this message translates to:
@@ -1106,6 +1226,12 @@ abstract class AppLocalizations {
   /// In ru, this message translates to:
   /// **'Зеленый'**
   String get choiceGreen;
+
+  /// No description provided for @choiceKey.
+  ///
+  /// In ru, this message translates to:
+  /// **'Ключ'**
+  String get choiceKey;
 
   /// No description provided for @choiceLock.
   ///

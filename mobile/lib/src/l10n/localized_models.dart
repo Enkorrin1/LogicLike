@@ -6,6 +6,7 @@ import '../domain/family_profile.dart';
 import '../domain/learning_foundation.dart';
 import '../domain/motivation_plan.dart';
 import '../domain/parent_weekly_report.dart';
+import '../domain/puzzle_content.dart';
 import 'generated/app_localizations.dart';
 
 extension LocalizedModels on AppLocalizations {
@@ -88,6 +89,29 @@ extension LocalizedModels on AppLocalizations {
       return localeName.startsWith('ru') ? 'Смешанные навыки' : 'Mixed skills';
     }
     return visibleTags.join(' + ');
+  }
+
+  String labelForPuzzleWorld(PuzzleWorld world) {
+    final ru = localeName.startsWith('ru');
+    return switch (world) {
+      PuzzleWorld.space => ru ? 'Космос' : 'Space',
+      PuzzleWorld.forest => ru ? 'Лес' : 'Forest',
+      PuzzleWorld.sea => ru ? 'Море' : 'Sea',
+      PuzzleWorld.toyCity => ru ? 'Город игрушек' : 'Toy City',
+      PuzzleWorld.magicSchool => ru ? 'Магическая школа' : 'Magic School',
+      PuzzleWorld.laboratory => ru ? 'Лаборатория' : 'Laboratory',
+      PuzzleWorld.farm => ru ? 'Ферма' : 'Farm',
+    };
+  }
+
+  String labelForPuzzleCharacter(PuzzleCharacter character) {
+    final ru = localeName.startsWith('ru');
+    return switch (character) {
+      PuzzleCharacter.leo => ru ? 'Лёва' : 'Leo',
+      PuzzleCharacter.nickAstronaut => ru ? 'Ник' : 'Nick',
+      PuzzleCharacter.robi => ru ? 'Роби' : 'Robi',
+      PuzzleCharacter.owlCoach => ru ? 'Совёнок' : 'Owl Coach',
+    };
   }
 
   String skillTagLabel(SkillTag tag) {
@@ -504,6 +528,10 @@ extension LocalizedModels on AppLocalizations {
       'detail-count' => challengeDetailCountExplanation,
       'space-sequence' => challengeSpaceSequenceExplanation,
       'shape-stack' => challengeShapeStackExplanation,
+      'memory-recall' => challengeMemoryRecallExplanation,
+      'sorting-rule' => challengeSortingRuleExplanation,
+      'missing-piece' => challengeMissingPieceExplanation,
+      'logic-deduction' => challengeLogicDeductionExplanation,
       _ => challenge.explanation,
     };
   }
@@ -558,6 +586,20 @@ extension LocalizedModels on AppLocalizations {
       'shape-stack:square' => choiceSquare,
       'shape-stack:circle' => choiceCircle,
       'shape-stack:triangle' => choiceTriangle,
+      'memory-recall:star' => choiceStar,
+      'memory-recall:key' => choiceKey,
+      'memory-recall:banana' => choiceBanana,
+      'memory-recall:triangle' => choiceTriangle,
+      'sorting-rule:pear' => choicePear,
+      'sorting-rule:star' => choiceStar,
+      'sorting-rule:planet' => choicePlanet,
+      'sorting-rule:lock' => choiceLock,
+      'missing-piece:circle' => choiceCircle,
+      'missing-piece:star' => choiceStar,
+      'missing-piece:key' => choiceKey,
+      'logic-deduction:rocket' => choiceRocket,
+      'logic-deduction:key' => choiceKey,
+      'logic-deduction:banana' => choiceBanana,
       'path-maze:left' => localeName.startsWith('ru') ? 'влево' : 'left',
       'path-maze:right' => localeName.startsWith('ru') ? 'вправо' : 'right',
       'path-maze:up' => localeName.startsWith('ru') ? 'вверх' : 'up',
@@ -607,6 +649,18 @@ extension LocalizedModels on AppLocalizations {
       'path-maze' => ru
           ? 'Помоги предмету «${labels[0]}» добраться до «${labels[1]}». Куда идти на развилке?'
           : 'Help ${labels[0]} get to ${labels[1]}. Which way should it go at the fork?',
+      'memory-recall' => ru
+          ? 'Запомни ряд: ${labels[0]}, ${labels[1]}, ${labels[2]}. Какая карточка спряталась?'
+          : 'Remember the row: ${labels[0]}, ${labels[1]}, ${labels[2]}. Which card is hidden?',
+      'sorting-rule' => ru
+          ? 'В коробке уже есть ${labels[0]} и ${labels[1]}. Что подходит по тому же правилу?'
+          : 'The box already has ${labels[0]} and ${labels[1]}. What follows the same rule?',
+      'missing-piece' => ru
+          ? 'У картинки «${labels[0]}» не хватает детали. Какая деталь подходит?'
+          : 'The ${labels[0]} picture is missing a part. Which part fits?',
+      'logic-deduction' => ru
+          ? '${_deductionClue(challenge.tokens[0])}. ${_deductionClue(challenge.tokens[1])}. Что это?'
+          : '${_deductionClue(challenge.tokens[0])}. ${_deductionClue(challenge.tokens[1])}. What is it?',
       'detail-count' => ru
           ? 'Есть ${nums[0]} красных кругов, ${nums[1]} синих квадратов и ${nums[2]} зеленых звезд. Чего больше всего?'
           : 'There are ${nums[0]} red circles, ${nums[1]} blue squares, and ${nums[2]} green stars. Which group has the most?',
@@ -638,6 +692,18 @@ extension LocalizedModels on AppLocalizations {
       'path-maze' => ru
           ? 'Проследи дорожку от старта до цели и выбери направление на развилке.'
           : 'Follow the road from start to finish and choose the direction at the fork.',
+      'memory-recall' => ru
+          ? 'Закрой пальцем ряд и проверь, какой предмет был последним.'
+          : 'Cover the row and check which object was last.',
+      'sorting-rule' => ru
+          ? 'Найди два предмета с общим свойством, потом выбери третий такой же.'
+          : 'Find the shared property, then choose one more matching item.',
+      'missing-piece' => ru
+          ? 'Смотри на форму пустого места, а не только на цвет.'
+          : 'Look at the missing shape, not only the color.',
+      'logic-deduction' => ru
+          ? 'Используй обе подсказки сразу и убери неподходящие варианты.'
+          : 'Use both clues together and remove choices that do not fit.',
       _ => ru
           ? 'Правило повторяется. Найди начало нового повтора.'
           : 'The rule repeats. Find the start of the next repeat.',
@@ -667,6 +733,18 @@ extension LocalizedModels on AppLocalizations {
       'path-maze' => ru
           ? 'Верная дорожка ведёт ${_directionName(challenge.correctChoiceId)}.'
           : 'The correct road goes ${_directionName(challenge.correctChoiceId)}.',
+      'memory-recall' => ru
+          ? 'Спрятанная карточка: $correct. Она была в запомненном ряду.'
+          : 'The hidden card is $correct. It was in the remembered row.',
+      'sorting-rule' => ru
+          ? '$correct подходит к правилу этой коробки.'
+          : '$correct follows the box rule.',
+      'missing-piece' => ru
+          ? 'Подходит деталь: $correct. Она закрывает пустое место.'
+          : 'The fitting part is $correct. It completes the empty place.',
+      'logic-deduction' => ru
+          ? 'Ответ: $correct. Он подходит ко всем подсказкам.'
+          : 'The answer is $correct. It matches every clue.',
       _ => ru
           ? 'Правильный ответ: $correct. Он продолжает правило этой задачи.'
           : 'The correct answer is $correct. It continues this puzzle rule.',
@@ -697,6 +775,7 @@ extension LocalizedModels on AppLocalizations {
       'rocket' => choiceRocket,
       'planet' => choicePlanet,
       'lock' => choiceLock,
+      'key' => choiceKey,
       'shoe' => choiceShoe,
       'cloud' => choiceCloud,
       'red' => choiceRed,
@@ -706,7 +785,6 @@ extension LocalizedModels on AppLocalizations {
       'red-circles' => choiceRedCircles,
       'blue-squares' => choiceBlueSquares,
       'green-stars' => choiceGreenStars,
-      'key' => ru ? 'ключ' : 'a key',
       'foot' => ru ? 'нога' : 'a foot',
       'rain' => ru ? 'дождь' : 'rain',
       'left' || 'right' || 'up' || 'down' => _directionName(id),
@@ -742,6 +820,19 @@ extension LocalizedModels on AppLocalizations {
         ru ? 'высокий корпус и два крыла' : 'a tall body with two wings',
       'planet' => ru ? 'круглая форма с кольцом' : 'a round shape with a ring',
       'star' => ru ? 'пять острых лучей' : 'five sharp points',
+      _ => _itemName(id),
+    };
+  }
+
+  String _deductionClue(String id) {
+    final ru = localeName.startsWith('ru');
+    return switch (id) {
+      'flies' => ru ? 'Он летает' : 'It can fly',
+      'not-fruit' => ru ? 'Это не фрукт' : 'It is not a fruit',
+      'opens' => ru ? 'Он что-то открывает' : 'It opens something',
+      'not-cloud' => ru ? 'Это не облако' : 'It is not a cloud',
+      'fruit' => ru ? 'Это фрукт' : 'It is a fruit',
+      'yellow' => ru ? 'Он желтый' : 'It is yellow',
       _ => _itemName(id),
     };
   }

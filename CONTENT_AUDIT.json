@@ -1,26 +1,30 @@
 {
-  "generatedAt": "2026-06-14T00:01:43.673649",
+  "generatedAt": "2026-06-14T00:28:37.689456",
   "summary": {
     "courses": 6,
     "lessons": 60,
     "steps": 240,
-    "uniqueFamilies": 17,
+    "uniqueFamilies": 21,
     "issues": 0,
     "familyCounts": {
       "balance-scale": 17,
       "code-grid": 18,
       "detail-count": 18,
-      "fruit-pattern": 14,
-      "lock-key": 12,
+      "fruit-pattern": 13,
+      "lock-key": 11,
+      "logic-deduction": 1,
       "logic-train": 15,
-      "memory-pairs": 15,
+      "memory-pairs": 14,
+      "memory-recall": 1,
+      "missing-piece": 1,
       "number-bridge": 19,
       "odd-card": 16,
       "path-maze": 2,
       "shadow-match": 16,
       "shape-path": 12,
-      "shape-rotation": 18,
+      "shape-rotation": 17,
       "shape-stack": 14,
+      "sorting-rule": 1,
       "space-sequence": 15,
       "sticker-sum": 13,
       "toy-count": 6
@@ -30,9 +34,2362 @@
       "confident": 60,
       "growing": 60,
       "starter": 60
+    },
+    "worldCounts": {
+      "farm": 17,
+      "forest": 29,
+      "laboratory": 55,
+      "magicSchool": 26,
+      "sea": 14,
+      "space": 64,
+      "toyCity": 35
+    },
+    "characterCounts": {
+      "leo": 69,
+      "nickAstronaut": 52,
+      "owlCoach": 61,
+      "robi": 58
+    },
+    "phase13ContentPackItems": 100,
+    "phase13UniqueSignatures": 100,
+    "phase13Issues": 0,
+    "phase13CategoryCounts": {
+      "comparison": 10,
+      "counting": 15,
+      "memory-detail": 10,
+      "odd-one-out": 15,
+      "pair-matching": 10,
+      "path-logic": 10,
+      "pattern": 20,
+      "shadow-matching": 10
+    },
+    "phase13FamilyCounts": {
+      "balance-scale": 5,
+      "detail-count": 5,
+      "fruit-pattern": 4,
+      "lock-key": 5,
+      "logic-deduction": 2,
+      "logic-train": 4,
+      "memory-pairs": 5,
+      "memory-recall": 3,
+      "missing-piece": 2,
+      "odd-card": 15,
+      "path-maze": 10,
+      "shadow-match": 10,
+      "shape-path": 4,
+      "shape-stack": 4,
+      "sorting-rule": 3,
+      "space-sequence": 4,
+      "sticker-sum": 8,
+      "toy-count": 7
     }
   },
   "issues": [],
+  "phase13Issues": [],
+  "phase13ContentPack": [
+    {
+      "id": "phase13.pattern.1",
+      "category": "pattern",
+      "family": "shape-path",
+      "contentId": "content.shape_path.space_shapes",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "leo",
+      "correctChoiceId": "circle",
+      "choices": [
+        "triangle",
+        "circle",
+        "square",
+        "star"
+      ],
+      "tokens": [
+        "circle",
+        "square"
+      ],
+      "numbers": [],
+      "signature": "shape-path|circle|circle,square||triangle,circle,square,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.2",
+      "category": "pattern",
+      "family": "shape-path",
+      "contentId": "content.shape_path.space_shapes",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "leo",
+      "correctChoiceId": "triangle",
+      "choices": [
+        "triangle",
+        "circle",
+        "square",
+        "star"
+      ],
+      "tokens": [
+        "triangle",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "shape-path|triangle|triangle,star||triangle,circle,square,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.3",
+      "category": "pattern",
+      "family": "shape-path",
+      "contentId": "content.shape_path.space_shapes",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "leo",
+      "correctChoiceId": "square",
+      "choices": [
+        "triangle",
+        "circle",
+        "square",
+        "star"
+      ],
+      "tokens": [
+        "square",
+        "circle"
+      ],
+      "numbers": [],
+      "signature": "shape-path|square|square,circle||triangle,circle,square,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.4",
+      "category": "pattern",
+      "family": "shape-path",
+      "contentId": "content.shape_path.space_shapes",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "leo",
+      "correctChoiceId": "star",
+      "choices": [
+        "triangle",
+        "circle",
+        "square",
+        "star"
+      ],
+      "tokens": [
+        "star",
+        "triangle"
+      ],
+      "numbers": [],
+      "signature": "shape-path|star|star,triangle||triangle,circle,square,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.5",
+      "category": "pattern",
+      "family": "fruit-pattern",
+      "contentId": "content.fruit_pattern.forest_row",
+      "contentType": "patternSequence",
+      "world": "forest",
+      "character": "leo",
+      "correctChoiceId": "apple",
+      "choices": [
+        "apple",
+        "banana",
+        "pear"
+      ],
+      "tokens": [
+        "apple",
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "fruit-pattern|apple|apple,banana||apple,banana,pear",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.6",
+      "category": "pattern",
+      "family": "fruit-pattern",
+      "contentId": "content.fruit_pattern.forest_row",
+      "contentType": "patternSequence",
+      "world": "forest",
+      "character": "leo",
+      "correctChoiceId": "banana",
+      "choices": [
+        "apple",
+        "banana",
+        "pear"
+      ],
+      "tokens": [
+        "banana",
+        "pear"
+      ],
+      "numbers": [],
+      "signature": "fruit-pattern|banana|banana,pear||apple,banana,pear",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.7",
+      "category": "pattern",
+      "family": "fruit-pattern",
+      "contentId": "content.fruit_pattern.forest_row",
+      "contentType": "patternSequence",
+      "world": "forest",
+      "character": "leo",
+      "correctChoiceId": "pear",
+      "choices": [
+        "apple",
+        "banana",
+        "pear"
+      ],
+      "tokens": [
+        "pear",
+        "apple"
+      ],
+      "numbers": [],
+      "signature": "fruit-pattern|pear|pear,apple||apple,banana,pear",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.8",
+      "category": "pattern",
+      "family": "fruit-pattern",
+      "contentId": "content.fruit_pattern.forest_row",
+      "contentType": "patternSequence",
+      "world": "forest",
+      "character": "leo",
+      "correctChoiceId": "apple",
+      "choices": [
+        "apple",
+        "banana",
+        "pear"
+      ],
+      "tokens": [
+        "apple",
+        "pear"
+      ],
+      "numbers": [],
+      "signature": "fruit-pattern|apple|apple,pear||apple,banana,pear",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.9",
+      "category": "pattern",
+      "family": "logic-train",
+      "contentId": "content.logic_train.station_pattern",
+      "contentType": "patternSequence",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "red",
+      "choices": [
+        "blue",
+        "red",
+        "green"
+      ],
+      "tokens": [
+        "red",
+        "blue"
+      ],
+      "numbers": [],
+      "signature": "logic-train|red|red,blue||blue,red,green",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.10",
+      "category": "pattern",
+      "family": "logic-train",
+      "contentId": "content.logic_train.station_pattern",
+      "contentType": "patternSequence",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "green",
+      "choices": [
+        "blue",
+        "red",
+        "green"
+      ],
+      "tokens": [
+        "green",
+        "red"
+      ],
+      "numbers": [],
+      "signature": "logic-train|green|green,red||blue,red,green",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.11",
+      "category": "pattern",
+      "family": "logic-train",
+      "contentId": "content.logic_train.station_pattern",
+      "contentType": "patternSequence",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "blue",
+      "choices": [
+        "blue",
+        "red",
+        "green"
+      ],
+      "tokens": [
+        "blue",
+        "green"
+      ],
+      "numbers": [],
+      "signature": "logic-train|blue|blue,green||blue,red,green",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.12",
+      "category": "pattern",
+      "family": "logic-train",
+      "contentId": "content.logic_train.station_pattern",
+      "contentType": "patternSequence",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "red",
+      "choices": [
+        "blue",
+        "red",
+        "green"
+      ],
+      "tokens": [
+        "red",
+        "green"
+      ],
+      "numbers": [],
+      "signature": "logic-train|red|red,green||blue,red,green",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.13",
+      "category": "pattern",
+      "family": "space-sequence",
+      "contentId": "content.space_sequence.planet_route",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "rocket",
+      "choices": [
+        "rocket",
+        "planet",
+        "star"
+      ],
+      "tokens": [
+        "rocket",
+        "planet"
+      ],
+      "numbers": [],
+      "signature": "space-sequence|rocket|rocket,planet||rocket,planet,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.14",
+      "category": "pattern",
+      "family": "space-sequence",
+      "contentId": "content.space_sequence.planet_route",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "planet",
+      "choices": [
+        "rocket",
+        "planet",
+        "star"
+      ],
+      "tokens": [
+        "planet",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "space-sequence|planet|planet,star||rocket,planet,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.15",
+      "category": "pattern",
+      "family": "space-sequence",
+      "contentId": "content.space_sequence.planet_route",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "star",
+      "choices": [
+        "rocket",
+        "planet",
+        "star"
+      ],
+      "tokens": [
+        "star",
+        "rocket"
+      ],
+      "numbers": [],
+      "signature": "space-sequence|star|star,rocket||rocket,planet,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.16",
+      "category": "pattern",
+      "family": "space-sequence",
+      "contentId": "content.space_sequence.planet_route",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "rocket",
+      "choices": [
+        "rocket",
+        "planet",
+        "star"
+      ],
+      "tokens": [
+        "rocket",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "space-sequence|rocket|rocket,star||rocket,planet,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.17",
+      "category": "pattern",
+      "family": "shape-stack",
+      "contentId": "content.shape_stack.magic_tower",
+      "contentType": "patternSequence",
+      "world": "magicSchool",
+      "character": "leo",
+      "correctChoiceId": "square",
+      "choices": [
+        "square",
+        "circle",
+        "triangle",
+        "star"
+      ],
+      "tokens": [
+        "square",
+        "circle"
+      ],
+      "numbers": [],
+      "signature": "shape-stack|square|square,circle||square,circle,triangle,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.18",
+      "category": "pattern",
+      "family": "shape-stack",
+      "contentId": "content.shape_stack.magic_tower",
+      "contentType": "patternSequence",
+      "world": "magicSchool",
+      "character": "leo",
+      "correctChoiceId": "triangle",
+      "choices": [
+        "square",
+        "circle",
+        "triangle",
+        "star"
+      ],
+      "tokens": [
+        "triangle",
+        "square"
+      ],
+      "numbers": [],
+      "signature": "shape-stack|triangle|triangle,square||square,circle,triangle,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.19",
+      "category": "pattern",
+      "family": "shape-stack",
+      "contentId": "content.shape_stack.magic_tower",
+      "contentType": "patternSequence",
+      "world": "magicSchool",
+      "character": "leo",
+      "correctChoiceId": "circle",
+      "choices": [
+        "square",
+        "circle",
+        "triangle",
+        "star"
+      ],
+      "tokens": [
+        "circle",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "shape-stack|circle|circle,star||square,circle,triangle,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.pattern.20",
+      "category": "pattern",
+      "family": "shape-stack",
+      "contentId": "content.shape_stack.magic_tower",
+      "contentType": "patternSequence",
+      "world": "magicSchool",
+      "character": "leo",
+      "correctChoiceId": "star",
+      "choices": [
+        "square",
+        "circle",
+        "triangle",
+        "star"
+      ],
+      "tokens": [
+        "star",
+        "square"
+      ],
+      "numbers": [],
+      "signature": "shape-stack|star|star,square||square,circle,triangle,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.1",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "ball",
+      "choices": [
+        "apple",
+        "ball",
+        "banana"
+      ],
+      "tokens": [
+        "apple",
+        "banana",
+        "pear",
+        "ball"
+      ],
+      "numbers": [],
+      "signature": "odd-card|ball|apple,banana,pear,ball||apple,ball,banana",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.2",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "cloud",
+      "choices": [
+        "rocket",
+        "cloud",
+        "planet"
+      ],
+      "tokens": [
+        "rocket",
+        "planet",
+        "star",
+        "cloud"
+      ],
+      "numbers": [],
+      "signature": "odd-card|cloud|rocket,planet,star,cloud||rocket,cloud,planet",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.3",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "shoe",
+      "choices": [
+        "circle",
+        "shoe",
+        "square"
+      ],
+      "tokens": [
+        "circle",
+        "square",
+        "triangle",
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "odd-card|shoe|circle,square,triangle,shoe||circle,shoe,square",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.4",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "rocket",
+      "choices": [
+        "apple",
+        "rocket",
+        "banana"
+      ],
+      "tokens": [
+        "apple",
+        "banana",
+        "pear",
+        "rocket"
+      ],
+      "numbers": [],
+      "signature": "odd-card|rocket|apple,banana,pear,rocket||apple,rocket,banana",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.5",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "apple",
+      "choices": [
+        "rocket",
+        "apple",
+        "planet"
+      ],
+      "tokens": [
+        "rocket",
+        "planet",
+        "star",
+        "apple"
+      ],
+      "numbers": [],
+      "signature": "odd-card|apple|rocket,planet,star,apple||rocket,apple,planet",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.6",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "key",
+      "choices": [
+        "circle",
+        "key",
+        "square"
+      ],
+      "tokens": [
+        "circle",
+        "square",
+        "triangle",
+        "key"
+      ],
+      "numbers": [],
+      "signature": "odd-card|key|circle,square,triangle,key||circle,key,square",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.7",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "banana",
+      "choices": [
+        "lock",
+        "banana",
+        "key"
+      ],
+      "tokens": [
+        "lock",
+        "key",
+        "shoe",
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "odd-card|banana|lock,key,shoe,banana||lock,banana,key",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.8",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "planet",
+      "choices": [
+        "apple",
+        "planet",
+        "banana"
+      ],
+      "tokens": [
+        "apple",
+        "banana",
+        "pear",
+        "planet"
+      ],
+      "numbers": [],
+      "signature": "odd-card|planet|apple,banana,pear,planet||apple,planet,banana",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.9",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "star",
+      "choices": [
+        "key",
+        "star",
+        "lock"
+      ],
+      "tokens": [
+        "key",
+        "lock",
+        "shoe",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "odd-card|star|key,lock,shoe,star||key,star,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.10",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "pear",
+      "choices": [
+        "rocket",
+        "pear",
+        "planet"
+      ],
+      "tokens": [
+        "rocket",
+        "planet",
+        "cloud",
+        "pear"
+      ],
+      "numbers": [],
+      "signature": "odd-card|pear|rocket,planet,cloud,pear||rocket,pear,planet",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.11",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "lock",
+      "choices": [
+        "circle",
+        "lock",
+        "square"
+      ],
+      "tokens": [
+        "circle",
+        "square",
+        "triangle",
+        "lock"
+      ],
+      "numbers": [],
+      "signature": "odd-card|lock|circle,square,triangle,lock||circle,lock,square",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.12",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "cloud",
+      "choices": [
+        "apple",
+        "cloud",
+        "banana"
+      ],
+      "tokens": [
+        "apple",
+        "banana",
+        "pear",
+        "cloud"
+      ],
+      "numbers": [],
+      "signature": "odd-card|cloud|apple,banana,pear,cloud||apple,cloud,banana",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.13",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "shoe",
+      "choices": [
+        "rocket",
+        "shoe",
+        "planet"
+      ],
+      "tokens": [
+        "rocket",
+        "planet",
+        "star",
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "odd-card|shoe|rocket,planet,star,shoe||rocket,shoe,planet",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.14",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "ball",
+      "choices": [
+        "key",
+        "ball",
+        "lock"
+      ],
+      "tokens": [
+        "key",
+        "lock",
+        "cloud",
+        "ball"
+      ],
+      "numbers": [],
+      "signature": "odd-card|ball|key,lock,cloud,ball||key,ball,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.odd.15",
+      "category": "odd-one-out",
+      "family": "odd-card",
+      "contentId": "content.odd_card.picnic_cards",
+      "contentType": "oddOneOut",
+      "world": "forest",
+      "character": "owlCoach",
+      "correctChoiceId": "triangle",
+      "choices": [
+        "apple",
+        "triangle",
+        "banana"
+      ],
+      "tokens": [
+        "apple",
+        "banana",
+        "pear",
+        "triangle"
+      ],
+      "numbers": [],
+      "signature": "odd-card|triangle|apple,banana,pear,triangle||apple,triangle,banana",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.1",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "3",
+      "choices": [
+        "2",
+        "3",
+        "4"
+      ],
+      "tokens": [],
+      "numbers": [
+        1,
+        2,
+        3
+      ],
+      "signature": "toy-count|3||1,2,3|2,3,4",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.2",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "5",
+      "choices": [
+        "4",
+        "5",
+        "6"
+      ],
+      "tokens": [],
+      "numbers": [
+        2,
+        3,
+        5
+      ],
+      "signature": "toy-count|5||2,3,5|4,5,6",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.3",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "4",
+      "choices": [
+        "3",
+        "4",
+        "5"
+      ],
+      "tokens": [],
+      "numbers": [
+        3,
+        1,
+        4
+      ],
+      "signature": "toy-count|4||3,1,4|3,4,5",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.4",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "6",
+      "choices": [
+        "5",
+        "6",
+        "7"
+      ],
+      "tokens": [],
+      "numbers": [
+        4,
+        2,
+        6
+      ],
+      "signature": "toy-count|6||4,2,6|5,6,7",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.5",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "4",
+      "choices": [
+        "3",
+        "4",
+        "5"
+      ],
+      "tokens": [],
+      "numbers": [
+        1,
+        3,
+        4
+      ],
+      "signature": "toy-count|4||1,3,4|3,4,5",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.6",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "3",
+      "choices": [
+        "2",
+        "3",
+        "4"
+      ],
+      "tokens": [],
+      "numbers": [
+        2,
+        1,
+        3
+      ],
+      "signature": "toy-count|3||2,1,3|2,3,4",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.toys.7",
+      "category": "counting",
+      "family": "toy-count",
+      "contentId": "content.toy_count.toy_shelf",
+      "contentType": "counting",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "5",
+      "choices": [
+        "4",
+        "5",
+        "6"
+      ],
+      "tokens": [],
+      "numbers": [
+        3,
+        2,
+        5
+      ],
+      "signature": "toy-count|5||3,2,5|4,5,6",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.1",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "5",
+      "choices": [
+        "4",
+        "5",
+        "6"
+      ],
+      "tokens": [],
+      "numbers": [
+        2,
+        3,
+        5
+      ],
+      "signature": "sticker-sum|5||2,3,5|4,5,6",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.2",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "7",
+      "choices": [
+        "6",
+        "7",
+        "8"
+      ],
+      "tokens": [],
+      "numbers": [
+        3,
+        4,
+        7
+      ],
+      "signature": "sticker-sum|7||3,4,7|6,7,8",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.3",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "5",
+      "choices": [
+        "4",
+        "5",
+        "6"
+      ],
+      "tokens": [],
+      "numbers": [
+        4,
+        1,
+        5
+      ],
+      "signature": "sticker-sum|5||4,1,5|4,5,6",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.4",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "7",
+      "choices": [
+        "6",
+        "7",
+        "8"
+      ],
+      "tokens": [],
+      "numbers": [
+        5,
+        2,
+        7
+      ],
+      "signature": "sticker-sum|7||5,2,7|6,7,8",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.5",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "9",
+      "choices": [
+        "8",
+        "9",
+        "10"
+      ],
+      "tokens": [],
+      "numbers": [
+        6,
+        3,
+        9
+      ],
+      "signature": "sticker-sum|9||6,3,9|8,9,10",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.6",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "6",
+      "choices": [
+        "5",
+        "6",
+        "7"
+      ],
+      "tokens": [],
+      "numbers": [
+        2,
+        4,
+        6
+      ],
+      "signature": "sticker-sum|6||2,4,6|5,6,7",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.7",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "4",
+      "choices": [
+        "3",
+        "4",
+        "5"
+      ],
+      "tokens": [],
+      "numbers": [
+        3,
+        1,
+        4
+      ],
+      "signature": "sticker-sum|4||3,1,4|3,4,5",
+      "issues": []
+    },
+    {
+      "id": "phase13.count.stickers.8",
+      "category": "counting",
+      "family": "sticker-sum",
+      "contentId": "content.sticker_sum.album_math",
+      "contentType": "visualMathStory",
+      "world": "toyCity",
+      "character": "leo",
+      "correctChoiceId": "6",
+      "choices": [
+        "5",
+        "6",
+        "7"
+      ],
+      "tokens": [],
+      "numbers": [
+        4,
+        2,
+        6
+      ],
+      "signature": "sticker-sum|6||4,2,6|5,6,7",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.scale.1",
+      "category": "comparison",
+      "family": "balance-scale",
+      "contentId": "content.balance_scale.farm_scales",
+      "contentType": "comparison",
+      "world": "farm",
+      "character": "leo",
+      "correctChoiceId": "1",
+      "choices": [
+        "3",
+        "1",
+        "2"
+      ],
+      "tokens": [
+        "apple"
+      ],
+      "numbers": [
+        2,
+        1,
+        1
+      ],
+      "signature": "balance-scale|1|apple|2,1,1|3,1,2",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.scale.2",
+      "category": "comparison",
+      "family": "balance-scale",
+      "contentId": "content.balance_scale.farm_scales",
+      "contentType": "comparison",
+      "world": "farm",
+      "character": "leo",
+      "correctChoiceId": "3",
+      "choices": [
+        "2",
+        "3",
+        "4"
+      ],
+      "tokens": [
+        "apple"
+      ],
+      "numbers": [
+        4,
+        1,
+        3
+      ],
+      "signature": "balance-scale|3|apple|4,1,3|2,3,4",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.scale.3",
+      "category": "comparison",
+      "family": "balance-scale",
+      "contentId": "content.balance_scale.farm_scales",
+      "contentType": "comparison",
+      "world": "farm",
+      "character": "leo",
+      "correctChoiceId": "3",
+      "choices": [
+        "2",
+        "3",
+        "4"
+      ],
+      "tokens": [
+        "apple"
+      ],
+      "numbers": [
+        5,
+        2,
+        3
+      ],
+      "signature": "balance-scale|3|apple|5,2,3|2,3,4",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.scale.4",
+      "category": "comparison",
+      "family": "balance-scale",
+      "contentId": "content.balance_scale.farm_scales",
+      "contentType": "comparison",
+      "world": "farm",
+      "character": "leo",
+      "correctChoiceId": "1",
+      "choices": [
+        "3",
+        "1",
+        "2"
+      ],
+      "tokens": [
+        "apple"
+      ],
+      "numbers": [
+        5,
+        4,
+        1
+      ],
+      "signature": "balance-scale|1|apple|5,4,1|3,1,2",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.scale.5",
+      "category": "comparison",
+      "family": "balance-scale",
+      "contentId": "content.balance_scale.farm_scales",
+      "contentType": "comparison",
+      "world": "farm",
+      "character": "leo",
+      "correctChoiceId": "4",
+      "choices": [
+        "3",
+        "4",
+        "5"
+      ],
+      "tokens": [
+        "apple"
+      ],
+      "numbers": [
+        6,
+        2,
+        4
+      ],
+      "signature": "balance-scale|4|apple|6,2,4|3,4,5",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.details.1",
+      "category": "comparison",
+      "family": "detail-count",
+      "contentId": "content.detail_count.observation_map",
+      "contentType": "comparison",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "red-circles",
+      "choices": [
+        "blue-squares",
+        "red-circles",
+        "green-stars"
+      ],
+      "tokens": [],
+      "numbers": [
+        3,
+        2,
+        1
+      ],
+      "signature": "detail-count|red-circles||3,2,1|blue-squares,red-circles,green-stars",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.details.2",
+      "category": "comparison",
+      "family": "detail-count",
+      "contentId": "content.detail_count.observation_map",
+      "contentType": "comparison",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "blue-squares",
+      "choices": [
+        "blue-squares",
+        "red-circles",
+        "green-stars"
+      ],
+      "tokens": [],
+      "numbers": [
+        1,
+        4,
+        2
+      ],
+      "signature": "detail-count|blue-squares||1,4,2|blue-squares,red-circles,green-stars",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.details.3",
+      "category": "comparison",
+      "family": "detail-count",
+      "contentId": "content.detail_count.observation_map",
+      "contentType": "comparison",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "green-stars",
+      "choices": [
+        "blue-squares",
+        "red-circles",
+        "green-stars"
+      ],
+      "tokens": [],
+      "numbers": [
+        2,
+        1,
+        5
+      ],
+      "signature": "detail-count|green-stars||2,1,5|blue-squares,red-circles,green-stars",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.details.4",
+      "category": "comparison",
+      "family": "detail-count",
+      "contentId": "content.detail_count.observation_map",
+      "contentType": "comparison",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "red-circles",
+      "choices": [
+        "blue-squares",
+        "red-circles",
+        "green-stars"
+      ],
+      "tokens": [],
+      "numbers": [
+        4,
+        3,
+        2
+      ],
+      "signature": "detail-count|red-circles||4,3,2|blue-squares,red-circles,green-stars",
+      "issues": []
+    },
+    {
+      "id": "phase13.compare.details.5",
+      "category": "comparison",
+      "family": "detail-count",
+      "contentId": "content.detail_count.observation_map",
+      "contentType": "comparison",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "blue-squares",
+      "choices": [
+        "blue-squares",
+        "red-circles",
+        "green-stars"
+      ],
+      "tokens": [],
+      "numbers": [
+        2,
+        5,
+        3
+      ],
+      "signature": "detail-count|blue-squares||2,5,3|blue-squares,red-circles,green-stars",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.1",
+      "category": "pair-matching",
+      "family": "memory-pairs",
+      "contentId": "content.memory_pairs.magic_pairs",
+      "contentType": "pairMatching",
+      "world": "sea",
+      "character": "owlCoach",
+      "correctChoiceId": "lock",
+      "choices": [
+        "lock",
+        "shoe",
+        "cloud"
+      ],
+      "tokens": [
+        "key",
+        "lock"
+      ],
+      "numbers": [],
+      "signature": "memory-pairs|lock|key,lock||lock,shoe,cloud",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.2",
+      "category": "pair-matching",
+      "family": "memory-pairs",
+      "contentId": "content.memory_pairs.magic_pairs",
+      "contentType": "pairMatching",
+      "world": "sea",
+      "character": "owlCoach",
+      "correctChoiceId": "shoe",
+      "choices": [
+        "shoe",
+        "cloud",
+        "lock"
+      ],
+      "tokens": [
+        "foot",
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "memory-pairs|shoe|foot,shoe||shoe,cloud,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.3",
+      "category": "pair-matching",
+      "family": "memory-pairs",
+      "contentId": "content.memory_pairs.magic_pairs",
+      "contentType": "pairMatching",
+      "world": "sea",
+      "character": "owlCoach",
+      "correctChoiceId": "cloud",
+      "choices": [
+        "cloud",
+        "shoe",
+        "lock"
+      ],
+      "tokens": [
+        "rain",
+        "cloud"
+      ],
+      "numbers": [],
+      "signature": "memory-pairs|cloud|rain,cloud||cloud,shoe,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.4",
+      "category": "pair-matching",
+      "family": "memory-pairs",
+      "contentId": "content.memory_pairs.magic_pairs",
+      "contentType": "pairMatching",
+      "world": "sea",
+      "character": "owlCoach",
+      "correctChoiceId": "planet",
+      "choices": [
+        "planet",
+        "lock",
+        "shoe"
+      ],
+      "tokens": [
+        "rocket",
+        "planet"
+      ],
+      "numbers": [],
+      "signature": "memory-pairs|planet|rocket,planet||planet,lock,shoe",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.5",
+      "category": "pair-matching",
+      "family": "memory-pairs",
+      "contentId": "content.memory_pairs.magic_pairs",
+      "contentType": "pairMatching",
+      "world": "sea",
+      "character": "owlCoach",
+      "correctChoiceId": "banana",
+      "choices": [
+        "banana",
+        "cloud",
+        "key"
+      ],
+      "tokens": [
+        "apple",
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "memory-pairs|banana|apple,banana||banana,cloud,key",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.6",
+      "category": "pair-matching",
+      "family": "lock-key",
+      "contentId": "content.lock_key.magic_pair",
+      "contentType": "pairMatching",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "lock",
+      "choices": [
+        "lock",
+        "shoe",
+        "cloud"
+      ],
+      "tokens": [
+        "key",
+        "lock"
+      ],
+      "numbers": [],
+      "signature": "lock-key|lock|key,lock||lock,shoe,cloud",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.7",
+      "category": "pair-matching",
+      "family": "lock-key",
+      "contentId": "content.lock_key.magic_pair",
+      "contentType": "pairMatching",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "shoe",
+      "choices": [
+        "shoe",
+        "cloud",
+        "lock"
+      ],
+      "tokens": [
+        "foot",
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "lock-key|shoe|foot,shoe||shoe,cloud,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.8",
+      "category": "pair-matching",
+      "family": "lock-key",
+      "contentId": "content.lock_key.magic_pair",
+      "contentType": "pairMatching",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "cloud",
+      "choices": [
+        "cloud",
+        "shoe",
+        "lock"
+      ],
+      "tokens": [
+        "rain",
+        "cloud"
+      ],
+      "numbers": [],
+      "signature": "lock-key|cloud|rain,cloud||cloud,shoe,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.9",
+      "category": "pair-matching",
+      "family": "lock-key",
+      "contentId": "content.lock_key.magic_pair",
+      "contentType": "pairMatching",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "planet",
+      "choices": [
+        "planet",
+        "shoe",
+        "lock"
+      ],
+      "tokens": [
+        "rocket",
+        "planet"
+      ],
+      "numbers": [],
+      "signature": "lock-key|planet|rocket,planet||planet,shoe,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.pair.10",
+      "category": "pair-matching",
+      "family": "lock-key",
+      "contentId": "content.lock_key.magic_pair",
+      "contentType": "pairMatching",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "banana",
+      "choices": [
+        "banana",
+        "key",
+        "cloud"
+      ],
+      "tokens": [
+        "apple",
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "lock-key|banana|apple,banana||banana,key,cloud",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.1",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "rocket",
+      "choices": [
+        "rocket",
+        "apple",
+        "ball"
+      ],
+      "tokens": [
+        "rocket"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|rocket|rocket||rocket,apple,ball",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.2",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "planet",
+      "choices": [
+        "planet",
+        "banana",
+        "key"
+      ],
+      "tokens": [
+        "planet"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|planet|planet||planet,banana,key",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.3",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "star",
+      "choices": [
+        "star",
+        "pear",
+        "lock"
+      ],
+      "tokens": [
+        "star"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|star|star||star,pear,lock",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.4",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "apple",
+      "choices": [
+        "apple",
+        "ball",
+        "shoe"
+      ],
+      "tokens": [
+        "apple"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|apple|apple||apple,ball,shoe",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.5",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "banana",
+      "choices": [
+        "banana",
+        "key",
+        "rocket"
+      ],
+      "tokens": [
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|banana|banana||banana,key,rocket",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.6",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "pear",
+      "choices": [
+        "pear",
+        "lock",
+        "planet"
+      ],
+      "tokens": [
+        "pear"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|pear|pear||pear,lock,planet",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.7",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "ball",
+      "choices": [
+        "ball",
+        "shoe",
+        "star"
+      ],
+      "tokens": [
+        "ball"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|ball|ball||ball,shoe,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.8",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "key",
+      "choices": [
+        "key",
+        "rocket",
+        "apple"
+      ],
+      "tokens": [
+        "key"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|key|key||key,rocket,apple",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.9",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "lock",
+      "choices": [
+        "lock",
+        "planet",
+        "banana"
+      ],
+      "tokens": [
+        "lock"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|lock|lock||lock,planet,banana",
+      "issues": []
+    },
+    {
+      "id": "phase13.shadow.10",
+      "category": "shadow-matching",
+      "family": "shadow-match",
+      "contentId": "content.shadow_match.space_shadow",
+      "contentType": "shadowMatch",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "shoe",
+      "choices": [
+        "shoe",
+        "star",
+        "pear"
+      ],
+      "tokens": [
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "shadow-match|shoe|shoe||shoe,star,pear",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.1",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "right",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "rocket",
+        "planet",
+        "right"
+      ],
+      "numbers": [],
+      "signature": "path-maze|right|rocket,planet,right||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.2",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "up",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "key",
+        "lock",
+        "up"
+      ],
+      "numbers": [],
+      "signature": "path-maze|up|key,lock,up||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.3",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "left",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "shoe",
+        "star",
+        "left"
+      ],
+      "numbers": [],
+      "signature": "path-maze|left|shoe,star,left||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.4",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "down",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "apple",
+        "cloud",
+        "down"
+      ],
+      "numbers": [],
+      "signature": "path-maze|down|apple,cloud,down||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.5",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "right",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "banana",
+        "pear",
+        "right"
+      ],
+      "numbers": [],
+      "signature": "path-maze|right|banana,pear,right||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.6",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "left",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "planet",
+        "rocket",
+        "left"
+      ],
+      "numbers": [],
+      "signature": "path-maze|left|planet,rocket,left||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.7",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "down",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "lock",
+        "key",
+        "down"
+      ],
+      "numbers": [],
+      "signature": "path-maze|down|lock,key,down||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.8",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "up",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "ball",
+        "star",
+        "up"
+      ],
+      "numbers": [],
+      "signature": "path-maze|up|ball,star,up||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.9",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "right",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "circle",
+        "square",
+        "right"
+      ],
+      "numbers": [],
+      "signature": "path-maze|right|circle,square,right||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.path.10",
+      "category": "path-logic",
+      "family": "path-maze",
+      "contentId": "content.path_maze.space_path",
+      "contentType": "pathLogic",
+      "world": "space",
+      "character": "nickAstronaut",
+      "correctChoiceId": "left",
+      "choices": [
+        "left",
+        "right",
+        "up",
+        "down"
+      ],
+      "tokens": [
+        "triangle",
+        "circle",
+        "left"
+      ],
+      "numbers": [],
+      "signature": "path-maze|left|triangle,circle,left||left,right,up,down",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.1",
+      "category": "memory-detail",
+      "family": "memory-recall",
+      "contentId": "content.memory_recall.hidden_cards",
+      "contentType": "memoryRecall",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "star",
+      "choices": [
+        "star",
+        "rocket",
+        "planet"
+      ],
+      "tokens": [
+        "rocket",
+        "planet",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "memory-recall|star|rocket,planet,star||star,rocket,planet",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.2",
+      "category": "memory-detail",
+      "family": "memory-recall",
+      "contentId": "content.memory_recall.hidden_cards",
+      "contentType": "memoryRecall",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "key",
+      "choices": [
+        "key",
+        "lock",
+        "cloud"
+      ],
+      "tokens": [
+        "lock",
+        "cloud",
+        "key"
+      ],
+      "numbers": [],
+      "signature": "memory-recall|key|lock,cloud,key||key,lock,cloud",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.3",
+      "category": "memory-detail",
+      "family": "memory-recall",
+      "contentId": "content.memory_recall.hidden_cards",
+      "contentType": "memoryRecall",
+      "world": "magicSchool",
+      "character": "owlCoach",
+      "correctChoiceId": "banana",
+      "choices": [
+        "banana",
+        "apple",
+        "pear"
+      ],
+      "tokens": [
+        "apple",
+        "pear",
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "memory-recall|banana|apple,pear,banana||banana,apple,pear",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.4",
+      "category": "memory-detail",
+      "family": "sorting-rule",
+      "contentId": "content.sorting_rule.rule_box",
+      "contentType": "sortingRule",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "pear",
+      "choices": [
+        "pear",
+        "rocket",
+        "apple"
+      ],
+      "tokens": [
+        "apple",
+        "banana",
+        "pear",
+        "rocket"
+      ],
+      "numbers": [],
+      "signature": "sorting-rule|pear|apple,banana,pear,rocket||pear,rocket,apple",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.5",
+      "category": "memory-detail",
+      "family": "sorting-rule",
+      "contentId": "content.sorting_rule.rule_box",
+      "contentType": "sortingRule",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "star",
+      "choices": [
+        "star",
+        "shoe",
+        "circle"
+      ],
+      "tokens": [
+        "circle",
+        "square",
+        "star",
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "sorting-rule|star|circle,square,star,shoe||star,shoe,circle",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.6",
+      "category": "memory-detail",
+      "family": "sorting-rule",
+      "contentId": "content.sorting_rule.rule_box",
+      "contentType": "sortingRule",
+      "world": "toyCity",
+      "character": "robi",
+      "correctChoiceId": "lock",
+      "choices": [
+        "lock",
+        "banana",
+        "key"
+      ],
+      "tokens": [
+        "key",
+        "cloud",
+        "lock",
+        "banana"
+      ],
+      "numbers": [],
+      "signature": "sorting-rule|lock|key,cloud,lock,banana||lock,banana,key",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.7",
+      "category": "memory-detail",
+      "family": "missing-piece",
+      "contentId": "content.missing_piece.picture_patch",
+      "contentType": "missingPiece",
+      "world": "laboratory",
+      "character": "robi",
+      "correctChoiceId": "circle",
+      "choices": [
+        "circle",
+        "square",
+        "star"
+      ],
+      "tokens": [
+        "rocket",
+        "circle",
+        "square",
+        "star"
+      ],
+      "numbers": [],
+      "signature": "missing-piece|circle|rocket,circle,square,star||circle,square,star",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.8",
+      "category": "memory-detail",
+      "family": "missing-piece",
+      "contentId": "content.missing_piece.picture_patch",
+      "contentType": "missingPiece",
+      "world": "laboratory",
+      "character": "robi",
+      "correctChoiceId": "key",
+      "choices": [
+        "key",
+        "cloud",
+        "shoe"
+      ],
+      "tokens": [
+        "lock",
+        "key",
+        "cloud",
+        "shoe"
+      ],
+      "numbers": [],
+      "signature": "missing-piece|key|lock,key,cloud,shoe||key,cloud,shoe",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.9",
+      "category": "memory-detail",
+      "family": "logic-deduction",
+      "contentId": "content.logic_deduction.two_clues",
+      "contentType": "logicDeduction",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "rocket",
+      "choices": [
+        "rocket",
+        "apple",
+        "ball"
+      ],
+      "tokens": [
+        "flies",
+        "not-fruit",
+        "rocket",
+        "apple",
+        "ball"
+      ],
+      "numbers": [],
+      "signature": "logic-deduction|rocket|flies,not-fruit,rocket,apple,ball||rocket,apple,ball",
+      "issues": []
+    },
+    {
+      "id": "phase13.memory.10",
+      "category": "memory-detail",
+      "family": "logic-deduction",
+      "contentId": "content.logic_deduction.two_clues",
+      "contentType": "logicDeduction",
+      "world": "laboratory",
+      "character": "owlCoach",
+      "correctChoiceId": "banana",
+      "choices": [
+        "banana",
+        "planet",
+        "lock"
+      ],
+      "tokens": [
+        "fruit",
+        "yellow",
+        "banana",
+        "planet",
+        "lock"
+      ],
+      "numbers": [],
+      "signature": "logic-deduction|banana|fruit,yellow,banana,planet,lock||banana,planet,lock",
+      "issues": []
+    }
+  ],
   "steps": [
     {
       "lessonId": "lesson.001",
@@ -239,7 +2596,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -323,12 +2680,8 @@
       "questionKey": "toy-count",
       "hintKey": "toy-count",
       "explanationKey": "toy-count",
-      "correctChoiceId": "4",
+      "correctChoiceId": "5",
       "choices": [
-        {
-          "id": "3",
-          "rawLabel": "3"
-        },
         {
           "id": "4",
           "rawLabel": "4"
@@ -336,13 +2689,17 @@
         {
           "id": "5",
           "rawLabel": "5"
+        },
+        {
+          "id": "6",
+          "rawLabel": "6"
         }
       ],
       "tokens": [],
       "numbers": [
         2,
-        2,
-        4
+        3,
+        5
       ],
       "issues": []
     },
@@ -386,7 +2743,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "circle",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "triangle",
@@ -406,8 +2763,8 @@
         }
       ],
       "tokens": [
-        "circle",
-        "square"
+        "triangle",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -450,23 +2807,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "rocket",
       "choices": [
-        {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
         {
           "id": "rocket",
           "rawLabel": "rocket"
         },
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "apple",
+          "rawLabel": "apple"
+        },
+        {
+          "id": "ball",
+          "rawLabel": "ball"
         }
       ],
       "tokens": [
-        "planet"
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -509,7 +2866,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "pear",
+      "correctChoiceId": "apple",
       "choices": [
         {
           "id": "apple",
@@ -525,8 +2882,8 @@
         }
       ],
       "tokens": [
-        "pear",
-        "apple"
+        "apple",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -636,7 +2993,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "pear",
+      "correctChoiceId": "banana",
       "choices": [
         {
           "id": "apple",
@@ -652,8 +3009,8 @@
         }
       ],
       "tokens": [
-        "pear",
-        "apple"
+        "banana",
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -694,26 +3051,26 @@
       "questionKey": "toy-count",
       "hintKey": "toy-count",
       "explanationKey": "toy-count",
-      "correctChoiceId": "2",
+      "correctChoiceId": "4",
       "choices": [
-        {
-          "id": "1",
-          "rawLabel": "1"
-        },
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
+        },
+        {
+          "id": "4",
+          "rawLabel": "4"
+        },
+        {
+          "id": "5",
+          "rawLabel": "5"
         }
       ],
       "tokens": [],
       "numbers": [
+        3,
         1,
-        1,
-        2
+        4
       ],
       "issues": []
     },
@@ -730,7 +3087,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -872,8 +3229,12 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "6",
+      "correctChoiceId": "5",
       "choices": [
+        {
+          "id": "4",
+          "rawLabel": "4"
+        },
         {
           "id": "5",
           "rawLabel": "5"
@@ -881,17 +3242,13 @@
         {
           "id": "6",
           "rawLabel": "6"
-        },
-        {
-          "id": "7",
-          "rawLabel": "7"
         }
       ],
       "tokens": [],
       "numbers": [
-        4,
         2,
-        6
+        3,
+        5
       ],
       "issues": []
     },
@@ -934,28 +3291,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "3",
+      "correctChoiceId": "1",
       "choices": [
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "4",
-          "rawLabel": "4"
+          "id": "1",
+          "rawLabel": "1"
+        },
+        {
+          "id": "2",
+          "rawLabel": "2"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        6,
-        3,
-        3
+        2,
+        1,
+        1
       ],
       "issues": []
     },
@@ -1073,8 +3430,8 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
         3,
+        4,
         7
       ],
       "issues": []
@@ -1115,7 +3472,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "red",
+      "correctChoiceId": "green",
       "choices": [
         {
           "id": "blue",
@@ -1131,8 +3488,8 @@
         }
       ],
       "tokens": [
-        "red",
-        "blue"
+        "green",
+        "red"
       ],
       "numbers": [],
       "issues": []
@@ -1450,9 +3807,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
-        1,
-        2
+        3,
+        2,
+        1
       ],
       "issues": []
     },
@@ -1469,7 +3826,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -1495,15 +3852,15 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "cloud",
       "choices": [
-        {
-          "id": "shoe",
-          "rawLabel": "shoe"
-        },
         {
           "id": "cloud",
           "rawLabel": "cloud"
+        },
+        {
+          "id": "shoe",
+          "rawLabel": "shoe"
         },
         {
           "id": "lock",
@@ -1511,8 +3868,8 @@
         }
       ],
       "tokens": [
-        "foot",
-        "shoe"
+        "rain",
+        "cloud"
       ],
       "numbers": [],
       "issues": []
@@ -1680,7 +4037,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "green-stars",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -1698,8 +4055,8 @@
       "tokens": [],
       "numbers": [
         1,
-        2,
-        3
+        4,
+        2
       ],
       "issues": []
     },
@@ -1739,7 +4096,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "red",
+      "correctChoiceId": "blue",
       "choices": [
         {
           "id": "blue",
@@ -1755,8 +4112,8 @@
         }
       ],
       "tokens": [
-        "red",
-        "blue"
+        "blue",
+        "green"
       ],
       "numbers": [],
       "issues": []
@@ -1799,7 +4156,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "green-stars",
       "choices": [
         {
           "id": "blue-squares",
@@ -1816,9 +4173,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
+        2,
         1,
-        2
+        5
       ],
       "issues": []
     },
@@ -2051,12 +4408,12 @@
           "rawLabel": "planet"
         },
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "banana",
+          "rawLabel": "banana"
         },
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "key",
+          "rawLabel": "key"
         }
       ],
       "tokens": [
@@ -2101,7 +4458,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "blue",
+      "correctChoiceId": "red",
       "choices": [
         {
           "id": "blue",
@@ -2117,7 +4474,7 @@
         }
       ],
       "tokens": [
-        "blue",
+        "red",
         "green"
       ],
       "numbers": [],
@@ -2223,28 +4580,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "1",
+      "correctChoiceId": "3",
       "choices": [
+        {
+          "id": "2",
+          "rawLabel": "2"
+        },
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "1",
-          "rawLabel": "1"
-        },
-        {
-          "id": "2",
-          "rawLabel": "2"
+          "id": "4",
+          "rawLabel": "4"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        3,
-        2,
-        1
+        4,
+        1,
+        3
       ],
       "issues": []
     },
@@ -2470,7 +4827,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "blue-squares",
+      "correctChoiceId": "red-circles",
       "choices": [
         {
           "id": "blue-squares",
@@ -2487,9 +4844,9 @@
       ],
       "tokens": [],
       "numbers": [
-        3,
         4,
-        1
+        3,
+        2
       ],
       "issues": []
     },
@@ -2590,23 +4947,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "star",
       "choices": [
-        {
-          "id": "rocket",
-          "rawLabel": "rocket"
-        },
-        {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
         {
           "id": "star",
           "rawLabel": "star"
+        },
+        {
+          "id": "pear",
+          "rawLabel": "pear"
+        },
+        {
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "rocket"
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -2649,7 +5006,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "rocket",
@@ -2665,8 +5022,8 @@
         }
       ],
       "tokens": [
-        "planet",
-        "star"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -2748,7 +5105,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -2774,24 +5131,24 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "planet",
       "choices": [
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
-        },
-        {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "planet",
+          "rawLabel": "planet"
         },
         {
           "id": "lock",
           "rawLabel": "lock"
+        },
+        {
+          "id": "shoe",
+          "rawLabel": "shoe"
         }
       ],
       "tokens": [
-        "foot",
-        "shoe"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -2836,7 +5193,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "circle",
+      "correctChoiceId": "square",
       "choices": [
         {
           "id": "square",
@@ -2856,8 +5213,8 @@
         }
       ],
       "tokens": [
-        "circle",
-        "star"
+        "square",
+        "circle"
       ],
       "numbers": [],
       "issues": []
@@ -2905,15 +5262,15 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "ball",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "apple",
           "rawLabel": "apple"
         },
         {
-          "id": "ball",
-          "rawLabel": "ball"
+          "id": "rocket",
+          "rawLabel": "rocket"
         },
         {
           "id": "banana",
@@ -2924,7 +5281,7 @@
         "apple",
         "banana",
         "pear",
-        "ball"
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -2968,19 +5325,19 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "3",
+      "correctChoiceId": "1",
       "choices": [
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "4",
-          "rawLabel": "4"
+          "id": "1",
+          "rawLabel": "1"
+        },
+        {
+          "id": "2",
+          "rawLabel": "2"
         }
       ],
       "tokens": [
@@ -2988,8 +5345,8 @@
       ],
       "numbers": [
         5,
-        2,
-        3
+        4,
+        1
       ],
       "issues": []
     },
@@ -3031,7 +5388,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "apple",
+      "correctChoiceId": "pear",
       "choices": [
         {
           "id": "apple",
@@ -3047,8 +5404,8 @@
         }
       ],
       "tokens": [
-        "apple",
-        "banana"
+        "pear",
+        "apple"
       ],
       "numbers": [],
       "issues": []
@@ -3091,23 +5448,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "apple",
       "choices": [
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "apple",
+          "rawLabel": "apple"
         },
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "ball",
+          "rawLabel": "ball"
         },
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "shoe",
+          "rawLabel": "shoe"
         }
       ],
       "tokens": [
-        "planet"
+        "apple"
       ],
       "numbers": [],
       "issues": []
@@ -3155,26 +5512,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "apple",
       "choices": [
         {
-          "id": "circle",
-          "rawLabel": "circle"
+          "id": "rocket",
+          "rawLabel": "rocket"
         },
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "apple",
+          "rawLabel": "apple"
         },
         {
-          "id": "square",
-          "rawLabel": "square"
+          "id": "planet",
+          "rawLabel": "planet"
         }
       ],
       "tokens": [
-        "circle",
-        "square",
-        "triangle",
-        "shoe"
+        "rocket",
+        "planet",
+        "star",
+        "apple"
       ],
       "numbers": [],
       "issues": []
@@ -3219,7 +5576,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "square",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "square",
@@ -3239,8 +5596,8 @@
         }
       ],
       "tokens": [
-        "square",
-        "circle"
+        "triangle",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -3281,26 +5638,26 @@
       "questionKey": "toy-count",
       "hintKey": "toy-count",
       "explanationKey": "toy-count",
-      "correctChoiceId": "3",
+      "correctChoiceId": "6",
       "choices": [
         {
-          "id": "2",
-          "rawLabel": "2"
+          "id": "5",
+          "rawLabel": "5"
         },
         {
-          "id": "3",
-          "rawLabel": "3"
+          "id": "6",
+          "rawLabel": "6"
         },
         {
-          "id": "4",
-          "rawLabel": "4"
+          "id": "7",
+          "rawLabel": "7"
         }
       ],
       "tokens": [],
       "numbers": [
+        4,
         2,
-        1,
-        3
+        6
       ],
       "issues": []
     },
@@ -3357,8 +5714,8 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
-        3,
+        5,
+        2,
         7
       ],
       "issues": []
@@ -3402,28 +5759,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "1",
+      "correctChoiceId": "4",
       "choices": [
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "1",
-          "rawLabel": "1"
+          "id": "4",
+          "rawLabel": "4"
         },
         {
-          "id": "2",
-          "rawLabel": "2"
+          "id": "5",
+          "rawLabel": "5"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        3,
+        6,
         2,
-        1
+        4
       ],
       "issues": []
     },
@@ -3651,23 +6008,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "banana",
       "choices": [
+        {
+          "id": "banana",
+          "rawLabel": "banana"
+        },
+        {
+          "id": "key",
+          "rawLabel": "key"
+        },
         {
           "id": "rocket",
           "rawLabel": "rocket"
-        },
-        {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
-        {
-          "id": "star",
-          "rawLabel": "star"
         }
       ],
       "tokens": [
-        "rocket"
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -3710,7 +6067,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -3727,9 +6084,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
-        1,
-        2
+        2,
+        5,
+        3
       ],
       "issues": []
     },
@@ -3746,7 +6103,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -3772,24 +6129,24 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "lock",
+      "correctChoiceId": "banana",
       "choices": [
         {
-          "id": "lock",
-          "rawLabel": "lock"
-        },
-        {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "banana",
+          "rawLabel": "banana"
         },
         {
           "id": "cloud",
           "rawLabel": "cloud"
+        },
+        {
+          "id": "key",
+          "rawLabel": "key"
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "apple",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -3893,7 +6250,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "green-stars",
+      "correctChoiceId": "red-circles",
       "choices": [
         {
           "id": "blue-squares",
@@ -3910,9 +6267,9 @@
       ],
       "tokens": [],
       "numbers": [
-        2,
         3,
-        4
+        2,
+        1
       ],
       "issues": []
     },
@@ -3959,26 +6316,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "ball",
+      "correctChoiceId": "key",
       "choices": [
         {
-          "id": "apple",
-          "rawLabel": "apple"
+          "id": "circle",
+          "rawLabel": "circle"
         },
         {
-          "id": "ball",
-          "rawLabel": "ball"
+          "id": "key",
+          "rawLabel": "key"
         },
         {
-          "id": "banana",
-          "rawLabel": "banana"
+          "id": "square",
+          "rawLabel": "square"
         }
       ],
       "tokens": [
-        "apple",
-        "banana",
-        "pear",
-        "ball"
+        "circle",
+        "square",
+        "triangle",
+        "key"
       ],
       "numbers": [],
       "issues": []
@@ -4147,28 +6504,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "3",
+      "correctChoiceId": "1",
       "choices": [
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "4",
-          "rawLabel": "4"
+          "id": "1",
+          "rawLabel": "1"
+        },
+        {
+          "id": "2",
+          "rawLabel": "2"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        5,
         2,
-        3
+        1,
+        1
       ],
       "issues": []
     },
@@ -4181,66 +6538,6 @@
       "stepId": "step.017.4",
       "stepOrder": 4,
       "stepRole": "stretch",
-      "puzzleId": "puzzle.space_sequence",
-      "family": "space-sequence",
-      "contentId": "content.space_sequence.planet_route",
-      "contentType": "patternSequence",
-      "world": "space",
-      "character": "nickAstronaut",
-      "characterPose": "happy",
-      "sceneAsset": "assets/images/puzzles/rocket.svg",
-      "requiredObjectIds": [
-        "rocket",
-        "planet",
-        "star"
-      ],
-      "requiredColorIds": [
-        "red",
-        "blue",
-        "yellow"
-      ],
-      "requiredNumberSlots": 0,
-      "animationCues": [
-        "pathMove",
-        "answerBounce"
-      ],
-      "skillTag": "pattern",
-      "lessonDifficulty": "growing",
-      "puzzleDifficulty": "medium",
-      "questionKey": "space-sequence",
-      "hintKey": "space-sequence",
-      "explanationKey": "space-sequence",
-      "correctChoiceId": "star",
-      "choices": [
-        {
-          "id": "rocket",
-          "rawLabel": "rocket"
-        },
-        {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
-        {
-          "id": "star",
-          "rawLabel": "star"
-        }
-      ],
-      "tokens": [
-        "star",
-        "rocket"
-      ],
-      "numbers": [],
-      "issues": []
-    },
-    {
-      "lessonId": "lesson.018",
-      "lessonNumber": 18,
-      "lessonTitleKey": "lesson_018_title",
-      "lessonTitleEn": "Space sequence",
-      "lessonTitleRu": "Космический ряд",
-      "stepId": "step.018.1",
-      "stepOrder": 1,
-      "stepRole": "warmUp",
       "puzzleId": "puzzle.space_sequence",
       "family": "space-sequence",
       "contentId": "content.space_sequence.planet_route",
@@ -4288,6 +6585,66 @@
       "tokens": [
         "planet",
         "star"
+      ],
+      "numbers": [],
+      "issues": []
+    },
+    {
+      "lessonId": "lesson.018",
+      "lessonNumber": 18,
+      "lessonTitleKey": "lesson_018_title",
+      "lessonTitleEn": "Space sequence",
+      "lessonTitleRu": "Космический ряд",
+      "stepId": "step.018.1",
+      "stepOrder": 1,
+      "stepRole": "warmUp",
+      "puzzleId": "puzzle.space_sequence",
+      "family": "space-sequence",
+      "contentId": "content.space_sequence.planet_route",
+      "contentType": "patternSequence",
+      "world": "space",
+      "character": "nickAstronaut",
+      "characterPose": "happy",
+      "sceneAsset": "assets/images/puzzles/rocket.svg",
+      "requiredObjectIds": [
+        "rocket",
+        "planet",
+        "star"
+      ],
+      "requiredColorIds": [
+        "red",
+        "blue",
+        "yellow"
+      ],
+      "requiredNumberSlots": 0,
+      "animationCues": [
+        "pathMove",
+        "answerBounce"
+      ],
+      "skillTag": "pattern",
+      "lessonDifficulty": "growing",
+      "puzzleDifficulty": "medium",
+      "questionKey": "space-sequence",
+      "hintKey": "space-sequence",
+      "explanationKey": "space-sequence",
+      "correctChoiceId": "star",
+      "choices": [
+        {
+          "id": "rocket",
+          "rawLabel": "rocket"
+        },
+        {
+          "id": "planet",
+          "rawLabel": "planet"
+        },
+        {
+          "id": "star",
+          "rawLabel": "star"
+        }
+      ],
+      "tokens": [
+        "star",
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -4447,23 +6804,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "pear",
       "choices": [
+        {
+          "id": "pear",
+          "rawLabel": "pear"
+        },
+        {
+          "id": "lock",
+          "rawLabel": "lock"
+        },
         {
           "id": "planet",
           "rawLabel": "planet"
-        },
-        {
-          "id": "rocket",
-          "rawLabel": "rocket"
-        },
-        {
-          "id": "star",
-          "rawLabel": "star"
         }
       ],
       "tokens": [
-        "planet"
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -4511,26 +6868,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "ball",
+      "correctChoiceId": "banana",
       "choices": [
         {
-          "id": "apple",
-          "rawLabel": "apple"
-        },
-        {
-          "id": "ball",
-          "rawLabel": "ball"
+          "id": "lock",
+          "rawLabel": "lock"
         },
         {
           "id": "banana",
           "rawLabel": "banana"
+        },
+        {
+          "id": "key",
+          "rawLabel": "key"
         }
       ],
       "tokens": [
-        "apple",
-        "banana",
-        "pear",
-        "ball"
+        "lock",
+        "key",
+        "shoe",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -4573,7 +6930,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "green-stars",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -4590,9 +6947,9 @@
       ],
       "tokens": [],
       "numbers": [
-        2,
-        3,
-        4
+        1,
+        4,
+        2
       ],
       "issues": []
     },
@@ -4712,7 +7069,7 @@
       ],
       "tokens": [
         "apple",
-        "banana"
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -4753,26 +7110,26 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "6",
+      "correctChoiceId": "9",
       "choices": [
         {
-          "id": "5",
-          "rawLabel": "5"
+          "id": "8",
+          "rawLabel": "8"
         },
         {
-          "id": "6",
-          "rawLabel": "6"
+          "id": "9",
+          "rawLabel": "9"
         },
         {
-          "id": "7",
-          "rawLabel": "7"
+          "id": "10",
+          "rawLabel": "10"
         }
       ],
       "tokens": [],
       "numbers": [
-        4,
-        2,
-        6
+        6,
+        3,
+        9
       ],
       "issues": []
     },
@@ -4940,12 +7297,8 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "2",
+      "correctChoiceId": "3",
       "choices": [
-        {
-          "id": "1",
-          "rawLabel": "1"
-        },
         {
           "id": "2",
           "rawLabel": "2"
@@ -4953,15 +7306,19 @@
         {
           "id": "3",
           "rawLabel": "3"
+        },
+        {
+          "id": "4",
+          "rawLabel": "4"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        5,
-        3,
-        2
+        4,
+        1,
+        3
       ],
       "issues": []
     },
@@ -5098,53 +7455,59 @@
       "stepId": "step.021.3",
       "stepOrder": 3,
       "stepRole": "core",
-      "puzzleId": "puzzle.fruit_pattern",
-      "family": "fruit-pattern",
-      "contentId": "content.fruit_pattern.forest_row",
-      "contentType": "patternSequence",
-      "world": "forest",
-      "character": "leo",
-      "characterPose": "happy",
-      "sceneAsset": "assets/images/puzzles/apple.svg",
+      "puzzleId": "puzzle.sorting_rule",
+      "family": "sorting-rule",
+      "contentId": "content.sorting_rule.rule_box",
+      "contentType": "sortingRule",
+      "world": "toyCity",
+      "character": "robi",
+      "characterPose": "hint",
+      "sceneAsset": "assets/images/puzzles/puzzle_card.svg",
       "requiredObjectIds": [
+        "box",
         "apple",
         "banana",
-        "pear"
+        "pear",
+        "rocket",
+        "lock"
       ],
       "requiredColorIds": [
         "red",
         "yellow",
-        "green"
+        "green",
+        "blue"
       ],
       "requiredNumberSlots": 0,
       "animationCues": [
         "answerBounce",
-        "objectReveal"
+        "wrongShake"
       ],
       "skillTag": "pattern",
       "lessonDifficulty": "growing",
-      "puzzleDifficulty": "easy",
-      "questionKey": "fruit-pattern",
-      "hintKey": "fruit-pattern",
-      "explanationKey": "fruit-pattern",
-      "correctChoiceId": "apple",
+      "puzzleDifficulty": "hard",
+      "questionKey": "sorting-rule",
+      "hintKey": "sorting-rule",
+      "explanationKey": "sorting-rule",
+      "correctChoiceId": "pear",
       "choices": [
-        {
-          "id": "apple",
-          "rawLabel": "apple"
-        },
-        {
-          "id": "banana",
-          "rawLabel": "banana"
-        },
         {
           "id": "pear",
           "rawLabel": "pear"
+        },
+        {
+          "id": "rocket",
+          "rawLabel": "rocket"
+        },
+        {
+          "id": "apple",
+          "rawLabel": "apple"
         }
       ],
       "tokens": [
         "apple",
-        "banana"
+        "banana",
+        "pear",
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -5187,7 +7550,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "rocket",
@@ -5203,7 +7566,7 @@
         }
       ],
       "tokens": [
-        "planet",
+        "rocket",
         "star"
       ],
       "numbers": [],
@@ -5308,7 +7671,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "triangle",
+      "correctChoiceId": "star",
       "choices": [
         {
           "id": "square",
@@ -5328,7 +7691,7 @@
         }
       ],
       "tokens": [
-        "triangle",
+        "star",
         "square"
       ],
       "numbers": [],
@@ -5436,15 +7799,15 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "ball",
       "choices": [
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "ball",
+          "rawLabel": "ball"
         },
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "shoe",
+          "rawLabel": "shoe"
         },
         {
           "id": "star",
@@ -5452,7 +7815,7 @@
         }
       ],
       "tokens": [
-        "rocket"
+        "ball"
       ],
       "numbers": [],
       "issues": []
@@ -5510,8 +7873,8 @@
       ],
       "tokens": [],
       "numbers": [
-        3,
         1,
+        3,
         4
       ],
       "issues": []
@@ -5572,8 +7935,8 @@
       "tokens": [],
       "numbers": [
         2,
-        3,
-        4
+        1,
+        5
       ],
       "issues": []
     },
@@ -5586,24 +7949,26 @@
       "stepId": "step.023.3",
       "stepOrder": 3,
       "stepRole": "core",
-      "puzzleId": "puzzle.memory_pairs",
-      "family": "memory-pairs",
-      "contentId": "content.memory_pairs.magic_pairs",
-      "contentType": "pairMatching",
+      "puzzleId": "puzzle.memory_recall",
+      "family": "memory-recall",
+      "contentId": "content.memory_recall.hidden_cards",
+      "contentType": "memoryRecall",
       "world": "magicSchool",
       "character": "owlCoach",
-      "characterPose": "hint",
-      "sceneAsset": "assets/images/puzzles/key.svg",
+      "characterPose": "thinking",
+      "sceneAsset": "assets/images/puzzles/puzzle_card.svg",
       "requiredObjectIds": [
+        "card",
+        "rocket",
+        "planet",
+        "star",
         "key",
-        "lock",
-        "shoe",
-        "cloud"
+        "banana"
       ],
       "requiredColorIds": [
+        "blue",
         "yellow",
-        "purple",
-        "blue"
+        "purple"
       ],
       "requiredNumberSlots": 0,
       "animationCues": [
@@ -5612,28 +7977,29 @@
       ],
       "skillTag": "memory",
       "lessonDifficulty": "growing",
-      "puzzleDifficulty": "easy",
-      "questionKey": "memory-pairs",
-      "hintKey": "memory-pairs",
-      "explanationKey": "memory-pairs",
-      "correctChoiceId": "shoe",
+      "puzzleDifficulty": "hard",
+      "questionKey": "memory-recall",
+      "hintKey": "memory-recall",
+      "explanationKey": "memory-recall",
+      "correctChoiceId": "star",
       "choices": [
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "star",
+          "rawLabel": "star"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "rocket",
+          "rawLabel": "rocket"
         },
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "planet",
+          "rawLabel": "planet"
         }
       ],
       "tokens": [
-        "foot",
-        "shoe"
+        "rocket",
+        "planet",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -5737,7 +8103,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "rocket",
@@ -5753,8 +8119,8 @@
         }
       ],
       "tokens": [
-        "planet",
-        "star"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -5799,7 +8165,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "circle",
+      "correctChoiceId": "square",
       "choices": [
         {
           "id": "square",
@@ -5819,8 +8185,8 @@
         }
       ],
       "tokens": [
-        "circle",
-        "star"
+        "square",
+        "circle"
       ],
       "numbers": [],
       "issues": []
@@ -5864,24 +8230,24 @@
       "questionKey": "lock-key",
       "hintKey": "lock-key",
       "explanationKey": "lock-key",
-      "correctChoiceId": "lock",
+      "correctChoiceId": "planet",
       "choices": [
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "planet",
+          "rawLabel": "planet"
         },
         {
           "id": "shoe",
           "rawLabel": "shoe"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -5988,7 +8354,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "green-stars",
+      "correctChoiceId": "red-circles",
       "choices": [
         {
           "id": "blue-squares",
@@ -6005,9 +8371,9 @@
       ],
       "tokens": [],
       "numbers": [
-        1,
-        2,
-        3
+        4,
+        3,
+        2
       ],
       "issues": []
     },
@@ -6020,23 +8386,25 @@
       "stepId": "step.025.2",
       "stepOrder": 2,
       "stepRole": "core",
-      "puzzleId": "puzzle.shape_rotation",
-      "family": "shape-rotation",
-      "contentId": "content.shape_rotation.lab_turntable",
-      "contentType": "spatialRotation",
+      "puzzleId": "puzzle.missing_piece",
+      "family": "missing-piece",
+      "contentId": "content.missing_piece.picture_patch",
+      "contentType": "missingPiece",
       "world": "laboratory",
       "character": "robi",
       "characterPose": "thinking",
-      "sceneAsset": "assets/images/puzzles/shape_triangle.svg",
+      "sceneAsset": "assets/images/puzzles/rocket.svg",
       "requiredObjectIds": [
-        "triangle",
+        "rocket",
+        "planet",
         "circle",
-        "square"
+        "star",
+        "key"
       ],
       "requiredColorIds": [
-        "purple",
         "teal",
-        "blue"
+        "blue",
+        "yellow"
       ],
       "requiredNumberSlots": 0,
       "animationCues": [
@@ -6046,15 +8414,11 @@
       "skillTag": "spatial",
       "lessonDifficulty": "growing",
       "puzzleDifficulty": "hard",
-      "questionKey": "shape-rotation",
-      "hintKey": "shape-rotation",
-      "explanationKey": "shape-rotation",
-      "correctChoiceId": "same",
+      "questionKey": "missing-piece",
+      "hintKey": "missing-piece",
+      "explanationKey": "missing-piece",
+      "correctChoiceId": "circle",
       "choices": [
-        {
-          "id": "same",
-          "rawLabel": "same"
-        },
         {
           "id": "circle",
           "rawLabel": "circle"
@@ -6062,10 +8426,17 @@
         {
           "id": "square",
           "rawLabel": "square"
+        },
+        {
+          "id": "star",
+          "rawLabel": "star"
         }
       ],
       "tokens": [
-        "left"
+        "rocket",
+        "circle",
+        "square",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -6083,7 +8454,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -6109,24 +8480,24 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "lock",
       "choices": [
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "lock",
+          "rawLabel": "lock"
         },
         {
           "id": "shoe",
           "rawLabel": "shoe"
         },
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "cloud",
+          "rawLabel": "cloud"
         }
       ],
       "tokens": [
-        "rain",
-        "cloud"
+        "key",
+        "lock"
       ],
       "numbers": [],
       "issues": []
@@ -6249,8 +8620,8 @@
         "apple"
       ],
       "numbers": [
-        6,
-        3,
+        5,
+        2,
         3
       ],
       "issues": []
@@ -6352,26 +8723,26 @@
       "questionKey": "toy-count",
       "hintKey": "toy-count",
       "explanationKey": "toy-count",
-      "correctChoiceId": "6",
+      "correctChoiceId": "3",
       "choices": [
         {
-          "id": "5",
-          "rawLabel": "5"
+          "id": "2",
+          "rawLabel": "2"
         },
         {
-          "id": "6",
-          "rawLabel": "6"
+          "id": "3",
+          "rawLabel": "3"
         },
         {
-          "id": "7",
-          "rawLabel": "7"
+          "id": "4",
+          "rawLabel": "4"
         }
       ],
       "tokens": [],
       "numbers": [
-        4,
         2,
-        6
+        1,
+        3
       ],
       "issues": []
     },
@@ -6482,26 +8853,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "planet",
       "choices": [
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
-        },
-        {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "apple",
+          "rawLabel": "apple"
         },
         {
           "id": "planet",
           "rawLabel": "planet"
+        },
+        {
+          "id": "banana",
+          "rawLabel": "banana"
         }
       ],
       "tokens": [
-        "rocket",
-        "planet",
-        "star",
-        "cloud"
+        "apple",
+        "banana",
+        "pear",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -6573,54 +8944,57 @@
       "stepId": "step.027.3",
       "stepOrder": 3,
       "stepRole": "core",
-      "puzzleId": "puzzle.lock_key",
-      "family": "lock-key",
-      "contentId": "content.lock_key.magic_pair",
-      "contentType": "pairMatching",
-      "world": "magicSchool",
+      "puzzleId": "puzzle.logic_deduction",
+      "family": "logic-deduction",
+      "contentId": "content.logic_deduction.two_clues",
+      "contentType": "logicDeduction",
+      "world": "laboratory",
       "character": "owlCoach",
       "characterPose": "hint",
-      "sceneAsset": "assets/images/puzzles/key.svg",
+      "sceneAsset": "assets/images/puzzles/sign_question.svg",
       "requiredObjectIds": [
+        "clue",
+        "rocket",
         "key",
-        "lock",
-        "shoe",
-        "cloud"
+        "banana"
       ],
       "requiredColorIds": [
         "yellow",
-        "purple",
+        "teal",
         "blue"
       ],
       "requiredNumberSlots": 0,
       "animationCues": [
-        "objectReveal",
+        "hintGlow",
         "answerBounce"
       ],
-      "skillTag": "memory",
+      "skillTag": "reasoning",
       "lessonDifficulty": "growing",
-      "puzzleDifficulty": "hard",
-      "questionKey": "lock-key",
-      "hintKey": "lock-key",
-      "explanationKey": "lock-key",
-      "correctChoiceId": "lock",
+      "puzzleDifficulty": "challenge",
+      "questionKey": "logic-deduction",
+      "hintKey": "logic-deduction",
+      "explanationKey": "logic-deduction",
+      "correctChoiceId": "rocket",
       "choices": [
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "rocket",
+          "rawLabel": "rocket"
         },
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "apple",
+          "rawLabel": "apple"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "ball",
+          "rawLabel": "ball"
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "flies",
+        "not-fruit",
+        "rocket",
+        "apple",
+        "ball"
       ],
       "numbers": [],
       "issues": []
@@ -6665,7 +9039,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "star",
+      "correctChoiceId": "circle",
       "choices": [
         {
           "id": "triangle",
@@ -6685,8 +9059,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "triangle"
+        "circle",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -6729,7 +9103,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "planet",
       "choices": [
         {
           "id": "rocket",
@@ -6745,8 +9119,8 @@
         }
       ],
       "tokens": [
-        "rocket",
-        "planet"
+        "planet",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -6789,23 +9163,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "key",
       "choices": [
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "key",
+          "rawLabel": "key"
         },
         {
           "id": "rocket",
           "rawLabel": "rocket"
         },
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "apple",
+          "rawLabel": "apple"
         }
       ],
       "tokens": [
-        "planet"
+        "key"
       ],
       "numbers": [],
       "issues": []
@@ -6850,7 +9224,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "circle",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "square",
@@ -6870,8 +9244,8 @@
         }
       ],
       "tokens": [
-        "circle",
-        "star"
+        "triangle",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -6971,12 +9345,8 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "5",
+      "correctChoiceId": "6",
       "choices": [
-        {
-          "id": "4",
-          "rawLabel": "4"
-        },
         {
           "id": "5",
           "rawLabel": "5"
@@ -6984,13 +9354,17 @@
         {
           "id": "6",
           "rawLabel": "6"
+        },
+        {
+          "id": "7",
+          "rawLabel": "7"
         }
       ],
       "tokens": [],
       "numbers": [
         2,
-        3,
-        5
+        4,
+        6
       ],
       "issues": []
     },
@@ -7033,8 +9407,12 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "2",
+      "correctChoiceId": "1",
       "choices": [
+        {
+          "id": "3",
+          "rawLabel": "3"
+        },
         {
           "id": "1",
           "rawLabel": "1"
@@ -7042,19 +9420,15 @@
         {
           "id": "2",
           "rawLabel": "2"
-        },
-        {
-          "id": "3",
-          "rawLabel": "3"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        3,
-        1,
-        2
+        5,
+        4,
+        1
       ],
       "issues": []
     },
@@ -7157,7 +9531,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "green-stars",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -7175,8 +9549,8 @@
       "tokens": [],
       "numbers": [
         2,
-        3,
-        4
+        5,
+        3
       ],
       "issues": []
     },
@@ -7216,7 +9590,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "green",
+      "correctChoiceId": "red",
       "choices": [
         {
           "id": "blue",
@@ -7232,8 +9606,8 @@
         }
       ],
       "tokens": [
-        "green",
-        "red"
+        "red",
+        "green"
       ],
       "numbers": [],
       "issues": []
@@ -7345,26 +9719,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "ball",
+      "correctChoiceId": "star",
       "choices": [
         {
-          "id": "apple",
-          "rawLabel": "apple"
+          "id": "key",
+          "rawLabel": "key"
         },
         {
-          "id": "ball",
-          "rawLabel": "ball"
+          "id": "star",
+          "rawLabel": "star"
         },
         {
-          "id": "banana",
-          "rawLabel": "banana"
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "apple",
-        "banana",
-        "pear",
-        "ball"
+        "key",
+        "lock",
+        "shoe",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -7469,7 +9843,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "square",
+      "correctChoiceId": "circle",
       "choices": [
         {
           "id": "square",
@@ -7489,8 +9863,8 @@
         }
       ],
       "tokens": [
-        "square",
-        "circle"
+        "circle",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -7533,7 +9907,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "star",
       "choices": [
         {
           "id": "rocket",
@@ -7549,8 +9923,8 @@
         }
       ],
       "tokens": [
-        "planet",
-        "star"
+        "star",
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -7593,23 +9967,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "star",
+      "correctChoiceId": "lock",
       "choices": [
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "lock",
+          "rawLabel": "lock"
         },
         {
           "id": "planet",
           "rawLabel": "planet"
         },
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "banana",
+          "rawLabel": "banana"
         }
       ],
       "tokens": [
-        "star"
+        "lock"
       ],
       "numbers": [],
       "issues": []
@@ -7653,15 +10027,15 @@
       "questionKey": "lock-key",
       "hintKey": "lock-key",
       "explanationKey": "lock-key",
-      "correctChoiceId": "lock",
+      "correctChoiceId": "banana",
       "choices": [
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "banana",
+          "rawLabel": "banana"
         },
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "key",
+          "rawLabel": "key"
         },
         {
           "id": "cloud",
@@ -7669,8 +10043,8 @@
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "apple",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -7774,7 +10148,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "blue-squares",
+      "correctChoiceId": "red-circles",
       "choices": [
         {
           "id": "blue-squares",
@@ -7792,7 +10166,7 @@
       "tokens": [],
       "numbers": [
         3,
-        4,
+        2,
         1
       ],
       "issues": []
@@ -7810,7 +10184,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -7897,28 +10271,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "2",
+      "correctChoiceId": "4",
       "choices": [
-        {
-          "id": "1",
-          "rawLabel": "1"
-        },
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
+        },
+        {
+          "id": "4",
+          "rawLabel": "4"
+        },
+        {
+          "id": "5",
+          "rawLabel": "5"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        5,
-        3,
-        2
+        6,
+        2,
+        4
       ],
       "issues": []
     },
@@ -7962,7 +10336,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "circle",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "triangle",
@@ -7982,8 +10356,8 @@
         }
       ],
       "tokens": [
-        "circle",
-        "square"
+        "triangle",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -8024,7 +10398,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "blue",
+      "correctChoiceId": "red",
       "choices": [
         {
           "id": "blue",
@@ -8040,8 +10414,8 @@
         }
       ],
       "tokens": [
-        "blue",
-        "green"
+        "red",
+        "blue"
       ],
       "numbers": [],
       "issues": []
@@ -8153,15 +10527,15 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "pear",
       "choices": [
         {
           "id": "rocket",
           "rawLabel": "rocket"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "pear",
+          "rawLabel": "pear"
         },
         {
           "id": "planet",
@@ -8171,8 +10545,8 @@
       "tokens": [
         "rocket",
         "planet",
-        "star",
-        "cloud"
+        "cloud",
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -8274,23 +10648,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "shoe",
       "choices": [
         {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
-        {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "shoe",
+          "rawLabel": "shoe"
         },
         {
           "id": "star",
           "rawLabel": "star"
+        },
+        {
+          "id": "pear",
+          "rawLabel": "pear"
         }
       ],
       "tokens": [
-        "planet"
+        "shoe"
       ],
       "numbers": [],
       "issues": []
@@ -8333,7 +10707,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "star",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "rocket",
@@ -8349,8 +10723,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "rocket"
+        "rocket",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -8395,7 +10769,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "square",
+      "correctChoiceId": "star",
       "choices": [
         {
           "id": "square",
@@ -8415,8 +10789,8 @@
         }
       ],
       "tokens": [
-        "square",
-        "circle"
+        "star",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -8457,26 +10831,26 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "6",
+      "correctChoiceId": "4",
       "choices": [
+        {
+          "id": "3",
+          "rawLabel": "3"
+        },
+        {
+          "id": "4",
+          "rawLabel": "4"
+        },
         {
           "id": "5",
           "rawLabel": "5"
-        },
-        {
-          "id": "6",
-          "rawLabel": "6"
-        },
-        {
-          "id": "7",
-          "rawLabel": "7"
         }
       ],
       "tokens": [],
       "numbers": [
-        4,
-        2,
-        6
+        3,
+        1,
+        4
       ],
       "issues": []
     },
@@ -8580,28 +10954,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "3",
+      "correctChoiceId": "1",
       "choices": [
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "4",
-          "rawLabel": "4"
+          "id": "1",
+          "rawLabel": "1"
+        },
+        {
+          "id": "2",
+          "rawLabel": "2"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        5,
         2,
-        3
+        1,
+        1
       ],
       "issues": []
     },
@@ -8707,7 +11081,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -8724,8 +11098,8 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
         1,
+        4,
         2
       ],
       "issues": []
@@ -8743,7 +11117,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -8829,7 +11203,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "apple",
+      "correctChoiceId": "pear",
       "choices": [
         {
           "id": "apple",
@@ -8845,8 +11219,8 @@
         }
       ],
       "tokens": [
-        "apple",
-        "banana"
+        "pear",
+        "apple"
       ],
       "numbers": [],
       "issues": []
@@ -8889,7 +11263,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "rocket",
@@ -8905,8 +11279,8 @@
         }
       ],
       "tokens": [
-        "planet",
-        "star"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -9008,7 +11382,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "green-stars",
       "choices": [
         {
           "id": "blue-squares",
@@ -9025,9 +11399,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
+        2,
         1,
-        2
+        5
       ],
       "issues": []
     },
@@ -9069,7 +11443,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "pear",
+      "correctChoiceId": "apple",
       "choices": [
         {
           "id": "apple",
@@ -9085,8 +11459,8 @@
         }
       ],
       "tokens": [
-        "pear",
-        "apple"
+        "apple",
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -9104,7 +11478,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -9130,8 +11504,12 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "lock",
+      "correctChoiceId": "planet",
       "choices": [
+        {
+          "id": "planet",
+          "rawLabel": "planet"
+        },
         {
           "id": "lock",
           "rawLabel": "lock"
@@ -9139,15 +11517,11 @@
         {
           "id": "shoe",
           "rawLabel": "shoe"
-        },
-        {
-          "id": "cloud",
-          "rawLabel": "cloud"
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -9210,8 +11584,8 @@
         "apple"
       ],
       "numbers": [
-        6,
-        3,
+        4,
+        1,
         3
       ],
       "issues": []
@@ -9252,12 +11626,8 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "5",
+      "correctChoiceId": "6",
       "choices": [
-        {
-          "id": "4",
-          "rawLabel": "4"
-        },
         {
           "id": "5",
           "rawLabel": "5"
@@ -9265,13 +11635,17 @@
         {
           "id": "6",
           "rawLabel": "6"
+        },
+        {
+          "id": "7",
+          "rawLabel": "7"
         }
       ],
       "tokens": [],
       "numbers": [
+        4,
         2,
-        3,
-        5
+        6
       ],
       "issues": []
     },
@@ -9443,26 +11817,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "lock",
       "choices": [
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "circle",
+          "rawLabel": "circle"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "lock",
+          "rawLabel": "lock"
         },
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "square",
+          "rawLabel": "square"
         }
       ],
       "tokens": [
-        "rocket",
-        "planet",
-        "star",
-        "cloud"
+        "circle",
+        "square",
+        "triangle",
+        "lock"
       ],
       "numbers": [],
       "issues": []
@@ -9506,24 +11880,24 @@
       "questionKey": "lock-key",
       "hintKey": "lock-key",
       "explanationKey": "lock-key",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "lock",
       "choices": [
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "lock",
+          "rawLabel": "lock"
         },
         {
           "id": "shoe",
           "rawLabel": "shoe"
         },
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "cloud",
+          "rawLabel": "cloud"
         }
       ],
       "tokens": [
-        "rain",
-        "cloud"
+        "key",
+        "lock"
       ],
       "numbers": [],
       "issues": []
@@ -9564,7 +11938,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "red",
+      "correctChoiceId": "green",
       "choices": [
         {
           "id": "blue",
@@ -9580,8 +11954,8 @@
         }
       ],
       "tokens": [
-        "red",
-        "blue"
+        "green",
+        "red"
       ],
       "numbers": [],
       "issues": []
@@ -9626,7 +12000,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "star",
+      "correctChoiceId": "square",
       "choices": [
         {
           "id": "triangle",
@@ -9646,8 +12020,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "triangle"
+        "square",
+        "circle"
       ],
       "numbers": [],
       "issues": []
@@ -9690,7 +12064,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "planet",
       "choices": [
         {
           "id": "rocket",
@@ -9706,8 +12080,8 @@
         }
       ],
       "tokens": [
-        "rocket",
-        "planet"
+        "planet",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -9752,7 +12126,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "triangle",
+      "correctChoiceId": "square",
       "choices": [
         {
           "id": "square",
@@ -9772,8 +12146,8 @@
         }
       ],
       "tokens": [
-        "triangle",
-        "square"
+        "square",
+        "circle"
       ],
       "numbers": [],
       "issues": []
@@ -9816,23 +12190,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "star",
+      "correctChoiceId": "rocket",
       "choices": [
-        {
-          "id": "star",
-          "rawLabel": "star"
-        },
-        {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
         {
           "id": "rocket",
           "rawLabel": "rocket"
+        },
+        {
+          "id": "apple",
+          "rawLabel": "apple"
+        },
+        {
+          "id": "ball",
+          "rawLabel": "ball"
         }
       ],
       "tokens": [
-        "star"
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -10011,7 +12385,7 @@
       "tokens": [],
       "numbers": [
         4,
-        1,
+        3,
         2
       ],
       "issues": []
@@ -10054,7 +12428,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "banana",
+      "correctChoiceId": "apple",
       "choices": [
         {
           "id": "apple",
@@ -10070,8 +12444,8 @@
         }
       ],
       "tokens": [
-        "banana",
-        "pear"
+        "apple",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -10089,7 +12463,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -10115,24 +12489,24 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "banana",
       "choices": [
+        {
+          "id": "banana",
+          "rawLabel": "banana"
+        },
         {
           "id": "cloud",
           "rawLabel": "cloud"
         },
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
-        },
-        {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "key",
+          "rawLabel": "key"
         }
       ],
       "tokens": [
-        "rain",
-        "cloud"
+        "apple",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -10176,28 +12550,28 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "1",
+      "correctChoiceId": "3",
       "choices": [
+        {
+          "id": "2",
+          "rawLabel": "2"
+        },
         {
           "id": "3",
           "rawLabel": "3"
         },
         {
-          "id": "1",
-          "rawLabel": "1"
-        },
-        {
-          "id": "2",
-          "rawLabel": "2"
+          "id": "4",
+          "rawLabel": "4"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        3,
+        5,
         2,
-        1
+        3
       ],
       "issues": []
     },
@@ -10237,8 +12611,12 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "6",
+      "correctChoiceId": "5",
       "choices": [
+        {
+          "id": "4",
+          "rawLabel": "4"
+        },
         {
           "id": "5",
           "rawLabel": "5"
@@ -10246,17 +12624,13 @@
         {
           "id": "6",
           "rawLabel": "6"
-        },
-        {
-          "id": "7",
-          "rawLabel": "7"
         }
       ],
       "tokens": [],
       "numbers": [
-        5,
-        1,
-        6
+        2,
+        3,
+        5
       ],
       "issues": []
     },
@@ -10428,15 +12802,15 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "ball",
+      "correctChoiceId": "cloud",
       "choices": [
         {
           "id": "apple",
           "rawLabel": "apple"
         },
         {
-          "id": "ball",
-          "rawLabel": "ball"
+          "id": "cloud",
+          "rawLabel": "cloud"
         },
         {
           "id": "banana",
@@ -10447,7 +12821,7 @@
         "apple",
         "banana",
         "pear",
-        "ball"
+        "cloud"
       ],
       "numbers": [],
       "issues": []
@@ -10737,7 +13111,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "square",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "square",
@@ -10757,8 +13131,8 @@
         }
       ],
       "tokens": [
-        "square",
-        "circle"
+        "triangle",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -10808,12 +13182,12 @@
           "rawLabel": "planet"
         },
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "banana",
+          "rawLabel": "banana"
         },
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "key",
+          "rawLabel": "key"
         }
       ],
       "tokens": [
@@ -10978,7 +13352,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -10995,9 +13369,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
-        1,
-        2
+        2,
+        5,
+        3
       ],
       "issues": []
     },
@@ -11039,7 +13413,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "apple",
+      "correctChoiceId": "banana",
       "choices": [
         {
           "id": "apple",
@@ -11055,8 +13429,8 @@
         }
       ],
       "tokens": [
-        "apple",
-        "banana"
+        "banana",
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -11074,7 +13448,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -11100,8 +13474,12 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "lock",
       "choices": [
+        {
+          "id": "lock",
+          "rawLabel": "lock"
+        },
         {
           "id": "shoe",
           "rawLabel": "shoe"
@@ -11109,15 +13487,11 @@
         {
           "id": "cloud",
           "rawLabel": "cloud"
-        },
-        {
-          "id": "lock",
-          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "foot",
-        "shoe"
+        "key",
+        "lock"
       ],
       "numbers": [],
       "issues": []
@@ -11161,8 +13535,12 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "2",
+      "correctChoiceId": "1",
       "choices": [
+        {
+          "id": "3",
+          "rawLabel": "3"
+        },
         {
           "id": "1",
           "rawLabel": "1"
@@ -11170,19 +13548,15 @@
         {
           "id": "2",
           "rawLabel": "2"
-        },
-        {
-          "id": "3",
-          "rawLabel": "3"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        3,
-        1,
-        2
+        5,
+        4,
+        1
       ],
       "issues": []
     },
@@ -11222,12 +13596,8 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "6",
+      "correctChoiceId": "7",
       "choices": [
-        {
-          "id": "5",
-          "rawLabel": "5"
-        },
         {
           "id": "6",
           "rawLabel": "6"
@@ -11235,13 +13605,17 @@
         {
           "id": "7",
           "rawLabel": "7"
+        },
+        {
+          "id": "8",
+          "rawLabel": "8"
         }
       ],
       "tokens": [],
       "numbers": [
         3,
-        3,
-        6
+        4,
+        7
       ],
       "issues": []
     },
@@ -11416,22 +13790,22 @@
       "correctChoiceId": "shoe",
       "choices": [
         {
-          "id": "circle",
-          "rawLabel": "circle"
+          "id": "rocket",
+          "rawLabel": "rocket"
         },
         {
           "id": "shoe",
           "rawLabel": "shoe"
         },
         {
-          "id": "square",
-          "rawLabel": "square"
+          "id": "planet",
+          "rawLabel": "planet"
         }
       ],
       "tokens": [
-        "circle",
-        "square",
-        "triangle",
+        "rocket",
+        "planet",
+        "star",
         "shoe"
       ],
       "numbers": [],
@@ -11476,24 +13850,24 @@
       "questionKey": "lock-key",
       "hintKey": "lock-key",
       "explanationKey": "lock-key",
-      "correctChoiceId": "lock",
+      "correctChoiceId": "cloud",
       "choices": [
         {
-          "id": "lock",
-          "rawLabel": "lock"
+          "id": "cloud",
+          "rawLabel": "cloud"
         },
         {
           "id": "shoe",
           "rawLabel": "shoe"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "rain",
+        "cloud"
       ],
       "numbers": [],
       "issues": []
@@ -11534,7 +13908,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "green",
+      "correctChoiceId": "red",
       "choices": [
         {
           "id": "blue",
@@ -11550,8 +13924,8 @@
         }
       ],
       "tokens": [
-        "green",
-        "red"
+        "red",
+        "green"
       ],
       "numbers": [],
       "issues": []
@@ -11596,7 +13970,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "star",
+      "correctChoiceId": "circle",
       "choices": [
         {
           "id": "triangle",
@@ -11616,8 +13990,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "triangle"
+        "circle",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -11660,7 +14034,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "rocket",
       "choices": [
         {
           "id": "rocket",
@@ -11676,7 +14050,7 @@
         }
       ],
       "tokens": [
-        "planet",
+        "rocket",
         "star"
       ],
       "numbers": [],
@@ -11786,23 +14160,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "star",
       "choices": [
-        {
-          "id": "rocket",
-          "rawLabel": "rocket"
-        },
-        {
-          "id": "planet",
-          "rawLabel": "planet"
-        },
         {
           "id": "star",
           "rawLabel": "star"
+        },
+        {
+          "id": "pear",
+          "rawLabel": "pear"
+        },
+        {
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "rocket"
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -11980,9 +14354,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
-        1,
-        2
+        3,
+        2,
+        1
       ],
       "issues": []
     },
@@ -12059,7 +14433,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -12085,12 +14459,8 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "lock",
+      "correctChoiceId": "shoe",
       "choices": [
-        {
-          "id": "lock",
-          "rawLabel": "lock"
-        },
         {
           "id": "shoe",
           "rawLabel": "shoe"
@@ -12098,11 +14468,15 @@
         {
           "id": "cloud",
           "rawLabel": "cloud"
+        },
+        {
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "key",
-        "lock"
+        "foot",
+        "shoe"
       ],
       "numbers": [],
       "issues": []
@@ -12146,12 +14520,8 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "3",
+      "correctChoiceId": "4",
       "choices": [
-        {
-          "id": "2",
-          "rawLabel": "2"
-        },
         {
           "id": "3",
           "rawLabel": "3"
@@ -12159,6 +14529,10 @@
         {
           "id": "4",
           "rawLabel": "4"
+        },
+        {
+          "id": "5",
+          "rawLabel": "5"
         }
       ],
       "tokens": [
@@ -12166,8 +14540,8 @@
       ],
       "numbers": [
         6,
-        3,
-        3
+        2,
+        4
       ],
       "issues": []
     },
@@ -12207,26 +14581,26 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "7",
+      "correctChoiceId": "5",
       "choices": [
+        {
+          "id": "4",
+          "rawLabel": "4"
+        },
+        {
+          "id": "5",
+          "rawLabel": "5"
+        },
         {
           "id": "6",
           "rawLabel": "6"
-        },
-        {
-          "id": "7",
-          "rawLabel": "7"
-        },
-        {
-          "id": "8",
-          "rawLabel": "8"
         }
       ],
       "tokens": [],
       "numbers": [
-        6,
+        4,
         1,
-        7
+        5
       ],
       "issues": []
     },
@@ -12398,26 +14772,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "ball",
       "choices": [
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "key",
+          "rawLabel": "key"
         },
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "ball",
+          "rawLabel": "ball"
         },
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "lock",
+          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "rocket",
-        "planet",
-        "star",
-        "cloud"
+        "key",
+        "lock",
+        "cloud",
+        "ball"
       ],
       "numbers": [],
       "issues": []
@@ -12461,11 +14835,11 @@
       "questionKey": "lock-key",
       "hintKey": "lock-key",
       "explanationKey": "lock-key",
-      "correctChoiceId": "cloud",
+      "correctChoiceId": "planet",
       "choices": [
         {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "planet",
+          "rawLabel": "planet"
         },
         {
           "id": "shoe",
@@ -12477,8 +14851,8 @@
         }
       ],
       "tokens": [
-        "rain",
-        "cloud"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -12581,7 +14955,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "star",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "triangle",
@@ -12601,8 +14975,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "triangle"
+        "triangle",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -12707,7 +15081,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "triangle",
+      "correctChoiceId": "star",
       "choices": [
         {
           "id": "square",
@@ -12727,7 +15101,7 @@
         }
       ],
       "tokens": [
-        "triangle",
+        "star",
         "square"
       ],
       "numbers": [],
@@ -12771,23 +15145,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "star",
+      "correctChoiceId": "apple",
       "choices": [
         {
-          "id": "star",
-          "rawLabel": "star"
+          "id": "apple",
+          "rawLabel": "apple"
         },
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "ball",
+          "rawLabel": "ball"
         },
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "shoe",
+          "rawLabel": "shoe"
         }
       ],
       "tokens": [
-        "star"
+        "apple"
       ],
       "numbers": [],
       "issues": []
@@ -12948,7 +15322,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "blue-squares",
       "choices": [
         {
           "id": "blue-squares",
@@ -12965,8 +15339,8 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
         1,
+        4,
         2
       ],
       "issues": []
@@ -13009,7 +15383,7 @@
       "questionKey": "fruit-pattern",
       "hintKey": "fruit-pattern",
       "explanationKey": "fruit-pattern",
-      "correctChoiceId": "banana",
+      "correctChoiceId": "apple",
       "choices": [
         {
           "id": "apple",
@@ -13025,7 +15399,7 @@
         }
       ],
       "tokens": [
-        "banana",
+        "apple",
         "pear"
       ],
       "numbers": [],
@@ -13044,7 +15418,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -13150,8 +15524,8 @@
         "apple"
       ],
       "numbers": [
-        3,
         2,
+        1,
         1
       ],
       "issues": []
@@ -13209,8 +15583,8 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
-        3,
+        5,
+        2,
         7
       ],
       "issues": []
@@ -13383,15 +15757,15 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "ball",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "apple",
           "rawLabel": "apple"
         },
         {
-          "id": "ball",
-          "rawLabel": "ball"
+          "id": "triangle",
+          "rawLabel": "triangle"
         },
         {
           "id": "banana",
@@ -13402,7 +15776,7 @@
         "apple",
         "banana",
         "pear",
-        "ball"
+        "triangle"
       ],
       "numbers": [],
       "issues": []
@@ -13446,24 +15820,24 @@
       "questionKey": "lock-key",
       "hintKey": "lock-key",
       "explanationKey": "lock-key",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "banana",
       "choices": [
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "banana",
+          "rawLabel": "banana"
+        },
+        {
+          "id": "key",
+          "rawLabel": "key"
         },
         {
           "id": "cloud",
           "rawLabel": "cloud"
-        },
-        {
-          "id": "lock",
-          "rawLabel": "lock"
         }
       ],
       "tokens": [
-        "foot",
-        "shoe"
+        "apple",
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -13504,7 +15878,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "blue",
+      "correctChoiceId": "green",
       "choices": [
         {
           "id": "blue",
@@ -13520,8 +15894,8 @@
         }
       ],
       "tokens": [
-        "blue",
-        "green"
+        "green",
+        "red"
       ],
       "numbers": [],
       "issues": []
@@ -13566,7 +15940,7 @@
       "questionKey": "shape-path",
       "hintKey": "shape-path",
       "explanationKey": "shape-path",
-      "correctChoiceId": "star",
+      "correctChoiceId": "square",
       "choices": [
         {
           "id": "triangle",
@@ -13586,8 +15960,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "triangle"
+        "square",
+        "circle"
       ],
       "numbers": [],
       "issues": []
@@ -13630,7 +16004,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "star",
+      "correctChoiceId": "planet",
       "choices": [
         {
           "id": "rocket",
@@ -13646,8 +16020,8 @@
         }
       ],
       "tokens": [
-        "star",
-        "rocket"
+        "planet",
+        "star"
       ],
       "numbers": [],
       "issues": []
@@ -13756,23 +16130,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "banana",
       "choices": [
         {
-          "id": "planet",
-          "rawLabel": "planet"
+          "id": "banana",
+          "rawLabel": "banana"
+        },
+        {
+          "id": "key",
+          "rawLabel": "key"
         },
         {
           "id": "rocket",
           "rawLabel": "rocket"
-        },
-        {
-          "id": "star",
-          "rawLabel": "star"
         }
       ],
       "tokens": [
-        "planet"
+        "banana"
       ],
       "numbers": [],
       "issues": []
@@ -13943,7 +16317,7 @@
       "questionKey": "detail-count",
       "hintKey": "detail-count",
       "explanationKey": "detail-count",
-      "correctChoiceId": "red-circles",
+      "correctChoiceId": "green-stars",
       "choices": [
         {
           "id": "blue-squares",
@@ -13960,9 +16334,9 @@
       ],
       "tokens": [],
       "numbers": [
-        4,
+        2,
         1,
-        2
+        5
       ],
       "issues": []
     },
@@ -14039,7 +16413,7 @@
       "family": "memory-pairs",
       "contentId": "content.memory_pairs.magic_pairs",
       "contentType": "pairMatching",
-      "world": "magicSchool",
+      "world": "sea",
       "character": "owlCoach",
       "characterPose": "hint",
       "sceneAsset": "assets/images/puzzles/key.svg",
@@ -14065,24 +16439,24 @@
       "questionKey": "memory-pairs",
       "hintKey": "memory-pairs",
       "explanationKey": "memory-pairs",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "planet",
       "choices": [
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
-        },
-        {
-          "id": "cloud",
-          "rawLabel": "cloud"
+          "id": "planet",
+          "rawLabel": "planet"
         },
         {
           "id": "lock",
           "rawLabel": "lock"
+        },
+        {
+          "id": "shoe",
+          "rawLabel": "shoe"
         }
       ],
       "tokens": [
-        "foot",
-        "shoe"
+        "rocket",
+        "planet"
       ],
       "numbers": [],
       "issues": []
@@ -14126,12 +16500,8 @@
       "questionKey": "balance-scale",
       "hintKey": "balance-scale",
       "explanationKey": "balance-scale",
-      "correctChoiceId": "2",
+      "correctChoiceId": "3",
       "choices": [
-        {
-          "id": "1",
-          "rawLabel": "1"
-        },
         {
           "id": "2",
           "rawLabel": "2"
@@ -14139,15 +16509,19 @@
         {
           "id": "3",
           "rawLabel": "3"
+        },
+        {
+          "id": "4",
+          "rawLabel": "4"
         }
       ],
       "tokens": [
         "apple"
       ],
       "numbers": [
-        3,
+        4,
         1,
-        2
+        3
       ],
       "issues": []
     },
@@ -14187,26 +16561,26 @@
       "questionKey": "sticker-sum",
       "hintKey": "sticker-sum",
       "explanationKey": "sticker-sum",
-      "correctChoiceId": "3",
+      "correctChoiceId": "9",
       "choices": [
         {
-          "id": "2",
-          "rawLabel": "2"
+          "id": "8",
+          "rawLabel": "8"
         },
         {
-          "id": "3",
-          "rawLabel": "3"
+          "id": "9",
+          "rawLabel": "9"
         },
         {
-          "id": "4",
-          "rawLabel": "4"
+          "id": "10",
+          "rawLabel": "10"
         }
       ],
       "tokens": [],
       "numbers": [
-        2,
-        1,
-        3
+        6,
+        3,
+        9
       ],
       "issues": []
     },
@@ -14378,26 +16752,26 @@
       "questionKey": "odd-card",
       "hintKey": "odd-card",
       "explanationKey": "odd-card",
-      "correctChoiceId": "shoe",
+      "correctChoiceId": "ball",
       "choices": [
         {
-          "id": "circle",
-          "rawLabel": "circle"
+          "id": "apple",
+          "rawLabel": "apple"
         },
         {
-          "id": "shoe",
-          "rawLabel": "shoe"
+          "id": "ball",
+          "rawLabel": "ball"
         },
         {
-          "id": "square",
-          "rawLabel": "square"
+          "id": "banana",
+          "rawLabel": "banana"
         }
       ],
       "tokens": [
-        "circle",
-        "square",
-        "triangle",
-        "shoe"
+        "apple",
+        "banana",
+        "pear",
+        "ball"
       ],
       "numbers": [],
       "issues": []
@@ -14499,7 +16873,7 @@
       "questionKey": "logic-train",
       "hintKey": "logic-train",
       "explanationKey": "logic-train",
-      "correctChoiceId": "green",
+      "correctChoiceId": "blue",
       "choices": [
         {
           "id": "blue",
@@ -14515,8 +16889,8 @@
         }
       ],
       "tokens": [
-        "green",
-        "red"
+        "blue",
+        "green"
       ],
       "numbers": [],
       "issues": []
@@ -14625,7 +16999,7 @@
       "questionKey": "space-sequence",
       "hintKey": "space-sequence",
       "explanationKey": "space-sequence",
-      "correctChoiceId": "planet",
+      "correctChoiceId": "star",
       "choices": [
         {
           "id": "rocket",
@@ -14641,8 +17015,8 @@
         }
       ],
       "tokens": [
-        "planet",
-        "star"
+        "star",
+        "rocket"
       ],
       "numbers": [],
       "issues": []
@@ -14687,7 +17061,7 @@
       "questionKey": "shape-stack",
       "hintKey": "shape-stack",
       "explanationKey": "shape-stack",
-      "correctChoiceId": "circle",
+      "correctChoiceId": "triangle",
       "choices": [
         {
           "id": "square",
@@ -14707,8 +17081,8 @@
         }
       ],
       "tokens": [
-        "circle",
-        "star"
+        "triangle",
+        "square"
       ],
       "numbers": [],
       "issues": []
@@ -14751,23 +17125,23 @@
       "questionKey": "shadow-match",
       "hintKey": "shadow-match",
       "explanationKey": "shadow-match",
-      "correctChoiceId": "rocket",
+      "correctChoiceId": "pear",
       "choices": [
         {
-          "id": "rocket",
-          "rawLabel": "rocket"
+          "id": "pear",
+          "rawLabel": "pear"
+        },
+        {
+          "id": "lock",
+          "rawLabel": "lock"
         },
         {
           "id": "planet",
           "rawLabel": "planet"
-        },
-        {
-          "id": "star",
-          "rawLabel": "star"
         }
       ],
       "tokens": [
-        "rocket"
+        "pear"
       ],
       "numbers": [],
       "issues": []
@@ -14814,7 +17188,7 @@
       "questionKey": "path-maze",
       "hintKey": "path-maze",
       "explanationKey": "path-maze",
-      "correctChoiceId": "right",
+      "correctChoiceId": "up",
       "choices": [
         {
           "id": "left",
@@ -14834,9 +17208,9 @@
         }
       ],
       "tokens": [
-        "rocket",
-        "planet",
-        "right"
+        "key",
+        "lock",
+        "up"
       ],
       "numbers": [],
       "issues": []

@@ -415,6 +415,8 @@ Current implementation:
 Goal:
 Build 12-15 reusable puzzle mechanics with strong visual presentation.
 
+Status: implemented.
+
 Puzzle types:
 
 - `pattern_sequence`: continue a visual row,
@@ -440,10 +442,26 @@ Acceptance criteria:
 - each type supports RU/EN prompt, hint, and explanation,
 - answer choices can show SVG visuals.
 
+Current implementation:
+
+- added four new reusable puzzle families: `memory-recall`, `sorting-rule`,
+  `missing-piece`, and `logic-deduction`,
+- added lesson generation logic for each new family with unique tokens,
+  answer choices, correct answer, hint, and explanation paths,
+- added visual renderers for hidden-card recall, rule-box sorting, missing
+  picture part, and two-clue deduction,
+- wired the new mechanics into the mid-course lesson route while keeping early
+  onboarding and first-lesson smoke flows stable,
+- added RU/EN localization keys for the new mechanics and answer label support,
+- extended `PuzzleContentCatalog`, content audit, and tests to cover the new
+  types and their SVG answer assets.
+
 ### Phase 12 - Thematic Worlds
 
 Goal:
 Make puzzles varied by placing them inside recognizable worlds.
+
+Status: implemented.
 
 Worlds:
 
@@ -469,10 +487,22 @@ Acceptance criteria:
 - puzzles from different worlds feel visually different,
 - lessons can mix worlds or stay inside one mini-story.
 
+Implemented:
+
+- added reusable world theme metadata with gradients, accent colors, and ambient
+  assets,
+- surfaced world and guide character labels in the lesson header with RU/EN
+  localization,
+- connected world themes to the puzzle visual scene container,
+- added world and character distribution to the content audit,
+- added tests for world theme coverage and ambient asset availability.
+
 ### Phase 13 - Content Pack 1: 100 Unique Puzzles
 
 Goal:
 Create the first large content pack with real variety.
+
+Status: implemented.
 
 Target distribution:
 
@@ -491,6 +521,18 @@ Acceptance criteria:
 - no puzzle uses a mismatched scene,
 - no answer choice lacks a visual,
 - all puzzles have RU/EN text, hint, and explanation.
+
+Implemented:
+
+- added `ContentPackCatalog.phase13Items` with 100 unique puzzle definitions,
+- matched the planned distribution across pattern, odd-one-out, counting,
+  comparison, pair matching, shadow matching, path logic, and memory/detail
+  puzzles,
+- connected lesson generation to phase 13 variants by matching puzzle family,
+- extended content audit with phase 13 item counts, uniqueness, family
+  distribution, category distribution, and visual answer checks,
+- added automated tests for pack size, uniqueness, distribution, assets, and
+  lesson generation coverage.
 
 ### Phase 14 - Content Pack 2: 300+ Levels
 

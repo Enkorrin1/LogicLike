@@ -165,5 +165,33 @@ void main() {
         contains(challenge.correctChoiceId),
       );
     });
+
+    test('generates phase 11 puzzle type lesson variants', () {
+      const puzzleIds = {
+        'puzzle.memory_recall': 'memory-recall',
+        'puzzle.sorting_rule': 'sorting-rule',
+        'puzzle.missing_piece': 'missing-piece',
+        'puzzle.logic_deduction': 'logic-deduction',
+      };
+
+      for (final entry in puzzleIds.entries) {
+        final step = FoundationCatalog.starterLessonSteps.firstWhere(
+          (step) => step.puzzleId == entry.key,
+        );
+        final challenge = dailyChallengeForLessonStep(
+          step,
+          FoundationCatalog.puzzleForStep(step),
+          age: ChildAge.seven,
+        );
+
+        expect(challenge.visualId, entry.value);
+        expect(challenge.tokens, isNotEmpty);
+        expect(challenge.choices.length, greaterThanOrEqualTo(3));
+        expect(
+          challenge.choices.map((choice) => choice.id),
+          contains(challenge.correctChoiceId),
+        );
+      }
+    });
   });
 }

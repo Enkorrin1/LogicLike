@@ -595,6 +595,80 @@ class AppLocalizationsRu extends AppLocalizations {
       'Больше всего красных кругов: их три.';
 
   @override
+  String get challengeMemoryRecallTitle => 'Запомни карточки';
+
+  @override
+  String get challengeMemoryRecallPrompt =>
+      'Посмотри на ряд и найди спрятанную карточку.';
+
+  @override
+  String get challengeMemoryRecallQuestion => 'Какая карточка спряталась?';
+
+  @override
+  String get challengeMemoryRecallHint =>
+      'Вспомни предметы слева направо и проверь последний.';
+
+  @override
+  String get challengeMemoryRecallExplanation =>
+      'Спрятанная карточка была в ряду, который нужно было запомнить.';
+
+  @override
+  String get challengeSortingRuleTitle => 'Правило коробки';
+
+  @override
+  String get challengeSortingRulePrompt =>
+      'Найди предмет, который подходит к остальным.';
+
+  @override
+  String get challengeSortingRuleQuestion => 'Что подходит по тому же правилу?';
+
+  @override
+  String get challengeSortingRuleHint =>
+      'Сначала найди общее свойство у предметов в коробке.';
+
+  @override
+  String get challengeSortingRuleExplanation =>
+      'Правильный предмет подходит к общему правилу коробки.';
+
+  @override
+  String get challengeMissingPieceTitle => 'Недостающая деталь';
+
+  @override
+  String get challengeMissingPiecePrompt =>
+      'Выбери деталь, которая завершает картинку.';
+
+  @override
+  String get challengeMissingPieceQuestion =>
+      'Какая деталь подходит в пустое место?';
+
+  @override
+  String get challengeMissingPieceHint =>
+      'Сравни форму пустого места с вариантами ответа.';
+
+  @override
+  String get challengeMissingPieceExplanation =>
+      'Эта деталь завершает картинку без лишних углов.';
+
+  @override
+  String get challengeLogicDeductionTitle => 'Две подсказки';
+
+  @override
+  String get challengeLogicDeductionPrompt =>
+      'Используй обе подсказки и убери лишние варианты.';
+
+  @override
+  String get challengeLogicDeductionQuestion =>
+      'Что подходит ко всем подсказкам?';
+
+  @override
+  String get challengeLogicDeductionHint =>
+      'Каждая подсказка убирает хотя бы один неверный вариант.';
+
+  @override
+  String get challengeLogicDeductionExplanation =>
+      'Правильный ответ подходит сразу к двум подсказкам.';
+
+  @override
   String get choiceTriangle => 'Треугольник';
 
   @override
@@ -620,6 +694,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get choiceGreen => 'Зеленый';
+
+  @override
+  String get choiceKey => 'Ключ';
 
   @override
   String get choiceLock => 'Замок';

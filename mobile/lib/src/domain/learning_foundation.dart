@@ -13,6 +13,10 @@ enum PuzzleType {
   countBridge,
   visualCompare,
   analogy,
+  memoryRecall,
+  sortingRule,
+  missingPiece,
+  logicDeduction,
 }
 
 enum SkillTag {
@@ -1534,7 +1538,7 @@ class FoundationCatalog {
       id: 'step.021.3',
       lessonId: 'lesson.021',
       order: 3,
-      puzzleId: 'puzzle.fruit_pattern',
+      puzzleId: 'puzzle.sorting_rule',
       internalSkillTag: SkillTag.pattern,
     ),
     LessonStep(
@@ -1590,7 +1594,7 @@ class FoundationCatalog {
       id: 'step.023.3',
       lessonId: 'lesson.023',
       order: 3,
-      puzzleId: 'puzzle.memory_pairs',
+      puzzleId: 'puzzle.memory_recall',
       internalSkillTag: SkillTag.memory,
     ),
     LessonStep(
@@ -1639,7 +1643,7 @@ class FoundationCatalog {
       id: 'step.025.2',
       lessonId: 'lesson.025',
       order: 2,
-      puzzleId: 'puzzle.shape_rotation',
+      puzzleId: 'puzzle.missing_piece',
       internalSkillTag: SkillTag.spatial,
     ),
     LessonStep(
@@ -1702,8 +1706,8 @@ class FoundationCatalog {
       id: 'step.027.3',
       lessonId: 'lesson.027',
       order: 3,
-      puzzleId: 'puzzle.lock_key',
-      internalSkillTag: SkillTag.memory,
+      puzzleId: 'puzzle.logic_deduction',
+      internalSkillTag: SkillTag.reasoning,
     ),
     LessonStep(
       id: 'step.027.4',
@@ -2791,6 +2795,42 @@ class FoundationCatalog {
       payloadRef: 'path-maze',
       correctAnswerKey: 'right',
       hintKeys: ['challengePathMazeHint'],
+    ),
+    PuzzleDefinition(
+      id: 'puzzle.memory_recall',
+      lessonId: 'lesson.shared',
+      type: PuzzleType.memoryRecall,
+      skillTag: SkillTag.memory,
+      payloadRef: 'memory-recall',
+      correctAnswerKey: 'star',
+      hintKeys: ['challengeMemoryRecallHint'],
+    ),
+    PuzzleDefinition(
+      id: 'puzzle.sorting_rule',
+      lessonId: 'lesson.shared',
+      type: PuzzleType.sortingRule,
+      skillTag: SkillTag.classification,
+      payloadRef: 'sorting-rule',
+      correctAnswerKey: 'pear',
+      hintKeys: ['challengeSortingRuleHint'],
+    ),
+    PuzzleDefinition(
+      id: 'puzzle.missing_piece',
+      lessonId: 'lesson.shared',
+      type: PuzzleType.missingPiece,
+      skillTag: SkillTag.spatial,
+      payloadRef: 'missing-piece',
+      correctAnswerKey: 'circle',
+      hintKeys: ['challengeMissingPieceHint'],
+    ),
+    PuzzleDefinition(
+      id: 'puzzle.logic_deduction',
+      lessonId: 'lesson.shared',
+      type: PuzzleType.logicDeduction,
+      skillTag: SkillTag.reasoning,
+      payloadRef: 'logic-deduction',
+      correctAnswerKey: 'rocket',
+      hintKeys: ['challengeLogicDeductionHint'],
     ),
   ];
 

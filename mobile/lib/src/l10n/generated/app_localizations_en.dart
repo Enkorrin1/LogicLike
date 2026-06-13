@@ -585,6 +585,79 @@ class AppLocalizationsEn extends AppLocalizations {
       'The red circles are the most: there are three of them.';
 
   @override
+  String get challengeMemoryRecallTitle => 'Remember the cards';
+
+  @override
+  String get challengeMemoryRecallPrompt =>
+      'Look at the row and find the hidden card.';
+
+  @override
+  String get challengeMemoryRecallQuestion => 'Which card is hidden?';
+
+  @override
+  String get challengeMemoryRecallHint =>
+      'Remember the objects from left to right and check the last one.';
+
+  @override
+  String get challengeMemoryRecallExplanation =>
+      'The hidden card was in the row you had to remember.';
+
+  @override
+  String get challengeSortingRuleTitle => 'Box rule';
+
+  @override
+  String get challengeSortingRulePrompt =>
+      'Find the object that belongs with the others.';
+
+  @override
+  String get challengeSortingRuleQuestion => 'What follows the same rule?';
+
+  @override
+  String get challengeSortingRuleHint =>
+      'First find what the objects in the box have in common.';
+
+  @override
+  String get challengeSortingRuleExplanation =>
+      'The correct object matches the box rule.';
+
+  @override
+  String get challengeMissingPieceTitle => 'Missing piece';
+
+  @override
+  String get challengeMissingPiecePrompt =>
+      'Choose the part that completes the picture.';
+
+  @override
+  String get challengeMissingPieceQuestion =>
+      'Which piece fits the empty place?';
+
+  @override
+  String get challengeMissingPieceHint =>
+      'Compare the empty shape with the answer choices.';
+
+  @override
+  String get challengeMissingPieceExplanation =>
+      'This piece completes the picture without extra corners.';
+
+  @override
+  String get challengeLogicDeductionTitle => 'Two clues';
+
+  @override
+  String get challengeLogicDeductionPrompt =>
+      'Use both clues and remove the wrong choices.';
+
+  @override
+  String get challengeLogicDeductionQuestion => 'What matches every clue?';
+
+  @override
+  String get challengeLogicDeductionHint =>
+      'Each clue removes at least one wrong choice.';
+
+  @override
+  String get challengeLogicDeductionExplanation =>
+      'The correct answer matches both clues.';
+
+  @override
   String get choiceTriangle => 'Triangle';
 
   @override
@@ -610,6 +683,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get choiceGreen => 'Green';
+
+  @override
+  String get choiceKey => 'Key';
 
   @override
   String get choiceLock => 'Lock';

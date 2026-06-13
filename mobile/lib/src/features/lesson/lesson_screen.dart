@@ -5,6 +5,7 @@ import '../../domain/adaptive_learning.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
 import '../../domain/learning_foundation.dart';
+import '../../domain/puzzle_content.dart';
 import '../../l10n/l10n.dart';
 
 class LessonScreen extends StatefulWidget {
@@ -87,6 +88,7 @@ class _LessonScreenState extends State<LessonScreen> {
               stepRole: stepRole,
               adaptivePlan: adaptivePlan,
               hearts: child.hearts,
+              challenge: challenge,
             ),
             const SizedBox(height: 16),
             _LessonQuestionCard(
@@ -292,6 +294,7 @@ class _LessonHeader extends StatelessWidget {
     required this.stepRole,
     required this.adaptivePlan,
     required this.hearts,
+    required this.challenge,
   });
 
   final int currentStep;
@@ -299,13 +302,31 @@ class _LessonHeader extends StatelessWidget {
   final LessonStepRole stepRole;
   final AdaptiveLessonPlan adaptivePlan;
   final int hearts;
+  final DailyChallenge challenge;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final content = PuzzleContentCatalog.byFamilyId(challenge.visualId);
+    final theme = PuzzleContentCatalog.themeForWorld(content.world);
 
     return DecoratedBox(
-      decoration: _panelDecoration(),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: _themeColors(theme.gradientColors),
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: _themeColor(theme.accentColor).withValues(alpha: 0.16),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Row(
@@ -328,22 +349,99 @@ class _LessonHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   _AdaptiveModePill(plan: adaptivePlan),
+                  const SizedBox(height: 8),
+                  _WorldStoryPill(content: content),
                   const SizedBox(height: 10),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(999),
                     child: LinearProgressIndicator(
                       minHeight: 12,
                       value: currentStep / totalSteps,
-                      color: const Color(0xFF18B7AE),
-                      backgroundColor: const Color(0xFFDDF8F4),
+                      color: _themeColor(theme.accentColor),
+                      backgroundColor: Colors.white.withValues(alpha: 0.56),
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 14),
-            _HeartPill(hearts: hearts),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CharacterBadge(content: content),
+                const SizedBox(height: 8),
+                _HeartPill(hearts: hearts),
+              ],
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _WorldStoryPill extends StatelessWidget {
+  const _WorldStoryPill({required this.content});
+
+  final PuzzleContent content;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = PuzzleContentCatalog.themeForWorld(content.world);
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        key: ValueKey('world-pill-${content.world.name}'),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.72),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: _themeColor(theme.accentColor).withValues(alpha: 0.24),
+          ),
+        ),
+        child: Text(
+          '${l10n.labelForPuzzleWorld(content.world)} / '
+          '${l10n.labelForPuzzleCharacter(content.character)}',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: _themeColor(theme.textColor),
+                fontWeight: FontWeight.w900,
+              ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CharacterBadge extends StatelessWidget {
+  const _CharacterBadge({required this.content});
+
+  final PuzzleContent content;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = PuzzleContentCatalog.themeForWorld(content.world);
+
+    return Container(
+      key: ValueKey('character-badge-${content.character.name}'),
+      width: 58,
+      height: 58,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.82),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: _themeColor(theme.accentColor).withValues(alpha: 0.32),
+          width: 2,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(7),
+        child: Image.asset(
+          PuzzleContentCatalog.characterAsset(content.character),
+          fit: BoxFit.contain,
         ),
       ),
     );
@@ -877,6 +975,20 @@ String? _assetForChoice(String challengeId, String choiceId) {
     'shape-stack:circle' => _PuzzleAssets.circle,
     'shape-stack:triangle' => _PuzzleAssets.triangle,
     'shape-stack:star' => _PuzzleAssets.star,
+    'memory-recall:star' => _PuzzleAssets.star,
+    'memory-recall:key' => _PuzzleAssets.key,
+    'memory-recall:banana' => _PuzzleAssets.banana,
+    'memory-recall:triangle' => _PuzzleAssets.triangle,
+    'sorting-rule:pear' => _PuzzleAssets.pear,
+    'sorting-rule:star' => _PuzzleAssets.star,
+    'sorting-rule:planet' => _PuzzleAssets.planet,
+    'sorting-rule:lock' => _PuzzleAssets.lock,
+    'missing-piece:circle' => _PuzzleAssets.circle,
+    'missing-piece:star' => _PuzzleAssets.star,
+    'missing-piece:key' => _PuzzleAssets.key,
+    'logic-deduction:rocket' => _PuzzleAssets.rocket,
+    'logic-deduction:key' => _PuzzleAssets.key,
+    'logic-deduction:banana' => _PuzzleAssets.banana,
     _ => null,
   };
 }
@@ -1083,13 +1195,28 @@ class _PuzzleVisual extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = PuzzleContentCatalog.byFamilyId(challenge.visualId);
+    final theme = PuzzleContentCatalog.themeForWorld(content.world);
+
     return Container(
+      key: ValueKey('puzzle-world-${content.world.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E7),
+        gradient: LinearGradient(
+          colors: _themeColors(theme.sceneColors),
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(26),
         border: Border.all(color: const Color(0xFFFFFFFF), width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: _themeColor(theme.accentColor).withValues(alpha: 0.10),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: switch (challenge.visualId) {
         'shape-path' => _ShapePatternVisual(tokens: challenge.tokens),
@@ -1109,6 +1236,10 @@ class _PuzzleVisual extends StatelessWidget {
         'space-sequence' => _SpaceSequenceVisual(tokens: challenge.tokens),
         'shape-stack' => _ShapeStackVisual(tokens: challenge.tokens),
         'path-maze' => _PathMazeVisual(tokens: challenge.tokens),
+        'memory-recall' => _MemoryRecallVisual(tokens: challenge.tokens),
+        'sorting-rule' => _SortingRuleVisual(tokens: challenge.tokens),
+        'missing-piece' => _MissingPieceVisual(tokens: challenge.tokens),
+        'logic-deduction' => _LogicDeductionVisual(tokens: challenge.tokens),
         _ => const _DefaultPuzzleVisual(),
       },
     );
@@ -1534,6 +1665,257 @@ class _PathMazeVisual extends StatelessWidget {
       };
 
   double? _targetBottom(String direction) => direction == 'down' ? 4 : null;
+}
+
+class _MemoryRecallVisual extends StatelessWidget {
+  const _MemoryRecallVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final visible = tokens.isEmpty
+        ? const ['rocket', 'planet', 'star']
+        : tokens.take(3).toList(growable: false);
+
+    return Column(
+      key: const ValueKey('memory-recall-visual'),
+      children: [
+        _VisualRow(
+          children: [
+            for (final token in visible.take(2)) _TokenCard(token: token),
+            _HiddenMemoryCard(token: visible.last),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Container(
+          height: 8,
+          width: 150,
+          decoration: BoxDecoration(
+            color: const Color(0xFFBFEAE4),
+            borderRadius: BorderRadius.circular(999),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HiddenMemoryCard extends StatelessWidget {
+  const _HiddenMemoryCard({required this.token});
+
+  final String token;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Opacity(
+          opacity: 0.26,
+          child: _TokenCard(token: token),
+        ),
+        Container(
+          width: 58,
+          height: 58,
+          decoration: BoxDecoration(
+            color: const Color(0xFF9C6AF2),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF9C6AF2).withValues(alpha: 0.20),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          alignment: Alignment.center,
+          child: const _SignGlyph(
+            asset: _PuzzleAssets.question,
+            color: Colors.white,
+            size: 32,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SortingRuleVisual extends StatelessWidget {
+  const _SortingRuleVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final safeTokens = tokens.length >= 4
+        ? tokens
+        : const ['apple', 'banana', 'pear', 'rocket'];
+
+    return Column(
+      key: const ValueKey('sorting-rule-visual'),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE7FBF7),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: const Color(0xFF18B7AE), width: 2),
+          ),
+          child: _VisualRow(
+            children: [
+              _TokenCard(token: safeTokens[0]),
+              _TokenCard(token: safeTokens[1]),
+              const _QuestionToken(),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        _VisualRow(
+          children: [
+            _TokenCard(token: safeTokens[2]),
+            _TokenCard(token: safeTokens[3]),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _MissingPieceVisual extends StatelessWidget {
+  const _MissingPieceVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final subject = tokens.elementAtOrNull(0) ?? 'rocket';
+    final missing = tokens.elementAtOrNull(1) ?? 'circle';
+
+    return Column(
+      key: const ValueKey('missing-piece-visual'),
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            _TokenCard(token: subject),
+            Positioned(
+              right: 6,
+              top: 6,
+              child: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF8E7),
+                  borderRadius: BorderRadius.circular(11),
+                  border: Border.all(
+                    color: const Color(0xFFFFC739),
+                    width: 3,
+                  ),
+                ),
+                child: const _SignGlyph(
+                  asset: _PuzzleAssets.question,
+                  color: Color(0xFFFF9D2E),
+                  size: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _VisualRow(
+          children: [
+            const _MathSign('->'),
+            _TokenCard(token: missing),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _LogicDeductionVisual extends StatelessWidget {
+  const _LogicDeductionVisual({required this.tokens});
+
+  final List<String> tokens;
+
+  @override
+  Widget build(BuildContext context) {
+    final clueOne = tokens.elementAtOrNull(0) ?? 'flies';
+    final clueTwo = tokens.elementAtOrNull(1) ?? 'not-fruit';
+    final answer = tokens.elementAtOrNull(2) ?? 'rocket';
+
+    return Column(
+      key: const ValueKey('logic-deduction-visual'),
+      children: [
+        _VisualRow(
+          children: [
+            _ClueCard(clue: clueOne),
+            const _MathSign('+'),
+            _ClueCard(clue: clueTwo),
+          ],
+        ),
+        const SizedBox(height: 10),
+        _VisualRow(
+          children: [
+            const _QuestionToken(),
+            const _MathSign('->'),
+            _TokenCard(token: answer),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ClueCard extends StatelessWidget {
+  const _ClueCard({required this.clue});
+
+  final String clue;
+
+  @override
+  Widget build(BuildContext context) {
+    final asset = switch (clue) {
+      'flies' => _PuzzleAssets.rocket,
+      'opens' => _PuzzleAssets.key,
+      'fruit' || 'yellow' => _PuzzleAssets.banana,
+      'not-fruit' || 'not-cloud' => _PuzzleAssets.question,
+      _ => _PuzzleAssets.question,
+    };
+
+    return Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF164C55).withValues(alpha: 0.12),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _PuzzleSvg(asset: asset, size: 42),
+          if (clue.startsWith('not-'))
+            Container(
+              width: 50,
+              height: 5,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6F6B),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              transform: Matrix4.rotationZ(-0.66),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 class _MazeFork extends StatelessWidget {
@@ -2707,6 +3089,12 @@ class _RewardPolishMarker extends StatelessWidget {
       key: ValueKey('reward-polish-marker'),
     );
   }
+}
+
+Color _themeColor(int value) => Color(value);
+
+List<Color> _themeColors(List<int> values) {
+  return [for (final value in values) Color(value)];
 }
 
 BoxDecoration _panelDecoration() {

@@ -1,4 +1,5 @@
 import 'adaptive_learning.dart';
+import 'content_pack.dart';
 import 'family_profile.dart';
 import 'learning_foundation.dart';
 
@@ -152,6 +153,19 @@ DailyChallenge dailyChallengeForLessonStep(
       explanation: familyId,
       tokens: tokens,
       numbers: numbers,
+    );
+  }
+
+  final packItem = ContentPackCatalog.phase13ItemForStep(
+    step,
+    familyId: familyId,
+  );
+  if (packItem != null) {
+    return build(
+      correctChoiceId: packItem.correctChoiceId,
+      tokens: packItem.tokens,
+      numbers: packItem.numbers,
+      choices: packItem.choiceIds.toSetChoices(),
     );
   }
 
@@ -358,6 +372,72 @@ DailyChallenge dailyChallengeForLessonStep(
           correctChoiceId: variant.$3,
           adaptivePlan: adaptivePlan,
         ),
+      );
+    case 'memory-recall':
+      final variants = [
+        ('star', ['rocket', 'planet', 'star']),
+        ('key', ['lock', 'cloud', 'key']),
+        ('banana', ['apple', 'pear', 'banana']),
+        ('triangle', ['circle', 'square', 'triangle']),
+      ];
+      final variant = variants[seed % variants.length];
+      return build(
+        correctChoiceId: variant.$1,
+        tokens: variant.$2,
+        choices: _choices([
+          variant.$1,
+          variant.$2.first,
+          variant.$2[1],
+        ]).toSetChoices(),
+      );
+    case 'sorting-rule':
+      final variants = [
+        ('pear', ['apple', 'banana', 'pear', 'rocket']),
+        ('star', ['circle', 'square', 'star', 'shoe']),
+        ('planet', ['rocket', 'star', 'planet', 'apple']),
+        ('lock', ['key', 'cloud', 'lock', 'banana']),
+      ];
+      final variant = variants[seed % variants.length];
+      return build(
+        correctChoiceId: variant.$1,
+        tokens: variant.$2,
+        choices: _choices([
+          variant.$1,
+          variant.$2.last,
+          variant.$2.first,
+        ]).toSetChoices(),
+      );
+    case 'missing-piece':
+      final variants = [
+        ('circle', ['rocket', 'circle', 'square', 'star']),
+        ('star', ['planet', 'star', 'triangle', 'circle']),
+        ('key', ['lock', 'key', 'cloud', 'shoe']),
+      ];
+      final variant = variants[seed % variants.length];
+      return build(
+        correctChoiceId: variant.$1,
+        tokens: variant.$2,
+        choices: _choices([
+          variant.$1,
+          variant.$2[2],
+          variant.$2[3],
+        ]).toSetChoices(),
+      );
+    case 'logic-deduction':
+      final variants = [
+        ('rocket', ['flies', 'not-fruit', 'rocket', 'apple', 'ball']),
+        ('key', ['opens', 'not-cloud', 'key', 'cloud', 'shoe']),
+        ('banana', ['fruit', 'yellow', 'banana', 'planet', 'lock']),
+      ];
+      final variant = variants[seed % variants.length];
+      return build(
+        correctChoiceId: variant.$1,
+        tokens: variant.$2,
+        choices: _choices([
+          variant.$2[2],
+          variant.$2[3],
+          variant.$2[4],
+        ]).toSetChoices(),
       );
   }
 

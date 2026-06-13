@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:logic_like/src/domain/daily_challenge.dart';
 import 'package:logic_like/src/domain/family_profile.dart';
 import 'package:logic_like/src/domain/learning_foundation.dart';
+import 'package:logic_like/src/domain/content_pack.dart';
 import 'package:logic_like/src/domain/puzzle_content.dart';
 
 const _supportedVisualFamilies = {
@@ -24,6 +25,10 @@ const _supportedVisualFamilies = {
   'space-sequence',
   'shape-stack',
   'path-maze',
+  'memory-recall',
+  'sorting-rule',
+  'missing-piece',
+  'logic-deduction',
 };
 
 void main() {
@@ -31,6 +36,8 @@ void main() {
   final ruArb = _readArb('lib/l10n/app_ru.arb');
   final rows = <Map<String, Object?>>[];
   final issues = <Map<String, Object?>>[];
+  final phase13Rows = <Map<String, Object?>>[];
+  final phase13Issues = <Map<String, Object?>>[];
 
   for (final lesson in FoundationCatalog.starterLessons) {
     final lessonNumber = _numberFromId(lesson.id);
@@ -109,13 +116,59 @@ void main() {
     }
   }
 
+  for (final item in ContentPackCatalog.phase13Items) {
+    final content = PuzzleContentCatalog.maybeByFamilyId(item.familyId);
+    final itemIssues = _issuesForContentPackItem(item, content);
+    phase13Rows.add({
+      'id': item.id,
+      'category': item.category,
+      'family': item.familyId,
+      'contentId': content?.id,
+      'contentType': content?.contentType.name,
+      'world': content?.world.name,
+      'character': content?.character.name,
+      'correctChoiceId': item.correctChoiceId,
+      'choices': item.choiceIds,
+      'tokens': item.tokens,
+      'numbers': item.numbers,
+      'signature': item.signature,
+      'issues': itemIssues,
+    });
+    for (final issue in itemIssues) {
+      phase13Issues.add({
+        'id': item.id,
+        'family': item.familyId,
+        'issue': issue,
+      });
+    }
+  }
+
   final familyCounts = <String, int>{};
   final difficultyCounts = <String, int>{};
+  final worldCounts = <String, int>{};
+  final characterCounts = <String, int>{};
+  final phase13FamilyCounts = <String, int>{};
+  final phase13CategoryCounts = <String, int>{};
   for (final row in rows) {
     final family = row['family']! as String;
     final difficulty = row['lessonDifficulty']! as String;
+    final world = row['world'] as String?;
+    final character = row['character'] as String?;
     familyCounts[family] = (familyCounts[family] ?? 0) + 1;
     difficultyCounts[difficulty] = (difficultyCounts[difficulty] ?? 0) + 1;
+    if (world != null) {
+      worldCounts[world] = (worldCounts[world] ?? 0) + 1;
+    }
+    if (character != null) {
+      characterCounts[character] = (characterCounts[character] ?? 0) + 1;
+    }
+  }
+  for (final row in phase13Rows) {
+    final family = row['family']! as String;
+    final category = row['category']! as String;
+    phase13FamilyCounts[family] = (phase13FamilyCounts[family] ?? 0) + 1;
+    phase13CategoryCounts[category] =
+        (phase13CategoryCounts[category] ?? 0) + 1;
   }
 
   final audit = {
@@ -128,8 +181,19 @@ void main() {
       'issues': issues.length,
       'familyCounts': _sortedMap(familyCounts),
       'difficultyCounts': _sortedMap(difficultyCounts),
+      'worldCounts': _sortedMap(worldCounts),
+      'characterCounts': _sortedMap(characterCounts),
+      'phase13ContentPackItems': ContentPackCatalog.phase13Items.length,
+      'phase13UniqueSignatures': {
+        for (final item in ContentPackCatalog.phase13Items) item.signature,
+      }.length,
+      'phase13Issues': phase13Issues.length,
+      'phase13CategoryCounts': _sortedMap(phase13CategoryCounts),
+      'phase13FamilyCounts': _sortedMap(phase13FamilyCounts),
     },
     'issues': issues,
+    'phase13Issues': phase13Issues,
+    'phase13ContentPack': phase13Rows,
     'steps': rows,
   };
 
@@ -142,6 +206,47 @@ void main() {
     'Generated ${outputFile.path} with ${rows.length} steps and '
     '${issues.length} issues.',
   );
+}
+
+List<String> _issuesForContentPackItem(
+  ContentPackItem item,
+  PuzzleContent? content,
+) {
+  final issues = <String>[];
+  final choiceIds = item.choiceIds.toSet();
+
+  if (content == null) {
+    issues.add('missing_puzzle_content');
+  }
+  if (item.choiceIds.length < 3) {
+    issues.add('too_few_choices');
+  }
+  if (!choiceIds.contains(item.correctChoiceId)) {
+    issues.add('correct_choice_missing');
+  }
+  if (item.signature.trim().isEmpty) {
+    issues.add('empty_signature');
+  }
+  if (item.tokens.isEmpty && item.numbers.isEmpty) {
+    issues.add('missing_visual_data');
+  }
+
+  for (final choiceId in item.choiceIds) {
+    final assets = PuzzleContentCatalog.assetsForChoice(
+      item.familyId,
+      choiceId,
+    );
+    if (assets.isEmpty) {
+      issues.add('missing_choice_visual:$choiceId');
+    }
+    for (final asset in assets) {
+      if (!File(asset).existsSync()) {
+        issues.add('missing_choice_asset:$choiceId:$asset');
+      }
+    }
+  }
+
+  return issues;
 }
 
 List<String> _issuesFor(
@@ -182,6 +287,11 @@ List<String> _issuesFor(
     }
     if (content.animationCues.isEmpty) {
       issues.add('missing_animation_cues');
+    }
+    if (!PuzzleContentCatalog.worldThemes.any(
+      (theme) => theme.world == content.world,
+    )) {
+      issues.add('missing_world_theme:${content.world.name}');
     }
     for (final asset in PuzzleContentCatalog.assetsForContent(content)) {
       if (!File(asset).existsSync()) {
@@ -242,6 +352,18 @@ PuzzleContentType _contentTypeFor(PuzzleType type, String familyId) {
   if (familyId == 'code-grid') {
     return PuzzleContentType.symbolCode;
   }
+  if (familyId == 'memory-recall') {
+    return PuzzleContentType.memoryRecall;
+  }
+  if (familyId == 'sorting-rule') {
+    return PuzzleContentType.sortingRule;
+  }
+  if (familyId == 'missing-piece') {
+    return PuzzleContentType.missingPiece;
+  }
+  if (familyId == 'logic-deduction') {
+    return PuzzleContentType.logicDeduction;
+  }
 
   return switch (type) {
     PuzzleType.oddOneOut => PuzzleContentType.oddOneOut,
@@ -252,6 +374,10 @@ PuzzleContentType _contentTypeFor(PuzzleType type, String familyId) {
     PuzzleType.countBridge => PuzzleContentType.counting,
     PuzzleType.visualCompare => PuzzleContentType.comparison,
     PuzzleType.analogy => PuzzleContentType.logicDeduction,
+    PuzzleType.memoryRecall => PuzzleContentType.memoryRecall,
+    PuzzleType.sortingRule => PuzzleContentType.sortingRule,
+    PuzzleType.missingPiece => PuzzleContentType.missingPiece,
+    PuzzleType.logicDeduction => PuzzleContentType.logicDeduction,
   };
 }
 
@@ -271,8 +397,12 @@ String _difficultyFor(DailyChallenge challenge) {
     'code-grid' ||
     'number-bridge' ||
     'detail-count' ||
-    'lock-key' =>
+    'lock-key' ||
+    'memory-recall' ||
+    'sorting-rule' ||
+    'missing-piece' =>
       'hard',
+    'logic-deduction' => 'challenge',
     _ => 'unknown',
   };
 }

@@ -42,6 +42,29 @@ void main() {
       expect(missingAssets, isEmpty);
     });
 
+    test('defines a visual theme and content coverage for every world', () {
+      final themedWorlds = {
+        for (final theme in PuzzleContentCatalog.worldThemes) theme.world,
+      };
+      final contentWorlds = {
+        for (final content in PuzzleContentCatalog.contents) content.world,
+      };
+
+      expect(themedWorlds, PuzzleWorld.values.toSet());
+      expect(contentWorlds, PuzzleWorld.values.toSet());
+    });
+
+    test('references only existing theme ambient assets', () {
+      final missingAssets = <String>[];
+      for (final theme in PuzzleContentCatalog.worldThemes) {
+        if (!File(theme.ambientAsset).existsSync()) {
+          missingAssets.add('${theme.world.name}: ${theme.ambientAsset}');
+        }
+      }
+
+      expect(missingAssets, isEmpty);
+    });
+
     test('resolves visuals for representative answer choices', () {
       final cases = {
         'shape-path': ['circle', 'square', 'triangle'],
@@ -49,6 +72,10 @@ void main() {
         'number-bridge': ['4+2+1'],
         'detail-count': ['red-circles', 'blue-squares', 'green-stars'],
         'path-maze': ['left', 'right', 'up', 'down'],
+        'memory-recall': ['star', 'key', 'banana'],
+        'sorting-rule': ['pear', 'star', 'planet', 'lock'],
+        'missing-piece': ['circle', 'star', 'key'],
+        'logic-deduction': ['rocket', 'key', 'banana'],
       };
       final missingAssets = <String>[];
 
