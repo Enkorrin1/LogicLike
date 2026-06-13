@@ -84,5 +84,65 @@ void main() {
         isTrue,
       );
     });
+
+    test('phase 14 exposes three hundred level-ready puzzle steps', () {
+      final items = ContentPackCatalog.phase14Items;
+
+      expect(items, hasLength(300));
+      expect(ContentPackCatalog.phase14DifficultyCounts(), {
+        'easy': 60,
+        'medium': 120,
+        'hard': 80,
+        'mixed-review': 40,
+      });
+      expect(
+        {for (final item in items) item.familyId}.length,
+        greaterThanOrEqualTo(18),
+      );
+    });
+
+    test('phase 14 defines boss lessons as mixed review adventures', () {
+      expect(ContentPackCatalog.phase14BossLessons, hasLength(8));
+
+      for (final bossLesson in ContentPackCatalog.phase14BossLessons) {
+        expect(bossLesson.itemIds, hasLength(5));
+        final items = [
+          for (final item in ContentPackCatalog.phase14Items)
+            if (bossLesson.itemIds.contains(item.id)) item,
+        ];
+        expect(items.map((item) => item.difficultyBand).toSet(), {
+          'mixed-review',
+        });
+        expect(
+          items.map((item) => item.familyId).toSet().length,
+          greaterThanOrEqualTo(4),
+        );
+      }
+    });
+
+    test('phase 14 items have content and visual answer assets', () {
+      final issues = <String>[];
+
+      for (final item in ContentPackCatalog.phase14Items) {
+        final content = PuzzleContentCatalog.maybeByFamilyId(item.familyId);
+        if (content == null) {
+          issues.add('${item.id}: missing content for ${item.familyId}');
+        }
+        if (!item.choiceIds.contains(item.correctChoiceId)) {
+          issues.add('${item.id}: correct answer is not in choices');
+        }
+        for (final choiceId in item.choiceIds) {
+          final assets = PuzzleContentCatalog.assetsForChoice(
+            item.familyId,
+            choiceId,
+          );
+          if (assets.isEmpty) {
+            issues.add('${item.id}: missing visual for $choiceId');
+          }
+        }
+      }
+
+      expect(issues, isEmpty);
+    });
   });
 }

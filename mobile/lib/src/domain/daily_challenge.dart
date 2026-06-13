@@ -156,7 +156,7 @@ DailyChallenge dailyChallengeForLessonStep(
     );
   }
 
-  final packItem = ContentPackCatalog.phase13ItemForStep(
+  final packItem = ContentPackCatalog.itemForStep(
     step,
     familyId: familyId,
   );

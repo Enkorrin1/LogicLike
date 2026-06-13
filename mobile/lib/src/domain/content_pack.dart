@@ -7,6 +7,8 @@ class ContentPackItem {
     required this.familyId,
     required this.correctChoiceId,
     required this.choiceIds,
+    this.difficultyBand = 'foundation',
+    this.bossLessonId,
     this.tokens = const [],
     this.numbers = const [],
   });
@@ -16,6 +18,8 @@ class ContentPackItem {
   final String familyId;
   final String correctChoiceId;
   final List<String> choiceIds;
+  final String difficultyBand;
+  final String? bossLessonId;
   final List<String> tokens;
   final List<int> numbers;
 
@@ -30,8 +34,27 @@ class ContentPackItem {
   }
 }
 
+class BossLessonDefinition {
+  const BossLessonDefinition({
+    required this.id,
+    required this.titleKey,
+    required this.itemIds,
+  });
+
+  final String id;
+  final String titleKey;
+  final List<String> itemIds;
+}
+
 class ContentPackCatalog {
   const ContentPackCatalog._();
+
+  static const phase14DifficultyTargets = {
+    'easy': 60,
+    'medium': 120,
+    'hard': 80,
+    'mixed-review': 40,
+  };
 
   static final List<ContentPackItem> phase13Items = [
     ..._patternItems(),
@@ -44,7 +67,21 @@ class ContentPackCatalog {
     ..._memoryDetailItems(),
   ];
 
-  static ContentPackItem? phase13ItemForStep(
+  static final List<ContentPackItem> phase14Items = _buildPhase14Items();
+
+  static final List<BossLessonDefinition> phase14BossLessons = [
+    for (var index = 0; index < 8; index += 1)
+      BossLessonDefinition(
+        id: 'phase14.boss.${index + 1}',
+        titleKey: 'boss_${(index + 1).toString().padLeft(2, '0')}',
+        itemIds: [
+          for (final item in phase14Items)
+            if (item.bossLessonId == 'phase14.boss.${index + 1}') item.id,
+        ],
+      ),
+  ];
+
+  static ContentPackItem? itemForStep(
     LessonStep step, {
     required String familyId,
   }) {
@@ -53,7 +90,7 @@ class ContentPackCatalog {
     }
 
     final matchingItems = [
-      for (final item in phase13Items)
+      for (final item in phase14Items)
         if (item.familyId == familyId) item,
     ];
     if (matchingItems.isEmpty) {
@@ -80,6 +117,439 @@ class ContentPackCatalog {
       counts[item.category] = (counts[item.category] ?? 0) + 1;
     }
     return counts;
+  }
+
+  static Map<String, int> phase14DifficultyCounts() {
+    final counts = <String, int>{};
+    for (final item in phase14Items) {
+      counts[item.difficultyBand] = (counts[item.difficultyBand] ?? 0) + 1;
+    }
+    return counts;
+  }
+
+  static List<ContentPackItem> _buildPhase14Items() {
+    return [
+      ..._phase14BandItems(
+        difficultyBand: 'easy',
+        count: phase14DifficultyTargets['easy']!,
+        families: const [
+          'shape-path',
+          'fruit-pattern',
+          'toy-count',
+          'odd-card',
+          'memory-pairs',
+          'shadow-match',
+        ],
+      ),
+      ..._phase14BandItems(
+        difficultyBand: 'medium',
+        count: phase14DifficultyTargets['medium']!,
+        families: const [
+          'logic-train',
+          'sticker-sum',
+          'lock-key',
+          'space-sequence',
+          'shape-stack',
+          'sorting-rule',
+          'path-maze',
+        ],
+      ),
+      ..._phase14BandItems(
+        difficultyBand: 'hard',
+        count: phase14DifficultyTargets['hard']!,
+        families: const [
+          'balance-scale',
+          'shape-rotation',
+          'code-grid',
+          'number-bridge',
+          'detail-count',
+          'missing-piece',
+          'logic-deduction',
+        ],
+      ),
+      ..._phase14ReviewItems(),
+    ];
+  }
+
+  static List<ContentPackItem> _phase14BandItems({
+    required String difficultyBand,
+    required int count,
+    required List<String> families,
+  }) {
+    return [
+      for (var index = 0; index < count; index += 1)
+        _phase14ItemForFamily(
+          id: 'phase14.$difficultyBand.${index + 1}',
+          difficultyBand: difficultyBand,
+          familyId: families[index % families.length],
+          variant: index,
+        ),
+    ];
+  }
+
+  static List<ContentPackItem> _phase14ReviewItems() {
+    const families = [
+      'shape-path',
+      'odd-card',
+      'toy-count',
+      'logic-train',
+      'memory-pairs',
+      'shadow-match',
+      'balance-scale',
+      'code-grid',
+      'number-bridge',
+      'path-maze',
+      'memory-recall',
+      'sorting-rule',
+      'missing-piece',
+      'logic-deduction',
+    ];
+    return [
+      for (var index = 0;
+          index < phase14DifficultyTargets['mixed-review']!;
+          index += 1)
+        _phase14ItemForFamily(
+          id: 'phase14.review.${index + 1}',
+          difficultyBand: 'mixed-review',
+          familyId: families[index % families.length],
+          variant: index + 100,
+          bossLessonId: 'phase14.boss.${(index ~/ 5) + 1}',
+        ),
+    ];
+  }
+
+  static ContentPackItem _phase14ItemForFamily({
+    required String id,
+    required String difficultyBand,
+    required String familyId,
+    required int variant,
+    String? bossLessonId,
+  }) {
+    ContentPackItem item({
+      required String category,
+      required String correctChoiceId,
+      required List<String> choiceIds,
+      List<String> tokens = const [],
+      List<int> numbers = const [],
+    }) {
+      return ContentPackItem(
+        id: id,
+        category: category,
+        familyId: familyId,
+        correctChoiceId: correctChoiceId,
+        choiceIds: choiceIds,
+        difficultyBand: difficultyBand,
+        bossLessonId: bossLessonId,
+        tokens: tokens,
+        numbers: numbers,
+      );
+    }
+
+    switch (familyId) {
+      case 'shape-path':
+        const pairs = [
+          ('circle', 'square'),
+          ('triangle', 'star'),
+          ('square', 'circle'),
+          ('star', 'triangle'),
+          ('circle', 'triangle'),
+          ('square', 'star'),
+        ];
+        final pair = pairs[variant % pairs.length];
+        return item(
+          category: 'pattern',
+          correctChoiceId: pair.$1,
+          tokens: [pair.$1, pair.$2],
+          choiceIds: const ['triangle', 'circle', 'square', 'star'],
+        );
+      case 'fruit-pattern':
+        const pairs = [
+          ('apple', 'banana'),
+          ('banana', 'pear'),
+          ('pear', 'apple'),
+          ('apple', 'pear'),
+          ('banana', 'apple'),
+        ];
+        final pair = pairs[variant % pairs.length];
+        return item(
+          category: 'pattern',
+          correctChoiceId: pair.$1,
+          tokens: [pair.$1, pair.$2],
+          choiceIds: const ['apple', 'banana', 'pear'],
+        );
+      case 'logic-train':
+        const pairs = [
+          ('red', 'blue'),
+          ('green', 'red'),
+          ('blue', 'green'),
+          ('red', 'green'),
+          ('blue', 'red'),
+        ];
+        final pair = pairs[variant % pairs.length];
+        return item(
+          category: 'pattern',
+          correctChoiceId: pair.$1,
+          tokens: [pair.$1, pair.$2],
+          choiceIds: const ['blue', 'red', 'green'],
+        );
+      case 'space-sequence':
+        const pairs = [
+          ('rocket', 'planet'),
+          ('planet', 'star'),
+          ('star', 'rocket'),
+          ('rocket', 'star'),
+          ('planet', 'rocket'),
+        ];
+        final pair = pairs[variant % pairs.length];
+        return item(
+          category: 'pattern',
+          correctChoiceId: pair.$1,
+          tokens: [pair.$1, pair.$2],
+          choiceIds: const ['rocket', 'planet', 'star'],
+        );
+      case 'shape-stack':
+        const pairs = [
+          ('square', 'circle'),
+          ('triangle', 'square'),
+          ('circle', 'star'),
+          ('star', 'square'),
+          ('triangle', 'circle'),
+        ];
+        final pair = pairs[variant % pairs.length];
+        return item(
+          category: 'pattern',
+          correctChoiceId: pair.$1,
+          tokens: [pair.$1, pair.$2],
+          choiceIds: const ['square', 'circle', 'triangle', 'star'],
+        );
+      case 'toy-count':
+        final first = 1 + (variant % 5);
+        final second = 1 + ((variant ~/ 2) % 4);
+        final total = first + second;
+        return item(
+          category: 'counting',
+          correctChoiceId: '$total',
+          numbers: [first, second, total],
+          choiceIds: _numericChoiceIds(total),
+        );
+      case 'sticker-sum':
+        final first = 2 + (variant % 7);
+        final second = 1 + ((variant ~/ 3) % 5);
+        final total = first + second;
+        return item(
+          category: 'counting',
+          correctChoiceId: '$total',
+          numbers: [first, second, total],
+          choiceIds: _numericChoiceIds(total),
+        );
+      case 'odd-card':
+        const rows = [
+          ('ball', ['apple', 'banana', 'pear', 'ball']),
+          ('cloud', ['rocket', 'planet', 'star', 'cloud']),
+          ('shoe', ['circle', 'square', 'triangle', 'shoe']),
+          ('rocket', ['apple', 'banana', 'pear', 'rocket']),
+          ('apple', ['rocket', 'planet', 'star', 'apple']),
+          ('key', ['circle', 'square', 'triangle', 'key']),
+          ('banana', ['lock', 'key', 'shoe', 'banana']),
+          ('planet', ['apple', 'banana', 'pear', 'planet']),
+          ('star', ['key', 'lock', 'shoe', 'star']),
+          ('pear', ['rocket', 'planet', 'cloud', 'pear']),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'odd-one-out',
+          correctChoiceId: row.$1,
+          tokens: row.$2,
+          choiceIds: [row.$2[0], row.$1, row.$2[1]],
+        );
+      case 'memory-pairs':
+      case 'lock-key':
+        const rows = [
+          ('key', 'lock', ['lock', 'shoe', 'cloud']),
+          ('foot', 'shoe', ['shoe', 'cloud', 'lock']),
+          ('rain', 'cloud', ['cloud', 'shoe', 'lock']),
+          ('rocket', 'planet', ['planet', 'lock', 'shoe']),
+          ('apple', 'banana', ['banana', 'cloud', 'key']),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'pair-matching',
+          correctChoiceId: row.$2,
+          tokens: [row.$1, row.$2],
+          choiceIds: row.$3,
+        );
+      case 'shadow-match':
+        const tokens = [
+          'rocket',
+          'planet',
+          'star',
+          'apple',
+          'banana',
+          'pear',
+          'ball',
+          'key',
+          'lock',
+          'shoe',
+        ];
+        final token = tokens[variant % tokens.length];
+        return item(
+          category: 'shadow-matching',
+          correctChoiceId: token,
+          tokens: [token],
+          choiceIds: [
+            token,
+            tokens[(variant + 3) % tokens.length],
+            tokens[(variant + 6) % tokens.length],
+          ],
+        );
+      case 'balance-scale':
+        final known = 1 + (variant % 5);
+        final missing = 1 + ((variant ~/ 2) % 5);
+        final left = known + missing;
+        return item(
+          category: 'comparison',
+          correctChoiceId: '$missing',
+          tokens: const ['apple'],
+          numbers: [left, known, missing],
+          choiceIds: _numericChoiceIds(missing),
+        );
+      case 'detail-count':
+        final red = 1 + (variant % 5);
+        final blue = 1 + ((variant + 2) % 5);
+        final green = 1 + ((variant + 4) % 5);
+        final counts = {
+          'red-circles': red,
+          'blue-squares': blue,
+          'green-stars': green,
+        };
+        final correct = counts.entries
+            .reduce((best, next) => next.value > best.value ? next : best)
+            .key;
+        return item(
+          category: 'comparison',
+          correctChoiceId: correct,
+          numbers: [red, blue, green],
+          choiceIds: const ['blue-squares', 'red-circles', 'green-stars'],
+        );
+      case 'shape-rotation':
+        const turns = ['right', 'left', 'half'];
+        return item(
+          category: 'spatial-rotation',
+          correctChoiceId: 'same',
+          tokens: [turns[variant % turns.length]],
+          choiceIds: const ['same', 'circle', 'square'],
+        );
+      case 'code-grid':
+        final first = 1 + (variant % 6);
+        final stepSize = 2 + ((variant ~/ 2) % 3);
+        final second = first + 1;
+        final missing = second + stepSize * 2;
+        return item(
+          category: 'logic-grid',
+          correctChoiceId: '$missing',
+          numbers: [
+            first,
+            first + stepSize,
+            first + stepSize * 2,
+            second,
+            second + stepSize,
+            missing,
+            stepSize,
+          ],
+          choiceIds: _numericChoiceIds(missing),
+        );
+      case 'number-bridge':
+        final a = 2 + (variant % 6);
+        final b = 1 + ((variant ~/ 2) % 5);
+        final c = 1 + ((variant ~/ 3) % 4);
+        final total = a + b + c;
+        final correct = '$a+$b+$c';
+        return item(
+          category: 'visual-math',
+          correctChoiceId: correct,
+          numbers: [a, b, c, total],
+          choiceIds: [correct, '$a+$b', '$b+$c'],
+        );
+      case 'path-maze':
+        const rows = [
+          ('rocket', 'planet', 'right'),
+          ('key', 'lock', 'up'),
+          ('shoe', 'star', 'left'),
+          ('apple', 'cloud', 'down'),
+          ('banana', 'pear', 'right'),
+          ('planet', 'rocket', 'left'),
+          ('lock', 'key', 'down'),
+          ('ball', 'star', 'up'),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'path-logic',
+          correctChoiceId: row.$3,
+          tokens: [row.$1, row.$2, row.$3],
+          choiceIds: const ['left', 'right', 'up', 'down'],
+        );
+      case 'memory-recall':
+        const rows = [
+          ('star', ['rocket', 'planet', 'star']),
+          ('key', ['lock', 'cloud', 'key']),
+          ('banana', ['apple', 'pear', 'banana']),
+          ('triangle', ['circle', 'square', 'triangle']),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'memory-detail',
+          correctChoiceId: row.$1,
+          tokens: row.$2,
+          choiceIds: [row.$1, row.$2.first, row.$2[1]],
+        );
+      case 'sorting-rule':
+        const rows = [
+          ('pear', ['apple', 'banana', 'pear', 'rocket']),
+          ('star', ['circle', 'square', 'star', 'shoe']),
+          ('planet', ['rocket', 'star', 'planet', 'apple']),
+          ('lock', ['key', 'cloud', 'lock', 'banana']),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'memory-detail',
+          correctChoiceId: row.$1,
+          tokens: row.$2,
+          choiceIds: [row.$1, row.$2.last, row.$2.first],
+        );
+      case 'missing-piece':
+        const rows = [
+          ('circle', ['rocket', 'circle', 'square', 'star']),
+          ('star', ['planet', 'star', 'triangle', 'circle']),
+          ('key', ['lock', 'key', 'cloud', 'shoe']),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'memory-detail',
+          correctChoiceId: row.$1,
+          tokens: row.$2,
+          choiceIds: [row.$1, row.$2[2], row.$2[3]],
+        );
+      case 'logic-deduction':
+        const rows = [
+          ('rocket', ['flies', 'not-fruit', 'rocket', 'apple', 'ball']),
+          ('key', ['opens', 'not-cloud', 'key', 'cloud', 'shoe']),
+          ('banana', ['fruit', 'yellow', 'banana', 'planet', 'lock']),
+        ];
+        final row = rows[variant % rows.length];
+        return item(
+          category: 'memory-detail',
+          correctChoiceId: row.$1,
+          tokens: row.$2,
+          choiceIds: [row.$2[2], row.$2[3], row.$2[4]],
+        );
+    }
+
+    return item(
+      category: 'pattern',
+      correctChoiceId: 'circle',
+      tokens: const ['circle', 'square'],
+      choiceIds: const ['triangle', 'circle', 'square'],
+    );
   }
 
   static List<ContentPackItem> _patternItems() {

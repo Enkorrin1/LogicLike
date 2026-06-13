@@ -52,6 +52,16 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Step 1 of 4'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget.key is ValueKey<String> &&
+            (widget.key! as ValueKey<String>)
+                .value
+                .startsWith('character-pose-'),
+      ),
+      findsWidgets,
+    );
   });
 
   testWidgets('opens recommended lesson from home route card', (tester) async {
@@ -121,9 +131,10 @@ void main() {
     await tester.tap(find.text('Hint'));
     await tester.pumpAndSettle();
 
+    expect(find.byKey(const ValueKey('hint-lightbulb-moment')), findsOneWidget);
     expect(
       find.textContaining('The rule repeats'),
-      findsOneWidget,
+      findsWidgets,
     );
   });
 
@@ -216,6 +227,9 @@ void main() {
 
     expect(find.text('New sticker!'), findsOneWidget);
     expect(find.byKey(const ValueKey('reward-polish-marker')), findsOneWidget);
+    expect(find.byKey(const ValueKey('reward-flying-stars')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('reward-character-victory')), findsOneWidget);
     expect(find.text('Lesson summary'), findsOneWidget);
     expect(find.text('Questions'), findsOneWidget);
     expect(find.text('+1 sticker'), findsOneWidget);
@@ -479,7 +493,16 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('expression-svg-3+4+2')), findsOneWidget);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget.key is ValueKey<String> &&
+            (widget.key! as ValueKey<String>)
+                .value
+                .startsWith('expression-svg-'),
+      ),
+      findsWidgets,
+    );
   });
 
   testWidgets('shows parent skill insights panel', (tester) async {

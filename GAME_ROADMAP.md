@@ -539,6 +539,8 @@ Implemented:
 Goal:
 Scale from a good demo catalog to a deep learning product.
 
+Status: implemented.
+
 Scope:
 
 - 60 easy tasks,
@@ -561,7 +563,22 @@ Acceptance criteria:
 - lessons avoid mechanical repetition,
 - review/boss lessons feel special.
 
+Implemented:
+
+- added `ContentPackCatalog.phase14Items` with 300 level-ready puzzle steps,
+- split phase 14 by difficulty bands: 60 easy, 120 medium, 80 hard, and 40
+  mixed review tasks,
+- connected lesson generation to the phase 14 pack while preserving the first
+  onboarding lesson and adaptive numeric variants,
+- added 8 boss lesson definitions, each with 5 mixed-review tasks,
+- extended content audit with phase 14 counts, difficulty distribution, family
+  distribution, boss lesson counts, and visual answer checks,
+- added automated phase 14 tests for pack size, difficulty distribution, boss
+  lessons, content coverage, and answer visuals.
+
 ### Phase 15 - Animation And Delight
+
+Status: implemented.
 
 Goal:
 Make puzzles feel alive without making the UI noisy.
@@ -584,7 +601,20 @@ Acceptance criteria:
 - no layout jumps on small screens,
 - reduced-motion mode can disable nonessential motion later.
 
+Implemented:
+
+- answer cards now scale, shake gently on wrong answers, and glow on correct
+  answers,
+- hint panels appear as a lightbulb moment,
+- lesson character badges enter with a soft celebratory pop,
+- path-maze puzzles animate the start character toward the route,
+- sticker rewards keep the existing reveal and add lightweight flying stars,
+- motion is routed through one helper so nonessential animation can respect
+  reduced-motion settings.
+
 ### Phase 16 - Character System
+
+Status: implemented.
 
 Goal:
 Create recurring helpers that make content emotionally memorable.
@@ -612,6 +642,19 @@ Acceptance criteria:
 - puzzle definitions can reference a character and pose,
 - characters appear in lesson and reward moments,
 - character visuals match the app's soft 3D/SVG style.
+
+Implemented:
+
+- added six reusable character profiles: Leo, Nick, Robi, Mia, Captain Whale,
+  and Owl Coach,
+- expanded character poses to idle, happy, thinking, hint, holding object, and
+  victory,
+- added lightweight SVG character portraits in the app style,
+- connected puzzle metadata to all six characters and all six poses,
+- lesson headers now render the puzzle character plus a pose chip,
+- lesson completion now shows the current helper in a victory moment,
+- content audit and tests now verify character registry coverage, pose coverage,
+  and character asset existence.
 
 ### Phase 17 - Content QA Automation
 

@@ -29,12 +29,55 @@ void main() {
       }
     });
 
+    test('defines six reusable characters with six poses each', () {
+      expect(PuzzleContentCatalog.characterProfiles, hasLength(6));
+      expect(
+        PuzzleContentCatalog.characterProfiles
+            .map((profile) => profile.character)
+            .toSet(),
+        PuzzleCharacter.values.toSet(),
+      );
+      expect(CharacterPose.values, hasLength(6));
+      expect(
+        PuzzleContentCatalog.characterPoseAssets,
+        hasLength(PuzzleCharacter.values.length * CharacterPose.values.length),
+      );
+    });
+
+    test('starter content uses every character and every pose', () {
+      final usedCharacters = {
+        for (final content in PuzzleContentCatalog.contents) content.character,
+      };
+      final usedPoses = {
+        for (final content in PuzzleContentCatalog.contents)
+          content.characterPose,
+      };
+
+      expect(usedCharacters, PuzzleCharacter.values.toSet());
+      expect(usedPoses, CharacterPose.values.toSet());
+    });
+
     test('references only asset files that exist', () {
       final missingAssets = <String>[];
       for (final content in PuzzleContentCatalog.contents) {
         for (final asset in PuzzleContentCatalog.assetsForContent(content)) {
           if (!File(asset).existsSync()) {
             missingAssets.add('${content.familyId}: $asset');
+          }
+        }
+      }
+
+      expect(missingAssets, isEmpty);
+    });
+
+    test('references only existing character pose assets', () {
+      final missingAssets = <String>[];
+      for (final poseAsset in PuzzleContentCatalog.characterPoseAssets) {
+        for (final asset in [poseAsset.baseAsset, poseAsset.propAsset]) {
+          if (!File(asset).existsSync()) {
+            missingAssets.add(
+              '${poseAsset.character.name}/${poseAsset.pose.name}: $asset',
+            );
           }
         }
       }

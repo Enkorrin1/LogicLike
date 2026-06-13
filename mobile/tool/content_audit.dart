@@ -38,6 +38,8 @@ void main() {
   final issues = <Map<String, Object?>>[];
   final phase13Rows = <Map<String, Object?>>[];
   final phase13Issues = <Map<String, Object?>>[];
+  final phase14Rows = <Map<String, Object?>>[];
+  final phase14Issues = <Map<String, Object?>>[];
 
   for (final lesson in FoundationCatalog.starterLessons) {
     final lessonNumber = _numberFromId(lesson.id);
@@ -143,17 +145,52 @@ void main() {
     }
   }
 
+  for (final item in ContentPackCatalog.phase14Items) {
+    final content = PuzzleContentCatalog.maybeByFamilyId(item.familyId);
+    final itemIssues = _issuesForContentPackItem(item, content);
+    phase14Rows.add({
+      'id': item.id,
+      'category': item.category,
+      'difficultyBand': item.difficultyBand,
+      'bossLessonId': item.bossLessonId,
+      'family': item.familyId,
+      'contentId': content?.id,
+      'contentType': content?.contentType.name,
+      'world': content?.world.name,
+      'character': content?.character.name,
+      'correctChoiceId': item.correctChoiceId,
+      'choices': item.choiceIds,
+      'tokens': item.tokens,
+      'numbers': item.numbers,
+      'signature': item.signature,
+      'issues': itemIssues,
+    });
+    for (final issue in itemIssues) {
+      phase14Issues.add({
+        'id': item.id,
+        'family': item.familyId,
+        'issue': issue,
+      });
+    }
+  }
+
   final familyCounts = <String, int>{};
   final difficultyCounts = <String, int>{};
   final worldCounts = <String, int>{};
   final characterCounts = <String, int>{};
+  final characterPoseCounts = <String, int>{};
   final phase13FamilyCounts = <String, int>{};
   final phase13CategoryCounts = <String, int>{};
+  final phase14FamilyCounts = <String, int>{};
+  final phase14CategoryCounts = <String, int>{};
+  final phase14DifficultyCounts = <String, int>{};
+  final phase14BossCounts = <String, int>{};
   for (final row in rows) {
     final family = row['family']! as String;
     final difficulty = row['lessonDifficulty']! as String;
     final world = row['world'] as String?;
     final character = row['character'] as String?;
+    final characterPose = row['characterPose'] as String?;
     familyCounts[family] = (familyCounts[family] ?? 0) + 1;
     difficultyCounts[difficulty] = (difficultyCounts[difficulty] ?? 0) + 1;
     if (world != null) {
@@ -162,6 +199,10 @@ void main() {
     if (character != null) {
       characterCounts[character] = (characterCounts[character] ?? 0) + 1;
     }
+    if (characterPose != null) {
+      characterPoseCounts[characterPose] =
+          (characterPoseCounts[characterPose] ?? 0) + 1;
+    }
   }
   for (final row in phase13Rows) {
     final family = row['family']! as String;
@@ -169,6 +210,21 @@ void main() {
     phase13FamilyCounts[family] = (phase13FamilyCounts[family] ?? 0) + 1;
     phase13CategoryCounts[category] =
         (phase13CategoryCounts[category] ?? 0) + 1;
+  }
+  for (final row in phase14Rows) {
+    final family = row['family']! as String;
+    final category = row['category']! as String;
+    final difficulty = row['difficultyBand']! as String;
+    final bossLessonId = row['bossLessonId'] as String?;
+    phase14FamilyCounts[family] = (phase14FamilyCounts[family] ?? 0) + 1;
+    phase14CategoryCounts[category] =
+        (phase14CategoryCounts[category] ?? 0) + 1;
+    phase14DifficultyCounts[difficulty] =
+        (phase14DifficultyCounts[difficulty] ?? 0) + 1;
+    if (bossLessonId != null) {
+      phase14BossCounts[bossLessonId] =
+          (phase14BossCounts[bossLessonId] ?? 0) + 1;
+    }
   }
 
   final audit = {
@@ -183,6 +239,16 @@ void main() {
       'difficultyCounts': _sortedMap(difficultyCounts),
       'worldCounts': _sortedMap(worldCounts),
       'characterCounts': _sortedMap(characterCounts),
+      'characterPoseCounts': _sortedMap(characterPoseCounts),
+      'characterProfiles': [
+        for (final profile in PuzzleContentCatalog.characterProfiles)
+          {
+            'character': profile.character.name,
+            'asset': profile.asset,
+            'homeWorld': profile.homeWorld.name,
+          },
+      ],
+      'characterPoseAssets': PuzzleContentCatalog.characterPoseAssets.length,
       'phase13ContentPackItems': ContentPackCatalog.phase13Items.length,
       'phase13UniqueSignatures': {
         for (final item in ContentPackCatalog.phase13Items) item.signature,
@@ -190,10 +256,23 @@ void main() {
       'phase13Issues': phase13Issues.length,
       'phase13CategoryCounts': _sortedMap(phase13CategoryCounts),
       'phase13FamilyCounts': _sortedMap(phase13FamilyCounts),
+      'phase14ContentPackItems': ContentPackCatalog.phase14Items.length,
+      'phase14UniqueSignatures': {
+        for (final item in ContentPackCatalog.phase14Items) item.signature,
+      }.length,
+      'phase14Issues': phase14Issues.length,
+      'phase14DifficultyTargets': ContentPackCatalog.phase14DifficultyTargets,
+      'phase14DifficultyCounts': _sortedMap(phase14DifficultyCounts),
+      'phase14CategoryCounts': _sortedMap(phase14CategoryCounts),
+      'phase14FamilyCounts': _sortedMap(phase14FamilyCounts),
+      'phase14BossLessons': ContentPackCatalog.phase14BossLessons.length,
+      'phase14BossCounts': _sortedMap(phase14BossCounts),
     },
     'issues': issues,
     'phase13Issues': phase13Issues,
     'phase13ContentPack': phase13Rows,
+    'phase14Issues': phase14Issues,
+    'phase14ContentPack': phase14Rows,
     'steps': rows,
   };
 

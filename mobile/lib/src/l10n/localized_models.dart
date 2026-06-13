@@ -110,6 +110,8 @@ extension LocalizedModels on AppLocalizations {
       PuzzleCharacter.leo => ru ? 'Лёва' : 'Leo',
       PuzzleCharacter.nickAstronaut => ru ? 'Ник' : 'Nick',
       PuzzleCharacter.robi => ru ? 'Роби' : 'Robi',
+      PuzzleCharacter.miaFox => ru ? 'Мия' : 'Mia',
+      PuzzleCharacter.captainWhale => ru ? 'Капитан Кит' : 'Captain Whale',
       PuzzleCharacter.owlCoach => ru ? 'Совёнок' : 'Owl Coach',
     };
   }

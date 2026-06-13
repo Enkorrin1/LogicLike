@@ -31,6 +31,8 @@ enum PuzzleCharacter {
   leo,
   nickAstronaut,
   robi,
+  miaFox,
+  captainWhale,
   owlCoach,
 }
 
@@ -39,6 +41,7 @@ enum CharacterPose {
   happy,
   thinking,
   hint,
+  holdingObject,
   victory,
 }
 
@@ -130,11 +133,81 @@ class PuzzleWorldTheme {
   final String ambientAsset;
 }
 
+class PuzzleCharacterProfile {
+  const PuzzleCharacterProfile({
+    required this.character,
+    required this.asset,
+    required this.accentColor,
+    required this.homeWorld,
+  });
+
+  final PuzzleCharacter character;
+  final String asset;
+  final int accentColor;
+  final PuzzleWorld homeWorld;
+}
+
+class PuzzleCharacterPoseAsset {
+  const PuzzleCharacterPoseAsset({
+    required this.character,
+    required this.pose,
+    required this.baseAsset,
+    required this.propAsset,
+    required this.accentColor,
+  });
+
+  final PuzzleCharacter character;
+  final CharacterPose pose;
+  final String baseAsset;
+  final String propAsset;
+  final int accentColor;
+}
+
 class PuzzleContentCatalog {
   const PuzzleContentCatalog._();
 
   static const puzzleAssetRoot = 'assets/images/puzzles';
   static const generatedAssetRoot = 'assets/images/generated';
+  static const characterAssetRoot = 'assets/images/characters';
+
+  static const characterProfiles = <PuzzleCharacterProfile>[
+    PuzzleCharacterProfile(
+      character: PuzzleCharacter.leo,
+      asset: '$characterAssetRoot/leo.svg',
+      accentColor: 0xFFFF9D2E,
+      homeWorld: PuzzleWorld.forest,
+    ),
+    PuzzleCharacterProfile(
+      character: PuzzleCharacter.nickAstronaut,
+      asset: '$characterAssetRoot/nick_astronaut.svg',
+      accentColor: 0xFF44A8F2,
+      homeWorld: PuzzleWorld.space,
+    ),
+    PuzzleCharacterProfile(
+      character: PuzzleCharacter.robi,
+      asset: '$characterAssetRoot/robi.svg',
+      accentColor: 0xFF18B7AE,
+      homeWorld: PuzzleWorld.laboratory,
+    ),
+    PuzzleCharacterProfile(
+      character: PuzzleCharacter.miaFox,
+      asset: '$characterAssetRoot/mia_fox.svg',
+      accentColor: 0xFFFF8A45,
+      homeWorld: PuzzleWorld.forest,
+    ),
+    PuzzleCharacterProfile(
+      character: PuzzleCharacter.captainWhale,
+      asset: '$characterAssetRoot/captain_whale.svg',
+      accentColor: 0xFF5CC7E8,
+      homeWorld: PuzzleWorld.sea,
+    ),
+    PuzzleCharacterProfile(
+      character: PuzzleCharacter.owlCoach,
+      asset: '$characterAssetRoot/owl_coach.svg',
+      accentColor: 0xFF9C6AF2,
+      homeWorld: PuzzleWorld.magicSchool,
+    ),
+  ];
 
   static const worldThemes = <PuzzleWorldTheme>[
     PuzzleWorldTheme(
@@ -232,7 +305,7 @@ class PuzzleContentCatalog {
       familyId: 'fruit-pattern',
       contentType: PuzzleContentType.patternSequence,
       world: PuzzleWorld.forest,
-      character: PuzzleCharacter.leo,
+      character: PuzzleCharacter.miaFox,
       characterPose: CharacterPose.happy,
       ageBands: [AgeBandId.age4to5, AgeBandId.age6],
       difficultyTier: LessonDifficultyTier.starter,
@@ -292,7 +365,7 @@ class PuzzleContentCatalog {
       familyId: 'odd-card',
       contentType: PuzzleContentType.oddOneOut,
       world: PuzzleWorld.forest,
-      character: PuzzleCharacter.owlCoach,
+      character: PuzzleCharacter.miaFox,
       characterPose: CharacterPose.thinking,
       ageBands: [AgeBandId.age4to5, AgeBandId.age6, AgeBandId.age7to8],
       difficultyTier: LessonDifficultyTier.growing,
@@ -364,7 +437,7 @@ class PuzzleContentCatalog {
       contentType: PuzzleContentType.visualMathStory,
       world: PuzzleWorld.toyCity,
       character: PuzzleCharacter.leo,
-      characterPose: CharacterPose.happy,
+      characterPose: CharacterPose.holdingObject,
       ageBands: [AgeBandId.age6, AgeBandId.age7to8],
       difficultyTier: LessonDifficultyTier.growing,
       skillTags: [SkillTag.arithmetic],
@@ -394,7 +467,7 @@ class PuzzleContentCatalog {
       familyId: 'memory-pairs',
       contentType: PuzzleContentType.pairMatching,
       world: PuzzleWorld.sea,
-      character: PuzzleCharacter.owlCoach,
+      character: PuzzleCharacter.captainWhale,
       characterPose: CharacterPose.hint,
       ageBands: [AgeBandId.age6, AgeBandId.age7to8],
       difficultyTier: LessonDifficultyTier.growing,
@@ -488,7 +561,7 @@ class PuzzleContentCatalog {
       contentType: PuzzleContentType.comparison,
       world: PuzzleWorld.farm,
       character: PuzzleCharacter.leo,
-      characterPose: CharacterPose.thinking,
+      characterPose: CharacterPose.holdingObject,
       ageBands: [AgeBandId.age6, AgeBandId.age7to8],
       difficultyTier: LessonDifficultyTier.confident,
       skillTags: [SkillTag.arithmetic, SkillTag.reasoning],
@@ -641,7 +714,7 @@ class PuzzleContentCatalog {
       contentType: PuzzleContentType.patternSequence,
       world: PuzzleWorld.space,
       character: PuzzleCharacter.nickAstronaut,
-      characterPose: CharacterPose.happy,
+      characterPose: CharacterPose.victory,
       ageBands: [AgeBandId.age7to8],
       difficultyTier: LessonDifficultyTier.growing,
       skillTags: [SkillTag.pattern, SkillTag.spatial],
@@ -889,8 +962,39 @@ class PuzzleContentCatalog {
     );
   }
 
-  static String characterAsset(PuzzleCharacter character) {
-    return _characterAssets(character).first;
+  static PuzzleCharacterProfile characterProfile(PuzzleCharacter character) {
+    return characterProfiles.firstWhere(
+      (profile) => profile.character == character,
+    );
+  }
+
+  static PuzzleCharacterPoseAsset characterPoseAsset(
+    PuzzleCharacter character,
+    CharacterPose pose,
+  ) {
+    final profile = characterProfile(character);
+    return PuzzleCharacterPoseAsset(
+      character: character,
+      pose: pose,
+      baseAsset: profile.asset,
+      propAsset: _posePropAsset(pose),
+      accentColor: profile.accentColor,
+    );
+  }
+
+  static List<PuzzleCharacterPoseAsset> get characterPoseAssets {
+    return [
+      for (final profile in characterProfiles)
+        for (final pose in CharacterPose.values)
+          characterPoseAsset(profile.character, pose),
+    ];
+  }
+
+  static String characterAsset(
+    PuzzleCharacter character, [
+    CharacterPose pose = CharacterPose.idle,
+  ]) {
+    return characterPoseAsset(character, pose).baseAsset;
   }
 
   static List<String> assetsForChoice(String familyId, String choiceId) {
@@ -920,16 +1024,26 @@ class PuzzleContentCatalog {
       content.sceneAsset,
       ...content.supportingAssets,
       themeForWorld(content.world).ambientAsset,
-      ..._characterAssets(content.character),
+      ..._characterAssets(content.character, content.characterPose),
     ];
   }
 
-  static List<String> _characterAssets(PuzzleCharacter character) {
-    return switch (character) {
-      PuzzleCharacter.leo => ['$generatedAssetRoot/lion.png'],
-      PuzzleCharacter.nickAstronaut => ['$generatedAssetRoot/astronaut.png'],
-      PuzzleCharacter.robi => ['$generatedAssetRoot/rocket.png'],
-      PuzzleCharacter.owlCoach => ['$generatedAssetRoot/sticker.png'],
+  static List<String> _characterAssets(
+    PuzzleCharacter character,
+    CharacterPose pose,
+  ) {
+    final poseAsset = characterPoseAsset(character, pose);
+    return [poseAsset.baseAsset, poseAsset.propAsset];
+  }
+
+  static String _posePropAsset(CharacterPose pose) {
+    return switch (pose) {
+      CharacterPose.idle => '$puzzleAssetRoot/cloud.svg',
+      CharacterPose.happy => '$puzzleAssetRoot/shape_star.svg',
+      CharacterPose.thinking => '$puzzleAssetRoot/sign_question.svg',
+      CharacterPose.hint => '$puzzleAssetRoot/sign_question.svg',
+      CharacterPose.holdingObject => '$puzzleAssetRoot/puzzle_card.svg',
+      CharacterPose.victory => '$puzzleAssetRoot/rocket.svg',
     };
   }
 

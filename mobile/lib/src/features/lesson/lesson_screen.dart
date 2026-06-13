@@ -423,8 +423,13 @@ class _CharacterBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = PuzzleContentCatalog.themeForWorld(content.world);
+    final poseAsset = PuzzleContentCatalog.characterPoseAsset(
+      content.character,
+      content.characterPose,
+    );
+    final motion = _motionEnabled(context);
 
-    return Container(
+    final badge = Container(
       key: ValueKey('character-badge-${content.character.name}'),
       width: 58,
       height: 58,
@@ -437,11 +442,75 @@ class _CharacterBadge extends StatelessWidget {
         ),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.all(7),
-        child: Image.asset(
-          PuzzleContentCatalog.characterAsset(content.character),
-          fit: BoxFit.contain,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(7),
+            child: SvgPicture.asset(
+              poseAsset.baseAsset,
+              fit: BoxFit.contain,
+            ),
+          ),
+          Positioned(
+            right: 2,
+            bottom: 2,
+            child: _CharacterPoseChip(
+              poseAsset: poseAsset,
+              size: 19,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (!motion) {
+      return badge;
+    }
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.94, end: 1),
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: value,
+          child: child,
+        );
+      },
+      child: badge,
+    );
+  }
+}
+
+class _CharacterPoseChip extends StatelessWidget {
+  const _CharacterPoseChip({
+    required this.poseAsset,
+    required this.size,
+  });
+
+  final PuzzleCharacterPoseAsset poseAsset;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: ValueKey(
+        'character-pose-${poseAsset.character.name}-${poseAsset.pose.name}',
+      ),
+      width: size,
+      height: size,
+      padding: EdgeInsets.all(size * 0.18),
+      decoration: BoxDecoration(
+        color: Color(poseAsset.accentColor),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: SvgPicture.asset(
+        poseAsset.propAsset,
+        colorFilter: const ColorFilter.mode(
+          Colors.white,
+          BlendMode.srcIn,
         ),
       ),
     );
@@ -666,38 +735,52 @@ class _LessonChoiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wrongSelected = submitted && selected && !correct;
+    final correctGlow = submitted && correct;
+    final motion = _motionEnabled(context);
 
     return AnimatedSlide(
-      offset: wrongSelected ? const Offset(0.012, 0) : Offset.zero,
-      duration: const Duration(milliseconds: 110),
+      offset: motion && wrongSelected ? const Offset(0.018, 0) : Offset.zero,
+      duration: motion ? const Duration(milliseconds: 110) : Duration.zero,
       curve: Curves.easeOut,
       child: AnimatedScale(
-        scale: selected || (submitted && correct) ? 1.015 : 1,
-        duration: const Duration(milliseconds: 160),
+        scale: motion && (selected || correctGlow) ? 1.018 : 1,
+        duration: motion ? const Duration(milliseconds: 160) : Duration.zero,
         curve: Curves.easeOutBack,
         child: InkWell(
           borderRadius: BorderRadius.circular(22),
           onTap: onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 190),
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: motion && correctGlow ? 1 : 0),
+            duration:
+                motion ? const Duration(milliseconds: 360) : Duration.zero,
             curve: Curves.easeOutCubic,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: _backgroundColor,
-              border: Border.all(
-                color: _borderColor,
-                width: selected || (submitted && correct) ? 2 : 1,
-              ),
-              borderRadius: BorderRadius.circular(22),
-              boxShadow: [
-                if (selected || (submitted && correct))
-                  BoxShadow(
-                    color: _borderColor.withValues(alpha: 0.20),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
+            builder: (context, glow, child) {
+              return AnimatedContainer(
+                duration:
+                    motion ? const Duration(milliseconds: 190) : Duration.zero,
+                curve: Curves.easeOutCubic,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: _backgroundColor,
+                  border: Border.all(
+                    color: _borderColor,
+                    width: selected || correctGlow ? 2 : 1,
                   ),
-              ],
-            ),
+                  borderRadius: BorderRadius.circular(22),
+                  boxShadow: [
+                    if (selected || correctGlow)
+                      BoxShadow(
+                        color: _borderColor.withValues(
+                          alpha: 0.20 + glow * 0.12,
+                        ),
+                        blurRadius: 16 + glow * 12,
+                        offset: const Offset(0, 8),
+                      ),
+                  ],
+                ),
+                child: child,
+              );
+            },
             child: Row(
               children: [
                 _ChoiceVisual(
@@ -716,7 +799,9 @@ class _LessonChoiceTile extends StatelessWidget {
                   ),
                 ),
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 180),
+                  duration: motion
+                      ? const Duration(milliseconds: 180)
+                      : Duration.zero,
                   transitionBuilder: (child, animation) {
                     return ScaleTransition(
                       scale: animation,
@@ -774,7 +859,7 @@ class _LessonChoiceTile extends StatelessWidget {
     if (selected) {
       return const Color(0xFF18B7AE);
     }
-    return const Color(0xFFE4F1EE);
+    return const Color(0xFFDDEDEA);
   }
 }
 
@@ -814,8 +899,10 @@ class _HintPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final motion = _motionEnabled(context);
 
-    return Container(
+    final panel = Container(
+      key: const ValueKey('hint-lightbulb-moment'),
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -855,6 +942,29 @@ class _HintPanel extends StatelessWidget {
           ),
         ],
       ),
+    );
+
+    if (!motion) {
+      return panel;
+    }
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Opacity(
+          opacity: value.clamp(0.0, 1.0),
+          child: Transform.translate(
+            offset: Offset(0, 8 * (1 - value)),
+            child: Transform.scale(
+              scale: 0.97 + value * 0.03,
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: panel,
     );
   }
 }
@@ -1623,6 +1733,7 @@ class _PathMazeVisual extends StatelessWidget {
     final start = tokens.elementAtOrNull(0) ?? 'rocket';
     final target = tokens.elementAtOrNull(1) ?? 'planet';
     final direction = tokens.elementAtOrNull(2) ?? 'right';
+    final motion = _motionEnabled(context);
 
     return SizedBox(
       key: const ValueKey('path-maze-visual'),
@@ -1638,7 +1749,21 @@ class _PathMazeVisual extends StatelessWidget {
           Positioned(
             left: 8,
             bottom: 18,
-            child: _TokenCard(token: start),
+            child: TweenAnimationBuilder<double>(
+              key: const ValueKey('path-move-cue'),
+              tween: Tween(begin: 0, end: motion ? 1 : 0),
+              duration:
+                  motion ? const Duration(milliseconds: 760) : Duration.zero,
+              curve: Curves.easeInOutCubic,
+              builder: (context, value, child) {
+                final offset = _startMoveOffset(direction) * value;
+                return Transform.translate(
+                  offset: offset,
+                  child: child,
+                );
+              },
+              child: _TokenCard(token: start),
+            ),
           ),
           Positioned(
             right: _targetRight(direction),
@@ -1657,6 +1782,13 @@ class _PathMazeVisual extends StatelessWidget {
   }
 
   double _targetRight(String direction) => direction == 'left' ? 110 : 10;
+
+  Offset _startMoveOffset(String direction) => switch (direction) {
+        'up' => const Offset(42, -26),
+        'down' => const Offset(42, 18),
+        'left' => const Offset(32, -16),
+        _ => const Offset(52, -18),
+      };
 
   double? _targetTop(String direction) => switch (direction) {
         'up' => 4,
@@ -2626,6 +2758,12 @@ class _LessonCompleteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final firstStep = FoundationCatalog.stepsForLesson(lesson).firstOrNull;
+    final rewardContent = firstStep == null
+        ? null
+        : PuzzleContentCatalog.maybeByFamilyId(
+            FoundationCatalog.puzzleForStep(firstStep).payloadRef,
+          );
 
     return Scaffold(
       backgroundColor: const Color(0xFFFFFBF2),
@@ -2641,6 +2779,10 @@ class _LessonCompleteView extends StatelessWidget {
                   children: [
                     const _RewardPolishMarker(),
                     const _StickerReward(),
+                    if (rewardContent != null) ...[
+                      const SizedBox(height: 12),
+                      _RewardCharacter(content: rewardContent),
+                    ],
                     const SizedBox(height: 18),
                     Text(
                       l10n.lessonCompleteTitle,
@@ -2743,13 +2885,15 @@ class _StickerReward extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final motion = _motionEnabled(context);
+
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 620),
+      duration: motion ? const Duration(milliseconds: 620) : Duration.zero,
       curve: Curves.easeOutBack,
       builder: (context, value, child) {
-        final scale = 0.78 + (value * 0.22);
-        final turns = (1 - value) * -0.035;
+        final scale = motion ? 0.78 + (value * 0.22) : 1.0;
+        final turns = motion ? (1 - value) * -0.035 : 0.0;
         return Opacity(
           opacity: value.clamp(0.0, 1.0),
           child: Transform.rotate(
@@ -2812,7 +2956,159 @@ class _StickerReward extends StatelessWidget {
                 size: 24,
               ),
             ),
+            const _RewardFlyingStars(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RewardCharacter extends StatelessWidget {
+  const _RewardCharacter({required this.content});
+
+  final PuzzleContent content;
+
+  @override
+  Widget build(BuildContext context) {
+    final profile = PuzzleContentCatalog.characterProfile(content.character);
+    final poseAsset = PuzzleContentCatalog.characterPoseAsset(
+      content.character,
+      CharacterPose.victory,
+    );
+    final motion = _motionEnabled(context);
+    final child = Container(
+      key: const ValueKey('reward-character-victory'),
+      width: 86,
+      height: 86,
+      decoration: BoxDecoration(
+        color: Color(profile.accentColor).withValues(alpha: 0.14),
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Color(profile.accentColor).withValues(alpha: 0.32),
+          width: 2,
+        ),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(9),
+            child: SvgPicture.asset(
+              poseAsset.baseAsset,
+              fit: BoxFit.contain,
+            ),
+          ),
+          Positioned(
+            right: 7,
+            bottom: 7,
+            child: _CharacterPoseChip(
+              poseAsset: poseAsset,
+              size: 25,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (!motion) {
+      return child;
+    }
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 680),
+      curve: Curves.easeOutBack,
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.75 + value * 0.25,
+          child: Opacity(
+            opacity: value.clamp(0.0, 1.0),
+            child: child,
+          ),
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+class _RewardFlyingStars extends StatelessWidget {
+  const _RewardFlyingStars();
+
+  @override
+  Widget build(BuildContext context) {
+    final motion = _motionEnabled(context);
+
+    return SizedBox.expand(
+      key: const ValueKey('reward-flying-stars'),
+      child: Stack(
+        children: [
+          _RewardFlyStar(
+            begin: const Offset(76, 88),
+            end: const Offset(130, 18),
+            size: 22,
+            motion: motion,
+          ),
+          _RewardFlyStar(
+            begin: const Offset(84, 90),
+            end: const Offset(20, 44),
+            size: 18,
+            motion: motion,
+          ),
+          _RewardFlyStar(
+            begin: const Offset(82, 96),
+            end: const Offset(142, 120),
+            size: 16,
+            motion: motion,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RewardFlyStar extends StatelessWidget {
+  const _RewardFlyStar({
+    required this.begin,
+    required this.end,
+    required this.size,
+    required this.motion,
+  });
+
+  final Offset begin;
+  final Offset end;
+  final double size;
+  final bool motion;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned.fill(
+      child: TweenAnimationBuilder<double>(
+        tween: Tween(begin: 0, end: motion ? 1 : 0),
+        duration: motion ? const Duration(milliseconds: 780) : Duration.zero,
+        curve: Curves.easeOutCubic,
+        builder: (context, value, child) {
+          final position = Offset.lerp(begin, end, value)!;
+          return Transform.translate(
+            offset: position,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Opacity(
+                opacity:
+                    motion ? (1 - (value - 0.72).clamp(0.0, 0.28) / 0.28) : 1,
+                child: Transform.scale(
+                  scale: motion ? 0.7 + value * 0.55 : 1,
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        },
+        child: Icon(
+          Icons.star_rounded,
+          color: const Color(0xFFFFC739).withValues(alpha: 0.92),
+          size: size,
         ),
       ),
     );
@@ -3095,6 +3391,11 @@ Color _themeColor(int value) => Color(value);
 
 List<Color> _themeColors(List<int> values) {
   return [for (final value in values) Color(value)];
+}
+
+bool _motionEnabled(BuildContext context) {
+  final media = MediaQuery.maybeOf(context);
+  return media == null || !media.disableAnimations;
 }
 
 BoxDecoration _panelDecoration() {
