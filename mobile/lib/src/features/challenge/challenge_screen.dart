@@ -47,9 +47,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               daily: daily,
               onStart: (puzzle, index) => _openPuzzle(
                 context,
-                puzzle: puzzle,
-                number: index + 1,
-                total: daily.length,
+                puzzles: daily,
+                index: index,
                 mode: _PuzzleMode.daily,
                 completedToday: completedToday,
               ),
@@ -127,9 +126,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           areaIndex: areaIndex,
           onStart: (puzzle, puzzleIndex) => _openPuzzle(
             context,
-            puzzle: puzzle,
-            number: puzzleIndex + 1,
-            total: area.puzzles.length,
+            puzzles: area.puzzles,
+            index: puzzleIndex,
             mode: _PuzzleMode.practice,
             completedToday: completedToday,
           ),
@@ -140,27 +138,51 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
   void _openPuzzle(
     BuildContext context, {
-    required DailyChallenge puzzle,
-    required int number,
-    required int total,
+    required List<DailyChallenge> puzzles,
+    required int index,
     required _PuzzleMode mode,
     required bool completedToday,
   }) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => _PuzzlePlayScreen(
-          puzzle: puzzle,
-          number: number,
-          total: total,
+        builder: (_) => _buildPuzzlePlayScreen(
+          puzzles: puzzles,
+          index: index,
           mode: mode,
           completedToday: completedToday,
-          onComplete: () {
-            return mode == _PuzzleMode.daily
-                ? widget.onChallengeComplete(puzzle)
-                : widget.onPracticeComplete(puzzle);
-          },
         ),
       ),
+    );
+  }
+
+  Widget _buildPuzzlePlayScreen({
+    required List<DailyChallenge> puzzles,
+    required int index,
+    required _PuzzleMode mode,
+    required bool completedToday,
+  }) {
+    final puzzle = puzzles[index];
+    final nextIndex = index + 1;
+
+    return _PuzzlePlayScreen(
+      puzzle: puzzle,
+      number: index + 1,
+      total: puzzles.length,
+      mode: mode,
+      completedToday: completedToday,
+      nextPuzzleBuilder: nextIndex < puzzles.length
+          ? () => _buildPuzzlePlayScreen(
+                puzzles: puzzles,
+                index: nextIndex,
+                mode: mode,
+                completedToday: completedToday,
+              )
+          : null,
+      onComplete: () {
+        return mode == _PuzzleMode.daily
+            ? widget.onChallengeComplete(puzzle)
+            : widget.onPracticeComplete(puzzle);
+      },
     );
   }
 }
@@ -920,6 +942,7 @@ class _PuzzlePlayScreen extends StatefulWidget {
     required this.mode,
     required this.completedToday,
     required this.onComplete,
+    this.nextPuzzleBuilder,
   });
 
   final DailyChallenge puzzle;
@@ -928,6 +951,7 @@ class _PuzzlePlayScreen extends StatefulWidget {
   final _PuzzleMode mode;
   final bool completedToday;
   final Future<void> Function() onComplete;
+  final Widget Function()? nextPuzzleBuilder;
 
   @override
   State<_PuzzlePlayScreen> createState() => _PuzzlePlayScreenState();
@@ -951,15 +975,25 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
       return;
     }
 
-    setState(() {
-      _isSubmitting = false;
-      _showSuccessBurst = true;
-    });
-    Future<void>.delayed(const Duration(milliseconds: 1050), () {
-      if (mounted) {
-        setState(() => _showSuccessBurst = false);
-      }
-    });
+    setState(() => _showSuccessBurst = true);
+
+    await Future<void>.delayed(const Duration(milliseconds: 850));
+
+    if (!mounted) {
+      return;
+    }
+
+    final nextPuzzleBuilder = widget.nextPuzzleBuilder;
+    if (nextPuzzleBuilder == null) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (_) => nextPuzzleBuilder(),
+      ),
+    );
   }
 
   @override
