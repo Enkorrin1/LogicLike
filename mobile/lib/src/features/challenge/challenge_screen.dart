@@ -1335,6 +1335,8 @@ class _TaskIntro extends StatelessWidget {
               SizedBox(height: compact ? 2 : 4),
               Text(
                 puzzle.skill,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: accent,
                       fontWeight: FontWeight.w900,
@@ -1446,6 +1448,8 @@ class _MemoryStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardSize = compact ? 38.0 : 44.0;
+
     return _StageShell(
       accent: accent,
       compact: compact,
@@ -1453,35 +1457,111 @@ class _MemoryStage extends StatelessWidget {
         children: [
           Expanded(
             child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: compact ? 6 : 8,
+              runSpacing: compact ? 6 : 8,
               alignment: WrapAlignment.center,
-              children: const [
-                _StageToken(
+              children: [
+                _MemoryPreviewCard(
+                  label: '1',
                   icon: Icons.star_rounded,
                   color: AppPalette.mango,
+                  size: cardSize,
                 ),
-                _StageToken(
+                _MemoryPreviewCard(
+                  label: '2',
                   icon: Icons.favorite_rounded,
                   color: AppPalette.coral,
+                  size: cardSize,
                 ),
-                _StageToken(
-                  label: '?',
+                _MemoryPreviewCard(
+                  label: '3',
+                  icon: Icons.visibility_off_rounded,
                   color: AppPalette.lavender,
+                  size: cardSize,
+                  covered: true,
                 ),
-                _StageToken(
+                _MemoryPreviewCard(
+                  label: '4',
                   icon: Icons.cloud_rounded,
                   color: AppPalette.sky,
+                  size: cardSize,
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: compact ? 8 : 12),
           _StageToken(
             label: '?',
             color: accent,
             size: compact ? 50 : 58,
             highlighted: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MemoryPreviewCard extends StatelessWidget {
+  const _MemoryPreviewCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.size,
+    this.covered = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final double size;
+  final bool covered;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: covered
+              ? [
+                  AppPalette.ink.withValues(alpha: 0.12),
+                  AppPalette.lavender.withValues(alpha: 0.28),
+                ]
+              : [Colors.white, color.withValues(alpha: 0.72)],
+        ),
+        borderRadius: BorderRadius.circular(size * 0.28),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.18),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: 5,
+            top: 4,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppPalette.ink.withValues(alpha: 0.52),
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+          ),
+          Center(
+            child: Icon(
+              covered ? Icons.lock_rounded : icon,
+              color: covered ? AppPalette.muted : color,
+              size: size * 0.46,
+            ),
           ),
         ],
       ),
@@ -1500,60 +1580,92 @@ class _AttentionStage extends StatelessWidget {
     return _StageShell(
       accent: accent,
       compact: compact,
-      child: Center(
-        child: Wrap(
-          spacing: compact ? 6 : 7,
-          runSpacing: compact ? 6 : 7,
-          alignment: WrapAlignment.center,
-          children: [
-            const _StageToken(
-              icon: Icons.circle_rounded,
-              color: AppPalette.teal,
-              size: 34,
+      child: Row(
+        children: [
+          _StageToken(
+            icon: Icons.search_rounded,
+            color: accent,
+            size: compact ? 44 : 54,
+            highlighted: true,
+          ),
+          SizedBox(width: compact ? 8 : 12),
+          Expanded(
+            child: Wrap(
+              spacing: compact ? 6 : 7,
+              runSpacing: compact ? 6 : 7,
+              alignment: WrapAlignment.center,
+              children: [
+                _SearchSpot(color: AppPalette.teal, compact: compact),
+                _SearchSpot(color: AppPalette.teal, compact: compact),
+                _SearchSpot(
+                  color: accent,
+                  icon: Icons.auto_awesome_rounded,
+                  highlighted: true,
+                  compact: compact,
+                ),
+                _SearchSpot(color: AppPalette.teal, compact: compact),
+                _SearchSpot(
+                  color: AppPalette.mango,
+                  icon: Icons.star_rounded,
+                  compact: compact,
+                ),
+                _SearchSpot(color: AppPalette.teal, compact: compact),
+                _SearchSpot(
+                  color: AppPalette.mango,
+                  icon: Icons.star_rounded,
+                  compact: compact,
+                ),
+                _SearchSpot(color: AppPalette.teal, compact: compact),
+              ],
             ),
-            const _StageToken(
-              icon: Icons.circle_rounded,
-              color: AppPalette.teal,
-              size: 34,
-            ),
-            _StageToken(
-              icon: Icons.auto_awesome_rounded,
-              color: accent,
-              size: 42,
-              highlighted: true,
-            ),
-            const _StageToken(
-              icon: Icons.circle_rounded,
-              color: AppPalette.teal,
-              size: 34,
-            ),
-            const _StageToken(
-              icon: Icons.star_rounded,
-              color: AppPalette.mango,
-              size: 34,
-            ),
-            const _StageToken(
-              icon: Icons.circle_rounded,
-              color: AppPalette.teal,
-              size: 34,
-            ),
-            const _StageToken(
-              icon: Icons.star_rounded,
-              color: AppPalette.mango,
-              size: 34,
-            ),
-            const _StageToken(
-              icon: Icons.circle_rounded,
-              color: AppPalette.teal,
-              size: 34,
-            ),
-            const _StageToken(
-              icon: Icons.circle_rounded,
-              color: AppPalette.teal,
-              size: 34,
-            ),
-          ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SearchSpot extends StatelessWidget {
+  const _SearchSpot({
+    required this.color,
+    required this.compact,
+    this.icon,
+    this.highlighted = false,
+  });
+
+  final Color color;
+  final bool compact;
+  final IconData? icon;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    final size =
+        highlighted ? (compact ? 38.0 : 42.0) : (compact ? 30.0 : 34.0);
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: highlighted ? color : Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: highlighted ? Colors.white : color.withValues(alpha: 0.34),
+          width: highlighted ? 3 : 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: highlighted ? 0.28 : 0.12),
+            blurRadius: highlighted ? 16 : 9,
+            offset: Offset(0, highlighted ? 8 : 4),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Icon(
+        icon ?? Icons.circle_rounded,
+        color: highlighted ? Colors.white : color,
+        size: size * 0.50,
       ),
     );
   }
@@ -1570,35 +1682,73 @@ class _MathStage extends StatelessWidget {
     return _StageShell(
       accent: accent,
       compact: compact,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const _CounterGroup(
-            colors: [AppPalette.coral, AppPalette.mango, AppPalette.sky],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: compact ? 286 : 328,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _CounterGroup(
+                colors: const [
+                  AppPalette.coral,
+                  AppPalette.mango,
+                  AppPalette.sky,
+                ],
+                compact: compact,
+              ),
+              _MathSign(icon: Icons.add_rounded, color: accent),
+              _CounterGroup(
+                colors: const [AppPalette.teal, AppPalette.lavender],
+                compact: compact,
+              ),
+              Text(
+                '=',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: AppPalette.ink.withValues(alpha: 0.72),
+                    ),
+              ),
+              _StageToken(
+                label: '?',
+                color: AppPalette.mango,
+                size: compact ? 48 : 54,
+                highlighted: true,
+              ),
+            ],
           ),
-          _StageToken(
-            icon: Icons.add_rounded,
-            color: accent,
-            size: 42,
-            highlighted: true,
-          ),
-          const _CounterGroup(
-            colors: [AppPalette.teal, AppPalette.lavender],
-          ),
-          Text(
-            '=',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: AppPalette.ink.withValues(alpha: 0.72),
-                ),
-          ),
-          const _StageToken(
-            label: '?',
-            color: AppPalette.mango,
-            size: 54,
-            highlighted: true,
+        ),
+      ),
+    );
+  }
+}
+
+class _MathSign extends StatelessWidget {
+  const _MathSign({
+    required this.icon,
+    required this.color,
+  });
+
+  final IconData icon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.22),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
+      child: Icon(icon, color: Colors.white, size: 23),
     );
   }
 }
@@ -1616,22 +1766,28 @@ class _PathStage extends StatelessWidget {
       compact: compact,
       child: Row(
         children: [
-          _PathNode(icon: Icons.flag_rounded, color: accent),
+          _PathNode(
+            icon: Icons.flag_rounded,
+            color: accent,
+            compact: compact,
+          ),
           _PathLink(color: accent),
-          const _PathNode(
+          _PathNode(
             icon: Icons.arrow_forward_rounded,
             color: AppPalette.sky,
+            compact: compact,
           ),
           _PathLink(color: accent),
-          const _PathNode(
+          _PathNode(
             icon: Icons.turn_right_rounded,
             color: AppPalette.lavender,
+            compact: compact,
           ),
           _PathLink(color: accent),
-          const _StageToken(
+          _StageToken(
             label: '?',
             color: AppPalette.mango,
-            size: 48,
+            size: compact ? 42 : 48,
             highlighted: true,
           ),
         ],
@@ -1698,22 +1854,33 @@ class _StageToken extends StatelessWidget {
 }
 
 class _CounterGroup extends StatelessWidget {
-  const _CounterGroup({required this.colors});
+  const _CounterGroup({
+    required this.colors,
+    required this.compact,
+  });
 
   final List<Color> colors;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final blockSize = compact ? 30.0 : 34.0;
+    final stepX = compact ? 9.0 : 10.0;
+    final stepY = compact ? 8.0 : 9.0;
+
     return SizedBox(
-      width: 62,
-      height: 62,
+      width: compact ? 54 : 62,
+      height: compact ? 54 : 62,
       child: Stack(
         children: [
           for (var index = 0; index < colors.length; index++)
             Positioned(
-              left: index * 10,
-              top: index * 9,
-              child: _MiniBlock(color: colors[index]),
+              left: index * stepX,
+              top: index * stepY,
+              child: _MiniBlock(
+                color: colors[index],
+                size: blockSize,
+              ),
             ),
         ],
       ),
@@ -1722,15 +1889,19 @@ class _CounterGroup extends StatelessWidget {
 }
 
 class _MiniBlock extends StatelessWidget {
-  const _MiniBlock({required this.color});
+  const _MiniBlock({
+    required this.color,
+    required this.size,
+  });
 
   final Color color;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 34,
-      height: 34,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -1755,17 +1926,19 @@ class _PathNode extends StatelessWidget {
   const _PathNode({
     required this.icon,
     required this.color,
+    required this.compact,
   });
 
   final IconData icon;
   final Color color;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return _StageToken(
       icon: icon,
       color: color,
-      size: 44,
+      size: compact ? 38 : 44,
       highlighted: true,
     );
   }
@@ -1802,15 +1975,37 @@ class _PatternStrip extends StatelessWidget {
     return _StageShell(
       accent: accent,
       compact: compact,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          _PatternItem(shape: _PatternShape.circle, color: AppPalette.teal),
-          _PatternItem(shape: _PatternShape.square, color: Color(0xFF5F8BEF)),
-          _PatternItem(shape: _PatternShape.circle, color: AppPalette.teal),
-          _PatternItem(shape: _PatternShape.square, color: Color(0xFF5F8BEF)),
-          _PatternQuestion(),
-        ],
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: compact ? 284 : 330,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _PatternItem(
+                shape: _PatternShape.circle,
+                color: AppPalette.teal,
+                size: compact ? 38 : 42,
+              ),
+              _PatternItem(
+                shape: _PatternShape.square,
+                color: const Color(0xFF5F8BEF),
+                size: compact ? 38 : 42,
+              ),
+              _PatternItem(
+                shape: _PatternShape.circle,
+                color: AppPalette.teal,
+                size: compact ? 38 : 42,
+              ),
+              _PatternItem(
+                shape: _PatternShape.square,
+                color: const Color(0xFF5F8BEF),
+                size: compact ? 38 : 42,
+              ),
+              _PatternQuestion(size: compact ? 40 : 42),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1819,16 +2014,21 @@ class _PatternStrip extends StatelessWidget {
 enum _PatternShape { circle, square }
 
 class _PatternItem extends StatelessWidget {
-  const _PatternItem({required this.shape, required this.color});
+  const _PatternItem({
+    required this.shape,
+    required this.color,
+    required this.size,
+  });
 
   final _PatternShape shape;
   final Color color;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 42,
-      height: 42,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -1842,8 +2042,8 @@ class _PatternItem extends StatelessWidget {
       ),
       alignment: Alignment.center,
       child: Container(
-        width: 26,
-        height: 26,
+        width: size * 0.62,
+        height: size * 0.62,
         decoration: BoxDecoration(
           color: color,
           shape: shape == _PatternShape.circle
@@ -1858,23 +2058,25 @@ class _PatternItem extends StatelessWidget {
 }
 
 class _PatternQuestion extends StatelessWidget {
-  const _PatternQuestion();
+  const _PatternQuestion({required this.size});
+
+  final double size;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 42,
-      height: 42,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: const Color(0xFFFFE89A),
         borderRadius: BorderRadius.circular(16),
       ),
       alignment: Alignment.center,
-      child: const Text(
+      child: Text(
         '?',
         style: TextStyle(
-          color: Color(0xFFFF9F2E),
-          fontSize: 24,
+          color: const Color(0xFFFF9F2E),
+          fontSize: size * 0.57,
           fontWeight: FontWeight.w900,
         ),
       ),
@@ -1912,6 +2114,8 @@ class _QuestionBubble extends StatelessWidget {
       ),
       child: Text(
         prompt,
+        maxLines: compact ? 2 : 3,
+        overflow: TextOverflow.ellipsis,
         style: compact
             ? Theme.of(context).textTheme.titleMedium
             : Theme.of(context).textTheme.titleLarge,
