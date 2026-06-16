@@ -55,6 +55,7 @@ class AppController extends ChangeNotifier {
     final previousDailyIds = sameDailyProgressDay
         ? currentProfile.dailyCompletedPuzzleIds
         : const <String>[];
+    final alreadyCompletedDailyPuzzle = previousDailyIds.contains(challenge.id);
     final nextDailyIds = {
       ...previousDailyIds,
       challenge.id,
@@ -67,9 +68,10 @@ class AppController extends ChangeNotifier {
       completedChallenges: alreadyCompletedToday || !completedDailySet
           ? currentProfile.completedChallenges
           : currentProfile.completedChallenges + 1,
-      completedLevels: currentProfile.completedLevels >= 8
-          ? currentProfile.completedLevels
-          : currentProfile.completedLevels + 1,
+      completedLevels:
+          alreadyCompletedDailyPuzzle || currentProfile.completedLevels >= 8
+              ? currentProfile.completedLevels
+              : currentProfile.completedLevels + 1,
       dailyProgressDate: today,
       dailyCompletedPuzzleIds: nextDailyIds,
       lastChallengeDate:
@@ -81,16 +83,23 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> completePracticePuzzle(DailyChallenge _) async {
+  Future<void> completePracticePuzzle(DailyChallenge challenge) async {
     final currentProfile = _familyProfile;
     if (currentProfile == null) {
       return;
     }
 
+    final completedPracticeIds = currentProfile.completedPracticePuzzleIds;
+    final alreadyCompleted = completedPracticeIds.contains(challenge.id);
+    final nextPracticeIds = alreadyCompleted
+        ? completedPracticeIds
+        : <String>[...completedPracticeIds, challenge.id];
+
     final nextProfile = currentProfile.copyWith(
-      completedLevels: currentProfile.completedLevels >= 8
+      completedLevels: alreadyCompleted || currentProfile.completedLevels >= 8
           ? currentProfile.completedLevels
           : currentProfile.completedLevels + 1,
+      completedPracticePuzzleIds: nextPracticeIds,
     );
 
     await _familyProfileStore.save(nextProfile);

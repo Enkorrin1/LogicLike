@@ -55,6 +55,44 @@ void main() {
       expect(controller.familyProfile?.completedLevels, 3);
       expect(controller.familyProfile?.lastChallengeDate, today);
     });
+
+    test('does not count replayed daily puzzle as a new level', () async {
+      final today = _today();
+      final profile = FamilyProfile(
+        childName: 'РњРёСЂР°',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedLevels: 2,
+        dailyProgressDate: today,
+        dailyCompletedPuzzleIds: const ['test'],
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completeDailyChallenge(_challenge);
+
+      expect(controller.familyProfile?.completedLevels, 2);
+      expect(controller.familyProfile?.dailyCompletedPuzzleIds, ['test']);
+    });
+
+    test('stores free practice puzzles once', () async {
+      final profile = FamilyProfile(
+        childName: 'РњРёСЂР°',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedLevels: 2,
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completePracticePuzzle(_challenge);
+      await controller.completePracticePuzzle(_challenge);
+
+      expect(controller.familyProfile?.completedLevels, 3);
+      expect(controller.familyProfile?.completedPracticePuzzleIds, ['test']);
+    });
   });
 }
 

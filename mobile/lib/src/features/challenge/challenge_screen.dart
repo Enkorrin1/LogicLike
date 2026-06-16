@@ -3,6 +3,7 @@ import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
+import '../rewards/collection_screen.dart';
 
 class ChallengeScreen extends StatefulWidget {
   const ChallengeScreen({
@@ -26,6 +27,7 @@ class ChallengeScreen extends StatefulWidget {
 
 class _ChallengeScreenState extends State<ChallengeScreen> {
   String? _handledInitialAreaId;
+  final _brainGymKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     final areas = puzzleAreasForAge(widget.profile.childAge);
     final completedToday = widget.profile.completedOn(DateTime.now());
     final completedDailyIds = _completedDailyIdsForToday(widget.profile);
-    _openInitialAreaIfNeeded(context, areas, completedToday);
+    final completedPracticeIds =
+        widget.profile.completedPracticePuzzleIds.toSet();
+    _openInitialAreaIfNeeded(
+      context,
+      areas,
+      completedToday,
+      completedPracticeIds,
+    );
 
     return Scaffold(
       appBar: AppBar(title: const Text('Игры для мозга')),
@@ -54,7 +63,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            _BrainGymHeader(areasCount: areas.length),
+            KeyedSubtree(
+              key: _brainGymKey,
+              child: _BrainGymHeader(areasCount: areas.length),
+            ),
             const SizedBox(height: 12),
             GridView.builder(
               shrinkWrap: true,
@@ -68,11 +80,21 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
               itemBuilder: (context, index) {
                 final area = areas[index];
+                final completedInArea = area.puzzles
+                    .where((puzzle) => completedPracticeIds.contains(puzzle.id))
+                    .length;
                 return _BrainAreaCard(
                   area: area,
                   color: _areaColor(index),
+                  completedCount: completedInArea,
                   onTap: () {
-                    _openArea(context, area, index, completedToday);
+                    _openArea(
+                      context,
+                      area,
+                      index,
+                      completedToday,
+                      completedPracticeIds,
+                    );
                   },
                 );
               },
@@ -87,6 +109,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     BuildContext context,
     List<BrainArea> areas,
     bool completedToday,
+    Set<String> completedPracticeIds,
   ) {
     final initialAreaId = widget.initialAreaId;
     if (initialAreaId == null) {
@@ -107,7 +130,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       }
 
       if (areaIndex >= 0) {
-        _openArea(context, areas[areaIndex], areaIndex, completedToday);
+        _openArea(
+          context,
+          areas[areaIndex],
+          areaIndex,
+          completedToday,
+          completedPracticeIds,
+        );
       }
       widget.onInitialAreaHandled?.call();
     });
@@ -118,18 +147,21 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     BrainArea area,
     int areaIndex,
     bool completedToday,
+    Set<String> completedPracticeIds,
   ) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => _PuzzleAreaScreen(
           area: area,
           areaIndex: areaIndex,
-          onStart: (puzzle, puzzleIndex) => _openPuzzle(
+          completedPracticeIds: completedPracticeIds,
+          onStart: (puzzle, puzzleIndex, onPracticeSolved) => _openPuzzle(
             context,
             puzzles: area.puzzles,
             index: puzzleIndex,
             mode: _PuzzleMode.practice,
             completedToday: completedToday,
+            onPracticeSolved: onPracticeSolved,
           ),
         ),
       ),
@@ -142,6 +174,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     required int index,
     required _PuzzleMode mode,
     required bool completedToday,
+    ValueChanged<DailyChallenge>? onPracticeSolved,
   }) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -150,6 +183,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           index: index,
           mode: mode,
           completedToday: completedToday,
+          onPracticeSolved: onPracticeSolved,
         ),
       ),
     );
@@ -160,6 +194,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     required int index,
     required _PuzzleMode mode,
     required bool completedToday,
+    ValueChanged<DailyChallenge>? onPracticeSolved,
   }) {
     final puzzle = puzzles[index];
     final nextIndex = index + 1;
@@ -170,20 +205,43 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       total: puzzles.length,
       mode: mode,
       completedToday: completedToday,
-      nextPuzzleBuilder: nextIndex < puzzles.length
+      onDailyRewardContinue: _focusFreeTraining,
+      nextPuzzleBuilder: mode == _PuzzleMode.daily && nextIndex < puzzles.length
           ? () => _buildPuzzlePlayScreen(
                 puzzles: puzzles,
                 index: nextIndex,
                 mode: mode,
                 completedToday: completedToday,
+                onPracticeSolved: onPracticeSolved,
               )
           : null,
+      onPracticeSolved: onPracticeSolved,
       onComplete: () {
         return mode == _PuzzleMode.daily
             ? widget.onChallengeComplete(puzzle)
             : widget.onPracticeComplete(puzzle);
       },
     );
+  }
+
+  void _focusFreeTraining() {
+    Future<void>.delayed(const Duration(milliseconds: 120), () {
+      if (!mounted) {
+        return;
+      }
+
+      final targetContext = _brainGymKey.currentContext;
+      if (targetContext == null || !targetContext.mounted) {
+        return;
+      }
+
+      Scrollable.ensureVisible(
+        targetContext,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
+        alignment: 0.06,
+      );
+    });
   }
 }
 
@@ -302,18 +360,27 @@ class _DailyQuestPanel extends StatelessWidget {
                 total: total,
                 progress: progress,
               ),
-              const SizedBox(height: 14),
-              for (var i = 0; i < daily.length; i++)
-                Padding(
-                  padding:
-                      EdgeInsets.only(bottom: i == daily.length - 1 ? 0 : 10),
-                  child: _DailyQuestRow(
-                    puzzle: daily[i],
-                    index: i,
-                    completed: completedDailyIds.contains(daily[i].id),
-                    onTap: () => onStart(daily[i], i),
-                  ),
+              if (allCompleted && daily.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _DailyReplayCard(
+                  steps: total,
+                  onTap: () => onStart(daily.first, 0),
                 ),
+              ] else ...[
+                const SizedBox(height: 14),
+                for (var i = 0; i < daily.length; i++)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: i == daily.length - 1 ? 0 : 10,
+                    ),
+                    child: _DailyQuestRow(
+                      puzzle: daily[i],
+                      index: i,
+                      completed: completedDailyIds.contains(daily[i].id),
+                      onTap: () => onStart(daily[i], i),
+                    ),
+                  ),
+              ],
             ],
           ),
         ],
@@ -439,6 +506,79 @@ class _DailyMissionProgress extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DailyReplayCard extends StatelessWidget {
+  const _DailyReplayCard({
+    required this.steps,
+    required this.onTap,
+  });
+
+  final int steps;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.78),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white, width: 2),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: AppPalette.mint.withValues(alpha: 0.82),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: const Icon(
+                Icons.replay_rounded,
+                color: AppPalette.teal,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Повторить миссию',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    '$steps шага для тренировки',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Icon(
+              Icons.arrow_forward_rounded,
+              color: AppPalette.ink,
+              size: 28,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -633,15 +773,20 @@ class _BrainAreaCard extends StatelessWidget {
   const _BrainAreaCard({
     required this.area,
     required this.color,
+    required this.completedCount,
     required this.onTap,
   });
 
   final BrainArea area;
   final Color color;
+  final int completedCount;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final total = area.puzzles.length;
+    final progress = total == 0 ? 0.0 : completedCount / total;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -726,22 +871,39 @@ class _BrainAreaCard extends StatelessWidget {
                         Row(
                           children: [
                             const Icon(
-                              Icons.extension_rounded,
+                              Icons.flag_rounded,
                               color: Colors.white,
                               size: 18,
                             ),
                             const SizedBox(width: 5),
-                            Text(
-                              '${area.puzzles.length} уровней',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                  ),
+                            Expanded(
+                              child: Text(
+                                '$completedCount/$total уровней',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 7),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: LinearProgressIndicator(
+                            minHeight: 8,
+                            value: progress.clamp(0, 1).toDouble(),
+                            backgroundColor:
+                                Colors.white.withValues(alpha: 0.42),
+                            valueColor: const AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -756,20 +918,56 @@ class _BrainAreaCard extends StatelessWidget {
   }
 }
 
-class _PuzzleAreaScreen extends StatelessWidget {
+class _PuzzleAreaScreen extends StatefulWidget {
   const _PuzzleAreaScreen({
     required this.area,
     required this.areaIndex,
+    required this.completedPracticeIds,
     required this.onStart,
   });
 
   final BrainArea area;
   final int areaIndex;
-  final void Function(DailyChallenge puzzle, int index) onStart;
+  final Set<String> completedPracticeIds;
+  final void Function(
+    DailyChallenge puzzle,
+    int index,
+    ValueChanged<DailyChallenge> onPracticeSolved,
+  ) onStart;
+
+  @override
+  State<_PuzzleAreaScreen> createState() => _PuzzleAreaScreenState();
+}
+
+class _PuzzleAreaScreenState extends State<_PuzzleAreaScreen> {
+  late Set<String> _completedPracticeIds;
+
+  @override
+  void initState() {
+    super.initState();
+    _completedPracticeIds = {...widget.completedPracticeIds};
+  }
+
+  void _markSolved(DailyChallenge puzzle) {
+    if (_completedPracticeIds.contains(puzzle.id)) {
+      return;
+    }
+
+    setState(() {
+      _completedPracticeIds = {..._completedPracticeIds, puzzle.id};
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final color = _areaColor(areaIndex);
+    final area = widget.area;
+    final color = _areaColor(widget.areaIndex);
+    final completedCount = area.puzzles
+        .where((puzzle) => _completedPracticeIds.contains(puzzle.id))
+        .length;
+    final nextIndex = area.puzzles.indexWhere(
+      (puzzle) => !_completedPracticeIds.contains(puzzle.id),
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(area.title)),
@@ -780,16 +978,26 @@ class _PuzzleAreaScreen extends StatelessWidget {
           separatorBuilder: (_, __) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             if (index == 0) {
-              return _AreaHero(area: area, color: color);
+              return _AreaHero(
+                area: area,
+                color: color,
+                completedCount: completedCount,
+              );
             }
 
             final puzzleIndex = index - 1;
             final puzzle = area.puzzles[puzzleIndex];
+            final completed = _completedPracticeIds.contains(puzzle.id);
+            final current = nextIndex == -1
+                ? puzzleIndex == area.puzzles.length - 1
+                : puzzleIndex == nextIndex;
             return _FreePuzzleCard(
               puzzle: puzzle,
               levelNumber: puzzleIndex + 1,
               color: color,
-              onTap: () => onStart(puzzle, puzzleIndex),
+              completed: completed,
+              current: current,
+              onTap: () => widget.onStart(puzzle, puzzleIndex, _markSolved),
             );
           },
         ),
@@ -802,13 +1010,18 @@ class _AreaHero extends StatelessWidget {
   const _AreaHero({
     required this.area,
     required this.color,
+    required this.completedCount,
   });
 
   final BrainArea area;
   final Color color;
+  final int completedCount;
 
   @override
   Widget build(BuildContext context) {
+    final total = area.puzzles.length;
+    final progress = total == 0 ? 0.0 : completedCount / total;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -846,22 +1059,39 @@ class _AreaHero extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 10),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.22),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.30),
-                    ),
-                  ),
-                  child: Text(
-                    '${area.puzzles.length} уровней',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.30),
                         ),
+                      ),
+                      child: Text(
+                        '$completedCount из $total пройдено',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 9),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: LinearProgressIndicator(
+                    minHeight: 10,
+                    value: progress.clamp(0, 1).toDouble(),
+                    backgroundColor: Colors.white.withValues(alpha: 0.28),
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 ),
               ],
@@ -878,26 +1108,62 @@ class _FreePuzzleCard extends StatelessWidget {
     required this.puzzle,
     required this.levelNumber,
     required this.color,
+    required this.completed,
+    required this.current,
     required this.onTap,
   });
 
   final DailyChallenge puzzle;
   final int levelNumber;
   final Color color;
+  final bool completed;
+  final bool current;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final stateColor = completed
+        ? AppPalette.teal
+        : current
+            ? color
+            : AppPalette.muted;
+    final stateLabel = completed
+        ? 'пройдено'
+        : current
+            ? 'следующий'
+            : 'играть';
+    final stateIcon = completed
+        ? Icons.check_circle_rounded
+        : current
+            ? Icons.play_circle_fill_rounded
+            : Icons.arrow_forward_rounded;
+    final actionIcon = completed
+        ? Icons.check_rounded
+        : current
+            ? Icons.play_arrow_rounded
+            : Icons.arrow_forward_rounded;
+
     return BouncyTap(
       borderRadius: BorderRadius.circular(24),
       onTap: onTap,
       child: PlayfulCard(
-        borderColor: color.withValues(alpha: 0.35),
+        color: completed
+            ? AppPalette.mint.withValues(alpha: 0.46)
+            : current
+                ? Colors.white
+                : Colors.white.withValues(alpha: 0.88),
+        borderColor: completed
+            ? AppPalette.teal.withValues(alpha: 0.38)
+            : current
+                ? color.withValues(alpha: 0.50)
+                : AppPalette.border,
         child: Row(
           children: [
             AreaCharacterBadge(
               areaId: puzzle.areaId,
-              color: color.withValues(alpha: 0.20),
+              color: completed
+                  ? Colors.white.withValues(alpha: 0.88)
+                  : color.withValues(alpha: current ? 0.24 : 0.16),
               size: 58,
               padding: 3,
             ),
@@ -906,12 +1172,52 @@ class _FreePuzzleCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Уровень $levelNumber',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: color,
-                          fontWeight: FontWeight.w900,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Уровень $levelNumber',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: color,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                         ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: stateColor.withValues(alpha: 0.13),
+                          borderRadius: BorderRadius.circular(999),
+                          border: Border.all(
+                            color: stateColor.withValues(alpha: 0.16),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(stateIcon, color: stateColor, size: 15),
+                            const SizedBox(width: 4),
+                            Text(
+                              stateLabel,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color: stateColor,
+                                    fontWeight: FontWeight.w900,
+                                    height: 1,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -933,26 +1239,37 @@ class _FreePuzzleCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    color,
-                    color.withValues(alpha: 0.72),
-                  ],
-                ),
+                color: completed || current ? null : AppPalette.surfaceBlue,
+                gradient: completed || current
+                    ? LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: completed
+                            ? const [
+                                AppPalette.teal,
+                                Color(0xFF5EDBC9),
+                              ]
+                            : [
+                                color,
+                                color.withValues(alpha: 0.72),
+                              ],
+                      )
+                    : null,
                 shape: BoxShape.circle,
+                border: completed || current
+                    ? null
+                    : Border.all(color: AppPalette.border),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withValues(alpha: 0.22),
+                    color: stateColor.withValues(alpha: 0.18),
                     blurRadius: 14,
                     offset: const Offset(0, 7),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.play_arrow_rounded,
-                color: Colors.white,
+              child: Icon(
+                actionIcon,
+                color: completed || current ? Colors.white : AppPalette.ink,
                 size: 27,
               ),
             ),
@@ -970,7 +1287,9 @@ class _PuzzlePlayScreen extends StatefulWidget {
     required this.total,
     required this.mode,
     required this.completedToday,
+    required this.onDailyRewardContinue,
     required this.onComplete,
+    this.onPracticeSolved,
     this.nextPuzzleBuilder,
   });
 
@@ -979,7 +1298,9 @@ class _PuzzlePlayScreen extends StatefulWidget {
   final int total;
   final _PuzzleMode mode;
   final bool completedToday;
+  final VoidCallback onDailyRewardContinue;
   final Future<void> Function() onComplete;
+  final ValueChanged<DailyChallenge>? onPracticeSolved;
   final Widget Function()? nextPuzzleBuilder;
 
   @override
@@ -1008,6 +1329,9 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
 
     setState(() => _isSubmitting = true);
     await widget.onComplete();
+    if (widget.mode == _PuzzleMode.practice) {
+      widget.onPracticeSolved?.call(widget.puzzle);
+    }
 
     if (!mounted) {
       return;
@@ -1021,8 +1345,26 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
       return;
     }
 
+    if (widget.mode == _PuzzleMode.practice) {
+      Navigator.of(context).pop();
+      return;
+    }
+
     final nextPuzzleBuilder = widget.nextPuzzleBuilder;
     if (nextPuzzleBuilder == null) {
+      if (widget.mode == _PuzzleMode.daily) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute<void>(
+            builder: (_) => _DailyMissionCompleteScreen(
+              stars: widget.total,
+              completedSteps: widget.total,
+              onStartTraining: widget.onDailyRewardContinue,
+            ),
+          ),
+        );
+        return;
+      }
+
       Navigator.of(context).pop();
       return;
     }
@@ -1340,6 +1682,351 @@ class _BurstStar extends StatelessWidget {
             size: size,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _DailyMissionCompleteScreen extends StatelessWidget {
+  const _DailyMissionCompleteScreen({
+    required this.stars,
+    required this.completedSteps,
+    required this.onStartTraining,
+  });
+
+  final int stars;
+  final int completedSteps;
+  final VoidCallback onStartTraining;
+
+  void _close(BuildContext context) {
+    Feedback.forTap(context);
+    Navigator.of(context).pop();
+  }
+
+  void _startTraining(BuildContext context) {
+    Feedback.forTap(context);
+    Navigator.of(context).pop();
+    onStartTraining();
+  }
+
+  void _openCollection(BuildContext context) {
+    Feedback.forTap(context);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => CollectionScreen(
+          stars: stars,
+          completedLevels: completedSteps,
+          highlightDailyPrize: true,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final compact = MediaQuery.sizeOf(context).height < 720;
+
+    return Scaffold(
+      body: PlayfulBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(18, compact ? 8 : 14, 18, 24),
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton.filledTonal(
+                  onPressed: () => _close(context),
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              ),
+              SizedBox(height: compact ? 4 : 10),
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0, end: 1),
+                duration: const Duration(milliseconds: 620),
+                curve: Curves.easeOutBack,
+                builder: (context, value, child) {
+                  return Opacity(
+                    opacity: value.clamp(0, 1),
+                    child: Transform.translate(
+                      offset: Offset(0, (1 - value) * 18),
+                      child: Transform.scale(
+                        scale: 0.94 + value * 0.06,
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                child: _DailyRewardHero(
+                  stars: stars,
+                  completedSteps: completedSteps,
+                  compact: compact,
+                ),
+              ),
+              SizedBox(height: compact ? 14 : 18),
+              _RewardNextStepCard(compact: compact),
+              SizedBox(height: compact ? 14 : 18),
+              SoftShine(
+                borderRadius: BorderRadius.circular(22),
+                duration: const Duration(milliseconds: 1900),
+                child: FilledButton.icon(
+                  onPressed: () => _startTraining(context),
+                  icon: const Icon(Icons.play_arrow_rounded),
+                  label: const Text('Играть дальше'),
+                ),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                onPressed: () => _openCollection(context),
+                icon: const Icon(Icons.auto_awesome_rounded),
+                label: const Text('Моя коллекция'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DailyRewardHero extends StatelessWidget {
+  const _DailyRewardHero({
+    required this.stars,
+    required this.completedSteps,
+    required this.compact,
+  });
+
+  final int stars;
+  final int completedSteps;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      padding: EdgeInsets.fromLTRB(20, compact ? 18 : 22, 20, 20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFFFF0A8),
+            Color(0xFFFFB6C8),
+            Color(0xFFA9F4E8),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(34),
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: AppPalette.coral.withValues(alpha: 0.18),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -18,
+            right: -18,
+            child: Icon(
+              Icons.auto_awesome_rounded,
+              color: Colors.white.withValues(alpha: 0.36),
+              size: 116,
+            ),
+          ),
+          Positioned(
+            bottom: 70,
+            left: -8,
+            child: Icon(
+              Icons.star_rounded,
+              color: Colors.white.withValues(alpha: 0.42),
+              size: 44,
+            ),
+          ),
+          Column(
+            children: [
+              Container(
+                width: compact ? 118 : 136,
+                height: compact ? 118 : 136,
+                padding: const EdgeInsets.all(7),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppPalette.teal.withValues(alpha: 0.20),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/avatar_lion.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              SizedBox(height: compact ? 14 : 18),
+              Text(
+                'Миссия дня выполнена!',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: const Color(0xFF075D5A),
+                      fontWeight: FontWeight.w900,
+                      height: 1.04,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Ты закрыл все шаги. Можно забрать приз и играть свободно.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppPalette.ink,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+              SizedBox(height: compact ? 14 : 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: _RewardMetric(
+                      icon: Icons.star_rounded,
+                      value: '+$stars',
+                      label: 'звезды',
+                      color: AppPalette.mango,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Expanded(
+                    child: _RewardMetric(
+                      icon: Icons.local_fire_department_rounded,
+                      value: '+1',
+                      label: 'серия',
+                      color: AppPalette.coral,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _RewardMetric(
+                      icon: Icons.card_giftcard_rounded,
+                      value: '$completedSteps',
+                      label: 'шага',
+                      color: AppPalette.teal,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RewardMetric extends StatelessWidget {
+  const _RewardMetric({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.86),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppPalette.ink,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppPalette.muted,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RewardNextStepCard extends StatelessWidget {
+  const _RewardNextStepCard({required this.compact});
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlayfulCard(
+      padding: EdgeInsets.all(compact ? 14 : 16),
+      borderColor: AppPalette.mint.withValues(alpha: 0.72),
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFFE9FFF8),
+          Color(0xFFF7FBFF),
+        ],
+      ),
+      child: Row(
+        children: [
+          AreaCharacterBadge(
+            areaId: 'memory',
+            color: AppPalette.mint.withValues(alpha: 0.42),
+            size: compact ? 58 : 66,
+            padding: 2,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Что дальше?',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Выбирай героя: логика, память, внимание, счет или путь.',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

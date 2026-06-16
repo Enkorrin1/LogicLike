@@ -27,6 +27,7 @@ class FamilyProfile {
     this.completedLevels = 0,
     this.dailyProgressDate,
     this.dailyCompletedPuzzleIds = const [],
+    this.completedPracticePuzzleIds = const [],
     this.lastChallengeDate,
   });
 
@@ -37,6 +38,7 @@ class FamilyProfile {
   final int completedLevels;
   final DateTime? dailyProgressDate;
   final List<String> dailyCompletedPuzzleIds;
+  final List<String> completedPracticePuzzleIds;
   final DateTime? lastChallengeDate;
 
   bool completedOn(DateTime date) {
@@ -56,6 +58,7 @@ class FamilyProfile {
     int? completedLevels,
     DateTime? dailyProgressDate,
     List<String>? dailyCompletedPuzzleIds,
+    List<String>? completedPracticePuzzleIds,
     DateTime? lastChallengeDate,
   }) {
     return FamilyProfile(
@@ -67,6 +70,8 @@ class FamilyProfile {
       dailyProgressDate: dailyProgressDate ?? this.dailyProgressDate,
       dailyCompletedPuzzleIds:
           dailyCompletedPuzzleIds ?? this.dailyCompletedPuzzleIds,
+      completedPracticePuzzleIds:
+          completedPracticePuzzleIds ?? this.completedPracticePuzzleIds,
       lastChallengeDate: lastChallengeDate ?? this.lastChallengeDate,
     );
   }
@@ -80,6 +85,7 @@ class FamilyProfile {
       'completedLevels': completedLevels,
       'dailyProgressDate': dailyProgressDate?.toIso8601String(),
       'dailyCompletedPuzzleIds': dailyCompletedPuzzleIds,
+      'completedPracticePuzzleIds': completedPracticePuzzleIds,
       'lastChallengeDate': lastChallengeDate?.toIso8601String(),
     };
   }
@@ -89,6 +95,11 @@ class FamilyProfile {
     final dailyProgressDate = json['dailyProgressDate'] as String?;
     final dailyCompletedPuzzleIds =
         (json['dailyCompletedPuzzleIds'] as List<dynamic>?)
+                ?.whereType<String>()
+                .toList(growable: false) ??
+            const <String>[];
+    final completedPracticePuzzleIds =
+        (json['completedPracticePuzzleIds'] as List<dynamic>?)
                 ?.whereType<String>()
                 .toList(growable: false) ??
             const <String>[];
@@ -104,6 +115,7 @@ class FamilyProfile {
       dailyProgressDate:
           dailyProgressDate == null ? null : DateTime.parse(dailyProgressDate),
       dailyCompletedPuzzleIds: dailyCompletedPuzzleIds,
+      completedPracticePuzzleIds: completedPracticePuzzleIds,
       lastChallengeDate:
           lastChallengeDate == null ? null : DateTime.parse(lastChallengeDate),
     );
@@ -128,6 +140,10 @@ class FamilyProfile {
               dailyCompletedPuzzleIds,
               other.dailyCompletedPuzzleIds,
             ) &&
+            _sameStringList(
+              completedPracticePuzzleIds,
+              other.completedPracticePuzzleIds,
+            ) &&
             lastChallengeDate == other.lastChallengeDate;
   }
 
@@ -141,6 +157,7 @@ class FamilyProfile {
       completedLevels,
       dailyProgressDate,
       Object.hashAll(dailyCompletedPuzzleIds),
+      Object.hashAll(completedPracticePuzzleIds),
       lastChallengeDate,
     );
   }

@@ -7,6 +7,7 @@ import '../../domain/family_profile.dart';
 import '../../domain/learning_foundation.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
+import '../rewards/collection_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -60,6 +61,23 @@ class _HomeScreenState extends State<HomeScreen>
       );
   }
 
+  void _openCollection({
+    required int stars,
+    required int completedLevels,
+    required bool completedToday,
+  }) {
+    Feedback.forTap(context);
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => CollectionScreen(
+          stars: stars,
+          completedLevels: completedLevels,
+          highlightDailyPrize: completedToday,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dailyStars = widget.profile.completedChallenges;
@@ -99,8 +117,10 @@ class _HomeScreenState extends State<HomeScreen>
                     onStarsTap: () => _showHint(
                       'Звезды копятся за миссии и открывают новые призы.',
                     ),
-                    onPlanetTap: () => _showHint(
-                      'Космо-коллекция: ракеты, стикеры и значки героя.',
+                    onPlanetTap: () => _openCollection(
+                      stars: totalStars,
+                      completedLevels: mapProgress,
+                      completedToday: completedToday,
                     ),
                   ),
                 ),

@@ -10,12 +10,23 @@ void main() {
         createdAt: DateTime(2026, 6, 8, 9),
         completedChallenges: 2,
         completedLevels: 3,
+        completedPracticePuzzleIds: const ['logic-1', 'memory-2'],
         lastChallengeDate: DateTime(2026, 6, 8),
       );
 
       final restored = FamilyProfile.fromJson(profile.toJson());
 
       expect(restored, profile);
+    });
+
+    test('restores older json without practice progress', () {
+      final restored = FamilyProfile.fromJson({
+        'childName': 'Lev',
+        'childAge': ChildAge.five.name,
+        'createdAt': DateTime(2026, 6, 8, 9).toIso8601String(),
+      });
+
+      expect(restored.completedPracticePuzzleIds, isEmpty);
     });
 
     test('detects challenge completion by calendar date', () {
