@@ -36,7 +36,7 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> completeDailyChallenge(DailyChallenge _) async {
+  Future<void> completeDailyChallenge(DailyChallenge challenge) async {
     final currentProfile = _familyProfile;
     if (currentProfile == null) {
       return;
@@ -44,16 +44,36 @@ class AppController extends ChangeNotifier {
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
+    final dailyProgressDate = currentProfile.dailyProgressDate;
+    final sameDailyProgressDay = dailyProgressDate != null &&
+        DateTime(
+              dailyProgressDate.year,
+              dailyProgressDate.month,
+              dailyProgressDate.day,
+            ) ==
+            today;
+    final previousDailyIds = sameDailyProgressDay
+        ? currentProfile.dailyCompletedPuzzleIds
+        : const <String>[];
+    final nextDailyIds = {
+      ...previousDailyIds,
+      challenge.id,
+    }.toList(growable: false);
+    final dailyTarget = dailyChallengesForAge(currentProfile.childAge).length;
     final alreadyCompletedToday = currentProfile.completedOn(today);
+    final completedDailySet = nextDailyIds.length >= dailyTarget;
 
     final nextProfile = currentProfile.copyWith(
-      completedChallenges: alreadyCompletedToday
+      completedChallenges: alreadyCompletedToday || !completedDailySet
           ? currentProfile.completedChallenges
           : currentProfile.completedChallenges + 1,
       completedLevels: currentProfile.completedLevels >= 8
           ? currentProfile.completedLevels
           : currentProfile.completedLevels + 1,
-      lastChallengeDate: today,
+      dailyProgressDate: today,
+      dailyCompletedPuzzleIds: nextDailyIds,
+      lastChallengeDate:
+          completedDailySet ? today : currentProfile.lastChallengeDate,
     );
 
     await _familyProfileStore.save(nextProfile);

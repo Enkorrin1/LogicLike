@@ -25,6 +25,8 @@ class FamilyProfile {
     required this.createdAt,
     this.completedChallenges = 0,
     this.completedLevels = 0,
+    this.dailyProgressDate,
+    this.dailyCompletedPuzzleIds = const [],
     this.lastChallengeDate,
   });
 
@@ -33,6 +35,8 @@ class FamilyProfile {
   final DateTime createdAt;
   final int completedChallenges;
   final int completedLevels;
+  final DateTime? dailyProgressDate;
+  final List<String> dailyCompletedPuzzleIds;
   final DateTime? lastChallengeDate;
 
   bool completedOn(DateTime date) {
@@ -50,6 +54,8 @@ class FamilyProfile {
     DateTime? createdAt,
     int? completedChallenges,
     int? completedLevels,
+    DateTime? dailyProgressDate,
+    List<String>? dailyCompletedPuzzleIds,
     DateTime? lastChallengeDate,
   }) {
     return FamilyProfile(
@@ -58,6 +64,9 @@ class FamilyProfile {
       createdAt: createdAt ?? this.createdAt,
       completedChallenges: completedChallenges ?? this.completedChallenges,
       completedLevels: completedLevels ?? this.completedLevels,
+      dailyProgressDate: dailyProgressDate ?? this.dailyProgressDate,
+      dailyCompletedPuzzleIds:
+          dailyCompletedPuzzleIds ?? this.dailyCompletedPuzzleIds,
       lastChallengeDate: lastChallengeDate ?? this.lastChallengeDate,
     );
   }
@@ -69,12 +78,20 @@ class FamilyProfile {
       'createdAt': createdAt.toIso8601String(),
       'completedChallenges': completedChallenges,
       'completedLevels': completedLevels,
+      'dailyProgressDate': dailyProgressDate?.toIso8601String(),
+      'dailyCompletedPuzzleIds': dailyCompletedPuzzleIds,
       'lastChallengeDate': lastChallengeDate?.toIso8601String(),
     };
   }
 
   factory FamilyProfile.fromJson(Map<String, Object?> json) {
     final lastChallengeDate = json['lastChallengeDate'] as String?;
+    final dailyProgressDate = json['dailyProgressDate'] as String?;
+    final dailyCompletedPuzzleIds =
+        (json['dailyCompletedPuzzleIds'] as List<dynamic>?)
+                ?.whereType<String>()
+                .toList(growable: false) ??
+            const <String>[];
 
     return FamilyProfile(
       childName: json['childName'] as String,
@@ -84,6 +101,9 @@ class FamilyProfile {
       completedLevels: json['completedLevels'] as int? ??
           json['completedChallenges'] as int? ??
           0,
+      dailyProgressDate:
+          dailyProgressDate == null ? null : DateTime.parse(dailyProgressDate),
+      dailyCompletedPuzzleIds: dailyCompletedPuzzleIds,
       lastChallengeDate:
           lastChallengeDate == null ? null : DateTime.parse(lastChallengeDate),
     );
@@ -103,6 +123,11 @@ class FamilyProfile {
             createdAt == other.createdAt &&
             completedChallenges == other.completedChallenges &&
             completedLevels == other.completedLevels &&
+            dailyProgressDate == other.dailyProgressDate &&
+            _sameStringList(
+              dailyCompletedPuzzleIds,
+              other.dailyCompletedPuzzleIds,
+            ) &&
             lastChallengeDate == other.lastChallengeDate;
   }
 
@@ -114,7 +139,23 @@ class FamilyProfile {
       createdAt,
       completedChallenges,
       completedLevels,
+      dailyProgressDate,
+      Object.hashAll(dailyCompletedPuzzleIds),
       lastChallengeDate,
     );
   }
+}
+
+bool _sameStringList(List<String> left, List<String> right) {
+  if (left.length != right.length) {
+    return false;
+  }
+
+  for (var i = 0; i < left.length; i++) {
+    if (left[i] != right[i]) {
+      return false;
+    }
+  }
+
+  return true;
 }

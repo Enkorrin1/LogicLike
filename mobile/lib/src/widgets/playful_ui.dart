@@ -107,6 +107,58 @@ class IconBadge extends StatelessWidget {
   }
 }
 
+class AreaCharacterBadge extends StatelessWidget {
+  const AreaCharacterBadge({
+    required this.areaId,
+    required this.color,
+    this.size = 64,
+    this.padding = 4,
+    super.key,
+  });
+
+  final String areaId;
+  final Color color;
+  final double size;
+  final double padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      padding: EdgeInsets.all(padding),
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: AppPalette.ink.withValues(alpha: 0.10),
+            blurRadius: size * 0.22,
+            offset: Offset(0, size * 0.10),
+          ),
+        ],
+      ),
+      child: Image.asset(
+        _areaCharacterAsset(areaId),
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+      ),
+    );
+  }
+}
+
+String _areaCharacterAsset(String areaId) {
+  return switch (areaId) {
+    'logic' => 'assets/images/areas/area_logic_lynx.png',
+    'memory' => 'assets/images/areas/area_memory_elephant.png',
+    'attention' => 'assets/images/areas/area_attention_chameleon.png',
+    'math' => 'assets/images/areas/area_math_robot.png',
+    'space' => 'assets/images/areas/area_path_turtle.png',
+    _ => 'assets/images/avatar_lion.png',
+  };
+}
+
 class InfoPill extends StatelessWidget {
   const InfoPill({
     required this.icon,
@@ -180,6 +232,170 @@ class PlayfulCard extends StatelessWidget {
         ],
       ),
       child: child,
+    );
+  }
+}
+
+class BouncyTap extends StatefulWidget {
+  const BouncyTap({
+    required this.child,
+    this.onTap,
+    this.borderRadius,
+    this.pressedScale = 0.965,
+    super.key,
+  });
+
+  final Widget child;
+  final VoidCallback? onTap;
+  final BorderRadius? borderRadius;
+  final double pressedScale;
+
+  @override
+  State<BouncyTap> createState() => _BouncyTapState();
+}
+
+class _BouncyTapState extends State<BouncyTap> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed == value) {
+      return;
+    }
+    setState(() {
+      _pressed = value;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enabled = widget.onTap != null;
+
+    return Semantics(
+      button: enabled,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: enabled ? (_) => _setPressed(true) : null,
+        onTapCancel: enabled ? () => _setPressed(false) : null,
+        onTapUp: enabled
+            ? (_) {
+                _setPressed(false);
+                widget.onTap?.call();
+              }
+            : null,
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 110),
+          curve: Curves.easeOut,
+          scale: _pressed ? widget.pressedScale : 1,
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+class SoftShine extends StatefulWidget {
+  const SoftShine({
+    required this.child,
+    required this.borderRadius,
+    this.enabled = true,
+    this.duration = const Duration(milliseconds: 2200),
+    this.color = Colors.white,
+    super.key,
+  });
+
+  final Widget child;
+  final BorderRadius borderRadius;
+  final bool enabled;
+  final Duration duration;
+  final Color color;
+
+  @override
+  State<SoftShine> createState() => _SoftShineState();
+}
+
+class _SoftShineState extends State<SoftShine>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+    if (widget.enabled) {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SoftShine oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.duration != widget.duration) {
+      _controller.duration = widget.duration;
+    }
+    if (widget.enabled && !_controller.isAnimating) {
+      _controller.repeat();
+    } else if (!widget.enabled && _controller.isAnimating) {
+      _controller.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: widget.borderRadius,
+      child: Stack(
+        children: [
+          widget.child,
+          if (widget.enabled)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, _) {
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final width = constraints.maxWidth;
+                        final height = constraints.maxHeight;
+                        final left = width * (-0.55 + _controller.value * 1.7);
+
+                        return Stack(
+                          children: [
+                            Positioned(
+                              left: left,
+                              top: -height * 0.25,
+                              bottom: -height * 0.25,
+                              width: width * 0.34,
+                              child: Transform.rotate(
+                                angle: 0.28,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        widget.color.withValues(alpha: 0),
+                                        widget.color.withValues(alpha: 0.32),
+                                        widget.color.withValues(alpha: 0),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

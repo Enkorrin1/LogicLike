@@ -15,7 +15,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Настроим LogicLike'), findsOneWidget);
-    expect(find.text('Возраст'), findsOneWidget);
+    expect(find.text('Пропуск в BrainUp'), findsOneWidget);
+    expect(find.text('Выбери возрастной маршрут'), findsOneWidget);
   });
 }

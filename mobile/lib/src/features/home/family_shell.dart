@@ -20,6 +20,7 @@ class FamilyShell extends StatefulWidget {
 
 class _FamilyShellState extends State<FamilyShell> {
   int _selectedIndex = 0;
+  String? _pendingAreaId;
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +38,28 @@ class _FamilyShellState extends State<FamilyShell> {
             onStartChallenge: () {
               setState(() {
                 _selectedIndex = 1;
+                _pendingAreaId = null;
+              });
+            },
+            onStartArea: (areaId) {
+              setState(() {
+                _selectedIndex = 1;
+                _pendingAreaId = areaId;
               });
             },
           ),
           ChallengeScreen(
             profile: profile,
+            initialAreaId: _pendingAreaId,
+            onInitialAreaHandled: () {
+              if (!mounted || _pendingAreaId == null) {
+                return;
+              }
+
+              setState(() {
+                _pendingAreaId = null;
+              });
+            },
             onChallengeComplete: widget.controller.completeDailyChallenge,
             onPracticeComplete: widget.controller.completePracticePuzzle,
           ),
