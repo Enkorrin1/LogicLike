@@ -75,27 +75,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 selectedAge: _selectedAge,
                 showNameError: _showNameError,
                 onNameChanged: () {
-                  if (_showNameError) {
-                    setState(() {
-                      _showNameError = false;
-                    });
-                  }
+                  setState(() {
+                    _showNameError = false;
+                  });
                 },
-                onSubmit: _submit,
-              ),
-              const SizedBox(height: 14),
-              _AgeDock(
-                selectedAge: _selectedAge,
-                onSelected: (age) {
+                onAgeSelected: (age) {
                   setState(() {
                     _selectedAge = age;
                   });
                 },
+                onSubmit: _submit,
               ),
-              const SizedBox(height: 14),
-              const _BrainPreview(),
-              const SizedBox(height: 12),
-              const _ParentPromise(),
             ],
           ),
         ),
@@ -142,6 +132,7 @@ class _HeroPassport extends StatelessWidget {
     required this.selectedAge,
     required this.showNameError,
     required this.onNameChanged,
+    required this.onAgeSelected,
     required this.onSubmit,
   });
 
@@ -149,6 +140,7 @@ class _HeroPassport extends StatelessWidget {
   final ChildAge selectedAge;
   final bool showNameError;
   final VoidCallback onNameChanged;
+  final ValueChanged<ChildAge> onAgeSelected;
   final VoidCallback onSubmit;
 
   @override
@@ -232,7 +224,7 @@ class _HeroPassport extends StatelessWidget {
                           const _MissionPill(),
                           const SizedBox(height: 10),
                           Text(
-                            'Пропуск в BrainUp',
+                            'Создай героя',
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineSmall
@@ -261,7 +253,7 @@ class _HeroPassport extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Сначала создаем героя, потом открываем ежедневные задания и свободные головоломки по областям мозга.',
+                  'Лев покажет миссию дня, а дальше ребенок сам выберет тренировки.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppPalette.ink,
                         fontWeight: FontWeight.w800,
@@ -282,6 +274,13 @@ class _HeroPassport extends StatelessWidget {
                   onChanged: (_) => onNameChanged(),
                   onSubmitted: (_) => onSubmit(),
                 ),
+                const SizedBox(height: 14),
+                _InlineAgeSelector(
+                  selectedAge: selectedAge,
+                  onSelected: onAgeSelected,
+                ),
+                const SizedBox(height: 14),
+                const _HeroUnlockRow(),
               ],
             ),
           ),
@@ -320,8 +319,8 @@ class _MissionPill extends StatelessWidget {
   }
 }
 
-class _AgeDock extends StatelessWidget {
-  const _AgeDock({
+class _InlineAgeSelector extends StatelessWidget {
+  const _InlineAgeSelector({
     required this.selectedAge,
     required this.onSelected,
   });
@@ -331,43 +330,46 @@ class _AgeDock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlayfulCard(
-      padding: const EdgeInsets.all(16),
-      borderColor: Colors.white,
-      gradient: const LinearGradient(
-        colors: [Color(0xFFFFFFFF), Color(0xFFEAF7FF)],
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.58),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.74)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const IconBadge(
-                icon: Icons.tune_rounded,
-                color: Color(0xFFEDEAFF),
-                iconColor: AppPalette.lavender,
-                size: 42,
+              const Icon(
+                Icons.cake_rounded,
+                color: AppPalette.coral,
+                size: 18,
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Выбери возрастной маршрут',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
+              const SizedBox(width: 6),
+              Text(
+                'Возраст героя',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppPalette.ink,
+                      fontWeight: FontWeight.w900,
+                    ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
+          const SizedBox(height: 8),
+          Row(
             children: [
-              for (final age in ChildAge.values)
-                _AgeToken(
-                  age: age,
-                  selected: selectedAge == age,
-                  onTap: () => onSelected(age),
+              for (var i = 0; i < ChildAge.values.length; i++) ...[
+                Expanded(
+                  child: _CompactAgeChip(
+                    age: ChildAge.values[i],
+                    selected: selectedAge == ChildAge.values[i],
+                    onTap: () => onSelected(ChildAge.values[i]),
+                  ),
                 ),
+                if (i != ChildAge.values.length - 1) const SizedBox(width: 6),
+              ],
             ],
           ),
         ],
@@ -376,8 +378,8 @@ class _AgeDock extends StatelessWidget {
   }
 }
 
-class _AgeToken extends StatelessWidget {
-  const _AgeToken({
+class _CompactAgeChip extends StatelessWidget {
+  const _CompactAgeChip({
     required this.age,
     required this.selected,
     required this.onTap,
@@ -389,26 +391,28 @@ class _AgeToken extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
+    final color = selected ? AppPalette.coral : Colors.white;
+
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(16),
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        width: 88,
-        height: 64,
+        height: 52,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: selected ? AppPalette.coral : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          color: color,
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: selected ? AppPalette.coral : AppPalette.border,
-            width: 2,
+            color: selected ? Colors.white : AppPalette.border,
+            width: selected ? 2 : 1,
           ),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: AppPalette.coral.withValues(alpha: 0.22),
-                    blurRadius: 14,
-                    offset: const Offset(0, 8),
+                    color: AppPalette.coral.withValues(alpha: 0.24),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
                   ),
                 ]
               : null,
@@ -421,17 +425,21 @@ class _AgeToken extends StatelessWidget {
                   ? Icons.check_circle_rounded
                   : Icons.auto_awesome_rounded,
               color: selected ? Colors.white : AppPalette.teal,
-              size: 22,
+              size: 18,
             ),
-            const SizedBox(height: 4),
-            Text(
-              age.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: selected ? Colors.white : AppPalette.ink,
-                    fontWeight: FontWeight.w900,
-                  ),
+            const SizedBox(height: 3),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                age.label,
+                maxLines: 1,
+                softWrap: false,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: selected ? Colors.white : AppPalette.ink,
+                      fontWeight: FontWeight.w900,
+                      height: 1,
+                    ),
+              ),
             ),
           ],
         ),
@@ -440,162 +448,76 @@ class _AgeToken extends StatelessWidget {
   }
 }
 
-class _BrainPreview extends StatelessWidget {
-  const _BrainPreview();
+class _HeroUnlockRow extends StatelessWidget {
+  const _HeroUnlockRow();
 
   @override
   Widget build(BuildContext context) {
-    return PlayfulCard(
-      padding: const EdgeInsets.all(16),
-      borderColor: Colors.white,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const IconBadge(
-                icon: Icons.psychology_alt_rounded,
-                color: AppPalette.mint,
-                iconColor: AppPalette.teal,
-                size: 42,
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Что откроется',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-              ),
-            ],
+    return const Row(
+      children: [
+        Expanded(
+          child: _UnlockBadge(
+            icon: Icons.local_fire_department_rounded,
+            color: AppPalette.coral,
+            label: 'Миссия',
           ),
-          const SizedBox(height: 14),
-          const Row(
-            children: [
-              Expanded(
-                child: _PreviewTile(
-                  icon: Icons.local_fire_department_rounded,
-                  color: AppPalette.coral,
-                  title: 'Ежедневка',
-                  subtitle: 'серия',
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _PreviewTile(
-                  icon: Icons.extension_rounded,
-                  color: AppPalette.lavender,
-                  title: 'Головоломки',
-                  subtitle: 'на выбор',
-                ),
-              ),
-            ],
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: _UnlockBadge(
+            icon: Icons.extension_rounded,
+            color: AppPalette.lavender,
+            label: 'Игры',
           ),
-          const SizedBox(height: 10),
-          const Row(
-            children: [
-              Expanded(
-                child: _PreviewTile(
-                  icon: Icons.center_focus_strong_rounded,
-                  color: AppPalette.teal,
-                  title: 'Внимание',
-                  subtitle: 'фокус',
-                ),
-              ),
-              SizedBox(width: 10),
-              Expanded(
-                child: _PreviewTile(
-                  icon: Icons.calculate_rounded,
-                  color: AppPalette.mango,
-                  title: 'Счет',
-                  subtitle: 'числа',
-                ),
-              ),
-            ],
+        ),
+        SizedBox(width: 8),
+        Expanded(
+          child: _UnlockBadge(
+            icon: Icons.star_rounded,
+            color: AppPalette.mango,
+            label: 'Призы',
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _PreviewTile extends StatelessWidget {
-  const _PreviewTile({
+class _UnlockBadge extends StatelessWidget {
+  const _UnlockBadge({
     required this.icon,
     required this.color,
-    required this.title,
-    required this.subtitle,
+    required this.label,
   });
 
   final IconData icon;
   final Color color;
-  final String title;
-  final String subtitle;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 92,
-      padding: const EdgeInsets.all(12),
+      height: 68,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: color.withValues(alpha: 0.22)),
+        color: Colors.white.withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.82)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 28),
-          const Spacer(),
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 4),
           Text(
-            title,
+            label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: AppPalette.ink,
                   fontWeight: FontWeight.w900,
+                  height: 1,
                 ),
-          ),
-          Text(
-            subtitle,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ParentPromise extends StatelessWidget {
-  const _ParentPromise();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppPalette.ink,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        children: [
-          const IconBadge(
-            icon: Icons.family_restroom_rounded,
-            color: Colors.white,
-            iconColor: AppPalette.ink,
-            size: 42,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Для родителя: короткие занятия, без давления и с понятным прогрессом.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
           ),
         ],
       ),

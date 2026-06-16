@@ -15,7 +15,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Пропуск в BrainUp'), findsOneWidget);
-    expect(find.text('Выбери возрастной маршрут'), findsOneWidget);
+    expect(find.text('Создай героя'), findsOneWidget);
+    expect(find.text('Возраст героя'), findsOneWidget);
   });
 }
