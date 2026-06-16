@@ -888,47 +888,76 @@ class _FreePuzzleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlayfulCard(
-      borderColor: color.withValues(alpha: 0.35),
-      child: Row(
-        children: [
-          AreaCharacterBadge(
-            areaId: puzzle.areaId,
-            color: color.withValues(alpha: 0.20),
-            size: 58,
-            padding: 3,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Уровень $levelNumber',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: color,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                const SizedBox(height: 2),
-                Text(puzzle.title,
-                    style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 4),
-                Text(
-                  puzzle.prompt,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: PlayfulCard(
+        borderColor: color.withValues(alpha: 0.35),
+        child: Row(
+          children: [
+            AreaCharacterBadge(
+              areaId: puzzle.areaId,
+              color: color.withValues(alpha: 0.20),
+              size: 58,
+              padding: 3,
             ),
-          ),
-          IconButton.filled(
-            onPressed: onTap,
-            icon: const Icon(Icons.play_arrow_rounded),
-            style: IconButton.styleFrom(backgroundColor: color),
-          ),
-        ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Уровень $levelNumber',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    puzzle.title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    puzzle.prompt,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    color,
+                    color.withValues(alpha: 0.72),
+                  ],
+                ),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.22),
+                    blurRadius: 14,
+                    offset: const Offset(0, 7),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.play_arrow_rounded,
+                color: Colors.white,
+                size: 27,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -962,6 +991,15 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
   bool _showHint = false;
   bool _isSubmitting = false;
   bool _showSuccessBurst = false;
+
+  void _selectAnswer(String answer) {
+    if (_isSubmitting) {
+      return;
+    }
+
+    Feedback.forTap(context);
+    setState(() => _selectedAnswer = answer);
+  }
 
   Future<void> _submit() async {
     if (_selectedAnswer == null || _isSubmitting) {
@@ -1074,10 +1112,8 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                                       _selectedAnswer == answerOptions[i].label,
                                   compact: true,
                                   stacked: true,
-                                  onTap: () => setState(
-                                    () => _selectedAnswer =
-                                        answerOptions[i].label,
-                                  ),
+                                  onTap: () =>
+                                      _selectAnswer(answerOptions[i].label),
                                 ),
                               ),
                               if (i != answerOptions.length - 1)
@@ -1094,9 +1130,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                               selected: _selectedAnswer == option.label,
                               compact: false,
                               stacked: false,
-                              onTap: () => setState(
-                                () => _selectedAnswer = option.label,
-                              ),
+                              onTap: () => _selectAnswer(option.label),
                             ),
                           ),
                       SizedBox(height: compact ? 4 : 0),
@@ -1120,7 +1154,10 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
           if (_showSuccessBurst)
             Positioned.fill(
               child: IgnorePointer(
-                child: _SuccessBurst(accent: accent),
+                child: _SuccessBurst(
+                  accent: accent,
+                  hasNextPuzzle: widget.nextPuzzleBuilder != null,
+                ),
               ),
             ),
         ],
@@ -1137,9 +1174,13 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
 }
 
 class _SuccessBurst extends StatelessWidget {
-  const _SuccessBurst({required this.accent});
+  const _SuccessBurst({
+    required this.accent,
+    required this.hasNextPuzzle,
+  });
 
   final Color accent;
+  final bool hasNextPuzzle;
 
   @override
   Widget build(BuildContext context) {
@@ -1190,10 +1231,7 @@ class _SuccessBurst extends StatelessWidget {
                 child: Transform.scale(
                   scale: 0.72 + value * 0.28,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 17,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 14),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -1211,22 +1249,54 @@ class _SuccessBurst extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Row(
+                    child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.auto_awesome_rounded,
-                          color: Colors.white,
-                          size: 26,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Отлично!',
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_rounded,
+                              color: Colors.white,
+                              size: 26,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Отлично!',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleLarge
+                                  ?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w900,
                                   ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          hasNextPuzzle ? 'Летим дальше' : 'Все готово',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: 132,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(999),
+                            child: LinearProgressIndicator(
+                              minHeight: 7,
+                              value: value.clamp(0, 1).toDouble(),
+                              backgroundColor:
+                                  Colors.white.withValues(alpha: 0.28),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white.withValues(alpha: 0.92),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -2331,96 +2401,111 @@ class _AnswerOption extends StatelessWidget {
     return BouncyTap(
       borderRadius: borderRadius,
       onTap: onTap,
-      child: AnimatedContainer(
+      child: AnimatedScale(
         duration: const Duration(milliseconds: 180),
-        padding: EdgeInsets.symmetric(
-          horizontal: stacked ? 8 : 12,
-          vertical: stacked ? 8 : (compact ? 7 : 9),
-        ),
-        decoration: BoxDecoration(
-          color:
-              selected ? AppPalette.mint.withValues(alpha: 0.44) : Colors.white,
-          borderRadius: borderRadius,
-          border: Border.all(
-            color: selected ? AppPalette.teal : AppPalette.border,
-            width: selected ? 2 : 1.2,
+        curve: Curves.easeOutBack,
+        scale: selected ? 1.015 : 1,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: EdgeInsets.symmetric(
+            horizontal: stacked ? 8 : 12,
+            vertical: stacked ? 8 : (compact ? 7 : 9),
           ),
-        ),
-        child: stacked
-            ? SizedBox(
-                height: 78,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconBadge(
-                            icon: option.icon,
-                            color: option.color,
-                            iconColor: selected
-                                ? AppPalette.teal
-                                : AppPalette.lavender,
-                            size: 36,
-                          ),
-                          const SizedBox(height: 5),
-                          FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              option.label,
-                              maxLines: 1,
-                              softWrap: false,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: AppPalette.ink,
-                                    fontWeight: FontWeight.w900,
-                                    height: 1,
-                                  ),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppPalette.mint.withValues(alpha: 0.44)
+                : Colors.white,
+            borderRadius: borderRadius,
+            border: Border.all(
+              color: selected ? AppPalette.teal : AppPalette.border,
+              width: selected ? 2 : 1.2,
+            ),
+            boxShadow: [
+              if (selected)
+                BoxShadow(
+                  color: AppPalette.teal.withValues(alpha: 0.18),
+                  blurRadius: 14,
+                  offset: const Offset(0, 7),
+                ),
+            ],
+          ),
+          child: stacked
+              ? SizedBox(
+                  height: 78,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconBadge(
+                              icon: option.icon,
+                              color: option.color,
+                              iconColor: selected
+                                  ? AppPalette.teal
+                                  : AppPalette.lavender,
+                              size: 36,
                             ),
+                            const SizedBox(height: 5),
+                            FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                option.label,
+                                maxLines: 1,
+                                softWrap: false,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: AppPalette.ink,
+                                      fontWeight: FontWeight.w900,
+                                      height: 1,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (selected)
+                        const Positioned(
+                          top: -2,
+                          right: -2,
+                          child: Icon(
+                            Icons.check_circle_rounded,
+                            color: AppPalette.teal,
+                            size: 24,
                           ),
-                        ],
+                        ),
+                    ],
+                  ),
+                )
+              : Row(
+                  children: [
+                    IconBadge(
+                      icon: option.icon,
+                      color: option.color,
+                      iconColor:
+                          selected ? AppPalette.teal : AppPalette.lavender,
+                      size: compact ? 36 : 40,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        option.label,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ),
                     if (selected)
-                      const Positioned(
-                        top: -2,
-                        right: -2,
-                        child: Icon(
-                          Icons.check_circle_rounded,
-                          color: AppPalette.teal,
-                          size: 24,
-                        ),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppPalette.teal,
+                        size: 28,
                       ),
                   ],
                 ),
-              )
-            : Row(
-                children: [
-                  IconBadge(
-                    icon: option.icon,
-                    color: option.color,
-                    iconColor: selected ? AppPalette.teal : AppPalette.lavender,
-                    size: compact ? 36 : 40,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      option.label,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  if (selected)
-                    const Icon(
-                      Icons.check_circle_rounded,
-                      color: AppPalette.teal,
-                      size: 28,
-                    ),
-                ],
-              ),
+        ),
       ),
     );
   }
@@ -2481,25 +2566,30 @@ class _StickyAnswerBar extends StatelessWidget {
               const SizedBox(width: 12),
               SizedBox(
                 width: compact ? 156 : 170,
-                child: FilledButton.icon(
-                  onPressed: enabled && !loading ? onSubmit : null,
-                  style: compact
-                      ? FilledButton.styleFrom(
-                          minimumSize: const Size(0, 46),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                        )
-                      : null,
-                  icon: loading
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Icon(Icons.check_rounded),
-                  label: Text(loading ? 'Проверяем' : 'Проверить'),
+                child: SoftShine(
+                  borderRadius: BorderRadius.circular(18),
+                  enabled: enabled && !loading,
+                  duration: const Duration(milliseconds: 1800),
+                  child: FilledButton.icon(
+                    onPressed: enabled && !loading ? onSubmit : null,
+                    style: compact
+                        ? FilledButton.styleFrom(
+                            minimumSize: const Size(0, 46),
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                          )
+                        : null,
+                    icon: loading
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.check_rounded),
+                    label: Text(loading ? 'Проверяем' : 'Проверить'),
+                  ),
                 ),
               ),
             ],
