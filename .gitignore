@@ -9,13 +9,6 @@ coverage/
 .vscode/
 *.iml
 *.log
-logiclike-screen.png
-logiclike-*.png
-window-*.xml
-.android-avd/
-.tmp/
-.gradle-home/
-.pub-cache/
 
 .DS_Store
 Thumbs.db

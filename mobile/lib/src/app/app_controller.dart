@@ -1,11 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart';
 
 import '../data/family_profile_store.dart';
 import '../domain/daily_challenge.dart';
 import '../domain/family_profile.dart';
-import '../domain/learning_foundation.dart';
 
 class AppController extends ChangeNotifier {
   AppController(this._familyProfileStore);
@@ -27,23 +24,11 @@ class AppController extends ChangeNotifier {
   Future<void> completeOnboarding({
     required String childName,
     required ChildAge childAge,
-    required LearningGoal learningGoal,
   }) async {
-    final createdAt = DateTime.now();
-    final child = ChildProfile(
-      id: childProfileId(name: childName, createdAt: createdAt),
-      name: childName,
-      age: childAge,
-      learningGoal: learningGoal,
-      createdAt: createdAt,
-    );
     final profile = FamilyProfile(
       childName: childName,
       childAge: childAge,
-      learningGoal: learningGoal,
-      createdAt: createdAt,
-      childProfiles: [child],
-      activeChildId: child.id,
+      createdAt: DateTime.now(),
     );
 
     await _familyProfileStore.save(profile);
@@ -59,211 +44,62 @@ class AppController extends ChangeNotifier {
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    if (currentProfile.completedOn(today)) {
-      return;
-    }
+    final dailyProgressDate = currentProfile.dailyProgressDate;
+    final sameDailyProgressDay = dailyProgressDate != null &&
+        DateTime(
+              dailyProgressDate.year,
+              dailyProgressDate.month,
+              dailyProgressDate.day,
+            ) ==
+            today;
+    final previousDailyIds = sameDailyProgressDay
+        ? currentProfile.dailyCompletedPuzzleIds
+        : const <String>[];
+    final alreadyCompletedDailyPuzzle = previousDailyIds.contains(challenge.id);
+    final nextDailyIds = {
+      ...previousDailyIds,
+      challenge.id,
+    }.toList(growable: false);
+    final dailyTarget = dailyChallengesForAge(currentProfile.childAge).length;
+    final alreadyCompletedToday = currentProfile.completedOn(today);
+    final completedDailySet = nextDailyIds.length >= dailyTarget;
 
-    final activeChild = currentProfile.activeChild;
-    final yesterday = today.subtract(const Duration(days: 1));
-    final currentStreak =
-        activeChild.completedOn(yesterday) ? activeChild.currentStreak + 1 : 1;
-    final nextSession = PracticeSession(
-      completedAt: now,
-      challengeId: challenge.id,
-      challengeTitle: challenge.title,
-      skill: challenge.skill,
-      minutes: challenge.minutes,
-      correctAnswers: 1,
-      totalQuestions: 1,
+    final nextProfile = currentProfile.copyWith(
+      completedChallenges: alreadyCompletedToday || !completedDailySet
+          ? currentProfile.completedChallenges
+          : currentProfile.completedChallenges + 1,
+      completedLevels:
+          alreadyCompletedDailyPuzzle || currentProfile.completedLevels >= 8
+              ? currentProfile.completedLevels
+              : currentProfile.completedLevels + 1,
+      dailyProgressDate: today,
+      dailyCompletedPuzzleIds: nextDailyIds,
+      lastChallengeDate:
+          completedDailySet ? today : currentProfile.lastChallengeDate,
     );
-    final currentNode = _currentMapNodeFor(activeChild);
-    final completedMapNodeIds = [
-      ...activeChild.completedMapNodeIds,
-      if (currentNode != null &&
-          !activeChild.completedMapNodeIds.contains(currentNode.id))
-        currentNode.id,
-    ];
-    final completedLessonIds = [
-      ...activeChild.completedLessonIds,
-      if (currentNode != null &&
-          !activeChild.completedLessonIds.contains(currentNode.lessonId))
-        currentNode.lessonId,
-    ];
-    final nextChild = activeChild.copyWith(
-      completedChallenges: activeChild.completedChallenges + 1,
-      currentStreak: currentStreak,
-      bestStreak: math.max(activeChild.bestStreak, currentStreak),
-      totalPracticeMinutes:
-          activeChild.totalPracticeMinutes + challenge.minutes,
-      lastChallengeDate: today,
-      lastChallengeId: challenge.id,
-      lastChallengeSkill: challenge.skill,
-      practiceSessions: [
-        ...activeChild.practiceSessions,
-        nextSession,
-      ],
-      completedMapNodeIds: completedMapNodeIds,
-      completedLessonIds: completedLessonIds,
-      mapStars: activeChild.mapStars + 1,
-      mapXp: activeChild.mapXp +
-          (currentNode == null ? 20 : 20 + currentNode.order * 2),
-      hearts: math.min(5, activeChild.hearts + 1),
-    );
-
-    final nextProfile = currentProfile.withActiveChild(nextChild);
 
     await _familyProfileStore.save(nextProfile);
     _familyProfile = nextProfile;
     notifyListeners();
   }
 
-  Future<void> completeLesson({
-    required String lessonId,
-    required DailyChallenge challenge,
-    int correctAnswers = 1,
-    int totalQuestions = 1,
-    int usedHints = 0,
-    int wrongAttempts = 0,
-  }) async {
+  Future<void> completePracticePuzzle(DailyChallenge challenge) async {
     final currentProfile = _familyProfile;
     if (currentProfile == null) {
       return;
     }
 
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final activeChild = currentProfile.activeChild;
-    final currentNode = _nodeForLesson(lessonId);
-    final lesson = FoundationCatalog.lessonForId(lessonId);
-    final wasCompleted = activeChild.completedLessonIds.contains(lessonId);
-
-    final yesterday = today.subtract(const Duration(days: 1));
-    final currentStreak =
-        activeChild.completedOn(yesterday) ? activeChild.currentStreak + 1 : 1;
-    final nextSession = PracticeSession(
-      completedAt: now,
-      challengeId: lessonId,
-      challengeTitle: challenge.title,
-      skill: challenge.skill,
-      minutes: challenge.minutes,
-      correctAnswers: correctAnswers,
-      totalQuestions: totalQuestions,
-      usedHints: usedHints,
-      wrongAttempts: wrongAttempts,
-    );
-    final completedMapNodeIds = [
-      ...activeChild.completedMapNodeIds,
-      if (currentNode != null &&
-          !activeChild.completedMapNodeIds.contains(currentNode.id))
-        currentNode.id,
-    ];
-    final completedLessonIds = [
-      ...activeChild.completedLessonIds,
-      if (!activeChild.completedLessonIds.contains(lessonId)) lessonId,
-    ];
-    final nextChild = activeChild.copyWith(
-      completedChallenges:
-          activeChild.completedChallenges + (wasCompleted ? 0 : 1),
-      currentStreak: currentStreak,
-      bestStreak: math.max(activeChild.bestStreak, currentStreak),
-      totalPracticeMinutes:
-          activeChild.totalPracticeMinutes + challenge.minutes,
-      lastChallengeDate: today,
-      lastChallengeId: lessonId,
-      lastChallengeSkill: challenge.skill,
-      practiceSessions: [
-        ...activeChild.practiceSessions,
-        nextSession,
-      ],
-      completedMapNodeIds: completedMapNodeIds,
-      completedLessonIds: completedLessonIds,
-      mapStars: activeChild.mapStars + (wasCompleted ? 0 : 1),
-      mapXp: activeChild.mapXp + (wasCompleted ? 8 : lesson.xpReward),
-      hearts: math.min(5, activeChild.hearts + 1),
-    );
-
-    final nextProfile = currentProfile.withActiveChild(nextChild);
-
-    await _familyProfileStore.save(nextProfile);
-    _familyProfile = nextProfile;
-    notifyListeners();
-  }
-
-  MapNode? _currentMapNodeFor(ChildProfile child) {
-    for (final node in FoundationCatalog.starterMap.nodes) {
-      if (!child.completedMapNodeIds.contains(node.id)) {
-        return node;
-      }
-    }
-
-    return null;
-  }
-
-  MapNode? _nodeForLesson(String lessonId) {
-    for (final node in FoundationCatalog.starterMap.nodes) {
-      if (node.lessonId == lessonId) {
-        return node;
-      }
-    }
-
-    return null;
-  }
-
-  Future<void> addChildProfile({
-    required String childName,
-    required ChildAge childAge,
-    required LearningGoal learningGoal,
-  }) async {
-    final currentProfile = _familyProfile;
-    if (currentProfile == null || !currentProfile.canAddChild) {
-      return;
-    }
-
-    final createdAt = DateTime.now();
-    final child = ChildProfile(
-      id: childProfileId(name: childName, createdAt: createdAt),
-      name: childName,
-      age: childAge,
-      learningGoal: learningGoal,
-      createdAt: createdAt,
-    );
-    final nextProfile = currentProfile.withActiveChild(child);
-
-    await _familyProfileStore.save(nextProfile);
-    _familyProfile = nextProfile;
-    notifyListeners();
-  }
-
-  Future<void> selectChildProfile(String childId) async {
-    final currentProfile = _familyProfile;
-    if (currentProfile == null || currentProfile.activeChild.id == childId) {
-      return;
-    }
-
-    final child = currentProfile.children.firstWhere(
-      (profile) => profile.id == childId,
-      orElse: () => currentProfile.activeChild,
-    );
-    if (child.id == currentProfile.activeChild.id) {
-      return;
-    }
-
-    final nextProfile = currentProfile.withActiveChild(child);
-
-    await _familyProfileStore.save(nextProfile);
-    _familyProfile = nextProfile;
-    notifyListeners();
-  }
-
-  Future<void> updateSubscriptionPlan(FamilySubscriptionPlan plan) async {
-    final currentProfile = _familyProfile;
-    if (currentProfile == null || currentProfile.subscriptionPlan == plan) {
-      return;
-    }
+    final completedPracticeIds = currentProfile.completedPracticePuzzleIds;
+    final alreadyCompleted = completedPracticeIds.contains(challenge.id);
+    final nextPracticeIds = alreadyCompleted
+        ? completedPracticeIds
+        : <String>[...completedPracticeIds, challenge.id];
 
     final nextProfile = currentProfile.copyWith(
-      subscriptionPlan: plan,
-      subscriptionUpdatedAt: DateTime.now(),
+      completedLevels: alreadyCompleted || currentProfile.completedLevels >= 8
+          ? currentProfile.completedLevels
+          : currentProfile.completedLevels + 1,
+      completedPracticePuzzleIds: nextPracticeIds,
     );
 
     await _familyProfileStore.save(nextProfile);

@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../data/app_locale_store.dart';
 import '../data/family_profile_store.dart';
 import '../features/home/family_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
-import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
+import '../widgets/playful_ui.dart';
 import 'app_controller.dart';
 
 class LogicLikeApp extends StatefulWidget {
   const LogicLikeApp({
     required this.familyProfileStore,
-    this.appLocaleStore,
-    this.locale,
     super.key,
   });
 
   final FamilyProfileStore familyProfileStore;
-  final AppLocaleStore? appLocaleStore;
-  final Locale? locale;
 
   @override
   State<LogicLikeApp> createState() => _LogicLikeAppState();
@@ -26,14 +21,11 @@ class LogicLikeApp extends StatefulWidget {
 
 class _LogicLikeAppState extends State<LogicLikeApp> {
   late final AppController _controller;
-  Locale _locale = const Locale('ru');
 
   @override
   void initState() {
     super.initState();
-    _locale = widget.locale ?? const Locale('ru');
     _controller = AppController(widget.familyProfileStore)..load();
-    _loadSavedLocale();
   }
 
   @override
@@ -46,10 +38,7 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      onGenerateTitle: (context) => context.l10n.appTitle,
-      locale: _locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+      title: 'LogicLike',
       theme: buildAppTheme(),
       home: AnimatedBuilder(
         animation: _controller,
@@ -65,40 +54,10 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
             );
           }
 
-          return FamilyShell(
-            controller: _controller,
-            currentLocale: _locale,
-            onLocaleChanged: _changeLocale,
-          );
+          return FamilyShell(controller: _controller);
         },
       ),
     );
-  }
-
-  Future<void> _loadSavedLocale() async {
-    if (widget.locale != null) {
-      return;
-    }
-
-    final savedLocale = await widget.appLocaleStore?.load();
-    if (!mounted || savedLocale == null) {
-      return;
-    }
-
-    setState(() {
-      _locale = savedLocale;
-    });
-  }
-
-  Future<void> _changeLocale(Locale locale) async {
-    if (_locale.languageCode == locale.languageCode) {
-      return;
-    }
-
-    setState(() {
-      _locale = locale;
-    });
-    await widget.appLocaleStore?.save(locale);
   }
 }
 
@@ -108,8 +67,22 @@ class _LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
+      body: PlayfulBackground(
+        child: Center(
+          child: PlayfulCard(
+            padding: EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppMark(size: 56),
+                SizedBox(height: 18),
+                CircularProgressIndicator(),
+                SizedBox(height: 14),
+                Text('Готовим миссию...'),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

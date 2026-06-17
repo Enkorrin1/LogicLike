@@ -6,28 +6,43 @@ LogicLike is a family-edtech mobile product for children aged 4-8.
 
 Product goal:
 
-- Build a LogicLike-style family learning app for children aged 4-12 focused on
-  logic, math, spatial reasoning, attention, memory, patterns, comparisons,
-  rebuses, and puzzle-based thinking.
-- Use the public LogicLike product model as a benchmark for scope and learning
-  mechanics: large task catalog, themed courses, short explainable puzzles,
-  hints, answers, progress, and parent-visible analytics.
-- Do not copy proprietary LogicLike brand assets, exact UI, exact task texts, or
-  protected content. Build an original implementation with similar product
-  structure and educational goals.
+- Build a Duolingo-style learning engine for logic and math skills: short lessons,
+  frequent repetition loops, adaptive difficulty, and visible progression.
+- Combine game motivation (XP, streaks, hearts, stickers) with one main
+  level-by-level map that parents can track and understand.
+- Do not expose separate child-facing learning categories like Logic, Math,
+  Memory, or Attention as independent tracks. These can exist internally as
+  analytics tags, but the child progresses through one ordered map.
 
 Current product slice:
 
-- Child dashboard with daily mission, progress, collection/rewards, and access to
-  puzzle categories/courses.
-- Puzzle flow with question, choices, hints, correctness feedback, and clear
-  explanation.
-- Internal course/lesson/step catalog used to organize content by puzzle type and
-  difficulty.
-- Separate parent-facing area for family profile, progress summary, weak areas,
-  and weekly recommendations.
-- Onboarding with child age selection limited to 4-8 for the MVP.
+- Duolingo-like learning loop: one child-facing lesson map, ordered level
+  progression, mixed task types inside levels, and a reward loop for the child.
+- Separate parent-facing area for family profile, progress summary, and weekly
+  recommendations.
+- Onboarding with child age selection limited to 4-8.
 - Local family profile persistence and deterministic local progress model.
+
+## Visual Style Lock
+
+The current child-facing visual style is locked and must not be replaced during
+feature or content work.
+
+- Keep the soft 3D cartoon look with volumetric characters and playful
+  children-focused cards.
+- Preserve the home screen direction with the 3D lion avatar, astronaut mission
+  hero, area character portraits, rounded white panels, teal/coral/pastel
+  palette, large readable Russian copy, and bottom tab shell.
+- Do not replace main characters, mission art, area portraits, or reward visuals
+  with flat generic SVG icons.
+- SVGs are allowed for small functional symbols only: arrows, stars, tabs,
+  progress markers, and simple puzzle tokens when they do not replace the main
+  3D character/art direction.
+- New levels and puzzle content must be added inside this style, using matching
+  volumetric/generated art where a character, hero object, or scene illustration
+  is needed.
+- Any proposed visual redesign must be explicitly approved by the user before
+  implementation.
 
 ## Stack
 
@@ -174,14 +189,13 @@ A task is done only when:
 ## Current Product Roadmap
 
 - See `GAME_ROADMAP.md` for the active roadmap and acceptance criteria.
-- The active direction is now LogicLike-style: dashboard, course catalog, puzzle
-  categories, daily missions, progress, hints, explanations, and parent analytics.
+- Stage 0 is the Foundation stage and is currently active.
 
 ### Stage 0 Scope
 
-- Data architecture for a puzzle-course learning model:
-  - `Course`
-  - `CourseSection`
+- Data architecture for a lesson-first learning model:
+  - `LevelMap`
+  - `MapNode`
   - `Lesson`
   - `LessonStep`
   - `PuzzleDefinition`
@@ -193,7 +207,7 @@ A task is done only when:
   - lesson flow with immediate feedback,
   - adaptive difficulty hints/penalty rules,
   - hearts and streak mechanics,
-  - course/category progression,
-  - mixed cognitive task types inside missions and courses.
+  - ordered level unlocking logic,
+  - mixed cognitive task types inside one progression map.
 - Stable IDs and localization keys for all future content text.
 - No platform-specific shortcuts in new game core logic.

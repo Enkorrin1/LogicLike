@@ -28,171 +28,11 @@ void main() {
       await controller.completeOnboarding(
         childName: 'Лев',
         childAge: ChildAge.five,
-        learningGoal: LearningGoal.math,
       );
 
       expect(store.savedProfile?.childName, 'Лев');
       expect(store.savedProfile?.childAge, ChildAge.five);
-      expect(store.savedProfile?.learningGoal, LearningGoal.math);
-      expect(store.savedProfile?.children, hasLength(1));
-      expect(store.savedProfile?.activeChild.name, 'Лев');
       expect(controller.familyProfile, store.savedProfile);
-    });
-
-    test('adds and switches child profiles on a family plan', () async {
-      final profile = FamilyProfile(
-        childName: 'Мира',
-        childAge: ChildAge.six,
-        createdAt: DateTime(2026, 6, 8),
-        completedChallenges: 2,
-        subscriptionPlan: FamilySubscriptionPlan.annual,
-      );
-      final firstChildId = profile.activeChild.id;
-      final store = _InMemoryFamilyProfileStore(profile);
-      final controller = AppController(store);
-
-      await controller.load();
-      await controller.addChildProfile(
-        childName: 'Лев',
-        childAge: ChildAge.five,
-        learningGoal: LearningGoal.math,
-      );
-
-      expect(controller.familyProfile?.children, hasLength(2));
-      expect(controller.familyProfile?.childName, 'Лев');
-      expect(controller.familyProfile?.completedChallenges, 0);
-
-      await controller.selectChildProfile(firstChildId);
-
-      expect(controller.familyProfile?.childName, 'Мира');
-      expect(controller.familyProfile?.completedChallenges, 2);
-    });
-
-    test('does not add a second child on the starter plan', () async {
-      final profile = FamilyProfile(
-        childName: 'Мира',
-        childAge: ChildAge.six,
-        createdAt: DateTime(2026, 6, 8),
-      );
-      final store = _InMemoryFamilyProfileStore(profile);
-      final controller = AppController(store);
-
-      await controller.load();
-      await controller.addChildProfile(
-        childName: 'Лев',
-        childAge: ChildAge.five,
-        learningGoal: LearningGoal.math,
-      );
-
-      expect(controller.familyProfile?.children, hasLength(1));
-      expect(controller.familyProfile?.childName, 'Мира');
-    });
-
-    test('updates and saves family subscription plan', () async {
-      final profile = FamilyProfile(
-        childName: 'Мира',
-        childAge: ChildAge.six,
-        createdAt: DateTime(2026, 6, 8),
-      );
-      final store = _InMemoryFamilyProfileStore(profile);
-      final controller = AppController(store);
-
-      await controller.load();
-      await controller.updateSubscriptionPlan(FamilySubscriptionPlan.annual);
-
-      expect(
-        controller.familyProfile?.subscriptionPlan,
-        FamilySubscriptionPlan.annual,
-      );
-      expect(controller.familyProfile?.subscriptionUpdatedAt, isNotNull);
-      expect(store.savedProfile, controller.familyProfile);
-    });
-
-    test('records completion metrics for a daily challenge', () async {
-      final yesterday = _today().subtract(const Duration(days: 1));
-      final profile = FamilyProfile(
-        childName: 'Мира',
-        childAge: ChildAge.six,
-        createdAt: DateTime(2026, 6, 8),
-        completedChallenges: 2,
-        currentStreak: 2,
-        bestStreak: 2,
-        totalPracticeMinutes: 8,
-        lastChallengeDate: yesterday,
-      );
-      final store = _InMemoryFamilyProfileStore(profile);
-      final controller = AppController(store);
-
-      await controller.load();
-      await controller.completeDailyChallenge(_challenge);
-
-      final savedProfile = controller.familyProfile;
-      expect(savedProfile?.completedChallenges, 3);
-      expect(savedProfile?.currentStreak, 3);
-      expect(savedProfile?.bestStreak, 3);
-      expect(savedProfile?.totalPracticeMinutes, 9);
-      expect(savedProfile?.lastChallengeId, _challenge.id);
-      expect(savedProfile?.lastChallengeSkill, _challenge.skill);
-      expect(savedProfile?.practiceSessions, hasLength(1));
-      expect(savedProfile?.lastSession?.challengeTitle, _challenge.title);
-    });
-
-    test('records concrete lesson progress without duplicating repeats',
-        () async {
-      final profile = FamilyProfile(
-        childName: 'Leo',
-        childAge: ChildAge.five,
-        createdAt: DateTime(2026, 6, 8),
-      );
-      final store = _InMemoryFamilyProfileStore(profile);
-      final controller = AppController(store);
-
-      await controller.load();
-      await controller.completeLesson(
-        lessonId: 'lesson.001',
-        challenge: _challenge,
-        correctAnswers: 2,
-        totalQuestions: 3,
-        usedHints: 1,
-        wrongAttempts: 2,
-      );
-      await controller.completeLesson(
-        lessonId: 'lesson.001',
-        challenge: _challenge,
-      );
-
-      final savedProfile = controller.familyProfile;
-      expect(savedProfile?.completedChallenges, 1);
-      expect(savedProfile?.activeChild.completedLessonIds, ['lesson.001']);
-      expect(savedProfile?.activeChild.completedMapNodeIds, ['node.001']);
-      expect(savedProfile?.practiceSessions, hasLength(2));
-      expect(savedProfile?.lastChallengeId, 'lesson.001');
-      expect(savedProfile?.lastSession?.correctAnswers, 1);
-      expect(savedProfile?.practiceSessions.first.correctAnswers, 2);
-      expect(savedProfile?.practiceSessions.first.totalQuestions, 3);
-      expect(savedProfile?.practiceSessions.first.usedHints, 1);
-      expect(savedProfile?.practiceSessions.first.wrongAttempts, 2);
-    });
-
-    test('starts a new streak when yesterday was missed', () async {
-      final twoDaysAgo = _today().subtract(const Duration(days: 2));
-      final profile = FamilyProfile(
-        childName: 'Мира',
-        childAge: ChildAge.six,
-        createdAt: DateTime(2026, 6, 8),
-        completedChallenges: 4,
-        currentStreak: 4,
-        bestStreak: 4,
-        lastChallengeDate: twoDaysAgo,
-      );
-      final store = _InMemoryFamilyProfileStore(profile);
-      final controller = AppController(store);
-
-      await controller.load();
-      await controller.completeDailyChallenge(_challenge);
-
-      expect(controller.familyProfile?.currentStreak, 1);
-      expect(controller.familyProfile?.bestStreak, 4);
     });
 
     test('counts only one daily challenge completion per day', () async {
@@ -202,9 +42,7 @@ void main() {
         childAge: ChildAge.six,
         createdAt: DateTime(2026, 6, 8),
         completedChallenges: 2,
-        currentStreak: 2,
-        bestStreak: 2,
-        totalPracticeMinutes: 8,
+        completedLevels: 2,
         lastChallengeDate: today,
       );
       final store = _InMemoryFamilyProfileStore(profile);
@@ -214,29 +52,57 @@ void main() {
       await controller.completeDailyChallenge(_challenge);
 
       expect(controller.familyProfile?.completedChallenges, 2);
-      expect(controller.familyProfile?.currentStreak, 2);
-      expect(controller.familyProfile?.totalPracticeMinutes, 8);
-      expect(controller.familyProfile?.practiceSessions, isEmpty);
+      expect(controller.familyProfile?.completedLevels, 3);
       expect(controller.familyProfile?.lastChallengeDate, today);
+    });
+
+    test('does not count replayed daily puzzle as a new level', () async {
+      final today = _today();
+      final profile = FamilyProfile(
+        childName: 'РњРёСЂР°',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedLevels: 2,
+        dailyProgressDate: today,
+        dailyCompletedPuzzleIds: const ['test'],
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completeDailyChallenge(_challenge);
+
+      expect(controller.familyProfile?.completedLevels, 2);
+      expect(controller.familyProfile?.dailyCompletedPuzzleIds, ['test']);
+    });
+
+    test('stores free practice puzzles once', () async {
+      final profile = FamilyProfile(
+        childName: 'РњРёСЂР°',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+        completedLevels: 2,
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.completePracticePuzzle(_challenge);
+      await controller.completePracticePuzzle(_challenge);
+
+      expect(controller.familyProfile?.completedLevels, 3);
+      expect(controller.familyProfile?.completedPracticePuzzleIds, ['test']);
     });
   });
 }
 
 const _challenge = DailyChallenge(
   id: 'test',
-  title: 'Тестовое задание',
-  prompt: 'Выберите ответ.',
-  question: 'Что подходит?',
-  skill: 'Логика',
-  goal: LearningGoal.logic,
+  title: 'Test',
+  prompt: 'Test',
+  skill: 'Test',
   minutes: 1,
-  correctChoiceId: 'a',
-  hint: 'Нужен первый вариант.',
-  explanation: 'Первый вариант подходит по правилу.',
-  choices: [
-    ChallengeChoice(id: 'a', label: 'A'),
-    ChallengeChoice(id: 'b', label: 'B'),
-  ],
+  areaId: 'test',
 );
 
 DateTime _today() {
