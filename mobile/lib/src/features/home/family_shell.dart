@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_controller.dart';
-import '../../theme/app_theme.dart';
-import '../challenge/challenge_screen.dart';
+import '../../domain/learning_foundation.dart';
+import '../../l10n/l10n.dart';
+import '../collection/collection_screen.dart';
+import '../course/course_screen.dart';
+import '../lesson/lesson_screen.dart';
 import '../parent/parent_screen.dart';
 import 'home_screen.dart';
 
 class FamilyShell extends StatefulWidget {
   const FamilyShell({
     required this.controller,
+    required this.currentLocale,
+    required this.onLocaleChanged,
     super.key,
   });
 
   final AppController controller;
+  final Locale currentLocale;
+  final Future<void> Function(Locale locale) onLocaleChanged;
 
   @override
   State<FamilyShell> createState() => _FamilyShellState();
@@ -20,7 +27,10 @@ class FamilyShell extends StatefulWidget {
 
 class _FamilyShellState extends State<FamilyShell> {
   int _selectedIndex = 0;
-  String? _pendingAreaId;
+  CourseDefinition? _selectedCourse;
+  String? _activeLessonId;
+  bool _showCollection = false;
+  bool _showDailyLesson = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,70 +41,157 @@ class _FamilyShellState extends State<FamilyShell> {
         if (profile == null) {
           return const SizedBox.shrink();
         }
-
         final pages = [
-          HomeScreen(
-            profile: profile,
-            onStartChallenge: () {
-              setState(() {
-                _selectedIndex = 1;
-                _pendingAreaId = null;
-              });
-            },
-            onStartArea: (areaId) {
-              setState(() {
-                _selectedIndex = 1;
-                _pendingAreaId = areaId;
-              });
-            },
-          ),
-          ChallengeScreen(
-            profile: profile,
-            initialAreaId: _pendingAreaId,
-            onInitialAreaHandled: () {
-              if (!mounted || _pendingAreaId == null) {
-                return;
-              }
-
-              setState(() {
-                _pendingAreaId = null;
-              });
-            },
-            onChallengeComplete: widget.controller.completeDailyChallenge,
-            onPracticeComplete: widget.controller.completePracticePuzzle,
-          ),
+          _showCollection
+              ? CollectionScreen(
+                  profile: profile,
+                  onBackHome: () {
+                    setState(() {
+                      _showCollection = false;
+                    });
+                  },
+                )
+              : HomeScreen(
+                  profile: profile,
+                  onStartMission: () {
+                    setState(() {
+                      _selectedCourse = null;
+                      _activeLessonId = null;
+                      _showCollection = false;
+                      _showDailyLesson = true;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onCourseSelected: (course) {
+                    setState(() {
+                      _selectedCourse = course;
+                      _activeLessonId = null;
+                      _showCollection = false;
+                      _showDailyLesson = false;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onLessonSelected: (lessonId) {
+                    setState(() {
+                      _selectedCourse = null;
+                      _activeLessonId = lessonId;
+                      _showCollection = false;
+                      _showDailyLesson = false;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onCollectionSelected: () {
+                    setState(() {
+                      _showCollection = true;
+                      _showDailyLesson = false;
+                      _selectedIndex = 0;
+                    });
+                  },
+                ),
+          _showDailyLesson
+              ? LessonScreen(
+                  key: const ValueKey('daily-lesson'),
+                  profile: profile,
+                  lessonId: null,
+                  onLessonComplete: widget.controller.completeLesson,
+                  onNextLessonSelected: (lessonId) {
+                    setState(() {
+                      _showDailyLesson = false;
+                      _activeLessonId = lessonId;
+                      _showCollection = false;
+                      _selectedIndex = 1;
+                    });
+                  },
+                  onBackToMap: () {
+                    setState(() {
+                      _showDailyLesson = false;
+                      _selectedIndex = 0;
+                    });
+                  },
+                )
+              : _selectedCourse != null && _activeLessonId == null
+                  ? CourseScreen(
+                      profile: profile,
+                      course: _selectedCourse!,
+                      onStartLesson: (lessonId) {
+                        setState(() {
+                          _activeLessonId = lessonId;
+                        });
+                      },
+                      onBackHome: () {
+                        setState(() {
+                          _selectedCourse = null;
+                          _selectedIndex = 0;
+                        });
+                      },
+                    )
+                  : _activeLessonId == null
+                      ? AllLevelsScreen(
+                          profile: profile,
+                          onStartLesson: (lessonId) {
+                            setState(() {
+                              _selectedCourse = null;
+                              _activeLessonId = lessonId;
+                              _showDailyLesson = false;
+                            });
+                          },
+                          onBackHome: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                            });
+                          },
+                        )
+                      : LessonScreen(
+                          key: ValueKey(_activeLessonId ?? 'daily-lesson'),
+                          profile: profile,
+                          lessonId: _activeLessonId,
+                          onLessonComplete: widget.controller.completeLesson,
+                          onNextLessonSelected: (lessonId) {
+                            setState(() {
+                              _activeLessonId = lessonId;
+                              _showCollection = false;
+                              _showDailyLesson = false;
+                              _selectedIndex = 1;
+                            });
+                          },
+                          onBackToMap: () {
+                            setState(() {
+                              if (_selectedCourse != null) {
+                                _activeLessonId = null;
+                              } else {
+                                _showDailyLesson = false;
+                                _selectedIndex = 0;
+                              }
+                            });
+                          },
+                        ),
           ParentScreen(
             profile: profile,
+            currentLocale: widget.currentLocale,
+            onChildSelected: widget.controller.selectChildProfile,
+            onChildAdded: widget.controller.addChildProfile,
+            onLocaleChanged: widget.onLocaleChanged,
+            onSubscriptionPlanChanged: widget.controller.updateSubscriptionPlan,
             onResetProfile: widget.controller.resetFamilyProfile,
           ),
         ];
 
         return Scaffold(
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 280),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (child, animation) {
-              final slide = Tween<Offset>(
-                begin: const Offset(0.03, 0),
-                end: Offset.zero,
-              ).animate(animation);
-
-              return FadeTransition(
-                opacity: animation,
-                child: SlideTransition(position: slide, child: child),
-              );
-            },
-            child: KeyedSubtree(
-              key: ValueKey(_selectedIndex),
-              child: pages[_selectedIndex],
-            ),
+          body: IndexedStack(
+            index: _selectedIndex,
+            children: pages,
           ),
-          bottomNavigationBar: _KidBottomNav(
+          bottomNavigationBar: _PlayfulNavigationBar(
             selectedIndex: _selectedIndex,
-            onSelected: (index) {
+            onDestinationSelected: (index) {
               setState(() {
                 _selectedIndex = index;
+                if (index != 0) {
+                  _showCollection = false;
+                }
+                if (index == 1 && _activeLessonId == null) {
+                  _showDailyLesson = false;
+                }
               });
             },
           ),
@@ -104,166 +201,81 @@ class _FamilyShellState extends State<FamilyShell> {
   }
 }
 
-class _KidBottomNav extends StatelessWidget {
-  const _KidBottomNav({
+class _PlayfulNavigationBar extends StatelessWidget {
+  const _PlayfulNavigationBar({
     required this.selectedIndex,
-    required this.onSelected,
+    required this.onDestinationSelected,
   });
 
   final int selectedIndex;
-  final ValueChanged<int> onSelected;
+  final ValueChanged<int> onDestinationSelected;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
-        child: Container(
-          height: 82,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.96),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white, width: 2),
-            boxShadow: [
-              BoxShadow(
-                color: AppPalette.ink.withValues(alpha: 0.12),
-                blurRadius: 22,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              _KidNavItem(
-                icon: Icons.home_rounded,
-                label: 'Домой',
-                selected: selectedIndex == 0,
-                selectedColor: AppPalette.teal,
-                onTap: () => onSelected(0),
-              ),
-              _KidNavItem(
-                icon: Icons.assignment_turned_in_rounded,
-                label: 'Задание',
-                selected: selectedIndex == 1,
-                selectedColor: const Color(0xFF5CA8FF),
-                onTap: () => onSelected(1),
-              ),
-              _KidNavItem(
-                icon: Icons.group_rounded,
-                label: 'Родителю',
-                selected: selectedIndex == 2,
-                selectedColor: AppPalette.lavender,
-                onTap: () => onSelected(2),
-              ),
-            ],
-          ),
+      minimum: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF62B8B4).withValues(alpha: 0.18),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
-      ),
-    );
-  }
-}
-
-class _KidNavItem extends StatelessWidget {
-  const _KidNavItem({
-    required this.icon,
-    required this.label,
-    required this.selected,
-    required this.selectedColor,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool selected;
-  final Color selectedColor;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Semantics(
-        button: true,
-        selected: selected,
-        label: label,
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(end: selected ? 1 : 0),
-          duration: const Duration(milliseconds: 240),
-          curve: Curves.easeOutBack,
-          builder: (context, selectedT, child) {
-            return InkWell(
-              borderRadius: BorderRadius.circular(22),
-              onTap: () {
-                Feedback.forTap(context);
-                onTap();
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeOutCubic,
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 5),
-                decoration: BoxDecoration(
-                  color: selected
-                      ? selectedColor.withValues(alpha: 0.16)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Transform.scale(
-                      scale: 1 + selectedT * 0.08,
-                      child: Container(
-                        width: 38,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          color: Color.lerp(
-                            Colors.transparent,
-                            selectedColor,
-                            selectedT,
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: selected
-                              ? [
-                                  BoxShadow(
-                                    color:
-                                        selectedColor.withValues(alpha: 0.20),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 5),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Icon(
-                          icon,
-                          color: Color.lerp(
-                            AppPalette.muted,
-                            Colors.white,
-                            selectedT,
-                          ),
-                          size: 23,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: selected ? AppPalette.ink : AppPalette.muted,
-                            fontSize: 11,
-                            fontWeight:
-                                selected ? FontWeight.w900 : FontWeight.w800,
-                            height: 1,
-                          ),
-                    ),
-                  ],
-                ),
+        child: NavigationBarTheme(
+          data: NavigationBarThemeData(
+            height: 66,
+            backgroundColor: Colors.transparent,
+            indicatorColor: const Color(0xFFDDF8F4),
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              final selected = states.contains(WidgetState.selected);
+              return TextStyle(
+                color: selected
+                    ? const Color(0xFF0E8F88)
+                    : const Color(0xFF426A70),
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              );
+            }),
+            iconTheme: WidgetStateProperty.resolveWith((states) {
+              final selected = states.contains(WidgetState.selected);
+              return IconThemeData(
+                color: selected
+                    ? const Color(0xFF0E8F88)
+                    : const Color(0xFF7E98A0),
+                size: selected ? 27 : 25,
+              );
+            }),
+          ),
+          child: NavigationBar(
+            elevation: 0,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onDestinationSelected,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            destinations: [
+              NavigationDestination(
+                icon: const Icon(Icons.home_outlined),
+                selectedIcon: const Icon(Icons.home_rounded),
+                label: l10n.homeTab,
               ),
-            );
-          },
+              NavigationDestination(
+                icon: const Icon(Icons.assignment_turned_in_outlined),
+                selectedIcon: const Icon(Icons.assignment_turned_in_rounded),
+                label: l10n.challengeTab,
+              ),
+              NavigationDestination(
+                icon: const Icon(Icons.supervisor_account_outlined),
+                selectedIcon: const Icon(Icons.supervisor_account_rounded),
+                label: l10n.parentTab,
+              ),
+            ],
+          ),
         ),
       ),
     );

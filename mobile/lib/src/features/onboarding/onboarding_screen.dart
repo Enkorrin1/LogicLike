@@ -1,12 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
-import '../../theme/app_theme.dart';
-import '../../widgets/playful_ui.dart';
+import '../../l10n/l10n.dart';
 
 typedef CompleteOnboarding = Future<void> Function({
   required String childName,
   required ChildAge childAge,
+  required LearningGoal learningGoal,
 });
 
 class OnboardingScreen extends StatefulWidget {
@@ -25,6 +27,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _nameController = TextEditingController();
 
   ChildAge _selectedAge = ChildAge.six;
+  LearningGoal _selectedGoal = LearningGoal.logic;
   bool _showNameError = false;
   bool _isSaving = false;
 
@@ -51,6 +54,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await widget.onComplete(
       childName: childName,
       childAge: _selectedAge,
+      learningGoal: _selectedGoal,
     );
 
     if (!mounted) {
@@ -64,224 +68,215 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
-      body: PlayfulBackground(
-        child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.fromLTRB(18, 10, 18, 18),
-            children: [
-              _HeroPassport(
-                nameController: _nameController,
-                selectedAge: _selectedAge,
-                showNameError: _showNameError,
-                onNameChanged: () {
-                  setState(() {
-                    _showNameError = false;
-                  });
-                },
-                onAgeSelected: (age) {
-                  setState(() {
-                    _selectedAge = age;
-                  });
-                },
-                onSubmit: _submit,
-              ),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppPalette.surface,
-          boxShadow: [
-            BoxShadow(
-              color: AppPalette.ink.withValues(alpha: 0.10),
-              blurRadius: 24,
-              offset: const Offset(0, -10),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(18, 12, 18, 14),
-            child: FilledButton.icon(
-              onPressed: _isSaving ? null : _submit,
-              icon: _isSaving
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : const Icon(Icons.rocket_launch_rounded),
-              label: Text(_isSaving ? 'Готовим маршрут' : 'Создать героя'),
+      body: Stack(
+        children: [
+          const Positioned.fill(
+            child: CustomPaint(
+              painter: _OnboardingBackdropPainter(),
             ),
           ),
-        ),
+          SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(18, 12, 18, 26),
+              children: [
+                const _OnboardingHero(),
+                const SizedBox(height: 18),
+                Text(
+                  l10n.onboardingTitle,
+                  style: textTheme.displaySmall,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  l10n.onboardingSubtitle,
+                  style: textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 24),
+                DecoratedBox(
+                  decoration: _softPanelDecoration(),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: _nameController,
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            labelText: l10n.childNameLabel,
+                            errorText:
+                                _showNameError ? l10n.childNameError : null,
+                            prefixIcon: const Icon(Icons.child_care_rounded),
+                          ),
+                          onSubmitted: (_) => _submit(),
+                        ),
+                        const SizedBox(height: 22),
+                        Text(
+                          l10n.ageSectionTitle,
+                          style: textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            for (final age in ChildAge.values)
+                              ChoiceChip(
+                                label: Text(l10n.labelForAge(age)),
+                                selected: _selectedAge == age,
+                                avatar: _selectedAge == age
+                                    ? const Icon(
+                                        Icons.check_rounded,
+                                        size: 18,
+                                      )
+                                    : null,
+                                onSelected: (_) {
+                                  setState(() {
+                                    _selectedAge = age;
+                                  });
+                                },
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 22),
+                        Text(
+                          l10n.learningGoalSectionTitle,
+                          style: textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 12),
+                        for (final goal in LearningGoal.values) ...[
+                          _GoalOption(
+                            goal: goal,
+                            selected: _selectedGoal == goal,
+                            onTap: () {
+                              setState(() {
+                                _selectedGoal = goal;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                FilledButton.icon(
+                  onPressed: _isSaving ? null : _submit,
+                  icon: const Icon(Icons.arrow_forward_rounded),
+                  label: Text(_isSaving ? l10n.savingButton : l10n.startButton),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _HeroPassport extends StatelessWidget {
-  const _HeroPassport({
-    required this.nameController,
-    required this.selectedAge,
-    required this.showNameError,
-    required this.onNameChanged,
-    required this.onAgeSelected,
-    required this.onSubmit,
-  });
-
-  final TextEditingController nameController;
-  final ChildAge selectedAge;
-  final bool showNameError;
-  final VoidCallback onNameChanged;
-  final ValueChanged<ChildAge> onAgeSelected;
-  final VoidCallback onSubmit;
+class _OnboardingHero extends StatelessWidget {
+  const _OnboardingHero();
 
   @override
   Widget build(BuildContext context) {
-    final childName = nameController.text.trim();
-    final displayName = childName.isEmpty ? 'Юный герой' : childName;
+    final l10n = context.l10n;
 
     return Container(
-      clipBehavior: Clip.antiAlias,
+      height: 184,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(32),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF55D6F5),
-            Color(0xFF7EE9C5),
-            Color(0xFFFFE27A),
+            Color(0xFF5BD5FF),
+            Color(0xFFB9F6EA),
           ],
         ),
-        border: Border.all(color: Colors.white, width: 3),
         boxShadow: [
           BoxShadow(
-            color: AppPalette.sky.withValues(alpha: 0.28),
-            blurRadius: 28,
-            offset: const Offset(0, 16),
+            color: const Color(0xFF5EBFC5).withValues(alpha: 0.22),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
+          const Positioned.fill(
+            child: CustomPaint(
+              painter: _OnboardingHeroBackdropPainter(),
+            ),
+          ),
           const Positioned(
-            right: -34,
-            top: -28,
-            child: _HeroPlanet(size: 128, color: Color(0x55FFFFFF)),
+            left: 8,
+            bottom: -18,
+            child: SizedBox(
+              width: 132,
+              height: 132,
+              child: Image(
+                image: AssetImage('assets/images/generated/planet.png'),
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          const Positioned(
+            right: 22,
+            top: 12,
+            child: SizedBox(
+              width: 94,
+              height: 112,
+              child: Image(
+                image: AssetImage('assets/images/generated/rocket.png'),
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
           Positioned(
-            right: 14,
-            bottom: 14,
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: Colors.white.withValues(alpha: 0.70),
-              size: 48,
+            left: 22,
+            top: 18,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF2D9AB1).withValues(alpha: 0.20),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: const Padding(
+                padding: EdgeInsets.all(6),
+                child: SizedBox(
+                  width: 72,
+                  height: 72,
+                  child: Image(
+                    image: AssetImage('assets/images/generated/lion.png'),
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 18, 18, 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 94,
-                      height: 94,
-                      padding: const EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppPalette.ink.withValues(alpha: 0.12),
-                            blurRadius: 16,
-                            offset: const Offset(0, 8),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: Image.asset(
-                          'assets/images/avatar_lion.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const _MissionPill(),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Создай героя',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(
-                                  color: AppPalette.ink,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '$displayName, ${selectedAge.label}',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: AppPalette.ink,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Лев покажет миссию дня, а дальше ребенок сам выберет тренировки.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppPalette.ink,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: nameController,
-                  textCapitalization: TextCapitalization.words,
-                  textInputAction: TextInputAction.done,
-                  decoration: InputDecoration(
-                    labelText: 'Имя ребенка',
-                    errorText: showNameError ? 'Введите имя героя' : null,
-                    prefixIcon: const Icon(Icons.face_rounded),
-                    filled: true,
-                    fillColor: Colors.white.withValues(alpha: 0.92),
+          Positioned(
+            left: 116,
+            top: 32,
+            right: 118,
+            child: Text(
+              l10n.onboardingHeroTitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontSize: 24,
+                    height: 1.06,
                   ),
-                  onChanged: (_) => onNameChanged(),
-                  onSubmitted: (_) => onSubmit(),
-                ),
-                const SizedBox(height: 14),
-                _InlineAgeSelector(
-                  selectedAge: selectedAge,
-                  onSelected: onAgeSelected,
-                ),
-                const SizedBox(height: 14),
-                const _HeroUnlockRow(),
-              ],
             ),
           ),
         ],
@@ -290,259 +285,235 @@ class _HeroPassport extends StatelessWidget {
   }
 }
 
-class _MissionPill extends StatelessWidget {
-  const _MissionPill();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.86),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.stars_rounded, color: AppPalette.mango, size: 18),
-          const SizedBox(width: 5),
-          Text(
-            'старт миссии',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppPalette.ink,
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InlineAgeSelector extends StatelessWidget {
-  const _InlineAgeSelector({
-    required this.selectedAge,
-    required this.onSelected,
-  });
-
-  final ChildAge selectedAge;
-  final ValueChanged<ChildAge> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.58),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.74)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.cake_rounded,
-                color: AppPalette.coral,
-                size: 18,
-              ),
-              const SizedBox(width: 6),
-              Text(
-                'Возраст героя',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppPalette.ink,
-                      fontWeight: FontWeight.w900,
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              for (var i = 0; i < ChildAge.values.length; i++) ...[
-                Expanded(
-                  child: _CompactAgeChip(
-                    age: ChildAge.values[i],
-                    selected: selectedAge == ChildAge.values[i],
-                    onTap: () => onSelected(ChildAge.values[i]),
-                  ),
-                ),
-                if (i != ChildAge.values.length - 1) const SizedBox(width: 6),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CompactAgeChip extends StatelessWidget {
-  const _CompactAgeChip({
-    required this.age,
+class _GoalOption extends StatelessWidget {
+  const _GoalOption({
+    required this.goal,
     required this.selected,
     required this.onTap,
   });
 
-  final ChildAge age;
+  final LearningGoal goal;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppPalette.coral : Colors.white;
+    final l10n = context.l10n;
 
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(16),
+    return InkWell(
+      borderRadius: BorderRadius.circular(22),
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        height: 52,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(16),
+          color: selected ? const Color(0xFFDDF8F4) : Colors.white,
           border: Border.all(
-            color: selected ? Colors.white : AppPalette.border,
+            color: selected ? const Color(0xFF18B7AE) : const Color(0xFFD6EDE8),
             width: selected ? 2 : 1,
           ),
+          borderRadius: BorderRadius.circular(22),
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: AppPalette.coral.withValues(alpha: 0.24),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
+                    color: const Color(0xFF18B7AE).withValues(alpha: 0.13),
+                    blurRadius: 14,
+                    offset: const Offset(0, 7),
                   ),
                 ]
               : null,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
           children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: selected
+                    ? const Color(0xFF18B7AE)
+                    : const Color(0xFFFFF3D1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _goalIcon(goal),
+                color: selected ? Colors.white : const Color(0xFFFF9D2E),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.labelForGoal(goal),
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(l10n.descriptionForGoal(goal)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
             Icon(
               selected
-                  ? Icons.check_circle_rounded
-                  : Icons.auto_awesome_rounded,
-              color: selected ? Colors.white : AppPalette.teal,
-              size: 18,
-            ),
-            const SizedBox(height: 3),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                age.label,
-                maxLines: 1,
-                softWrap: false,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: selected ? Colors.white : AppPalette.ink,
-                      fontWeight: FontWeight.w900,
-                      height: 1,
-                    ),
-              ),
+                  ? Icons.radio_button_checked_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              color:
+                  selected ? const Color(0xFF18B7AE) : const Color(0xFF9AB3B4),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class _HeroUnlockRow extends StatelessWidget {
-  const _HeroUnlockRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      children: [
-        Expanded(
-          child: _UnlockBadge(
-            icon: Icons.local_fire_department_rounded,
-            color: AppPalette.coral,
-            label: 'Миссия',
-          ),
-        ),
-        SizedBox(width: 8),
-        Expanded(
-          child: _UnlockBadge(
-            icon: Icons.extension_rounded,
-            color: AppPalette.lavender,
-            label: 'Игры',
-          ),
-        ),
-        SizedBox(width: 8),
-        Expanded(
-          child: _UnlockBadge(
-            icon: Icons.star_rounded,
-            color: AppPalette.mango,
-            label: 'Призы',
-          ),
-        ),
-      ],
-    );
+  IconData _goalIcon(LearningGoal goal) {
+    switch (goal) {
+      case LearningGoal.logic:
+        return Icons.psychology_alt_rounded;
+      case LearningGoal.math:
+        return Icons.calculate_rounded;
+      case LearningGoal.attention:
+        return Icons.center_focus_strong_rounded;
+    }
   }
 }
 
-class _UnlockBadge extends StatelessWidget {
-  const _UnlockBadge({
-    required this.icon,
-    required this.color,
-    required this.label,
-  });
-
-  final IconData icon;
-  final Color color;
-  final String label;
+class _OnboardingBackdropPainter extends CustomPainter {
+  const _OnboardingBackdropPainter();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 68,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 9),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.74),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.82)),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppPalette.ink,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-          ),
-        ],
-      ),
+  void paint(Canvas canvas, Size size) {
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..color = const Color(0xFFFFFBF2),
     );
+
+    final aquaPaint = Paint()..color = const Color(0xFFE2FBF5);
+    canvas.drawCircle(
+        Offset(size.width * 0.88, size.height * 0.10), 90, aquaPaint);
+    canvas.drawCircle(
+        Offset(size.width * 0.06, size.height * 0.72), 80, aquaPaint);
+
+    final starPaint = Paint()..color = const Color(0xFFFFE05E);
+    for (final point in [
+      Offset(size.width * 0.12, size.height * 0.16),
+      Offset(size.width * 0.86, size.height * 0.36),
+      Offset(size.width * 0.18, size.height * 0.58),
+    ]) {
+      _drawStar(canvas, point, 9, starPaint);
+    }
+  }
+
+  void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
+    final path = Path();
+    for (var index = 0; index < 10; index += 1) {
+      final angle = -math.pi / 2 + index * math.pi / 5;
+      final currentRadius = index.isEven ? radius : radius * 0.45;
+      final point = Offset(
+        center.dx + math.cos(angle) * currentRadius,
+        center.dy + math.sin(angle) * currentRadius,
+      );
+      if (index == 0) {
+        path.moveTo(point.dx, point.dy);
+      } else {
+        path.lineTo(point.dx, point.dy);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
   }
 }
 
-class _HeroPlanet extends StatelessWidget {
-  const _HeroPlanet({
-    required this.size,
-    required this.color,
-  });
-
-  final double size;
-  final Color color;
+class _OnboardingHeroBackdropPainter extends CustomPainter {
+  const _OnboardingHeroBackdropPainter();
 
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
+  void paint(Canvas canvas, Size size) {
+    _drawCloud(canvas, Offset(size.width * 0.18, 42), 0.8);
+    _drawCloud(canvas, Offset(size.width * 0.74, 52), 0.7);
+
+    final starPaint = Paint()..color = const Color(0xFFFFE05E);
+    _drawStar(
+        canvas, Offset(size.width * 0.50, size.height * 0.34), 12, starPaint);
+    _drawStar(
+        canvas, Offset(size.width * 0.86, size.height * 0.80), 9, starPaint);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          -20,
+          size.height * 0.72,
+          size.width + 40,
+          size.height * 0.36,
+        ),
+        const Radius.circular(90),
       ),
+      Paint()..color = const Color(0xFF7BE0D1),
     );
   }
+
+  void _drawCloud(Canvas canvas, Offset center, double scale) {
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.78);
+    canvas.drawCircle(
+        center + Offset(-20 * scale, 8 * scale), 17 * scale, paint);
+    canvas.drawCircle(center, 20 * scale, paint);
+    canvas.drawCircle(
+        center + Offset(24 * scale, 9 * scale), 14 * scale, paint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: center + Offset(2, 14 * scale),
+          width: 76 * scale,
+          height: 18 * scale,
+        ),
+        Radius.circular(12 * scale),
+      ),
+      paint,
+    );
+  }
+
+  void _drawStar(Canvas canvas, Offset center, double radius, Paint paint) {
+    final path = Path();
+    for (var index = 0; index < 10; index += 1) {
+      final angle = -math.pi / 2 + index * math.pi / 5;
+      final currentRadius = index.isEven ? radius : radius * 0.45;
+      final point = Offset(
+        center.dx + math.cos(angle) * currentRadius,
+        center.dy + math.sin(angle) * currentRadius,
+      );
+      if (index == 0) {
+        path.moveTo(point.dx, point.dy);
+      } else {
+        path.lineTo(point.dx, point.dy);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return false;
+  }
+}
+
+BoxDecoration _softPanelDecoration() {
+  return BoxDecoration(
+    color: Colors.white.withValues(alpha: 0.94),
+    borderRadius: BorderRadius.circular(30),
+    border: Border.all(color: Colors.white, width: 2),
+    boxShadow: [
+      BoxShadow(
+        color: const Color(0xFF7ABDB8).withValues(alpha: 0.17),
+        blurRadius: 24,
+        offset: const Offset(0, 12),
+      ),
+    ],
+  );
 }

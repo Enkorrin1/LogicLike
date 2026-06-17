@@ -1,14 +1,14 @@
 # LogicLike
 
-LogicLike is a family-edtech mobile product for children aged 4-8.
+LogicLike is a Flutter family-edtech mobile app for children aged 4-12.
 
-The current product direction is Duolingo-style cognitive training focused on logic
-and math through short lessons, repetition loops, and one clear level-by-level
-map. Cognitive skill tags are used internally for analytics, not as separate
-child-facing tracks.
+The current direction is a LogicLike-style learning hub: daily missions, puzzle
+courses, short explainable tasks, rewards, progress, and parent analytics. The
+project uses LogicLike as a public product benchmark, but all UI, content,
+assets, and implementation must remain original.
 
-See `PROJECT_SPEC.md` for the working product, platform, localization, testing,
-Runner, and Watcher rules.
+See `PROJECT_SPEC.md` for product, platform, localization, testing, Runner, and
+Watcher rules. See `GAME_ROADMAP.md` for the active development roadmap.
 
 ## Mobile
 
