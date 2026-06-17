@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logic_like/src/app/app_controller.dart';
 import 'package:logic_like/src/data/family_profile_store.dart';
+import 'package:logic_like/src/data/locale_store.dart';
 import 'package:logic_like/src/domain/daily_challenge.dart';
 import 'package:logic_like/src/domain/family_profile.dart';
 
@@ -93,6 +96,21 @@ void main() {
       expect(controller.familyProfile?.completedLevels, 3);
       expect(controller.familyProfile?.completedPracticePuzzleIds, ['test']);
     });
+
+    test('loads and saves selected locale', () async {
+      final localeStore = _InMemoryLocaleStore(const Locale('en'));
+      final controller = AppController(
+        _InMemoryFamilyProfileStore(),
+        localeStore: localeStore,
+      );
+
+      await controller.load();
+      expect(controller.locale, const Locale('en'));
+
+      await controller.changeLocale(const Locale('de'));
+      expect(controller.locale, const Locale('de'));
+      expect(localeStore.savedLocale, const Locale('de'));
+    });
   });
 }
 
@@ -128,5 +146,21 @@ class _InMemoryFamilyProfileStore implements FamilyProfileStore {
   @override
   Future<void> save(FamilyProfile profile) async {
     savedProfile = profile;
+  }
+}
+
+class _InMemoryLocaleStore implements LocaleStore {
+  _InMemoryLocaleStore([this.savedLocale]);
+
+  Locale? savedLocale;
+
+  @override
+  Future<Locale?> load() async {
+    return savedLocale;
+  }
+
+  @override
+  Future<void> save(Locale locale) async {
+    savedLocale = locale;
   }
 }

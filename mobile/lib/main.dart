@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'src/app/logic_like_app.dart';
 import 'src/data/family_profile_store.dart';
+import 'src/data/locale_store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,7 @@ Future<void> main() async {
   runApp(
     LogicLikeApp(
       familyProfileStore: SharedPreferencesFamilyProfileStore(preferences),
+      localeStore: SharedPreferencesLocaleStore(preferences),
     ),
   );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logic_like/src/domain/family_profile.dart';
 import 'package:logic_like/src/features/parent/parent_screen.dart';
+import 'package:logic_like/src/l10n/l10n.dart';
 import 'package:logic_like/src/theme/app_theme.dart';
 
 void main() {
@@ -23,8 +24,13 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ru'),
         home: ParentScreen(
           profile: profile,
+          selectedLocale: const Locale('ru'),
+          onLocaleChanged: (_) {},
           onResetProfile: () async {
             resetCalled = true;
           },
@@ -70,5 +76,45 @@ void main() {
     await tester.tap(find.text('Отмена'));
     await tester.pumpAndSettle();
     expect(resetCalled, isFalse);
+  });
+
+  testWidgets('changes selected language from parent settings', (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    Locale? selectedLocale;
+    final profile = FamilyProfile(
+      childName: 'Lev',
+      childAge: ChildAge.five,
+      createdAt: DateTime.now(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ru'),
+        home: ParentScreen(
+          profile: profile,
+          selectedLocale: const Locale('ru'),
+          onLocaleChanged: (locale) {
+            selectedLocale = locale;
+          },
+          onResetProfile: () async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final dropdown = find.byType(DropdownButtonFormField<Locale>);
+    await tester.tap(dropdown);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('English').last);
+    await tester.pumpAndSettle();
+
+    expect(selectedLocale, const Locale('en'));
   });
 }

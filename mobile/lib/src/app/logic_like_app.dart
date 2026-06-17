@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../data/family_profile_store.dart';
+import '../data/locale_store.dart';
 import '../features/home/family_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import '../widgets/playful_ui.dart';
 import 'app_controller.dart';
@@ -10,10 +12,14 @@ import 'app_controller.dart';
 class LogicLikeApp extends StatefulWidget {
   const LogicLikeApp({
     required this.familyProfileStore,
+    this.localeStore,
+    this.locale,
     super.key,
   });
 
   final FamilyProfileStore familyProfileStore;
+  final LocaleStore? localeStore;
+  final Locale? locale;
 
   @override
   State<LogicLikeApp> createState() => _LogicLikeAppState();
@@ -25,7 +31,10 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
   @override
   void initState() {
     super.initState();
-    _controller = AppController(widget.familyProfileStore)..load();
+    _controller = AppController(
+      widget.familyProfileStore,
+      localeStore: widget.localeStore,
+    )..load();
   }
 
   @override
@@ -38,7 +47,10 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'LogicLike',
+      onGenerateTitle: (context) => context.l10n.appTitle,
+      locale: widget.locale ?? _controller.locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: buildAppTheme(),
       home: AnimatedBuilder(
         animation: _controller,
@@ -66,8 +78,8 @@ class _LoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: PlayfulBackground(
+    return Scaffold(
+      body: const PlayfulBackground(
         child: Center(
           child: PlayfulCard(
             padding: EdgeInsets.all(24),
@@ -78,9 +90,17 @@ class _LoadingScreen extends StatelessWidget {
                 SizedBox(height: 18),
                 CircularProgressIndicator(),
                 SizedBox(height: 14),
-                Text('Готовим миссию...'),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 18),
+          child: Text(
+            context.l10n.loadingMission,
+            textAlign: TextAlign.center,
           ),
         ),
       ),

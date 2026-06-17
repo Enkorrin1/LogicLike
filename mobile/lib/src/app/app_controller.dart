@@ -1,24 +1,48 @@
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 
 import '../data/family_profile_store.dart';
+import '../data/locale_store.dart';
 import '../domain/daily_challenge.dart';
 import '../domain/family_profile.dart';
 
 class AppController extends ChangeNotifier {
-  AppController(this._familyProfileStore);
+  AppController(
+    this._familyProfileStore, {
+    LocaleStore? localeStore,
+  }) : _localeStore = localeStore;
 
   final FamilyProfileStore _familyProfileStore;
+  final LocaleStore? _localeStore;
 
   bool _isLoading = true;
   FamilyProfile? _familyProfile;
+  Locale _locale = const Locale('ru');
 
   bool get isLoading => _isLoading;
   FamilyProfile? get familyProfile => _familyProfile;
+  Locale get locale => _locale;
 
   Future<void> load() async {
-    _familyProfile = await _familyProfileStore.load();
+    final loaded = await Future.wait<Object?>([
+      _familyProfileStore.load(),
+      _localeStore?.load() ?? Future<Locale?>.value(),
+    ]);
+    _familyProfile = loaded[0] as FamilyProfile?;
+    _locale = loaded[1] as Locale? ?? const Locale('ru');
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> changeLocale(Locale locale) async {
+    if (_locale == locale) {
+      return;
+    }
+
+    _locale = locale;
+    notifyListeners();
+    await _localeStore?.save(locale);
   }
 
   Future<void> completeOnboarding({

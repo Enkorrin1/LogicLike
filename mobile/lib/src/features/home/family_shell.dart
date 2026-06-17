@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_controller.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import '../challenge/challenge_screen.dart';
 import '../parent/parent_screen.dart';
@@ -65,6 +66,8 @@ class _FamilyShellState extends State<FamilyShell> {
           ),
           ParentScreen(
             profile: profile,
+            selectedLocale: widget.controller.locale,
+            onLocaleChanged: widget.controller.changeLocale,
             onResetProfile: widget.controller.resetFamilyProfile,
           ),
         ];
@@ -115,6 +118,8 @@ class _KidBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return SafeArea(
       top: false,
       child: Padding(
@@ -138,21 +143,21 @@ class _KidBottomNav extends StatelessWidget {
             children: [
               _KidNavItem(
                 icon: Icons.home_rounded,
-                label: 'Домой',
+                label: l10n.navHome,
                 selected: selectedIndex == 0,
                 selectedColor: AppPalette.teal,
                 onTap: () => onSelected(0),
               ),
               _KidNavItem(
                 icon: Icons.assignment_turned_in_rounded,
-                label: 'Задание',
+                label: l10n.navChallenge,
                 selected: selectedIndex == 1,
                 selectedColor: const Color(0xFF5CA8FF),
                 onTap: () => onSelected(1),
               ),
               _KidNavItem(
                 icon: Icons.group_rounded,
-                label: 'Родителю',
+                label: l10n.navParent,
                 selected: selectedIndex == 2,
                 selectedColor: AppPalette.lavender,
                 onTap: () => onSelected(2),

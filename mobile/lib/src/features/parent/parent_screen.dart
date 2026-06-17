@@ -4,17 +4,22 @@ import 'package:flutter/material.dart';
 
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 
 class ParentScreen extends StatelessWidget {
   const ParentScreen({
     required this.profile,
+    required this.selectedLocale,
+    required this.onLocaleChanged,
     required this.onResetProfile,
     super.key,
   });
 
   final FamilyProfile profile;
+  final Locale selectedLocale;
+  final ValueChanged<Locale> onLocaleChanged;
   final Future<void> Function() onResetProfile;
 
   @override
@@ -83,6 +88,8 @@ class ParentScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _FamilySettingsCard(
               profile: profile,
+              selectedLocale: selectedLocale,
+              onLocaleChanged: onLocaleChanged,
               onResetPressed: () => _confirmReset(context),
             ),
           ],
@@ -746,14 +753,20 @@ class _AdviceTile extends StatelessWidget {
 class _FamilySettingsCard extends StatelessWidget {
   const _FamilySettingsCard({
     required this.profile,
+    required this.selectedLocale,
+    required this.onLocaleChanged,
     required this.onResetPressed,
   });
 
   final FamilyProfile profile;
+  final Locale selectedLocale;
+  final ValueChanged<Locale> onLocaleChanged;
   final VoidCallback onResetPressed;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return PlayfulCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -790,6 +803,25 @@ class _FamilySettingsCard extends StatelessWidget {
             color: AppPalette.surfaceBlue,
             label: 'Подписка',
             value: 'скоро',
+          ),
+          DropdownButtonFormField<Locale>(
+            initialValue: selectedLocale,
+            decoration: InputDecoration(
+              labelText: l10n.settingsLanguage,
+              prefixIcon: const Icon(Icons.language_rounded),
+            ),
+            items: [
+              for (final option in _languageOptions(l10n))
+                DropdownMenuItem<Locale>(
+                  value: option.locale,
+                  child: Text(option.label),
+                ),
+            ],
+            onChanged: (locale) {
+              if (locale != null) {
+                onLocaleChanged(locale);
+              }
+            },
           ),
           const SizedBox(height: 6),
           OutlinedButton.icon(
@@ -855,6 +887,30 @@ class _InfoRow extends StatelessWidget {
       ),
     );
   }
+}
+
+class _LanguageOption {
+  const _LanguageOption(this.locale, this.label);
+
+  final Locale locale;
+  final String label;
+}
+
+List<_LanguageOption> _languageOptions(AppLocalizations l10n) {
+  return [
+    _LanguageOption(const Locale('ar'), l10n.languageArabic),
+    _LanguageOption(const Locale('de'), l10n.languageGerman),
+    _LanguageOption(const Locale('en'), l10n.languageEnglish),
+    _LanguageOption(const Locale('es'), l10n.languageSpanish),
+    _LanguageOption(const Locale('fr'), l10n.languageFrench),
+    _LanguageOption(const Locale('hi'), l10n.languageHindi),
+    _LanguageOption(const Locale('it'), l10n.languageItalian),
+    _LanguageOption(const Locale('ja'), l10n.languageJapanese),
+    _LanguageOption(const Locale('ko'), l10n.languageKorean),
+    _LanguageOption(const Locale('pt'), l10n.languagePortuguese),
+    _LanguageOption(const Locale('ru'), l10n.languageRussian),
+    _LanguageOption(const Locale('zh'), l10n.languageChinese),
+  ];
 }
 
 Set<String> _todaysCompletedPuzzleIds(FamilyProfile profile, DateTime now) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 
@@ -64,6 +65,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Scaffold(
       body: PlayfulBackground(
         child: SafeArea(
@@ -117,7 +120,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     )
                   : const Icon(Icons.rocket_launch_rounded),
-              label: Text(_isSaving ? 'Готовим маршрут' : 'Создать героя'),
+              label: Text(
+                _isSaving
+                    ? l10n.onboardingSubmitSaving
+                    : l10n.onboardingSubmitCreateHero,
+              ),
             ),
           ),
         ),
@@ -145,8 +152,10 @@ class _HeroPassport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final childName = nameController.text.trim();
-    final displayName = childName.isEmpty ? 'Юный герой' : childName;
+    final displayName =
+        childName.isEmpty ? l10n.onboardingDefaultHero : childName;
 
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -224,7 +233,7 @@ class _HeroPassport extends StatelessWidget {
                           const _MissionPill(),
                           const SizedBox(height: 10),
                           Text(
-                            'Создай героя',
+                            l10n.onboardingTitle,
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineSmall
@@ -235,7 +244,7 @@ class _HeroPassport extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '$displayName, ${selectedAge.label}',
+                            '$displayName, ${l10n.ageYears(selectedAge.years)}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)
@@ -253,7 +262,7 @@ class _HeroPassport extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Лев покажет миссию дня, а дальше ребенок сам выберет тренировки.',
+                  l10n.onboardingSubtitle,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: AppPalette.ink,
                         fontWeight: FontWeight.w800,
@@ -265,8 +274,8 @@ class _HeroPassport extends StatelessWidget {
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    labelText: 'Имя ребенка',
-                    errorText: showNameError ? 'Введите имя героя' : null,
+                    labelText: l10n.childNameLabel,
+                    errorText: showNameError ? l10n.childNameError : null,
                     prefixIcon: const Icon(Icons.face_rounded),
                     filled: true,
                     fillColor: Colors.white.withValues(alpha: 0.92),
@@ -307,7 +316,7 @@ class _MissionPill extends StatelessWidget {
           const Icon(Icons.stars_rounded, color: AppPalette.mango, size: 18),
           const SizedBox(width: 5),
           Text(
-            'старт миссии',
+            context.l10n.onboardingMissionPill,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: AppPalette.ink,
                   fontWeight: FontWeight.w900,
@@ -330,6 +339,8 @@ class _InlineAgeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -349,7 +360,7 @@ class _InlineAgeSelector extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                'Возраст героя',
+                l10n.onboardingAgeTitle,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppPalette.ink,
                       fontWeight: FontWeight.w900,
@@ -391,6 +402,7 @@ class _CompactAgeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final color = selected ? AppPalette.coral : Colors.white;
 
     return BouncyTap(
@@ -431,7 +443,7 @@ class _CompactAgeChip extends StatelessWidget {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                age.label,
+                l10n.ageYears(age.years),
                 maxLines: 1,
                 softWrap: false,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -453,29 +465,31 @@ class _HeroUnlockRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    final l10n = context.l10n;
+
+    return Row(
       children: [
         Expanded(
           child: _UnlockBadge(
             icon: Icons.local_fire_department_rounded,
             color: AppPalette.coral,
-            label: 'Миссия',
+            label: l10n.unlockMission,
           ),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
           child: _UnlockBadge(
             icon: Icons.extension_rounded,
             color: AppPalette.lavender,
-            label: 'Игры',
+            label: l10n.unlockGames,
           ),
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Expanded(
           child: _UnlockBadge(
             icon: Icons.star_rounded,
             color: AppPalette.mango,
-            label: 'Призы',
+            label: l10n.unlockPrizes,
           ),
         ),
       ],
