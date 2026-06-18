@@ -1,34 +1,407 @@
 {
-    "@@locale":  "fr",
-    "appTitle":  "LogicLike",
-    "loadingMission":  "Préparation de la mission...",
-    "navHome":  "Maison",
-    "navChallenge":  "Quête",
-    "navParent":  "Mère",
-    "onboardingSubmitSaving":  "Préparation de l'itinéraire",
-    "onboardingSubmitCreateHero":  "Créer un héros",
-    "onboardingDefaultHero":  "Jeune héros",
-    "onboardingTitle":  "Créer un héros",
-    "onboardingSubtitle":  "Le lion montrera la mission quotidienne, puis l'enfant pourra choisir des jeux cérébraux.",
-    "childNameLabel":  "Nom de l'enfant",
-    "childNameError":  "Entrez le nom du héros",
-    "onboardingMissionPill":  "début de mission",
-    "onboardingAgeTitle":  "Âge du héros",
-    "unlockMission":  "Mission",
-    "unlockGames":  "Jeux",
-    "unlockPrizes":  "Prix",
-    "ageYears":  "{years, plural, one{{years} année} other{{years} années}}",
-    "languageArabic":  "العربية",
-    "languageGerman":  "Deutsch",
-    "languageEnglish":  "English",
-    "languageSpanish":  "Español",
-    "languageFrench":  "Français",
-    "languageHindi":  "हिन्दी",
-    "languageItalian":  "Italiano",
-    "languageJapanese":  "日本語",
-    "languageKorean":  "한국어",
-    "languagePortuguese":  "Português",
-    "languageRussian":  "Русский",
-    "languageChinese":  "中文",
-    "settingsLanguage":  "Langue"
+  "appTitle": "BrainUp",
+  "loadingMission": "Préparation de la mission...",
+  "navHome": "Maison",
+  "navChallenge": "Tâche",
+  "navParent": "Mère",
+  "commonCancel": "Annuler",
+  "commonReset": "Réinitialiser",
+  "languageChanged": "Langue : {language}",
+  "languageButtonSemantics": "Changer de langue. Actuel : {language}",
+  "onboardingSubmitSaving": "Préparation de l'itinéraire",
+  "onboardingSubmitCreateHero": "Créer un héros",
+  "onboardingDefaultHero": "Jeune héros",
+  "onboardingTitle": "Créer un héros",
+  "onboardingHeroSummary": "{name}, {age}",
+  "onboardingSubtitle": "Le lion montrera la mission quotidienne, puis votre enfant pourra choisir l'entraînement cérébral.",
+  "childNameLabel": "Nom de l'enfant",
+  "childNameError": "Entrez le nom du héros",
+  "onboardingMissionPill": "début de mission",
+  "onboardingAgeTitle": "Âge du héros",
+  "unlockMission": "Mission",
+  "unlockGames": "Jeux",
+  "unlockPrizes": "Prix",
+  "ageYears": "{years} années",
+  "homeGreeting": "Bonjour,\n{name}",
+  "homeStarsHint": "Les étoiles grandissent au fil des missions et débloquent de nouveaux prix.",
+  "homeLockedLevelHint": "Ce niveau s'ouvre après de nouvelles étoiles.",
+  "homeStreakSavedHint": "Série sauvée ! Une nouvelle mission arrive demain.",
+  "homeStreakNeedMissionHint": "Terminez la mission quotidienne pour sauver la séquence.",
+  "homeStreakTitle": "Série quotidienne",
+  "homeStreakDays": "{days} jours d'affilée !",
+  "homeStreakWaiting": "la mission attend",
+  "homeMissionDaily": "Mission quotidienne",
+  "homeMissionFreePlay": "Jeu gratuit",
+  "homeTrainingOpen": "La formation est ouverte",
+  "homeLevel": "Niveau {level}",
+  "homeMissionStart": "Commencer",
+  "homeMissionChoose": "Choisir",
+  "homeMissionTag": "Mission principale",
+  "homeFreePlayTitle": "Jouez vous-même",
+  "homeFreePlaySubtitle": "choisissez un héros et entraînez votre cerveau",
+  "homeMiniGamesTitle": "Mini-jeux",
+  "homeMiniGamesSubtitle": "entraînement rapide après les niveaux",
+  "homeQuickPairs": "Paires",
+  "homeQuickPath": "Chemin",
+  "homeQuickCount": "Compter",
+  "homeProgressTitle": "Mes progrès",
+  "homeProgressStars": "Étoiles {current} / {total}",
+  "homeCollectionTitle": "Collection",
+  "homeCollectionStickers": "autocollants",
+  "homeLevelsTitle": "Niveaux",
+  "homeLevelsSubtitle": "8 thèmes de formation, pas un calendrier",
+  "homeNodeCompleted": "fait",
+  "homeNodePlay": "jouer",
+  "homeNodeSoon": "bientôt",
+  "homeMapStart": "Commencer",
+  "homeMapShapes": "Formes",
+  "homeMapPairs": "Paires",
+  "homeMapCount": "Compter",
+  "homeMapPath": "Chemin",
+  "homeMapRhythm": "Rythme",
+  "homeMapCompare": "Comparer",
+  "homeMapFinal": "Final",
+  "parentTitle": "Espace parents",
+  "parentIntroTitle": "Zone calme pour adultes",
+  "parentIntroBody": "Profil, progression, langue et futur abonnement en direct séparément de la mission enfant.",
+  "parentProfileTitle": "Profil familial",
+  "parentLocalBadge": "locale",
+  "parentChildLabel": "Enfant",
+  "parentAgeLabel": "Âge",
+  "parentCompletedTasksLabel": "Tâches terminées",
+  "parentLanguageLabel": "Langue",
+  "settingsLanguage": "Langue de l'application",
+  "parentSubscriptionTitle": "Abonnement familial",
+  "parentSubscriptionSoon": "bientôt",
+  "parentSubscriptionBody": "Le statut de paiement, les sièges familiaux et la gestion du plan apparaîtront ici.",
+  "parentFamilySeatsLabel": "Sièges familiaux",
+  "parentFamilySeatsValue": "prévu",
+  "parentPaymentLabel": "Paiement",
+  "parentPaymentValue": "non connecté",
+  "parentResetProfile": "Réinitialiser le profil",
+  "parentResetTitle": "Réinitialiser le profil ?",
+  "parentResetBody": "L'intégration s'ouvrira à nouveau et les progrès locaux seront effacés.",
+  "challengeTitle": "Jeux de réflexion",
+  "challengeDayDone": "Journée terminée",
+  "challengeDailyMission": "Mission quotidienne",
+  "challengeDayDoneBody": "Récompense reçue. Vous pouvez répéter ou jouer librement.",
+  "challengeDailyBody": "Effectuez 3 étapes pour sauvegarder la séquence et récupérer le prix.",
+  "challengePrize": "prix",
+  "challengeMissionProgress": "Avancement de la mission",
+  "countOfTotal": "{count} ou {total}",
+  "challengeRepeatMission": "Répéter la mission",
+  "challengeStepsTraining": "Étapes {steps} pour la formation",
+  "challengeStepNumber": "Étape {step}",
+  "challengeAgain": "encore",
+  "minutesShort": "{minutes} min.",
+  "challengeBrainGymTitle": "Gymnastique cérébrale",
+  "challengeBrainGymSubtitle": "Zones {count}, jouez dans n'importe quel ordre",
+  "challengeAreaLevels": "Niveaux {done}/{total}",
+  "challengeAreaCompleted": "{done} de {total} complet",
+  "challengeStateCompleted": "fait",
+  "challengeStateNext": "suivant",
+  "challengeStatePlay": "jouer",
+  "challengeLevelNumber": "Niveau {level}",
+  "challengeHideHint": "Masquer l'indice",
+  "challengeShowHint": "Afficher l'indice",
+  "challengeDailyTaskTitle": "Tâche quotidienne",
+  "challengePuzzleTaskTitle": "Puzzle",
+  "challengeDailyPath": "Chemin quotidien",
+  "challengeFreePlay": "Jeu gratuit",
+  "challengeExcellent": "Super!",
+  "challengeFlyNext": "Voler ensuite",
+  "challengeAllDone": "Tout est prêt",
+  "challengePlayMore": "Jouez plus",
+  "challengeMyCollection": "Ma collection",
+  "challengeDailyCompleteTitle": "Mission quotidienne terminée !",
+  "challengeDailyCompleteBody": "Vous avez terminé toutes les étapes. Récupérez le prix et jouez librement.",
+  "challengeRewardStars": "étoiles",
+  "challengeRewardStreak": "traînée",
+  "challengeRewardSteps": "mesures",
+  "challengeWhatNextTitle": "Et ensuite ?",
+  "challengeWhatNextBody": "Choisissez un héros : logique, mémoire, attention, compte ou chemin.",
+  "challengeProgressStep": "Étape {current} de {total}",
+  "challengeChooseAnswer": "Choisissez une réponse",
+  "challengeSelectedAnswer": "Réponse : {answer}",
+  "challengePickDifferentAnswer": "Choisissez une autre réponse",
+  "challengeCorrectAnswer": "Correct!",
+  "challengeChecking": "Vérification",
+  "challengeCheck": "Vérifier",
+  "challengeCorrectFeedbackTitle": "Super!",
+  "challengeRetryFeedbackTitle": "Presque là",
+  "challengeCorrectFeedbackText": "La réponse est correcte. Passons à autre chose !",
+  "hintLogic": "La règle se répète. Trouvez le début de la répétition suivante et continuez la rangée.",
+  "hintMemory": "Rappelez-vous d’abord quelles images ont été ouvertes. Recherchez ensuite la paire correspondante.",
+  "hintAttention": "Comparez les détails un par un : couleur, forme, taille et lieu.",
+  "hintMath": "Comptez en petits groupes pour qu’il soit plus facile de ne pas perdre le fil.",
+  "hintSpace": "Suivez le chemin du début à la fin et nommez le prochain virage.",
+  "collectionTitle": "Ma collection",
+  "collectionDayPrize": "Prix ​​du jour",
+  "collectionCosmoPrizes": "Prix ​​​​spatiaux",
+  "collectionUnlocked": "{unlocked} ou {total} ouvert",
+  "collectionNewPrizeTitle": "Prix ​​du nouveau jour",
+  "collectionNewPrizeBody": "Astronaute ajouté à la collection.",
+  "collectionSnackUnlocked": "{title} est déjà dans la collection.",
+  "collectionSnackLocked": "S'ouvre après de nouveaux niveaux.",
+  "collectionNewBadge": "nouveau",
+  "collectionLockedLevel": "{level} niveau.",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@languageButtonSemantics": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@onboardingHeroSummary": {
+    "placeholders": {
+      "age": {},
+      "name": {}
+    }
+  },
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@homeStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeProgressStars": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@countOfTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepsTraining": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepNumber": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeBrainGymSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaLevels": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaCompleted": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeLevelNumber": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeProgressStep": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeSelectedAnswer": {
+    "placeholders": {
+      "answer": {}
+    }
+  },
+  "@collectionUnlocked": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "unlocked": {
+        "type": "int"
+      }
+    }
+  },
+  "@collectionSnackUnlocked": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "@collectionLockedLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@@locale": "fr",
+  "parentOverviewTitle": "Aperçu des parents",
+  "parentOverviewBody": "Profil {name}, progrès, plan du jour et conseils pour s'entraîner à la maison.",
+  "@parentOverviewBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentStarsCount": "Étoiles {stars}",
+  "@parentStarsCount": {
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "parentMissionClosed": "mission accomplie",
+  "parentMissionWaiting": "mission en attente",
+  "parentProgressTitle": "Progrès de l'enfant",
+  "parentOverviewBadge": "aperçu",
+  "parentLevelsLabel": "Niveaux",
+  "parentLevelsValue": "{completed} ou {total}",
+  "@parentLevelsValue": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayLabel": "Aujourd'hui",
+  "parentTodayValue": "{done} ou {total}",
+  "@parentTodayValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentStarsLabel": "Étoiles",
+  "parentContentLabel": "Contenu",
+  "parentContentValue": "{done} ou {total}",
+  "@parentContentValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayPlanTitle": "Le plan d'aujourd'hui",
+  "parentTodayPlanBody": "Une série courte sans pression : 2-3 essais calmes valent mieux qu'une longue séance fatiguée.",
+  "parentPuzzleMeta": "{skill} • {minutes} min",
+  "@parentPuzzleMeta": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "parentAreasTitle": "Domaines de développement",
+  "parentBalanceBadge": "équilibre",
+  "parentAreasBody": "Il s'agit d'une carte pour adultes : les enfants devraient voir les missions et les héros, pas des catégories sèches.",
+  "parentRecommendationDone": "La mission d'aujourd'hui est terminée. C’est le bon moment pour saluer l’effort, pas la vitesse.",
+  "parentRecommendationRemaining": "Il y a des progrès aujourd'hui : il reste des tâches {remaining}.",
+  "@parentRecommendationRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "parentRecommendationStart": "Aujourd'hui, commencez par une courte mission de 4 à 6 minutes.",
+  "parentRecommendationsTitle": "Recommandations",
+  "parentHomeBadge": "à la maison",
+  "parentPaceLabel": "Rythme",
+  "parentWeekFocusLabel": "Focus de la semaine",
+  "parentFocusArea": "Le domaine qui nécessite le plus d’attention actuellement est « {areaTitle} » : {areaSubtitle}.",
+  "@parentFocusArea": {
+    "placeholders": {
+      "areaTitle": {
+        "type": "String"
+      },
+      "areaSubtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "parentDiscussLabel": "Comment discuter",
+  "parentDiscussBody": "Après une tâche, demandez : « Comment avez-vous trouvé la règle ? Cela construit une explication, pas une supposition.",
+  "parentFamilySecurityTitle": "Famille et sécurité",
+  "parentStorageLabel": "Stockage",
+  "parentStorageLocal": "sur l'appareil"
 }

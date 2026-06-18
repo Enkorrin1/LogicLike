@@ -1,34 +1,407 @@
 {
-    "@@locale":  "ja",
-    "appTitle":  "LogicLike",
-    "loadingMission":  "ミッションの準備中...",
-    "navHome":  "家",
-    "navChallenge":  "クエスト",
-    "navParent":  "親",
-    "onboardingSubmitSaving":  "ルートの準備中",
-    "onboardingSubmitCreateHero":  "ヒーローの作成",
-    "onboardingDefaultHero":  "若き英雄",
-    "onboardingTitle":  "ヒーローを作成する",
-    "onboardingSubtitle":  "ライオンが毎日のミッションを示し、子供は頭脳ゲームを選択できます。",
-    "childNameLabel":  "子供の名前",
-    "childNameError":  "ヒーロー名を入力してください",
-    "onboardingMissionPill":  "ミッション開始",
-    "onboardingAgeTitle":  "ヒーローの年齢",
-    "unlockMission":  "ミッション",
-    "unlockGames":  "ゲーム",
-    "unlockPrizes":  "賞品",
-    "ageYears":  "{years} 歳",
-    "languageArabic":  "العربية",
-    "languageGerman":  "Deutsch",
-    "languageEnglish":  "English",
-    "languageSpanish":  "Español",
-    "languageFrench":  "Français",
-    "languageHindi":  "हिन्दी",
-    "languageItalian":  "Italiano",
-    "languageJapanese":  "日本語",
-    "languageKorean":  "한국어",
-    "languagePortuguese":  "Português",
-    "languageRussian":  "Русский",
-    "languageChinese":  "中文",
-    "settingsLanguage":  "言語"
+  "appTitle": "BrainUp",
+  "loadingMission": "ミッションの準備中...",
+  "navHome": "家",
+  "navChallenge": "タスク",
+  "navParent": "親",
+  "commonCancel": "キャンセル",
+  "commonReset": "リセット",
+  "languageChanged": "言語: {language}",
+  "languageButtonSemantics": "言語を変更します。現在: {language}",
+  "onboardingSubmitSaving": "ルートの準備中",
+  "onboardingSubmitCreateHero": "ヒーローの作成",
+  "onboardingDefaultHero": "若き英雄",
+  "onboardingTitle": "ヒーローを作成する",
+  "onboardingHeroSummary": "{name}, {age}",
+  "onboardingSubtitle": "ライオンが毎日のミッションを示し、お子様は脳トレーニングを選択できます。",
+  "childNameLabel": "子供の名前",
+  "childNameError": "ヒーロー名を入力してください",
+  "onboardingMissionPill": "ミッション開始",
+  "onboardingAgeTitle": "ヒーローの年齢",
+  "unlockMission": "ミッション",
+  "unlockGames": "ゲーム",
+  "unlockPrizes": "賞品",
+  "ageYears": "{years}年",
+  "homeGreeting": "こんにちは、\n{name}",
+  "homeStarsHint": "スターはミッションによって成長し、新しい賞品のロックを解除します。",
+  "homeLockedLevelHint": "このレベルは新しいスターの後に開きます。",
+  "homeStreakSavedHint": "連続記録を保存しました!明日、新たなミッションが到着します。",
+  "homeStreakNeedMissionHint": "デイリーミッションを完了して連続記録を保存しましょう。",
+  "homeStreakTitle": "毎日の連続記録",
+  "homeStreakDays": "{days} 連日！",
+  "homeStreakWaiting": "ミッションが待っています",
+  "homeMissionDaily": "デイリーミッション",
+  "homeMissionFreePlay": "フリープレイ",
+  "homeTrainingOpen": "トレーニングは公開中です",
+  "homeLevel": "レベル{level}",
+  "homeMissionStart": "始める",
+  "homeMissionChoose": "選ぶ",
+  "homeMissionTag": "メインミッション",
+  "homeFreePlayTitle": "自分でプレイしてください",
+  "homeFreePlaySubtitle": "ヒーローを選んで脳を鍛えましょう",
+  "homeMiniGamesTitle": "ミニゲーム",
+  "homeMiniGamesSubtitle": "レベル後の簡単なトレーニング",
+  "homeQuickPairs": "ペア",
+  "homeQuickPath": "パス",
+  "homeQuickCount": "カウント",
+  "homeProgressTitle": "私の進歩",
+  "homeProgressStars": "{current} / {total} 星",
+  "homeCollectionTitle": "コレクション",
+  "homeCollectionStickers": "ステッカー",
+  "homeLevelsTitle": "レベル",
+  "homeLevelsSubtitle": "カレンダーではなく、8つのトレーニングテーマ",
+  "homeNodeCompleted": "終わり",
+  "homeNodePlay": "遊ぶ",
+  "homeNodeSoon": "すぐ",
+  "homeMapStart": "始める",
+  "homeMapShapes": "形状",
+  "homeMapPairs": "ペア",
+  "homeMapCount": "カウント",
+  "homeMapPath": "パス",
+  "homeMapRhythm": "リズム",
+  "homeMapCompare": "比較する",
+  "homeMapFinal": "ファイナル",
+  "parentTitle": "親エリア",
+  "parentIntroTitle": "大人の落ち着いたゾーン",
+  "parentIntroBody": "プロフィール、進捗状況、言語、および今後のサブスクリプションは、子ミッションとは別に表示されます。",
+  "parentProfileTitle": "家族プロフィール",
+  "parentLocalBadge": "地元",
+  "parentChildLabel": "子供",
+  "parentAgeLabel": "年",
+  "parentCompletedTasksLabel": "完了したタスク",
+  "parentLanguageLabel": "言語",
+  "settingsLanguage": "アプリ言語",
+  "parentSubscriptionTitle": "ファミリーサブスクリプション",
+  "parentSubscriptionSoon": "すぐ",
+  "parentSubscriptionBody": "ここには支払い状況、ファミリーシート、プラン管理が表示されます。",
+  "parentFamilySeatsLabel": "ファミリーシート",
+  "parentFamilySeatsValue": "計画された",
+  "parentPaymentLabel": "支払い",
+  "parentPaymentValue": "接続されていません",
+  "parentResetProfile": "プロファイルをリセット",
+  "parentResetTitle": "プロファイルをリセットしますか?",
+  "parentResetBody": "オンボーディングが再び開き、ローカルの進行状況がクリアされます。",
+  "challengeTitle": "頭脳ゲーム",
+  "challengeDayDone": "一日が終わりました",
+  "challengeDailyMission": "デイリーミッション",
+  "challengeDayDoneBody": "報酬を受け取りました。繰り返したり、自由に再生したりできます。",
+  "challengeDailyBody": "3 つのステップを完了して連続記録を保存し、賞品を受け取ります。",
+  "challengePrize": "賞",
+  "challengeMissionProgress": "ミッションの進行状況",
+  "countOfTotal": "{total}の{count}",
+  "challengeRepeatMission": "リピートミッション",
+  "challengeStepsTraining": "{steps} トレーニングの手順",
+  "challengeStepNumber": "ステップ{step}",
+  "challengeAgain": "また",
+  "minutesShort": "{minutes} 分",
+  "challengeBrainGymTitle": "ブレインジム",
+  "challengeBrainGymSubtitle": "{count} エリア、任意の順序でプレイ",
+  "challengeAreaLevels": "{done}/{total}レベル",
+  "challengeAreaCompleted": "{done} の {total} 完成",
+  "challengeStateCompleted": "終わり",
+  "challengeStateNext": "次",
+  "challengeStatePlay": "遊ぶ",
+  "challengeLevelNumber": "レベル{level}",
+  "challengeHideHint": "ヒントを隠す",
+  "challengeShowHint": "ヒントを表示",
+  "challengeDailyTaskTitle": "日々のタスク",
+  "challengePuzzleTaskTitle": "パズル",
+  "challengeDailyPath": "毎日のパス",
+  "challengeFreePlay": "フリープレイ",
+  "challengeExcellent": "素晴らしい！",
+  "challengeFlyNext": "次に飛ぶ",
+  "challengeAllDone": "準備完了",
+  "challengePlayMore": "もっとプレイする",
+  "challengeMyCollection": "私のコレクション",
+  "challengeDailyCompleteTitle": "デイリーミッション完了！",
+  "challengeDailyCompleteBody": "すべての手順が完了しました。賞品を集めて自由に遊んでください。",
+  "challengeRewardStars": "星",
+  "challengeRewardStreak": "縞模様",
+  "challengeRewardSteps": "ステップ",
+  "challengeWhatNextTitle": "次は何でしょうか？",
+  "challengeWhatNextBody": "ロジック、記憶、注意、カウント、またはパスからヒーローを選択します。",
+  "challengeProgressStep": "{total}のステップ{current}",
+  "challengeChooseAnswer": "答えを選択してください",
+  "challengeSelectedAnswer": "答え：{answer}",
+  "challengePickDifferentAnswer": "別の答えを選択してください",
+  "challengeCorrectAnswer": "正しい！",
+  "challengeChecking": "チェック中",
+  "challengeCheck": "チェック",
+  "challengeCorrectFeedbackTitle": "素晴らしい！",
+  "challengeRetryFeedbackTitle": "もうすぐそこ",
+  "challengeCorrectFeedbackText": "答えは正しいです。続けていきましょう！",
+  "hintLogic": "ルールは繰り返されます。次の繰り返しの開始点を見つけて、行を続行します。",
+  "hintMemory": "まず、どの写真が開かれたかを思い出してください。次に、一致するペアを探します。",
+  "hintAttention": "色、形、サイズ、場所などの詳細を 1 つずつ比較します。",
+  "hintMath": "小さなグループに分けて数えることで、見失ってしまうことを防ぎやすくなります。",
+  "hintSpace": "最初から最後までパスをたどり、次のターンに名前を付けます。",
+  "collectionTitle": "私のコレクション",
+  "collectionDayPrize": "当日賞品",
+  "collectionCosmoPrizes": "宇宙賞",
+  "collectionUnlocked": "{unlocked} の {total} オープン",
+  "collectionNewPrizeTitle": "ニューデイ賞",
+  "collectionNewPrizeBody": "宇宙飛行士がコレクションに追加されました。",
+  "collectionSnackUnlocked": "{title} はすでにコレクションに含まれています。",
+  "collectionSnackLocked": "新しいレベルの後に開きます。",
+  "collectionNewBadge": "新しい",
+  "collectionLockedLevel": "{level} Lv.",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@languageButtonSemantics": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@onboardingHeroSummary": {
+    "placeholders": {
+      "age": {},
+      "name": {}
+    }
+  },
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@homeStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeProgressStars": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@countOfTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepsTraining": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepNumber": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeBrainGymSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaLevels": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaCompleted": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeLevelNumber": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeProgressStep": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeSelectedAnswer": {
+    "placeholders": {
+      "answer": {}
+    }
+  },
+  "@collectionUnlocked": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "unlocked": {
+        "type": "int"
+      }
+    }
+  },
+  "@collectionSnackUnlocked": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "@collectionLockedLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@@locale": "ja",
+  "parentOverviewTitle": "親の概要",
+  "parentOverviewBody": "{name}のプロフィール、進捗状況、今日の予定、自宅練習のヒントなど。",
+  "@parentOverviewBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentStarsCount": "{stars} 星",
+  "@parentStarsCount": {
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "parentMissionClosed": "任務完了",
+  "parentMissionWaiting": "ミッション待機中",
+  "parentProgressTitle": "子供の進歩",
+  "parentOverviewBadge": "概要",
+  "parentLevelsLabel": "レベル",
+  "parentLevelsValue": "{completed}/{total}",
+  "@parentLevelsValue": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayLabel": "今日",
+  "parentTodayValue": "{done}/{total}",
+  "@parentTodayValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentStarsLabel": "スター",
+  "parentContentLabel": "コンテンツ",
+  "parentContentValue": "{done}/{total}",
+  "@parentContentValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayPlanTitle": "今日の予定",
+  "parentTodayPlanBody": "プレッシャーのない短いシリーズ: 疲れた長いセッションを 1 回行うよりも、2 ～ 3 回の落ち着いたトライのほうが優れています。",
+  "parentPuzzleMeta": "{skill} • {minutes} 分",
+  "@parentPuzzleMeta": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "parentAreasTitle": "開発エリア",
+  "parentBalanceBadge": "バランス",
+  "parentAreasBody": "これは大人向けのマップです。子供たちは無味乾燥なカテゴリではなく、ミッションとヒーローを参照する必要があります。",
+  "parentRecommendationDone": "今日のミッションは完了です。スピードではなく努力を称賛するのに良い瞬間です。",
+  "parentRecommendationRemaining": "今日は進捗があります: {remaining} タスクが残っています。",
+  "@parentRecommendationRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "parentRecommendationStart": "今日は、4 ～ 6 分の短いミッションを 1 つ始めてください。",
+  "parentRecommendationsTitle": "推奨事項",
+  "parentHomeBadge": "自宅で",
+  "parentPaceLabel": "ペース",
+  "parentWeekFocusLabel": "週の焦点",
+  "parentFocusArea": "今最も注意が必要なのは「{areaTitle}」：{areaSubtitle}です。",
+  "@parentFocusArea": {
+    "placeholders": {
+      "areaTitle": {
+        "type": "String"
+      },
+      "areaSubtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "parentDiscussLabel": "話し合う方法",
+  "parentDiscussBody": "タスクの後で、「ルールをどうやって見つけましたか?」と尋ねます。これにより、推測ではなく説明が構築されます。",
+  "parentFamilySecurityTitle": "家族と安全",
+  "parentStorageLabel": "ストレージ",
+  "parentStorageLocal": "デバイス上で"
 }

@@ -120,189 +120,1077 @@ abstract class AppLocalizations {
 
   /// No description provided for @appTitle.
   ///
-  /// In ru, this message translates to:
-  /// **'LogicLike'**
+  /// In en, this message translates to:
+  /// **'BrainUp'**
   String get appTitle;
 
   /// No description provided for @loadingMission.
   ///
-  /// In ru, this message translates to:
-  /// **'Готовим миссию...'**
+  /// In en, this message translates to:
+  /// **'Preparing the mission...'**
   String get loadingMission;
 
   /// No description provided for @navHome.
   ///
-  /// In ru, this message translates to:
-  /// **'Домой'**
+  /// In en, this message translates to:
+  /// **'Home'**
   String get navHome;
 
   /// No description provided for @navChallenge.
   ///
-  /// In ru, this message translates to:
-  /// **'Задание'**
+  /// In en, this message translates to:
+  /// **'Task'**
   String get navChallenge;
 
   /// No description provided for @navParent.
   ///
-  /// In ru, this message translates to:
-  /// **'Родителю'**
+  /// In en, this message translates to:
+  /// **'Parent'**
   String get navParent;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// No description provided for @commonReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get commonReset;
+
+  /// No description provided for @languageChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Language: {language}'**
+  String languageChanged(Object language);
+
+  /// No description provided for @languageButtonSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Change language. Current: {language}'**
+  String languageButtonSemantics(Object language);
 
   /// No description provided for @onboardingSubmitSaving.
   ///
-  /// In ru, this message translates to:
-  /// **'Готовим маршрут'**
+  /// In en, this message translates to:
+  /// **'Preparing route'**
   String get onboardingSubmitSaving;
 
   /// No description provided for @onboardingSubmitCreateHero.
   ///
-  /// In ru, this message translates to:
-  /// **'Создать героя'**
+  /// In en, this message translates to:
+  /// **'Create hero'**
   String get onboardingSubmitCreateHero;
 
   /// No description provided for @onboardingDefaultHero.
   ///
-  /// In ru, this message translates to:
-  /// **'Юный герой'**
+  /// In en, this message translates to:
+  /// **'Young hero'**
   String get onboardingDefaultHero;
 
   /// No description provided for @onboardingTitle.
   ///
-  /// In ru, this message translates to:
-  /// **'Создай героя'**
+  /// In en, this message translates to:
+  /// **'Create a hero'**
   String get onboardingTitle;
+
+  /// No description provided for @onboardingHeroSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, {age}'**
+  String onboardingHeroSummary(Object age, Object name);
 
   /// No description provided for @onboardingSubtitle.
   ///
-  /// In ru, this message translates to:
-  /// **'Лев покажет миссию дня, а дальше ребенок сам выберет тренировки.'**
+  /// In en, this message translates to:
+  /// **'The lion will show the daily mission, then your child can choose brain training.'**
   String get onboardingSubtitle;
 
   /// No description provided for @childNameLabel.
   ///
-  /// In ru, this message translates to:
-  /// **'Имя ребенка'**
+  /// In en, this message translates to:
+  /// **'Child name'**
   String get childNameLabel;
 
   /// No description provided for @childNameError.
   ///
-  /// In ru, this message translates to:
-  /// **'Введите имя героя'**
+  /// In en, this message translates to:
+  /// **'Enter hero name'**
   String get childNameError;
 
   /// No description provided for @onboardingMissionPill.
   ///
-  /// In ru, this message translates to:
-  /// **'старт миссии'**
+  /// In en, this message translates to:
+  /// **'mission start'**
   String get onboardingMissionPill;
 
   /// No description provided for @onboardingAgeTitle.
   ///
-  /// In ru, this message translates to:
-  /// **'Возраст героя'**
+  /// In en, this message translates to:
+  /// **'Hero age'**
   String get onboardingAgeTitle;
 
   /// No description provided for @unlockMission.
   ///
-  /// In ru, this message translates to:
-  /// **'Миссия'**
+  /// In en, this message translates to:
+  /// **'Mission'**
   String get unlockMission;
 
   /// No description provided for @unlockGames.
   ///
-  /// In ru, this message translates to:
-  /// **'Игры'**
+  /// In en, this message translates to:
+  /// **'Games'**
   String get unlockGames;
 
   /// No description provided for @unlockPrizes.
   ///
-  /// In ru, this message translates to:
-  /// **'Призы'**
+  /// In en, this message translates to:
+  /// **'Prizes'**
   String get unlockPrizes;
 
   /// No description provided for @ageYears.
   ///
-  /// In ru, this message translates to:
-  /// **'{years, plural, one{{years} год} few{{years} года} many{{years} лет} other{{years} лет}}'**
-  String ageYears(num years);
+  /// In en, this message translates to:
+  /// **'{years} years'**
+  String ageYears(int years);
 
-  /// No description provided for @languageArabic.
+  /// No description provided for @homeGreeting.
   ///
-  /// In ru, this message translates to:
-  /// **'العربية'**
-  String get languageArabic;
+  /// In en, this message translates to:
+  /// **'Hi,\n{name}'**
+  String homeGreeting(Object name);
 
-  /// No description provided for @languageGerman.
+  /// No description provided for @homeStarsHint.
   ///
-  /// In ru, this message translates to:
-  /// **'Deutsch'**
-  String get languageGerman;
+  /// In en, this message translates to:
+  /// **'Stars grow from missions and unlock new prizes.'**
+  String get homeStarsHint;
 
-  /// No description provided for @languageEnglish.
+  /// No description provided for @homeLockedLevelHint.
   ///
-  /// In ru, this message translates to:
-  /// **'English'**
-  String get languageEnglish;
+  /// In en, this message translates to:
+  /// **'This level opens after new stars.'**
+  String get homeLockedLevelHint;
 
-  /// No description provided for @languageSpanish.
+  /// No description provided for @homeStreakSavedHint.
   ///
-  /// In ru, this message translates to:
-  /// **'Español'**
-  String get languageSpanish;
+  /// In en, this message translates to:
+  /// **'Streak saved! A new mission arrives tomorrow.'**
+  String get homeStreakSavedHint;
 
-  /// No description provided for @languageFrench.
+  /// No description provided for @homeStreakNeedMissionHint.
   ///
-  /// In ru, this message translates to:
-  /// **'Français'**
-  String get languageFrench;
+  /// In en, this message translates to:
+  /// **'Complete the daily mission to save the streak.'**
+  String get homeStreakNeedMissionHint;
 
-  /// No description provided for @languageHindi.
+  /// No description provided for @homeStreakTitle.
   ///
-  /// In ru, this message translates to:
-  /// **'हिन्दी'**
-  String get languageHindi;
+  /// In en, this message translates to:
+  /// **'Daily streak'**
+  String get homeStreakTitle;
 
-  /// No description provided for @languageItalian.
+  /// No description provided for @homeStreakDays.
   ///
-  /// In ru, this message translates to:
-  /// **'Italiano'**
-  String get languageItalian;
+  /// In en, this message translates to:
+  /// **'{days} days in a row!'**
+  String homeStreakDays(int days);
 
-  /// No description provided for @languageJapanese.
+  /// No description provided for @homeStreakWaiting.
   ///
-  /// In ru, this message translates to:
-  /// **'日本語'**
-  String get languageJapanese;
+  /// In en, this message translates to:
+  /// **'mission is waiting'**
+  String get homeStreakWaiting;
 
-  /// No description provided for @languageKorean.
+  /// No description provided for @homeMissionDaily.
   ///
-  /// In ru, this message translates to:
-  /// **'한국어'**
-  String get languageKorean;
+  /// In en, this message translates to:
+  /// **'Daily mission'**
+  String get homeMissionDaily;
 
-  /// No description provided for @languagePortuguese.
+  /// No description provided for @homeMissionFreePlay.
   ///
-  /// In ru, this message translates to:
-  /// **'Português'**
-  String get languagePortuguese;
+  /// In en, this message translates to:
+  /// **'Free play'**
+  String get homeMissionFreePlay;
 
-  /// No description provided for @languageRussian.
+  /// No description provided for @homeTrainingOpen.
   ///
-  /// In ru, this message translates to:
-  /// **'Русский'**
-  String get languageRussian;
+  /// In en, this message translates to:
+  /// **'Training is open'**
+  String get homeTrainingOpen;
 
-  /// No description provided for @languageChinese.
+  /// No description provided for @homeLevel.
   ///
-  /// In ru, this message translates to:
-  /// **'中文'**
-  String get languageChinese;
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String homeLevel(int level);
+
+  /// No description provided for @homeMissionStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get homeMissionStart;
+
+  /// No description provided for @homeMissionChoose.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose'**
+  String get homeMissionChoose;
+
+  /// No description provided for @homeMissionTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Main mission'**
+  String get homeMissionTag;
+
+  /// No description provided for @homeFreePlayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Play yourself'**
+  String get homeFreePlayTitle;
+
+  /// No description provided for @homeFreePlaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'choose a hero and train your brain'**
+  String get homeFreePlaySubtitle;
+
+  /// No description provided for @homeMiniGamesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mini-games'**
+  String get homeMiniGamesTitle;
+
+  /// No description provided for @homeMiniGamesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'quick training after levels'**
+  String get homeMiniGamesSubtitle;
+
+  /// No description provided for @homeQuickPairs.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairs'**
+  String get homeQuickPairs;
+
+  /// No description provided for @homeQuickPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get homeQuickPath;
+
+  /// No description provided for @homeQuickCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get homeQuickCount;
+
+  /// No description provided for @homeProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My progress'**
+  String get homeProgressTitle;
+
+  /// No description provided for @homeProgressStars.
+  ///
+  /// In en, this message translates to:
+  /// **'{current} / {total} stars'**
+  String homeProgressStars(int current, int total);
+
+  /// No description provided for @homeCollectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection'**
+  String get homeCollectionTitle;
+
+  /// No description provided for @homeCollectionStickers.
+  ///
+  /// In en, this message translates to:
+  /// **'stickers'**
+  String get homeCollectionStickers;
+
+  /// No description provided for @homeLevelsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Levels'**
+  String get homeLevelsTitle;
+
+  /// No description provided for @homeLevelsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'8 training themes, not a calendar'**
+  String get homeLevelsSubtitle;
+
+  /// No description provided for @homeNodeCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'done'**
+  String get homeNodeCompleted;
+
+  /// No description provided for @homeNodePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'play'**
+  String get homeNodePlay;
+
+  /// No description provided for @homeNodeSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'soon'**
+  String get homeNodeSoon;
+
+  /// No description provided for @homeMapStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get homeMapStart;
+
+  /// No description provided for @homeMapShapes.
+  ///
+  /// In en, this message translates to:
+  /// **'Shapes'**
+  String get homeMapShapes;
+
+  /// No description provided for @homeMapPairs.
+  ///
+  /// In en, this message translates to:
+  /// **'Pairs'**
+  String get homeMapPairs;
+
+  /// No description provided for @homeMapCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Count'**
+  String get homeMapCount;
+
+  /// No description provided for @homeMapPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Path'**
+  String get homeMapPath;
+
+  /// No description provided for @homeMapRhythm.
+  ///
+  /// In en, this message translates to:
+  /// **'Rhythm'**
+  String get homeMapRhythm;
+
+  /// No description provided for @homeMapCompare.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare'**
+  String get homeMapCompare;
+
+  /// No description provided for @homeMapFinal.
+  ///
+  /// In en, this message translates to:
+  /// **'Final'**
+  String get homeMapFinal;
+
+  /// No description provided for @parentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent area'**
+  String get parentTitle;
+
+  /// No description provided for @parentIntroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm zone for adults'**
+  String get parentIntroTitle;
+
+  /// No description provided for @parentIntroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile, progress, language and future subscription live separately from the child mission.'**
+  String get parentIntroBody;
+
+  /// No description provided for @parentProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family profile'**
+  String get parentProfileTitle;
+
+  /// No description provided for @parentLocalBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'local'**
+  String get parentLocalBadge;
+
+  /// No description provided for @parentChildLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get parentChildLabel;
+
+  /// No description provided for @parentAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get parentAgeLabel;
+
+  /// No description provided for @parentCompletedTasksLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks completed'**
+  String get parentCompletedTasksLabel;
+
+  /// No description provided for @parentLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get parentLanguageLabel;
 
   /// No description provided for @settingsLanguage.
   ///
-  /// In ru, this message translates to:
-  /// **'Язык'**
+  /// In en, this message translates to:
+  /// **'App language'**
   String get settingsLanguage;
+
+  /// No description provided for @parentSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family subscription'**
+  String get parentSubscriptionTitle;
+
+  /// No description provided for @parentSubscriptionSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'soon'**
+  String get parentSubscriptionSoon;
+
+  /// No description provided for @parentSubscriptionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment status, family seats and plan management will appear here.'**
+  String get parentSubscriptionBody;
+
+  /// No description provided for @parentFamilySeatsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Family seats'**
+  String get parentFamilySeatsLabel;
+
+  /// No description provided for @parentFamilySeatsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'planned'**
+  String get parentFamilySeatsValue;
+
+  /// No description provided for @parentPaymentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get parentPaymentLabel;
+
+  /// No description provided for @parentPaymentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'not connected'**
+  String get parentPaymentValue;
+
+  /// No description provided for @parentResetProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset profile'**
+  String get parentResetProfile;
+
+  /// No description provided for @parentResetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset profile?'**
+  String get parentResetTitle;
+
+  /// No description provided for @parentResetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Onboarding will open again and local progress will be cleared.'**
+  String get parentResetBody;
+
+  /// No description provided for @challengeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain games'**
+  String get challengeTitle;
+
+  /// No description provided for @challengeDayDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Day complete'**
+  String get challengeDayDone;
+
+  /// No description provided for @challengeDailyMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily mission'**
+  String get challengeDailyMission;
+
+  /// No description provided for @challengeDayDoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reward received. You can repeat or play freely.'**
+  String get challengeDayDoneBody;
+
+  /// No description provided for @challengeDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete 3 steps to save the streak and collect the prize.'**
+  String get challengeDailyBody;
+
+  /// No description provided for @challengePrize.
+  ///
+  /// In en, this message translates to:
+  /// **'prize'**
+  String get challengePrize;
+
+  /// No description provided for @challengeMissionProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Mission progress'**
+  String get challengeMissionProgress;
+
+  /// No description provided for @countOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} of {total}'**
+  String countOfTotal(int count, int total);
+
+  /// No description provided for @challengeRepeatMission.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat mission'**
+  String get challengeRepeatMission;
+
+  /// No description provided for @challengeStepsTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'{steps} steps for training'**
+  String challengeStepsTraining(int steps);
+
+  /// No description provided for @challengeStepNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step}'**
+  String challengeStepNumber(int step);
+
+  /// No description provided for @challengeAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'again'**
+  String get challengeAgain;
+
+  /// No description provided for @minutesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String minutesShort(int minutes);
+
+  /// No description provided for @challengeBrainGymTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brain gym'**
+  String get challengeBrainGymTitle;
+
+  /// No description provided for @challengeBrainGymSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} areas, play in any order'**
+  String challengeBrainGymSubtitle(int count);
+
+  /// No description provided for @challengeAreaLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'{done}/{total} levels'**
+  String challengeAreaLevels(int done, int total);
+
+  /// No description provided for @challengeAreaCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total} complete'**
+  String challengeAreaCompleted(int done, int total);
+
+  /// No description provided for @challengeStateCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'done'**
+  String get challengeStateCompleted;
+
+  /// No description provided for @challengeStateNext.
+  ///
+  /// In en, this message translates to:
+  /// **'next'**
+  String get challengeStateNext;
+
+  /// No description provided for @challengeStatePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'play'**
+  String get challengeStatePlay;
+
+  /// No description provided for @challengeLevelNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String challengeLevelNumber(int level);
+
+  /// No description provided for @challengeHideHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide hint'**
+  String get challengeHideHint;
+
+  /// No description provided for @challengeShowHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show hint'**
+  String get challengeShowHint;
+
+  /// No description provided for @challengeDailyTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily task'**
+  String get challengeDailyTaskTitle;
+
+  /// No description provided for @challengePuzzleTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Puzzle'**
+  String get challengePuzzleTaskTitle;
+
+  /// No description provided for @challengeDailyPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily path'**
+  String get challengeDailyPath;
+
+  /// No description provided for @challengeFreePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Free play'**
+  String get challengeFreePlay;
+
+  /// No description provided for @challengeExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Great!'**
+  String get challengeExcellent;
+
+  /// No description provided for @challengeFlyNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Flying next'**
+  String get challengeFlyNext;
+
+  /// No description provided for @challengeAllDone.
+  ///
+  /// In en, this message translates to:
+  /// **'All set'**
+  String get challengeAllDone;
+
+  /// No description provided for @challengePlayMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Play more'**
+  String get challengePlayMore;
+
+  /// No description provided for @challengeMyCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'My collection'**
+  String get challengeMyCollection;
+
+  /// No description provided for @challengeDailyCompleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily mission complete!'**
+  String get challengeDailyCompleteTitle;
+
+  /// No description provided for @challengeDailyCompleteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You finished all steps. Collect the prize and play freely.'**
+  String get challengeDailyCompleteBody;
+
+  /// No description provided for @challengeRewardStars.
+  ///
+  /// In en, this message translates to:
+  /// **'stars'**
+  String get challengeRewardStars;
+
+  /// No description provided for @challengeRewardStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'streak'**
+  String get challengeRewardStreak;
+
+  /// No description provided for @challengeRewardSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'steps'**
+  String get challengeRewardSteps;
+
+  /// No description provided for @challengeWhatNextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What next?'**
+  String get challengeWhatNextTitle;
+
+  /// No description provided for @challengeWhatNextBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a hero: logic, memory, attention, count or path.'**
+  String get challengeWhatNextBody;
+
+  /// No description provided for @challengeProgressStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String challengeProgressStep(int current, int total);
+
+  /// No description provided for @challengeChooseAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an answer'**
+  String get challengeChooseAnswer;
+
+  /// No description provided for @challengeSelectedAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer: {answer}'**
+  String challengeSelectedAnswer(Object answer);
+
+  /// No description provided for @challengePickDifferentAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose another answer'**
+  String get challengePickDifferentAnswer;
+
+  /// No description provided for @challengeCorrectAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct!'**
+  String get challengeCorrectAnswer;
+
+  /// No description provided for @challengeChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking'**
+  String get challengeChecking;
+
+  /// No description provided for @challengeCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get challengeCheck;
+
+  /// No description provided for @challengeCorrectFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Great!'**
+  String get challengeCorrectFeedbackTitle;
+
+  /// No description provided for @challengeRetryFeedbackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Almost there'**
+  String get challengeRetryFeedbackTitle;
+
+  /// No description provided for @challengeCorrectFeedbackText.
+  ///
+  /// In en, this message translates to:
+  /// **'The answer is correct. Moving on!'**
+  String get challengeCorrectFeedbackText;
+
+  /// No description provided for @hintLogic.
+  ///
+  /// In en, this message translates to:
+  /// **'The rule repeats. Find the start of the next repeat and continue the row.'**
+  String get hintLogic;
+
+  /// No description provided for @hintMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'First remember which pictures were opened. Then look for the matching pair.'**
+  String get hintMemory;
+
+  /// No description provided for @hintAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare details one by one: color, shape, size and place.'**
+  String get hintAttention;
+
+  /// No description provided for @hintMath.
+  ///
+  /// In en, this message translates to:
+  /// **'Count in small groups so it is easier not to lose track.'**
+  String get hintMath;
+
+  /// No description provided for @hintSpace.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow the path from start to finish and name the next turn.'**
+  String get hintSpace;
+
+  /// No description provided for @collectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'My collection'**
+  String get collectionTitle;
+
+  /// No description provided for @collectionDayPrize.
+  ///
+  /// In en, this message translates to:
+  /// **'Day prize'**
+  String get collectionDayPrize;
+
+  /// No description provided for @collectionCosmoPrizes.
+  ///
+  /// In en, this message translates to:
+  /// **'Space prizes'**
+  String get collectionCosmoPrizes;
+
+  /// No description provided for @collectionUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{unlocked} of {total} open'**
+  String collectionUnlocked(int total, int unlocked);
+
+  /// No description provided for @collectionNewPrizeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New day prize'**
+  String get collectionNewPrizeTitle;
+
+  /// No description provided for @collectionNewPrizeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Astronaut added to the collection.'**
+  String get collectionNewPrizeBody;
+
+  /// No description provided for @collectionSnackUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} is already in the collection.'**
+  String collectionSnackUnlocked(Object title);
+
+  /// No description provided for @collectionSnackLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens after new levels.'**
+  String get collectionSnackLocked;
+
+  /// No description provided for @collectionNewBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'new'**
+  String get collectionNewBadge;
+
+  /// No description provided for @collectionLockedLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'{level} lvl.'**
+  String collectionLockedLevel(int level);
+
+  /// No description provided for @parentOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent overview'**
+  String get parentOverviewTitle;
+
+  /// No description provided for @parentOverviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile {name}, progress, today\'s plan, and tips for practice at home.'**
+  String parentOverviewBody(String name);
+
+  /// No description provided for @parentStarsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{stars} stars'**
+  String parentStarsCount(int stars);
+
+  /// No description provided for @parentMissionClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'mission done'**
+  String get parentMissionClosed;
+
+  /// No description provided for @parentMissionWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'mission waiting'**
+  String get parentMissionWaiting;
+
+  /// No description provided for @parentProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Child progress'**
+  String get parentProgressTitle;
+
+  /// No description provided for @parentOverviewBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'overview'**
+  String get parentOverviewBadge;
+
+  /// No description provided for @parentLevelsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Levels'**
+  String get parentLevelsLabel;
+
+  /// No description provided for @parentLevelsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total}'**
+  String parentLevelsValue(int completed, int total);
+
+  /// No description provided for @parentTodayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get parentTodayLabel;
+
+  /// No description provided for @parentTodayValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total}'**
+  String parentTodayValue(int done, int total);
+
+  /// No description provided for @parentStarsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stars'**
+  String get parentStarsLabel;
+
+  /// No description provided for @parentContentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Content'**
+  String get parentContentLabel;
+
+  /// No description provided for @parentContentValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total}'**
+  String parentContentValue(int done, int total);
+
+  /// No description provided for @parentTodayPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s plan'**
+  String get parentTodayPlanTitle;
+
+  /// No description provided for @parentTodayPlanBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A short series without pressure: 2-3 calm tries are better than one long tired session.'**
+  String get parentTodayPlanBody;
+
+  /// No description provided for @parentPuzzleMeta.
+  ///
+  /// In en, this message translates to:
+  /// **'{skill} • {minutes} min'**
+  String parentPuzzleMeta(String skill, int minutes);
+
+  /// No description provided for @parentAreasTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Development areas'**
+  String get parentAreasTitle;
+
+  /// No description provided for @parentBalanceBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'balance'**
+  String get parentBalanceBadge;
+
+  /// No description provided for @parentAreasBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is an adult map: children should see missions and heroes, not dry categories.'**
+  String get parentAreasBody;
+
+  /// No description provided for @parentRecommendationDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s mission is done. This is a good moment to praise effort, not speed.'**
+  String get parentRecommendationDone;
+
+  /// No description provided for @parentRecommendationRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'There is progress today: {remaining} tasks left.'**
+  String parentRecommendationRemaining(int remaining);
+
+  /// No description provided for @parentRecommendationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Today, start with one short 4-6 minute mission.'**
+  String get parentRecommendationStart;
+
+  /// No description provided for @parentRecommendationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get parentRecommendationsTitle;
+
+  /// No description provided for @parentHomeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'at home'**
+  String get parentHomeBadge;
+
+  /// No description provided for @parentPaceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pace'**
+  String get parentPaceLabel;
+
+  /// No description provided for @parentWeekFocusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Week focus'**
+  String get parentWeekFocusLabel;
+
+  /// No description provided for @parentFocusArea.
+  ///
+  /// In en, this message translates to:
+  /// **'The area that needs the most attention now is \"{areaTitle}\": {areaSubtitle}.'**
+  String parentFocusArea(String areaTitle, String areaSubtitle);
+
+  /// No description provided for @parentDiscussLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'How to discuss'**
+  String get parentDiscussLabel;
+
+  /// No description provided for @parentDiscussBody.
+  ///
+  /// In en, this message translates to:
+  /// **'After a task, ask: \"How did you find the rule?\" This builds explanation, not guessing.'**
+  String get parentDiscussBody;
+
+  /// No description provided for @parentFamilySecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Family and safety'**
+  String get parentFamilySecurityTitle;
+
+  /// No description provided for @parentStorageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get parentStorageLabel;
+
+  /// No description provided for @parentStorageLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'on device'**
+  String get parentStorageLocal;
 }
 
 class _AppLocalizationsDelegate

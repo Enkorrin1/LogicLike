@@ -8,6 +8,7 @@ void main() {
         childName: 'Лев',
         childAge: ChildAge.five,
         createdAt: DateTime(2026, 6, 8, 9),
+        language: AppLanguage.en,
         completedChallenges: 2,
         completedLevels: 3,
         completedPracticePuzzleIds: const ['logic-1', 'memory-2'],
@@ -27,6 +28,7 @@ void main() {
       });
 
       expect(restored.completedPracticePuzzleIds, isEmpty);
+      expect(restored.language, AppLanguage.ru);
     });
 
     test('detects challenge completion by calendar date', () {

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 enum ChildAge {
   four(4, '4 года'),
   five(5, '5 лет'),
@@ -18,11 +20,48 @@ enum ChildAge {
   }
 }
 
+enum AppLanguage {
+  ar('ar', 'AR', 'العربية'),
+  de('de', 'DE', 'Deutsch'),
+  en('en', 'EN', 'English'),
+  es('es', 'ES', 'Español'),
+  fr('fr', 'FR', 'Français'),
+  hi('hi', 'HI', 'हिन्दी'),
+  it('it', 'IT', 'Italiano'),
+  ja('ja', 'JA', '日本語'),
+  ko('ko', 'KO', '한국어'),
+  pt('pt', 'PT', 'Português'),
+  ru('ru', 'RU', 'Русский'),
+  zh('zh', 'ZH', '中文');
+
+  const AppLanguage(this.code, this.shortLabel, this.label);
+
+  final String code;
+  final String shortLabel;
+  final String label;
+
+  Locale get locale => Locale(code);
+
+  AppLanguage get next {
+    const values = AppLanguage.values;
+    final nextIndex = (values.indexOf(this) + 1) % values.length;
+    return values[nextIndex];
+  }
+
+  static AppLanguage fromCode(String? code) {
+    return AppLanguage.values.firstWhere(
+      (language) => language.code == code,
+      orElse: () => AppLanguage.ru,
+    );
+  }
+}
+
 class FamilyProfile {
   const FamilyProfile({
     required this.childName,
     required this.childAge,
     required this.createdAt,
+    this.language = AppLanguage.ru,
     this.completedChallenges = 0,
     this.completedLevels = 0,
     this.dailyProgressDate,
@@ -34,6 +73,7 @@ class FamilyProfile {
   final String childName;
   final ChildAge childAge;
   final DateTime createdAt;
+  final AppLanguage language;
   final int completedChallenges;
   final int completedLevels;
   final DateTime? dailyProgressDate;
@@ -54,6 +94,7 @@ class FamilyProfile {
     String? childName,
     ChildAge? childAge,
     DateTime? createdAt,
+    AppLanguage? language,
     int? completedChallenges,
     int? completedLevels,
     DateTime? dailyProgressDate,
@@ -65,6 +106,7 @@ class FamilyProfile {
       childName: childName ?? this.childName,
       childAge: childAge ?? this.childAge,
       createdAt: createdAt ?? this.createdAt,
+      language: language ?? this.language,
       completedChallenges: completedChallenges ?? this.completedChallenges,
       completedLevels: completedLevels ?? this.completedLevels,
       dailyProgressDate: dailyProgressDate ?? this.dailyProgressDate,
@@ -81,6 +123,7 @@ class FamilyProfile {
       'childName': childName,
       'childAge': childAge.name,
       'createdAt': createdAt.toIso8601String(),
+      'language': language.code,
       'completedChallenges': completedChallenges,
       'completedLevels': completedLevels,
       'dailyProgressDate': dailyProgressDate?.toIso8601String(),
@@ -108,6 +151,7 @@ class FamilyProfile {
       childName: json['childName'] as String,
       childAge: ChildAge.fromName(json['childAge'] as String),
       createdAt: DateTime.parse(json['createdAt'] as String),
+      language: AppLanguage.fromCode(json['language'] as String?),
       completedChallenges: json['completedChallenges'] as int? ?? 0,
       completedLevels: json['completedLevels'] as int? ??
           json['completedChallenges'] as int? ??
@@ -133,6 +177,7 @@ class FamilyProfile {
             childName == other.childName &&
             childAge == other.childAge &&
             createdAt == other.createdAt &&
+            language == other.language &&
             completedChallenges == other.completedChallenges &&
             completedLevels == other.completedLevels &&
             dailyProgressDate == other.dailyProgressDate &&
@@ -153,6 +198,7 @@ class FamilyProfile {
       childName,
       childAge,
       createdAt,
+      language,
       completedChallenges,
       completedLevels,
       dailyProgressDate,

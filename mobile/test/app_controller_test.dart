@@ -111,6 +111,22 @@ void main() {
       expect(controller.locale, const Locale('de'));
       expect(localeStore.savedLocale, const Locale('de'));
     });
+
+    test('changes and saves app language', () async {
+      final profile = FamilyProfile(
+        childName: 'Мира',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final controller = AppController(store);
+
+      await controller.load();
+      await controller.changeLanguage(AppLanguage.en);
+
+      expect(controller.familyProfile?.language, AppLanguage.en);
+      expect(store.savedProfile?.language, AppLanguage.en);
+    });
   });
 }
 

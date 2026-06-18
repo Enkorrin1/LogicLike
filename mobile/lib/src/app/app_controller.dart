@@ -131,6 +131,19 @@ class AppController extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> changeLanguage(AppLanguage language) async {
+    final currentProfile = _familyProfile;
+    if (currentProfile == null || currentProfile.language == language) {
+      return;
+    }
+
+    final nextProfile = currentProfile.copyWith(language: language);
+
+    await _familyProfileStore.save(nextProfile);
+    _familyProfile = nextProfile;
+    notifyListeners();
+  }
+
   Future<void> resetFamilyProfile() async {
     await _familyProfileStore.clear();
     _familyProfile = null;

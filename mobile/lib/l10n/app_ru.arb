@@ -1,34 +1,407 @@
 {
-    "@@locale":  "ru",
-    "appTitle":  "LogicLike",
-    "loadingMission":  "Готовим миссию...",
-    "navHome":  "Домой",
-    "navChallenge":  "Задание",
-    "navParent":  "Родителю",
-    "onboardingSubmitSaving":  "Готовим маршрут",
-    "onboardingSubmitCreateHero":  "Создать героя",
-    "onboardingDefaultHero":  "Юный герой",
-    "onboardingTitle":  "Создай героя",
-    "onboardingSubtitle":  "Лев покажет миссию дня, а дальше ребенок сам выберет тренировки.",
-    "childNameLabel":  "Имя ребенка",
-    "childNameError":  "Введите имя героя",
-    "onboardingMissionPill":  "старт миссии",
-    "onboardingAgeTitle":  "Возраст героя",
-    "unlockMission":  "Миссия",
-    "unlockGames":  "Игры",
-    "unlockPrizes":  "Призы",
-    "ageYears":  "{years, plural, one{{years} год} few{{years} года} many{{years} лет} other{{years} лет}}",
-    "languageArabic":  "العربية",
-    "languageGerman":  "Deutsch",
-    "languageEnglish":  "English",
-    "languageSpanish":  "Español",
-    "languageFrench":  "Français",
-    "languageHindi":  "हिन्दी",
-    "languageItalian":  "Italiano",
-    "languageJapanese":  "日本語",
-    "languageKorean":  "한국어",
-    "languagePortuguese":  "Português",
-    "languageRussian":  "Русский",
-    "languageChinese":  "中文",
-    "settingsLanguage":  "Язык"
+  "appTitle": "BrainUp",
+  "loadingMission": "Готовим миссию...",
+  "navHome": "Домой",
+  "navChallenge": "Задание",
+  "navParent": "Родителю",
+  "commonCancel": "Отмена",
+  "commonReset": "Сбросить",
+  "languageChanged": "Язык: {language}",
+  "languageButtonSemantics": "Сменить язык. Сейчас {language}",
+  "onboardingSubmitSaving": "Готовим маршрут",
+  "onboardingSubmitCreateHero": "Создать героя",
+  "onboardingDefaultHero": "Юный герой",
+  "onboardingTitle": "Создай героя",
+  "onboardingHeroSummary": "{name}, {age}",
+  "onboardingSubtitle": "Лев покажет миссию дня, а дальше ребенок сам выберет тренировки.",
+  "childNameLabel": "Имя ребенка",
+  "childNameError": "Введите имя героя",
+  "onboardingMissionPill": "старт миссии",
+  "onboardingAgeTitle": "Возраст героя",
+  "unlockMission": "Миссия",
+  "unlockGames": "Игры",
+  "unlockPrizes": "Призы",
+  "ageYears": "{years} лет",
+  "homeGreeting": "Привет,\n{name}",
+  "homeStarsHint": "Звезды копятся за миссии и открывают новые призы.",
+  "homeLockedLevelHint": "Этот уровень откроется после новых звезд.",
+  "homeStreakSavedHint": "Серия сохранена! Завтра будет новая миссия.",
+  "homeStreakNeedMissionHint": "Пройди миссию дня, чтобы сохранить серию.",
+  "homeStreakTitle": "Серия дня",
+  "homeStreakDays": "{days} дней подряд!",
+  "homeStreakWaiting": "миссия ждет тебя",
+  "homeMissionDaily": "Миссия дня",
+  "homeMissionFreePlay": "Играть свободно",
+  "homeTrainingOpen": "Тренировки открыты",
+  "homeLevel": "Уровень {level}",
+  "homeMissionStart": "Старт",
+  "homeMissionChoose": "Выбрать",
+  "homeMissionTag": "Главная миссия",
+  "homeFreePlayTitle": "Играй сам",
+  "homeFreePlaySubtitle": "выбирай героя и тренируй мозг",
+  "homeMiniGamesTitle": "Мини-игры",
+  "homeMiniGamesSubtitle": "быстрая тренировка после уровней",
+  "homeQuickPairs": "Пары",
+  "homeQuickPath": "Путь",
+  "homeQuickCount": "Счет",
+  "homeProgressTitle": "Мой прогресс",
+  "homeProgressStars": "{current} / {total} звезд",
+  "homeCollectionTitle": "Коллекция",
+  "homeCollectionStickers": "наклеек",
+  "homeLevelsTitle": "Уровни",
+  "homeLevelsSubtitle": "8 тем для тренировки, не календарь",
+  "homeNodeCompleted": "пройдено",
+  "homeNodePlay": "играть",
+  "homeNodeSoon": "скоро",
+  "homeMapStart": "Старт",
+  "homeMapShapes": "Фигуры",
+  "homeMapPairs": "Пары",
+  "homeMapCount": "Счет",
+  "homeMapPath": "Путь",
+  "homeMapRhythm": "Ритм",
+  "homeMapCompare": "Сравни",
+  "homeMapFinal": "Финал",
+  "parentTitle": "Родительский контур",
+  "parentIntroTitle": "Спокойная зона для взрослых",
+  "parentIntroBody": "Профиль, прогресс, язык и будущая подписка собраны отдельно от детской миссии.",
+  "parentProfileTitle": "Семейный профиль",
+  "parentLocalBadge": "локально",
+  "parentChildLabel": "Ребенок",
+  "parentAgeLabel": "Возраст",
+  "parentCompletedTasksLabel": "Заданий выполнено",
+  "parentLanguageLabel": "Язык",
+  "settingsLanguage": "Язык приложения",
+  "parentSubscriptionTitle": "Семейная подписка",
+  "parentSubscriptionSoon": "скоро",
+  "parentSubscriptionBody": "Здесь появятся статус оплаты, семейные места и управление планом.",
+  "parentFamilySeatsLabel": "Семейные места",
+  "parentFamilySeatsValue": "в плане",
+  "parentPaymentLabel": "Оплата",
+  "parentPaymentValue": "не подключена",
+  "parentResetProfile": "Сбросить профиль",
+  "parentResetTitle": "Сбросить профиль?",
+  "parentResetBody": "Onboarding откроется заново, а локальный прогресс будет очищен.",
+  "challengeTitle": "Игры для мозга",
+  "challengeDayDone": "День закрыт",
+  "challengeDailyMission": "Миссия дня",
+  "challengeDayDoneBody": "Награда получена. Можно повторять или играть свободно.",
+  "challengeDailyBody": "Пройди 3 шага, чтобы сохранить серию и забрать приз.",
+  "challengePrize": "приз",
+  "challengeMissionProgress": "Прогресс миссии",
+  "countOfTotal": "{count} из {total}",
+  "challengeRepeatMission": "Повторить миссию",
+  "challengeStepsTraining": "{steps} шага для тренировки",
+  "challengeStepNumber": "Шаг {step}",
+  "challengeAgain": "еще",
+  "minutesShort": "{minutes} мин",
+  "challengeBrainGymTitle": "Тренажер мозга",
+  "challengeBrainGymSubtitle": "{count} областей, играй в любом порядке",
+  "challengeAreaLevels": "{done}/{total} уровней",
+  "challengeAreaCompleted": "{done} из {total} пройдено",
+  "challengeStateCompleted": "пройдено",
+  "challengeStateNext": "следующий",
+  "challengeStatePlay": "играть",
+  "challengeLevelNumber": "Уровень {level}",
+  "challengeHideHint": "Скрыть подсказку",
+  "challengeShowHint": "Показать подсказку",
+  "challengeDailyTaskTitle": "Задание дня",
+  "challengePuzzleTaskTitle": "Головоломка",
+  "challengeDailyPath": "Ежедневный путь",
+  "challengeFreePlay": "Свободная игра",
+  "challengeExcellent": "Отлично!",
+  "challengeFlyNext": "Летим дальше",
+  "challengeAllDone": "Все готово",
+  "challengePlayMore": "Играть дальше",
+  "challengeMyCollection": "Моя коллекция",
+  "challengeDailyCompleteTitle": "Миссия дня выполнена!",
+  "challengeDailyCompleteBody": "Ты закрыл все шаги. Можно забрать приз и играть свободно.",
+  "challengeRewardStars": "звезды",
+  "challengeRewardStreak": "серия",
+  "challengeRewardSteps": "шага",
+  "challengeWhatNextTitle": "Что дальше?",
+  "challengeWhatNextBody": "Выбирай героя: логика, память, внимание, счет или путь.",
+  "challengeProgressStep": "Шаг {current} из {total}",
+  "challengeChooseAnswer": "Выбери ответ",
+  "challengeSelectedAnswer": "Ответ: {answer}",
+  "challengePickDifferentAnswer": "Выбери другой ответ",
+  "challengeCorrectAnswer": "Верно!",
+  "challengeChecking": "Проверяем",
+  "challengeCheck": "Проверить",
+  "challengeCorrectFeedbackTitle": "Отлично!",
+  "challengeRetryFeedbackTitle": "Почти получилось",
+  "challengeCorrectFeedbackText": "Ответ верный. Идем дальше!",
+  "hintLogic": "Правило повторяется. Найди начало нового повтора и продолжи ряд.",
+  "hintMemory": "Сначала вспомни, какие картинки уже были открыты. Потом ищи такую же пару.",
+  "hintAttention": "Сравни детали по одной: цвет, форму, размер и место. Отличие обычно маленькое.",
+  "hintMath": "Считай не все сразу, а маленькими группами. Так легче не сбиться.",
+  "hintSpace": "Следи за дорожкой от старта к финишу и называй следующий поворот.",
+  "collectionTitle": "Моя коллекция",
+  "collectionDayPrize": "Приз дня",
+  "collectionCosmoPrizes": "Космо-призы",
+  "collectionUnlocked": "{unlocked} из {total} открыто",
+  "collectionNewPrizeTitle": "Новый приз дня",
+  "collectionNewPrizeBody": "Космонавт добавлен в коллекцию.",
+  "collectionSnackUnlocked": "{title} уже в коллекции.",
+  "collectionSnackLocked": "Откроется после новых уровней.",
+  "collectionNewBadge": "новый",
+  "collectionLockedLevel": "{level} ур.",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@languageButtonSemantics": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@onboardingHeroSummary": {
+    "placeholders": {
+      "age": {},
+      "name": {}
+    }
+  },
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@homeStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeProgressStars": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@countOfTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepsTraining": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepNumber": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeBrainGymSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaLevels": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaCompleted": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeLevelNumber": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeProgressStep": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeSelectedAnswer": {
+    "placeholders": {
+      "answer": {}
+    }
+  },
+  "@collectionUnlocked": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "unlocked": {
+        "type": "int"
+      }
+    }
+  },
+  "@collectionSnackUnlocked": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "@collectionLockedLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@@locale": "ru",
+  "parentOverviewTitle": "Родительский обзор",
+  "parentOverviewBody": "Профиль {name}, прогресс, сегодняшний план и подсказки для занятий дома.",
+  "@parentOverviewBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentStarsCount": "{stars} звезд",
+  "@parentStarsCount": {
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "parentMissionClosed": "миссия закрыта",
+  "parentMissionWaiting": "миссия ждет",
+  "parentProgressTitle": "Прогресс ребенка",
+  "parentOverviewBadge": "обзор",
+  "parentLevelsLabel": "Уровни",
+  "parentLevelsValue": "{completed} из {total}",
+  "@parentLevelsValue": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayLabel": "Сегодня",
+  "parentTodayValue": "{done} из {total}",
+  "@parentTodayValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentStarsLabel": "Звезды",
+  "parentContentLabel": "Контент",
+  "parentContentValue": "{done} из {total}",
+  "@parentContentValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayPlanTitle": "План на сегодня",
+  "parentTodayPlanBody": "Короткая серия без давления: лучше 2-3 спокойных подхода, чем длинная усталая сессия.",
+  "parentPuzzleMeta": "{skill} • {minutes} мин",
+  "@parentPuzzleMeta": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "parentAreasTitle": "Зоны развития",
+  "parentBalanceBadge": "баланс",
+  "parentAreasBody": "Это внутренняя карта для взрослых: ребенку лучше видеть миссии и героев, а не сухие категории.",
+  "parentRecommendationDone": "Сегодняшняя миссия закрыта. Хороший момент похвалить за старание, а не за скорость.",
+  "parentRecommendationRemaining": "Сегодня уже есть прогресс: осталось {remaining} заданий.",
+  "@parentRecommendationRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "parentRecommendationStart": "Сегодня лучше начать с одной короткой миссии на 4-6 минут.",
+  "parentRecommendationsTitle": "Рекомендации",
+  "parentHomeBadge": "для дома",
+  "parentPaceLabel": "Темп",
+  "parentWeekFocusLabel": "Фокус недели",
+  "parentFocusArea": "Больше всего сейчас просится зона «{areaTitle}»: {areaSubtitle}.",
+  "@parentFocusArea": {
+    "placeholders": {
+      "areaTitle": {
+        "type": "String"
+      },
+      "areaSubtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "parentDiscussLabel": "Как обсуждать",
+  "parentDiscussBody": "После задания спросите: «Как ты понял правило?» Это развивает объяснение, а не угадывание.",
+  "parentFamilySecurityTitle": "Семья и безопасность",
+  "parentStorageLabel": "Хранение",
+  "parentStorageLocal": "на устройстве"
 }

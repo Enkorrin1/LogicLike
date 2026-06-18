@@ -1,34 +1,407 @@
 {
-    "@@locale":  "hi",
-    "appTitle":  "LogicLike",
-    "loadingMission":  "मिशन की तैयारी...",
-    "navHome":  "घर",
-    "navChallenge":  "खोज",
-    "navParent":  "माता-पिता",
-    "onboardingSubmitSaving":  "मार्ग तैयार किया जा रहा है",
-    "onboardingSubmitCreateHero":  "हीरो बनाएं",
-    "onboardingDefaultHero":  "युवा नायक",
-    "onboardingTitle":  "एक हीरो बनाएं",
-    "onboardingSubtitle":  "शेर दैनिक मिशन दिखाएगा, फिर बच्चा दिमागी खेल चुन सकता है।",
-    "childNameLabel":  "बच्चे का नाम",
-    "childNameError":  "नायक का नाम दर्ज करें",
-    "onboardingMissionPill":  "मिशन प्रारंभ",
-    "onboardingAgeTitle":  "हीरो की उम्र",
-    "unlockMission":  "उद्देश्य",
-    "unlockGames":  "खेल",
-    "unlockPrizes":  "पुरस्कार",
-    "ageYears":  "{years, plural, one{{years} वर्ष} other{{years} साल}}",
-    "languageArabic":  "العربية",
-    "languageGerman":  "Deutsch",
-    "languageEnglish":  "English",
-    "languageSpanish":  "Español",
-    "languageFrench":  "Français",
-    "languageHindi":  "हिन्दी",
-    "languageItalian":  "Italiano",
-    "languageJapanese":  "日本語",
-    "languageKorean":  "한국어",
-    "languagePortuguese":  "Português",
-    "languageRussian":  "Русский",
-    "languageChinese":  "中文",
-    "settingsLanguage":  "भाषा"
+  "appTitle": "BrainUp",
+  "loadingMission": "मिशन की तैयारी...",
+  "navHome": "घर",
+  "navChallenge": "काम",
+  "navParent": "माता-पिता",
+  "commonCancel": "रद्द करना",
+  "commonReset": "रीसेट करें",
+  "languageChanged": "भाषा: {language}",
+  "languageButtonSemantics": "भाषा बदलें। वर्तमान: {language}",
+  "onboardingSubmitSaving": "मार्ग तैयार किया जा रहा है",
+  "onboardingSubmitCreateHero": "हीरो बनाएं",
+  "onboardingDefaultHero": "युवा नायक",
+  "onboardingTitle": "एक हीरो बनाएं",
+  "onboardingHeroSummary": "{name}, {age}",
+  "onboardingSubtitle": "शेर दैनिक मिशन दिखाएगा, फिर आपका बच्चा मस्तिष्क प्रशिक्षण चुन सकता है।",
+  "childNameLabel": "बच्चे का नाम",
+  "childNameError": "नायक का नाम दर्ज करें",
+  "onboardingMissionPill": "मिशन प्रारंभ",
+  "onboardingAgeTitle": "हीरो की उम्र",
+  "unlockMission": "उद्देश्य",
+  "unlockGames": "खेल",
+  "unlockPrizes": "पुरस्कार",
+  "ageYears": "{years} वर्ष",
+  "homeGreeting": "नमस्ते,\n{name}",
+  "homeStarsHint": "सितारे मिशन से बढ़ते हैं और नए पुरस्कार अनलॉक करते हैं।",
+  "homeLockedLevelHint": "यह स्तर नए सितारों के बाद खुलता है।",
+  "homeStreakSavedHint": "स्ट्रीक बच गई! कल एक नया मिशन आएगा।",
+  "homeStreakNeedMissionHint": "स्ट्रीक को बचाने के लिए दैनिक मिशन को पूरा करें।",
+  "homeStreakTitle": "दैनिक लकीर",
+  "homeStreakDays": "लगातार {days} दिन!",
+  "homeStreakWaiting": "मिशन इंतज़ार कर रहा है",
+  "homeMissionDaily": "दैनिक मिशन",
+  "homeMissionFreePlay": "फ्री प्ले",
+  "homeTrainingOpen": "प्रशिक्षण खुला है",
+  "homeLevel": "स्तर {level}",
+  "homeMissionStart": "शुरू",
+  "homeMissionChoose": "चुनना",
+  "homeMissionTag": "मुख्य मिशन",
+  "homeFreePlayTitle": "खुद खेलें",
+  "homeFreePlaySubtitle": "एक नायक चुनें और अपने मस्तिष्क को प्रशिक्षित करें",
+  "homeMiniGamesTitle": "मिनी खेल",
+  "homeMiniGamesSubtitle": "स्तरों के बाद त्वरित प्रशिक्षण",
+  "homeQuickPairs": "जोड़े",
+  "homeQuickPath": "पथ",
+  "homeQuickCount": "गिनती करना",
+  "homeProgressTitle": "मेरी तरक्की",
+  "homeProgressStars": "{current} / {total} तारे",
+  "homeCollectionTitle": "संग्रह",
+  "homeCollectionStickers": "स्टिकर",
+  "homeLevelsTitle": "स्तरों",
+  "homeLevelsSubtitle": "8 प्रशिक्षण थीम, कोई कैलेंडर नहीं",
+  "homeNodeCompleted": "हो गया",
+  "homeNodePlay": "खेल",
+  "homeNodeSoon": "जल्द ही",
+  "homeMapStart": "शुरू",
+  "homeMapShapes": "आकार",
+  "homeMapPairs": "जोड़े",
+  "homeMapCount": "गिनती करना",
+  "homeMapPath": "पथ",
+  "homeMapRhythm": "लय",
+  "homeMapCompare": "तुलना करना",
+  "homeMapFinal": "अंतिम",
+  "parentTitle": "मूल क्षेत्र",
+  "parentIntroTitle": "वयस्कों के लिए शांत क्षेत्र",
+  "parentIntroBody": "प्रोफ़ाइल, प्रगति, भाषा और भविष्य की सदस्यता बाल मिशन से अलग रहती है।",
+  "parentProfileTitle": "पारिवारिक प्रोफ़ाइल",
+  "parentLocalBadge": "स्थानीय",
+  "parentChildLabel": "बच्चा",
+  "parentAgeLabel": "आयु",
+  "parentCompletedTasksLabel": "कार्य पूर्ण",
+  "parentLanguageLabel": "भाषा",
+  "settingsLanguage": "ऐप भाषा",
+  "parentSubscriptionTitle": "पारिवारिक सदस्यता",
+  "parentSubscriptionSoon": "जल्द ही",
+  "parentSubscriptionBody": "भुगतान की स्थिति, पारिवारिक सीटें और योजना प्रबंधन यहां दिखाई देंगे।",
+  "parentFamilySeatsLabel": "पारिवारिक सीटें",
+  "parentFamilySeatsValue": "की योजना बनाई",
+  "parentPaymentLabel": "भुगतान",
+  "parentPaymentValue": "जुड़े नहीं हैं",
+  "parentResetProfile": "प्रोफ़ाइल रीसेट करें",
+  "parentResetTitle": "प्रोफ़ाइल रीसेट करें?",
+  "parentResetBody": "ऑनबोर्डिंग फिर से खुलेगी और स्थानीय प्रगति साफ़ हो जाएगी।",
+  "challengeTitle": "दिमागी खेल",
+  "challengeDayDone": "दिन पूरा",
+  "challengeDailyMission": "दैनिक मिशन",
+  "challengeDayDoneBody": "इनाम मिला. आप दोहरा सकते हैं या स्वतंत्र रूप से खेल सकते हैं।",
+  "challengeDailyBody": "स्ट्रीक को बचाने और पुरस्कार प्राप्त करने के लिए 3 चरणों को पूरा करें।",
+  "challengePrize": "पुरस्कार",
+  "challengeMissionProgress": "मिशन की प्रगति",
+  "countOfTotal": "{total} का {count}",
+  "challengeRepeatMission": "मिशन दोहराएँ",
+  "challengeStepsTraining": "प्रशिक्षण के लिए {steps} चरण",
+  "challengeStepNumber": "चरण {step}",
+  "challengeAgain": "दोबारा",
+  "minutesShort": "{minutes} मि",
+  "challengeBrainGymTitle": "ब्रेन जिम",
+  "challengeBrainGymSubtitle": "{count} क्षेत्र, किसी भी क्रम में खेलें",
+  "challengeAreaLevels": "{done}/{total} स्तर",
+  "challengeAreaCompleted": "{total} में से {done} पूर्ण",
+  "challengeStateCompleted": "हो गया",
+  "challengeStateNext": "अगला",
+  "challengeStatePlay": "खेल",
+  "challengeLevelNumber": "स्तर {level}",
+  "challengeHideHint": "संकेत छिपाएँ",
+  "challengeShowHint": "संकेत दिखाएँ",
+  "challengeDailyTaskTitle": "दैनिक कार्य",
+  "challengePuzzleTaskTitle": "पहेली",
+  "challengeDailyPath": "दैनिक पथ",
+  "challengeFreePlay": "फ्री प्ले",
+  "challengeExcellent": "महान!",
+  "challengeFlyNext": "आगे उड़ान",
+  "challengeAllDone": "सब तैयार",
+  "challengePlayMore": "अधिक खेलो",
+  "challengeMyCollection": "मेरा संग्रह",
+  "challengeDailyCompleteTitle": "दैनिक मिशन पूरा!",
+  "challengeDailyCompleteBody": "आपने सभी चरण पूरे कर लिए. पुरस्कार लीजिए और खुलकर खेलिए।",
+  "challengeRewardStars": "सितारे",
+  "challengeRewardStreak": "धारी",
+  "challengeRewardSteps": "कदम",
+  "challengeWhatNextTitle": "आगे क्या?",
+  "challengeWhatNextBody": "एक नायक चुनें: तर्क, स्मृति, ध्यान, गिनती या पथ।",
+  "challengeProgressStep": "{total} का चरण {current}",
+  "challengeChooseAnswer": "एक उत्तर चुनें",
+  "challengeSelectedAnswer": "उत्तर: {answer}",
+  "challengePickDifferentAnswer": "दूसरा उत्तर चुनें",
+  "challengeCorrectAnswer": "सही!",
+  "challengeChecking": "चेकिंग",
+  "challengeCheck": "जाँच करना",
+  "challengeCorrectFeedbackTitle": "महान!",
+  "challengeRetryFeedbackTitle": "वहाँ लगभग",
+  "challengeCorrectFeedbackText": "उत्तर सही है. आगे बढ़ते रहना!",
+  "hintLogic": "नियम दोहराता है. अगले दोहराव की शुरुआत ढूंढें और पंक्ति जारी रखें।",
+  "hintMemory": "सबसे पहले याद रखें कि कौन सी तस्वीरें खुली थीं. फिर मैचिंग जोड़ी की तलाश करें।",
+  "hintAttention": "विवरण की एक-एक करके तुलना करें: रंग, आकार, आकार और स्थान।",
+  "hintMath": "छोटे समूहों में गिनें ताकि ट्रैक न खोना आसान हो।",
+  "hintSpace": "प्रारंभ से अंत तक पथ का अनुसरण करें और अगले मोड़ को नाम दें।",
+  "collectionTitle": "मेरा संग्रह",
+  "collectionDayPrize": "दिन का पुरस्कार",
+  "collectionCosmoPrizes": "अंतरिक्ष पुरस्कार",
+  "collectionUnlocked": "{total} का {unlocked} खुला",
+  "collectionNewPrizeTitle": "नए दिन का पुरस्कार",
+  "collectionNewPrizeBody": "अंतरिक्ष यात्री को संग्रह में जोड़ा गया।",
+  "collectionSnackUnlocked": "{title} पहले से ही संग्रह में है।",
+  "collectionSnackLocked": "नए स्तरों के बाद खुलता है.",
+  "collectionNewBadge": "नया",
+  "collectionLockedLevel": "{level} लेवल।",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@languageButtonSemantics": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@onboardingHeroSummary": {
+    "placeholders": {
+      "age": {},
+      "name": {}
+    }
+  },
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@homeStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeProgressStars": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@countOfTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepsTraining": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepNumber": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeBrainGymSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaLevels": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaCompleted": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeLevelNumber": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeProgressStep": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeSelectedAnswer": {
+    "placeholders": {
+      "answer": {}
+    }
+  },
+  "@collectionUnlocked": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "unlocked": {
+        "type": "int"
+      }
+    }
+  },
+  "@collectionSnackUnlocked": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "@collectionLockedLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@@locale": "hi",
+  "parentOverviewTitle": "अभिभावक सिंहावलोकन",
+  "parentOverviewBody": "प्रोफ़ाइल {name}, प्रगति, आज की योजना और घर पर अभ्यास के लिए युक्तियाँ।",
+  "@parentOverviewBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentStarsCount": "{stars} सितारे",
+  "@parentStarsCount": {
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "parentMissionClosed": "मिशन पूरा हुआ",
+  "parentMissionWaiting": "मिशन प्रतीक्षा",
+  "parentProgressTitle": "संतान की उन्नति",
+  "parentOverviewBadge": "सिंहावलोकन",
+  "parentLevelsLabel": "स्तरों",
+  "parentLevelsValue": "{total} का {completed}",
+  "@parentLevelsValue": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayLabel": "आज",
+  "parentTodayValue": "{total} का {done}",
+  "@parentTodayValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentStarsLabel": "सितारे",
+  "parentContentLabel": "सामग्री",
+  "parentContentValue": "{total} का {done}",
+  "@parentContentValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayPlanTitle": "आज की योजना",
+  "parentTodayPlanBody": "दबाव के बिना एक छोटी श्रृंखला: 2-3 शांत प्रयास एक लंबे थके हुए सत्र से बेहतर हैं।",
+  "parentPuzzleMeta": "{skill} • {minutes} मि",
+  "@parentPuzzleMeta": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "parentAreasTitle": "विकास क्षेत्र",
+  "parentBalanceBadge": "संतुलन",
+  "parentAreasBody": "यह एक वयस्क मानचित्र है: बच्चों को मिशन और नायक देखना चाहिए, न कि सूखी श्रेणियां।",
+  "parentRecommendationDone": "आज का मिशन पूरा हो गया है. यह प्रयास की प्रशंसा करने का अच्छा क्षण है, गति की नहीं।",
+  "parentRecommendationRemaining": "आज प्रगति हुई है: {remaining} कार्य शेष हैं।",
+  "@parentRecommendationRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "parentRecommendationStart": "आज, 4-6 मिनट के एक छोटे मिशन से शुरुआत करें।",
+  "parentRecommendationsTitle": "सिफारिशों",
+  "parentHomeBadge": "घर पर",
+  "parentPaceLabel": "गति",
+  "parentWeekFocusLabel": "सप्ताह फोकस",
+  "parentFocusArea": "जिस क्षेत्र पर अभी सबसे अधिक ध्यान देने की आवश्यकता है वह है \"{areaTitle}\": {areaSubtitle}।",
+  "@parentFocusArea": {
+    "placeholders": {
+      "areaTitle": {
+        "type": "String"
+      },
+      "areaSubtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "parentDiscussLabel": "चर्चा कैसे करें",
+  "parentDiscussBody": "किसी कार्य के बाद पूछें: \"आपको नियम कैसे मिला?\" इससे स्पष्टीकरण बनता है, अनुमान नहीं।",
+  "parentFamilySecurityTitle": "परिवार और सुरक्षा",
+  "parentStorageLabel": "भंडारण",
+  "parentStorageLocal": "उपकरण पर"
 }

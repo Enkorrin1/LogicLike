@@ -5,6 +5,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../domain/family_profile.dart';
 import '../../domain/learning_foundation.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 import '../rewards/collection_screen.dart';
@@ -14,12 +16,14 @@ class HomeScreen extends StatefulWidget {
     required this.profile,
     required this.onStartChallenge,
     required this.onStartArea,
+    required this.onLanguageChanged,
     super.key,
   });
 
   final FamilyProfile profile;
   final VoidCallback onStartChallenge;
   final ValueChanged<String> onStartArea;
+  final Future<void> Function(AppLanguage language) onLanguageChanged;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -78,6 +82,19 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  Future<void> _toggleLanguage() async {
+    final nextLanguage = widget.profile.language.next;
+
+    Feedback.forTap(context);
+    await widget.onLanguageChanged(nextLanguage);
+    if (!mounted) {
+      return;
+    }
+
+    final l10n = context.l10n;
+    _showHint(l10n.languageChanged(l10n.languageName(nextLanguage)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final dailyStars = widget.profile.completedChallenges;
@@ -114,14 +131,16 @@ class _HomeScreenState extends State<HomeScreen>
                     childName: widget.profile.childName,
                     stars: totalStars,
                     hearts: hearts,
+                    language: widget.profile.language,
                     onStarsTap: () => _showHint(
-                      'Звезды копятся за миссии и открывают новые призы.',
+                      context.l10n.homeStarsHint,
                     ),
                     onPlanetTap: () => _openCollection(
                       stars: totalStars,
                       completedLevels: mapProgress,
                       completedToday: completedToday,
                     ),
+                    onLanguageTap: _toggleLanguage,
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -152,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen>
                     stars: mapProgress,
                     onCurrentTap: widget.onStartChallenge,
                     onLockedTap: () => _showHint(
-                      'Этот уровень откроется после новых звезд.',
+                      context.l10n.homeLockedLevelHint,
                     ),
                   ),
                 ),
@@ -165,8 +184,8 @@ class _HomeScreenState extends State<HomeScreen>
                     completedToday: completedToday,
                     onTap: () => _showHint(
                       completedToday
-                          ? 'Серия сохранена! Завтра будет новая миссия.'
-                          : 'Пройди миссию дня, чтобы сохранить серию.',
+                          ? context.l10n.homeStreakSavedHint
+                          : context.l10n.homeStreakNeedMissionHint,
                     ),
                   ),
                 ),
@@ -257,16 +276,20 @@ class _GreetingHeader extends StatelessWidget {
     required this.childName,
     required this.stars,
     required this.hearts,
+    required this.language,
     required this.onStarsTap,
     required this.onPlanetTap,
+    required this.onLanguageTap,
   });
 
   final Animation<double> animation;
   final String childName;
   final int stars;
   final int hearts;
+  final AppLanguage language;
   final VoidCallback onStarsTap;
   final VoidCallback onPlanetTap;
+  final VoidCallback onLanguageTap;
 
   @override
   Widget build(BuildContext context) {
@@ -305,17 +328,27 @@ class _GreetingHeader extends StatelessWidget {
         const SizedBox(width: 12),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              'Привет,\n$childName',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                    color: const Color(0xFF075D5A),
-                    fontSize: 31,
-                    fontWeight: FontWeight.w900,
-                    height: 1.02,
-                  ),
+            padding: const EdgeInsets.only(top: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n.homeGreeting(childName),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: const Color(0xFF075D5A),
+                        fontSize: 31,
+                        fontWeight: FontWeight.w900,
+                        height: 1.02,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                _LanguageButton(
+                  language: language,
+                  onTap: onLanguageTap,
+                ),
+              ],
             ),
           ),
         ),
@@ -346,6 +379,64 @@ class _GreetingHeader extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _LanguageButton extends StatelessWidget {
+  const _LanguageButton({
+    required this.language,
+    required this.onTap,
+  });
+
+  final AppLanguage language;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: context.l10n.languageButtonSemantics(
+        context.l10n.languageName(language),
+      ),
+      child: _TapScale(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: Container(
+          height: 36,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppPalette.ink.withValues(alpha: 0.09),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.language_rounded,
+                color: AppPalette.teal,
+                size: 18,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                language.shortLabel,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppPalette.ink,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -568,7 +659,7 @@ class _StreakStrip extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Серия дня',
+                    context.l10n.homeStreakTitle,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: AppPalette.muted,
                           fontWeight: FontWeight.w900,
@@ -577,8 +668,8 @@ class _StreakStrip extends StatelessWidget {
                   const SizedBox(height: 3),
                   Text(
                     completedToday
-                        ? '$streak дней подряд!'
-                        : 'миссия ждет тебя',
+                        ? context.l10n.homeStreakDays(streak)
+                        : context.l10n.homeStreakWaiting,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -752,7 +843,9 @@ class _MissionHeroCard extends StatelessWidget {
                         const _MissionTag(),
                         const SizedBox(height: 8),
                         Text(
-                          completedToday ? 'Играть свободно' : 'Миссия дня',
+                          completedToday
+                              ? context.l10n.homeMissionFreePlay
+                              : context.l10n.homeMissionDaily,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style:
@@ -766,8 +859,8 @@ class _MissionHeroCard extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           completedToday
-                              ? 'Тренировки открыты'
-                              : 'Уровень $level',
+                              ? context.l10n.homeTrainingOpen
+                              : context.l10n.homeLevel(level),
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: Colors.white.withValues(alpha: 0.86),
@@ -785,7 +878,9 @@ class _MissionHeroCard extends StatelessWidget {
                   const SizedBox(width: 8),
                   _StartMissionButton(
                     animation: animation,
-                    label: completedToday ? 'Выбрать' : 'Старт',
+                    label: completedToday
+                        ? context.l10n.homeMissionChoose
+                        : context.l10n.homeMissionStart,
                   ),
                 ],
               ),
@@ -825,7 +920,7 @@ class _MissionTag extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            'Главная миссия',
+            context.l10n.homeMissionTag,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
@@ -887,27 +982,22 @@ class _FreePlayPanel extends StatelessWidget {
     const items = [
       _FreePlayData(
         areaId: 'logic',
-        label: 'Логика',
         color: Color(0xFFFFD28E),
       ),
       _FreePlayData(
         areaId: 'memory',
-        label: 'Память',
         color: Color(0xFFA9F4E8),
       ),
       _FreePlayData(
         areaId: 'attention',
-        label: 'Внимание',
         color: Color(0xFFFFC6D5),
       ),
       _FreePlayData(
         areaId: 'math',
-        label: 'Счет',
         color: Color(0xFFDCD6FF),
       ),
       _FreePlayData(
         areaId: 'space',
-        label: 'Путь',
         color: Color(0xFFBFF6D0),
       ),
     ];
@@ -950,7 +1040,7 @@ class _FreePlayPanel extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Играй сам',
+                      context.l10n.homeFreePlayTitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -959,7 +1049,7 @@ class _FreePlayPanel extends StatelessWidget {
                           ),
                     ),
                     Text(
-                      'выбирай героя и тренируй мозг',
+                      context.l10n.homeFreePlaySubtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -997,12 +1087,10 @@ class _FreePlayPanel extends StatelessWidget {
 class _FreePlayData {
   const _FreePlayData({
     required this.areaId,
-    required this.label,
     required this.color,
   });
 
   final String areaId;
-  final String label;
   final Color color;
 }
 
@@ -1045,7 +1133,7 @@ class _FreePlayItem extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            data.label,
+            context.l10n.areaTitle(data.areaId),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -1139,9 +1227,9 @@ class _QuickGames extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _SectionHeader(
-          title: 'Мини-игры',
-          subtitle: 'быстрая тренировка после уровней',
+        _SectionHeader(
+          title: context.l10n.homeMiniGamesTitle,
+          subtitle: context.l10n.homeMiniGamesSubtitle,
           icon: Icons.videogame_asset_rounded,
         ),
         const SizedBox(height: 10),
@@ -1152,7 +1240,7 @@ class _QuickGames extends StatelessWidget {
                 animation: animation,
                 delay: 0,
                 icon: Icons.grid_view_rounded,
-                label: 'Пары',
+                label: context.l10n.homeQuickPairs,
                 color: const Color(0xFFFFE29B),
                 onTap: onStart,
               ),
@@ -1163,7 +1251,7 @@ class _QuickGames extends StatelessWidget {
                 animation: animation,
                 delay: 0.22,
                 icon: Icons.route_rounded,
-                label: 'Путь',
+                label: context.l10n.homeQuickPath,
                 color: const Color(0xFFBFF6D0),
                 onTap: onStart,
               ),
@@ -1174,7 +1262,7 @@ class _QuickGames extends StatelessWidget {
                 animation: animation,
                 delay: 0.44,
                 icon: Icons.calculate_rounded,
-                label: 'Счет',
+                label: context.l10n.homeQuickCount,
                 color: const Color(0xFFDCD6FF),
                 onTap: onStart,
               ),
@@ -1354,7 +1442,7 @@ class _ProgressTile extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Мой прогресс',
+                    context.l10n.homeProgressTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -1392,7 +1480,7 @@ class _ProgressTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Уровень $level',
+                        context.l10n.homeLevel(level),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style:
@@ -1403,7 +1491,7 @@ class _ProgressTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        '$currentXp / 200 звезд',
+                        context.l10n.homeProgressStars(currentXp, 200),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -1472,7 +1560,7 @@ class _CollectionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Коллекция',
+                  context.l10n.homeCollectionTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -1514,7 +1602,7 @@ class _CollectionTile extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 3),
                         child: Text(
-                          'наклеек',
+                          context.l10n.homeCollectionStickers,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style:
@@ -1563,9 +1651,9 @@ class _AdventurePath extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionHeader(
-            title: 'Уровни',
-            subtitle: '8 тем для тренировки, не календарь',
+          _SectionHeader(
+            title: context.l10n.homeLevelsTitle,
+            subtitle: context.l10n.homeLevelsSubtitle,
             icon: Icons.explore_rounded,
           ),
           const SizedBox(height: 10),
@@ -1626,9 +1714,9 @@ class _AdventureNode extends StatelessWidget {
       MapNodeState.locked => Icons.lock_rounded,
     };
     final caption = switch (state) {
-      MapNodeState.completed => 'пройдено',
-      MapNodeState.current => 'играть',
-      MapNodeState.locked => 'скоро',
+      MapNodeState.completed => context.l10n.homeNodeCompleted,
+      MapNodeState.current => context.l10n.homeNodePlay,
+      MapNodeState.locked => context.l10n.homeNodeSoon,
     };
 
     return _TapScale(
@@ -1666,7 +1754,7 @@ class _AdventureNode extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Text(
-              _nodeTitle(node.order),
+              context.l10n.mapNodeTitle(node.order),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -1692,19 +1780,6 @@ class _AdventureNode extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _nodeTitle(int order) {
-    return switch (order) {
-      1 => 'Старт',
-      2 => 'Фигуры',
-      3 => 'Пары',
-      4 => 'Счет',
-      5 => 'Путь',
-      6 => 'Ритм',
-      7 => 'Сравни',
-      _ => 'Финал',
-    };
   }
 }
 

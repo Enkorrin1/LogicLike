@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
+import '../../domain/puzzle_answer_rules.dart';
+import '../../l10n/generated/app_localizations.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 import '../rewards/collection_screen.dart';
@@ -45,7 +49,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Игры для мозга')),
+      appBar: AppBar(title: Text(context.l10n.challengeTitle)),
       body: PlayfulBackground(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
@@ -149,14 +153,20 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     bool completedToday,
     Set<String> completedPracticeIds,
   ) {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (_) => _PuzzleAreaScreen(
           area: area,
           areaIndex: areaIndex,
           completedPracticeIds: completedPracticeIds,
-          onStart: (puzzle, puzzleIndex, onPracticeSolved) => _openPuzzle(
-            context,
+          onStart: (
+            areaContext,
+            puzzle,
+            puzzleIndex,
+            onPracticeSolved,
+          ) =>
+              _openPuzzle(
+            areaContext,
             puzzles: area.puzzles,
             index: puzzleIndex,
             mode: _PuzzleMode.practice,
@@ -176,7 +186,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     required bool completedToday,
     ValueChanged<DailyChallenge>? onPracticeSolved,
   }) {
-    Navigator.of(context).push(
+    Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute<void>(
         builder: (_) => _buildPuzzlePlayScreen(
           puzzles: puzzles,
@@ -332,14 +342,16 @@ class _DailyQuestPanel extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          allCompleted ? 'День закрыт' : 'Миссия дня',
+                          allCompleted
+                              ? context.l10n.challengeDayDone
+                              : context.l10n.challengeDailyMission,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           allCompleted
-                              ? 'Награда получена. Можно повторять или играть свободно.'
-                              : 'Пройди 3 шага, чтобы сохранить серию и забрать приз.',
+                              ? context.l10n.challengeDayDoneBody
+                              : context.l10n.challengeDailyBody,
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: AppPalette.ink,
@@ -425,7 +437,7 @@ class _DailyRewardBadge extends StatelessWidget {
           ),
           const SizedBox(height: 2),
           Text(
-            completed ? 'приз' : '+$stars',
+            completed ? context.l10n.challengePrize : '+$stars',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -466,7 +478,7 @@ class _DailyMissionProgress extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Прогресс миссии',
+                  context.l10n.challengeMissionProgress,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -476,7 +488,7 @@ class _DailyMissionProgress extends StatelessWidget {
                 ),
               ),
               Text(
-                '$completed из $total',
+                context.l10n.countOfTotal(completed, total),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppPalette.ink,
                       fontWeight: FontWeight.w900,
@@ -554,7 +566,7 @@ class _DailyReplayCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Повторить миссию',
+                    context.l10n.challengeRepeatMission,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -563,7 +575,7 @@ class _DailyReplayCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '$steps шага для тренировки',
+                    context.l10n.challengeStepsTraining(steps),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall,
@@ -667,7 +679,7 @@ class _DailyQuestRow extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Шаг ${index + 1}',
+                      context.l10n.challengeStepNumber(index + 1),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -678,14 +690,14 @@ class _DailyQuestRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      puzzle.title,
+                      context.l10n.puzzleTitle(puzzle),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      puzzle.skill,
+                      context.l10n.puzzleSkill(puzzle),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodySmall,
@@ -716,7 +728,9 @@ class _DailyQuestRow extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      completed ? 'еще' : '${puzzle.minutes} мин',
+                      completed
+                          ? context.l10n.challengeAgain
+                          : context.l10n.minutesShort(puzzle.minutes),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppPalette.ink,
                             fontWeight: FontWeight.w900,
@@ -754,11 +768,11 @@ class _BrainGymHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Тренажер мозга',
+                context.l10n.challengeBrainGymTitle,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               Text(
-                '$areasCount областей, играй в любом порядке',
+                context.l10n.challengeBrainGymSubtitle(areasCount),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -846,7 +860,7 @@ class _BrainAreaCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          area.title,
+                          context.l10n.areaTitle(area.id),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style:
@@ -857,7 +871,7 @@ class _BrainAreaCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 3),
                         Text(
-                          area.subtitle,
+                          context.l10n.areaSubtitle(area.id),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style:
@@ -878,7 +892,10 @@ class _BrainAreaCard extends StatelessWidget {
                             const SizedBox(width: 5),
                             Expanded(
                               child: Text(
-                                '$completedCount/$total уровней',
+                                context.l10n.challengeAreaLevels(
+                                  completedCount,
+                                  total,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context)
@@ -930,6 +947,7 @@ class _PuzzleAreaScreen extends StatefulWidget {
   final int areaIndex;
   final Set<String> completedPracticeIds;
   final void Function(
+    BuildContext context,
     DailyChallenge puzzle,
     int index,
     ValueChanged<DailyChallenge> onPracticeSolved,
@@ -970,7 +988,7 @@ class _PuzzleAreaScreenState extends State<_PuzzleAreaScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(area.title)),
+      appBar: AppBar(title: Text(context.l10n.areaTitle(area.id))),
       body: PlayfulBackground(
         child: ListView.separated(
           padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
@@ -997,7 +1015,8 @@ class _PuzzleAreaScreenState extends State<_PuzzleAreaScreen> {
               color: color,
               completed: completed,
               current: current,
-              onTap: () => widget.onStart(puzzle, puzzleIndex, _markSolved),
+              onTap: () =>
+                  widget.onStart(context, puzzle, puzzleIndex, _markSolved),
             );
           },
         ),
@@ -1045,14 +1064,14 @@ class _AreaHero extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  area.title,
+                  context.l10n.areaTitle(area.id),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         color: Colors.white,
                       ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  area.subtitle,
+                  context.l10n.areaSubtitle(area.id),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w800,
@@ -1074,7 +1093,10 @@ class _AreaHero extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        '$completedCount из $total пройдено',
+                        context.l10n.challengeAreaCompleted(
+                          completedCount,
+                          total,
+                        ),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w900,
@@ -1128,10 +1150,10 @@ class _FreePuzzleCard extends StatelessWidget {
             ? color
             : AppPalette.muted;
     final stateLabel = completed
-        ? 'пройдено'
+        ? context.l10n.challengeStateCompleted
         : current
-            ? 'следующий'
-            : 'играть';
+            ? context.l10n.challengeStateNext
+            : context.l10n.challengeStatePlay;
     final stateIcon = completed
         ? Icons.check_circle_rounded
         : current
@@ -1176,7 +1198,7 @@ class _FreePuzzleCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          'Уровень $levelNumber',
+                          context.l10n.challengeLevelNumber(levelNumber),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style:
@@ -1221,12 +1243,12 @@ class _FreePuzzleCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    puzzle.title,
+                    context.l10n.puzzleTitle(puzzle),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    puzzle.prompt,
+                    context.l10n.puzzlePrompt(puzzle),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -1309,6 +1331,7 @@ class _PuzzlePlayScreen extends StatefulWidget {
 
 class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
   String? _selectedAnswer;
+  _AnswerCheckState _answerState = _AnswerCheckState.idle;
   bool _showHint = false;
   bool _isSubmitting = false;
   bool _showSuccessBurst = false;
@@ -1319,7 +1342,10 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     }
 
     Feedback.forTap(context);
-    setState(() => _selectedAnswer = answer);
+    setState(() {
+      _selectedAnswer = answer;
+      _answerState = _AnswerCheckState.idle;
+    });
   }
 
   Future<void> _submit() async {
@@ -1327,7 +1353,19 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
       return;
     }
 
-    setState(() => _isSubmitting = true);
+    if (!isCorrectAnswerForPuzzle(widget.puzzle, _selectedAnswer!)) {
+      Feedback.forLongPress(context);
+      setState(() {
+        _answerState = _AnswerCheckState.wrong;
+        _showHint = true;
+      });
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+      _answerState = _AnswerCheckState.correct;
+    });
     await widget.onComplete();
     if (widget.mode == _PuzzleMode.practice) {
       widget.onPracticeSolved?.call(widget.puzzle);
@@ -1346,14 +1384,14 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     }
 
     if (widget.mode == _PuzzleMode.practice) {
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
       return;
     }
 
     final nextPuzzleBuilder = widget.nextPuzzleBuilder;
     if (nextPuzzleBuilder == null) {
       if (widget.mode == _PuzzleMode.daily) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context, rootNavigator: true).pushReplacement(
           MaterialPageRoute<void>(
             builder: (_) => _DailyMissionCompleteScreen(
               stars: widget.total,
@@ -1365,11 +1403,11 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
         return;
       }
 
-      Navigator.of(context).pop();
+      Navigator.of(context, rootNavigator: true).pop();
       return;
     }
 
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context, rootNavigator: true).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) => nextPuzzleBuilder(),
       ),
@@ -1380,8 +1418,13 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
   Widget build(BuildContext context) {
     final isDaily = widget.mode == _PuzzleMode.daily;
     final accent = _areaAccentForId(widget.puzzle.areaId);
-    final answerOptions = _answerOptionsFor(widget.puzzle.areaId);
+    final answerRule = answerRuleForPuzzle(widget.puzzle);
+    final l10n = context.l10n;
+    final answerOptions = _answerOptionsFor(answerRule, l10n);
+    final correctAnswer = answerRule.correctAnswer;
     final compact = MediaQuery.sizeOf(context).height < 700;
+    final canSubmit =
+        _selectedAnswer != null && _answerState != _AnswerCheckState.wrong;
     final hintButton = OutlinedButton.icon(
       onPressed: () => setState(() => _showHint = !_showHint),
       icon: Icon(
@@ -1389,7 +1432,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
             ? Icons.visibility_off_rounded
             : Icons.tips_and_updates_rounded,
       ),
-      label: Text(_showHint ? 'Скрыть подсказку' : 'Показать подсказку'),
+      label: Text(_showHint ? l10n.challengeHideHint : l10n.challengeShowHint),
       style: compact
           ? OutlinedButton.styleFrom(
               visualDensity: VisualDensity.compact,
@@ -1401,7 +1444,13 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     );
 
     return Scaffold(
-      appBar: AppBar(title: Text(isDaily ? 'Задание дня' : 'Головоломка')),
+      appBar: AppBar(
+        title: Text(
+          isDaily
+              ? l10n.challengeDailyTaskTitle
+              : l10n.challengePuzzleTaskTitle,
+        ),
+      ),
       body: Stack(
         children: [
           PlayfulBackground(
@@ -1411,7 +1460,9 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                 _ProgressHeader(
                   current: widget.number,
                   total: widget.total,
-                  label: isDaily ? 'Ежедневный путь' : 'Свободная игра',
+                  label: isDaily
+                      ? l10n.challengeDailyPath
+                      : l10n.challengeFreePlay,
                   compact: compact,
                 ),
                 SizedBox(height: compact ? 10 : 16),
@@ -1438,7 +1489,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                       ),
                       SizedBox(height: compact ? 8 : 12),
                       _QuestionBubble(
-                        prompt: widget.puzzle.prompt,
+                        prompt: l10n.puzzlePrompt(widget.puzzle),
                         accent: accent,
                         compact: compact,
                       ),
@@ -1450,12 +1501,16 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                               Expanded(
                                 child: _AnswerOption(
                                   option: answerOptions[i],
-                                  selected:
-                                      _selectedAnswer == answerOptions[i].label,
+                                  selected: _selectedAnswer ==
+                                      answerOptions[i].answer,
+                                  state: _stateForOption(
+                                    answerOptions[i].answer,
+                                    correctAnswer,
+                                  ),
                                   compact: true,
                                   stacked: true,
                                   onTap: () =>
-                                      _selectAnswer(answerOptions[i].label),
+                                      _selectAnswer(answerOptions[i].answer),
                                 ),
                               ),
                               if (i != answerOptions.length - 1)
@@ -1469,12 +1524,25 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                             padding: const EdgeInsets.only(bottom: 7),
                             child: _AnswerOption(
                               option: option,
-                              selected: _selectedAnswer == option.label,
+                              selected: _selectedAnswer == option.answer,
+                              state:
+                                  _stateForOption(option.answer, correctAnswer),
                               compact: false,
                               stacked: false,
-                              onTap: () => _selectAnswer(option.label),
+                              onTap: () => _selectAnswer(option.answer),
                             ),
                           ),
+                      if (_answerState != _AnswerCheckState.idle) ...[
+                        SizedBox(height: compact ? 6 : 8),
+                        _AnswerFeedbackPanel(
+                          state: _answerState,
+                          retryText: l10n.retryTextForPuzzle(
+                            widget.puzzle,
+                            answerRule.retryText,
+                          ),
+                          compact: compact,
+                        ),
+                      ],
                       SizedBox(height: compact ? 4 : 0),
                       Align(
                         alignment: Alignment.centerLeft,
@@ -1505,15 +1573,31 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
         ],
       ),
       bottomNavigationBar: _StickyAnswerBar(
-        enabled: _selectedAnswer != null,
+        enabled: canSubmit,
         loading: _isSubmitting,
-        selectedAnswer: _selectedAnswer,
+        selectedAnswerLabel:
+            _selectedAnswer == null ? null : l10n.answerLabel(_selectedAnswer!),
+        answerState: _answerState,
         compact: compact,
         onSubmit: _submit,
       ),
     );
   }
+
+  _AnswerCheckState _stateForOption(String label, String correctAnswer) {
+    if (_answerState == _AnswerCheckState.correct && label == correctAnswer) {
+      return _AnswerCheckState.correct;
+    }
+
+    if (_answerState == _AnswerCheckState.wrong && label == _selectedAnswer) {
+      return _AnswerCheckState.wrong;
+    }
+
+    return _AnswerCheckState.idle;
+  }
 }
+
+enum _AnswerCheckState { idle, wrong, correct }
 
 class _SuccessBurst extends StatelessWidget {
   const _SuccessBurst({
@@ -1604,7 +1688,7 @@ class _SuccessBurst extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Отлично!',
+                              context.l10n.challengeExcellent,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleLarge
@@ -1617,7 +1701,9 @@ class _SuccessBurst extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          hasNextPuzzle ? 'Летим дальше' : 'Все готово',
+                          hasNextPuzzle
+                              ? context.l10n.challengeFlyNext
+                              : context.l10n.challengeAllDone,
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: Colors.white,
@@ -1771,14 +1857,14 @@ class _DailyMissionCompleteScreen extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: () => _startTraining(context),
                   icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Играть дальше'),
+                  label: Text(context.l10n.challengePlayMore),
                 ),
               ),
               const SizedBox(height: 10),
               OutlinedButton.icon(
                 onPressed: () => _openCollection(context),
                 icon: const Icon(Icons.auto_awesome_rounded),
-                label: const Text('Моя коллекция'),
+                label: Text(context.l10n.challengeMyCollection),
               ),
             ],
           ),
@@ -1870,7 +1956,7 @@ class _DailyRewardHero extends StatelessWidget {
               ),
               SizedBox(height: compact ? 14 : 18),
               Text(
-                'Миссия дня выполнена!',
+                context.l10n.challengeDailyCompleteTitle,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: const Color(0xFF075D5A),
@@ -1880,7 +1966,7 @@ class _DailyRewardHero extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Ты закрыл все шаги. Можно забрать приз и играть свободно.',
+                context.l10n.challengeDailyCompleteBody,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppPalette.ink,
@@ -1894,16 +1980,16 @@ class _DailyRewardHero extends StatelessWidget {
                     child: _RewardMetric(
                       icon: Icons.star_rounded,
                       value: '+$stars',
-                      label: 'звезды',
+                      label: context.l10n.challengeRewardStars,
                       color: AppPalette.mango,
                     ),
                   ),
                   const SizedBox(width: 10),
-                  const Expanded(
+                  Expanded(
                     child: _RewardMetric(
                       icon: Icons.local_fire_department_rounded,
                       value: '+1',
-                      label: 'серия',
+                      label: context.l10n.challengeRewardStreak,
                       color: AppPalette.coral,
                     ),
                   ),
@@ -1912,7 +1998,7 @@ class _DailyRewardHero extends StatelessWidget {
                     child: _RewardMetric(
                       icon: Icons.card_giftcard_rounded,
                       value: '$completedSteps',
-                      label: 'шага',
+                      label: context.l10n.challengeRewardSteps,
                       color: AppPalette.teal,
                     ),
                   ),
@@ -2009,14 +2095,14 @@ class _RewardNextStepCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Что дальше?',
+                  context.l10n.challengeWhatNextTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Выбирай героя: логика, память, внимание, счет или путь.',
+                  context.l10n.challengeWhatNextBody,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -2060,7 +2146,7 @@ class _ProgressHeader extends StatelessWidget {
                 Text(label, style: Theme.of(context).textTheme.bodySmall),
                 SizedBox(height: compact ? 2 : 3),
                 Text(
-                  'Шаг $current из $total',
+                  context.l10n.challengeProgressStep(current, total),
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 SizedBox(height: compact ? 6 : 8),
@@ -2116,7 +2202,7 @@ class _TaskIntro extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                puzzle.title,
+                context.l10n.puzzleTitle(puzzle),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: compact
@@ -2125,7 +2211,7 @@ class _TaskIntro extends StatelessWidget {
               ),
               SizedBox(height: compact ? 2 : 4),
               Text(
-                puzzle.skill,
+                context.l10n.puzzleSkill(puzzle),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -2155,11 +2241,31 @@ class _PuzzleStage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stage = switch (puzzle.areaId) {
-      'memory' => _MemoryStage(accent: accent, compact: compact),
-      'attention' => _AttentionStage(accent: accent, compact: compact),
-      'math' => _MathStage(accent: accent, compact: compact),
-      'space' => _PathStage(accent: accent, compact: compact),
-      _ => _PatternStrip(accent: accent, compact: compact),
+      'memory' => _MemoryStage(
+          puzzle: puzzle,
+          accent: accent,
+          compact: compact,
+        ),
+      'attention' => _AttentionStage(
+          puzzle: puzzle,
+          accent: accent,
+          compact: compact,
+        ),
+      'math' => _MathStage(
+          puzzle: puzzle,
+          accent: accent,
+          compact: compact,
+        ),
+      'space' => _PathStage(
+          puzzle: puzzle,
+          accent: accent,
+          compact: compact,
+        ),
+      _ => _PatternStrip(
+          puzzle: puzzle,
+          accent: accent,
+          compact: compact,
+        ),
     };
 
     return TweenAnimationBuilder<double>(
@@ -2232,14 +2338,20 @@ class _StageShell extends StatelessWidget {
 }
 
 class _MemoryStage extends StatelessWidget {
-  const _MemoryStage({required this.accent, required this.compact});
+  const _MemoryStage({
+    required this.puzzle,
+    required this.accent,
+    required this.compact,
+  });
 
+  final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final cardSize = compact ? 38.0 : 44.0;
+    final spec = _memoryStageSpecFor(puzzle.id, accent);
 
     return _StageShell(
       accent: accent,
@@ -2252,38 +2364,21 @@ class _MemoryStage extends StatelessWidget {
               runSpacing: compact ? 6 : 8,
               alignment: WrapAlignment.center,
               children: [
-                _MemoryPreviewCard(
-                  label: '1',
-                  icon: Icons.star_rounded,
-                  color: AppPalette.mango,
-                  size: cardSize,
-                ),
-                _MemoryPreviewCard(
-                  label: '2',
-                  icon: Icons.favorite_rounded,
-                  color: AppPalette.coral,
-                  size: cardSize,
-                ),
-                _MemoryPreviewCard(
-                  label: '3',
-                  icon: Icons.visibility_off_rounded,
-                  color: AppPalette.lavender,
-                  size: cardSize,
-                  covered: true,
-                ),
-                _MemoryPreviewCard(
-                  label: '4',
-                  icon: Icons.cloud_rounded,
-                  color: AppPalette.sky,
-                  size: cardSize,
-                ),
+                for (final card in spec.cards)
+                  _MemoryPreviewCard(
+                    label: card.label,
+                    icon: card.icon,
+                    color: card.color,
+                    size: cardSize,
+                    covered: card.covered,
+                  ),
               ],
             ),
           ),
           SizedBox(width: compact ? 8 : 12),
           _StageToken(
-            label: '?',
-            color: accent,
+            icon: spec.answerIcon,
+            color: spec.answerColor,
             size: compact ? 50 : 58,
             highlighted: true,
           ),
@@ -2291,6 +2386,223 @@ class _MemoryStage extends StatelessWidget {
       ),
     );
   }
+}
+
+class _MemoryStageSpec {
+  const _MemoryStageSpec({
+    required this.cards,
+    required this.answerColor,
+    this.answerIcon,
+  });
+
+  final List<_MemoryCardSpec> cards;
+  final IconData? answerIcon;
+  final Color answerColor;
+}
+
+class _MemoryCardSpec {
+  const _MemoryCardSpec({
+    required this.label,
+    required this.icon,
+    required this.color,
+    this.covered = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool covered;
+}
+
+_MemoryStageSpec _memoryStageSpecFor(String puzzleId, Color accent) {
+  return switch (puzzleId) {
+    'sound-order' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: '1',
+            icon: Icons.music_note_rounded,
+            color: AppPalette.sky,
+          ),
+          _MemoryCardSpec(
+            label: '2',
+            icon: Icons.graphic_eq_rounded,
+            color: AppPalette.mango,
+          ),
+          _MemoryCardSpec(
+            label: '3',
+            icon: Icons.music_note_rounded,
+            color: AppPalette.sky,
+          ),
+        ],
+        answerIcon: Icons.replay_rounded,
+        answerColor: AppPalette.lavender,
+      ),
+    'route-memory' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: '1',
+            icon: Icons.arrow_upward_rounded,
+            color: AppPalette.sky,
+          ),
+          _MemoryCardSpec(
+            label: '2',
+            icon: Icons.arrow_forward_rounded,
+            color: AppPalette.teal,
+          ),
+          _MemoryCardSpec(
+            label: '3',
+            icon: Icons.arrow_downward_rounded,
+            color: AppPalette.lavender,
+          ),
+          _MemoryCardSpec(
+            label: '4',
+            icon: Icons.visibility_off_rounded,
+            color: AppPalette.mango,
+            covered: true,
+          ),
+        ],
+        answerIcon: Icons.arrow_forward_rounded,
+        answerColor: AppPalette.teal,
+      ),
+    'hidden-cards' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: 'A',
+            icon: Icons.rocket_launch_rounded,
+            color: AppPalette.coral,
+          ),
+          _MemoryCardSpec(
+            label: 'B',
+            icon: Icons.public_rounded,
+            color: AppPalette.teal,
+            covered: true,
+          ),
+          _MemoryCardSpec(
+            label: 'C',
+            icon: Icons.star_rounded,
+            color: AppPalette.mango,
+          ),
+        ],
+        answerIcon: Icons.public_rounded,
+        answerColor: AppPalette.teal,
+      ),
+    'color-rhythm' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: '1',
+            icon: Icons.circle_rounded,
+            color: AppPalette.coral,
+          ),
+          _MemoryCardSpec(
+            label: '2',
+            icon: Icons.circle_rounded,
+            color: AppPalette.sky,
+          ),
+          _MemoryCardSpec(
+            label: '3',
+            icon: Icons.circle_rounded,
+            color: AppPalette.mango,
+          ),
+          _MemoryCardSpec(
+            label: '4',
+            icon: Icons.circle_rounded,
+            color: AppPalette.coral,
+          ),
+        ],
+        answerIcon: Icons.circle_rounded,
+        answerColor: AppPalette.sky,
+      ),
+    'what-changed' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: 'A',
+            icon: Icons.image_rounded,
+            color: AppPalette.sky,
+          ),
+          _MemoryCardSpec(
+            label: '→',
+            icon: Icons.swap_horiz_rounded,
+            color: AppPalette.lavender,
+          ),
+          _MemoryCardSpec(
+            label: 'B',
+            icon: Icons.place_rounded,
+            color: AppPalette.teal,
+          ),
+        ],
+        answerIcon: Icons.place_rounded,
+        answerColor: AppPalette.teal,
+      ),
+    'star-list' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: '1',
+            icon: Icons.star_rounded,
+            color: AppPalette.mango,
+          ),
+          _MemoryCardSpec(
+            label: '2',
+            icon: Icons.nightlight_round,
+            color: AppPalette.lavender,
+          ),
+          _MemoryCardSpec(
+            label: '3',
+            icon: Icons.rocket_launch_rounded,
+            color: AppPalette.coral,
+          ),
+        ],
+        answerIcon: Icons.star_rounded,
+        answerColor: AppPalette.mango,
+      ),
+    'captain-command' => const _MemoryStageSpec(
+        cards: [
+          _MemoryCardSpec(
+            label: '1',
+            icon: Icons.directions_run_rounded,
+            color: AppPalette.sky,
+          ),
+          _MemoryCardSpec(
+            label: '2',
+            icon: Icons.turn_right_rounded,
+            color: AppPalette.teal,
+          ),
+          _MemoryCardSpec(
+            label: '3',
+            icon: Icons.pan_tool_alt_rounded,
+            color: AppPalette.coral,
+          ),
+        ],
+        answerIcon: Icons.turn_right_rounded,
+        answerColor: AppPalette.teal,
+      ),
+    _ => _MemoryStageSpec(
+        cards: const [
+          _MemoryCardSpec(
+            label: '1',
+            icon: Icons.star_rounded,
+            color: AppPalette.mango,
+          ),
+          _MemoryCardSpec(
+            label: '2',
+            icon: Icons.favorite_rounded,
+            color: AppPalette.coral,
+          ),
+          _MemoryCardSpec(
+            label: '3',
+            icon: Icons.visibility_off_rounded,
+            color: AppPalette.lavender,
+            covered: true,
+          ),
+          _MemoryCardSpec(
+            label: '4',
+            icon: Icons.cloud_rounded,
+            color: AppPalette.sky,
+          ),
+        ],
+        answerIcon: Icons.favorite_rounded,
+        answerColor: accent,
+      ),
+  };
 }
 
 class _MemoryPreviewCard extends StatelessWidget {
@@ -2361,13 +2673,20 @@ class _MemoryPreviewCard extends StatelessWidget {
 }
 
 class _AttentionStage extends StatelessWidget {
-  const _AttentionStage({required this.accent, required this.compact});
+  const _AttentionStage({
+    required this.puzzle,
+    required this.accent,
+    required this.compact,
+  });
 
+  final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final items = _attentionStageItemsFor(puzzle.id, accent, compact);
+
     return _StageShell(
       accent: accent,
       compact: compact,
@@ -2385,35 +2704,205 @@ class _AttentionStage extends StatelessWidget {
               spacing: compact ? 6 : 7,
               runSpacing: compact ? 6 : 7,
               alignment: WrapAlignment.center,
-              children: [
-                _SearchSpot(color: AppPalette.teal, compact: compact),
-                _SearchSpot(color: AppPalette.teal, compact: compact),
-                _SearchSpot(
-                  color: accent,
-                  icon: Icons.auto_awesome_rounded,
-                  highlighted: true,
-                  compact: compact,
-                ),
-                _SearchSpot(color: AppPalette.teal, compact: compact),
-                _SearchSpot(
-                  color: AppPalette.mango,
-                  icon: Icons.star_rounded,
-                  compact: compact,
-                ),
-                _SearchSpot(color: AppPalette.teal, compact: compact),
-                _SearchSpot(
-                  color: AppPalette.mango,
-                  icon: Icons.star_rounded,
-                  compact: compact,
-                ),
-                _SearchSpot(color: AppPalette.teal, compact: compact),
-              ],
+              children: items,
             ),
           ),
         ],
       ),
     );
   }
+}
+
+List<Widget> _attentionStageItemsFor(
+  String puzzleId,
+  Color accent,
+  bool compact,
+) {
+  return switch (puzzleId) {
+    'odd-card' => [
+        _SearchChoiceCard(
+          label: '1',
+          icon: Icons.circle_rounded,
+          color: AppPalette.teal,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '2',
+          icon: Icons.auto_awesome_rounded,
+          color: accent,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '3',
+          icon: Icons.circle_rounded,
+          color: AppPalette.teal,
+          compact: compact,
+        ),
+      ],
+    'tiny-detail' => [
+        _SearchChoiceCard(
+          label: '↑',
+          icon: Icons.auto_awesome_rounded,
+          color: AppPalette.mango,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '•',
+          icon: Icons.crop_free_rounded,
+          color: accent,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '↓',
+          icon: Icons.circle_rounded,
+          color: AppPalette.sky,
+          compact: compact,
+        ),
+      ],
+    'shadow-match' => [
+        _SearchChoiceCard(
+          label: '★',
+          icon: Icons.pets_rounded,
+          color: AppPalette.teal,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '1',
+          icon: Icons.eco_rounded,
+          color: AppPalette.mango,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '2',
+          icon: Icons.pets_rounded,
+          color: accent,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '3',
+          icon: Icons.star_rounded,
+          color: AppPalette.lavender,
+          compact: compact,
+        ),
+      ],
+    'fast-eyes' => [
+        _SearchChoiceCard(
+          label: '!',
+          icon: Icons.bolt_rounded,
+          color: AppPalette.mango,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '1',
+          icon: Icons.circle_rounded,
+          color: AppPalette.teal,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '2',
+          icon: Icons.bolt_rounded,
+          color: AppPalette.mango,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '3',
+          icon: Icons.square_rounded,
+          color: AppPalette.lavender,
+          compact: compact,
+        ),
+      ],
+    'hidden-star' => [
+        _SearchSpot(
+            color: AppPalette.teal, icon: Icons.public, compact: compact),
+        _SearchSpot(color: AppPalette.sky, icon: Icons.cloud, compact: compact),
+        _SearchSpot(
+          color: AppPalette.mango,
+          icon: Icons.star_rounded,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchSpot(
+            color: AppPalette.coral,
+            icon: Icons.rocket_launch_rounded,
+            compact: compact),
+        _SearchSpot(color: AppPalette.sky, icon: Icons.cloud, compact: compact),
+      ],
+    'two-differences' => [
+        _SearchChoiceCard(
+          label: '1',
+          icon: Icons.image_rounded,
+          color: AppPalette.sky,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '2',
+          icon: Icons.difference_rounded,
+          color: accent,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '3',
+          icon: Icons.image_rounded,
+          color: AppPalette.lavender,
+          compact: compact,
+        ),
+      ],
+    'clean-row' => [
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+        _SearchSpot(
+          color: AppPalette.mango,
+          icon: Icons.star_rounded,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+      ],
+    'beacon-signal' => [
+        _SearchChoiceCard(
+          label: '−',
+          icon: Icons.circle_rounded,
+          color: AppPalette.coral,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '✓',
+          icon: Icons.circle_rounded,
+          color: AppPalette.teal,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchChoiceCard(
+          label: '+',
+          icon: Icons.circle_rounded,
+          color: AppPalette.mango,
+          compact: compact,
+        ),
+      ],
+    _ => [
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+        _SearchSpot(
+          color: accent,
+          icon: Icons.auto_awesome_rounded,
+          highlighted: true,
+          compact: compact,
+        ),
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+        _SearchSpot(
+          color: AppPalette.mango,
+          icon: Icons.star_rounded,
+          compact: compact,
+        ),
+        _SearchSpot(color: AppPalette.teal, compact: compact),
+      ],
+  };
 }
 
 class _SearchSpot extends StatelessWidget {
@@ -2462,14 +2951,88 @@ class _SearchSpot extends StatelessWidget {
   }
 }
 
-class _MathStage extends StatelessWidget {
-  const _MathStage({required this.accent, required this.compact});
+class _SearchChoiceCard extends StatelessWidget {
+  const _SearchChoiceCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.compact,
+    this.highlighted = false,
+  });
 
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool compact;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = compact ? 64.0 : 74.0;
+    final height = compact ? 54.0 : 62.0;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      width: width,
+      height: height,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: highlighted ? color : Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: highlighted ? Colors.white : color.withValues(alpha: 0.30),
+          width: highlighted ? 3 : 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: highlighted ? 0.26 : 0.12),
+            blurRadius: highlighted ? 16 : 9,
+            offset: Offset(0, highlighted ? 8 : 4),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: highlighted ? Colors.white : color,
+            size: compact ? 20 : 23,
+          ),
+          const SizedBox(height: 3),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              label,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: highlighted ? Colors.white : AppPalette.ink,
+                    fontWeight: FontWeight.w900,
+                    height: 1,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MathStage extends StatelessWidget {
+  const _MathStage({
+    required this.puzzle,
+    required this.accent,
+    required this.compact,
+  });
+
+  final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final children = _mathStageItemsFor(puzzle.id, accent, compact);
+
     return _StageShell(
       accent: accent,
       compact: compact,
@@ -2479,38 +3042,185 @@ class _MathStage extends StatelessWidget {
           width: compact ? 286 : 328,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _CounterGroup(
-                colors: const [
-                  AppPalette.coral,
-                  AppPalette.mango,
-                  AppPalette.sky,
-                ],
-                compact: compact,
-              ),
-              _MathSign(icon: Icons.add_rounded, color: accent),
-              _CounterGroup(
-                colors: const [AppPalette.teal, AppPalette.lavender],
-                compact: compact,
-              ),
-              Text(
-                '=',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: AppPalette.ink.withValues(alpha: 0.72),
-                    ),
-              ),
-              _StageToken(
-                label: '?',
-                color: AppPalette.mango,
-                size: compact ? 48 : 54,
-                highlighted: true,
-              ),
-            ],
+            children: children,
           ),
         ),
       ),
     );
   }
+}
+
+List<Widget> _mathStageItemsFor(
+  String puzzleId,
+  Color accent,
+  bool compact,
+) {
+  final tokenSize = compact ? 42.0 : 48.0;
+  final smallTokenSize = compact ? 36.0 : 40.0;
+
+  return switch (puzzleId) {
+    'number-bridge' => [
+        _StageToken(label: '1', color: AppPalette.sky, size: smallTokenSize),
+        _StageToken(label: '2', color: AppPalette.sky, size: smallTokenSize),
+        _StageToken(label: '3', color: AppPalette.sky, size: smallTokenSize),
+        _StageToken(label: '4', color: AppPalette.sky, size: smallTokenSize),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'star-balance' => [
+        _CounterGroup(
+          colors: const [AppPalette.mango, AppPalette.mango],
+          icon: Icons.star_rounded,
+          compact: compact,
+        ),
+        _MathSign(icon: Icons.balance_rounded, color: accent),
+        _CounterGroup(
+          colors: const [AppPalette.mango, AppPalette.mango],
+          icon: Icons.star_rounded,
+          compact: compact,
+        ),
+        _StageToken(label: '=', color: AppPalette.muted, size: smallTokenSize),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'count-rockets' => [
+        _CounterGroup(
+          colors: const [
+            AppPalette.coral,
+            AppPalette.coral,
+            AppPalette.coral,
+          ],
+          icon: Icons.rocket_launch_rounded,
+          compact: compact,
+        ),
+        _MathSign(icon: Icons.rocket_launch_rounded, color: accent),
+        _CounterGroup(
+          colors: const [
+            AppPalette.coral,
+            AppPalette.coral,
+            AppPalette.coral,
+          ],
+          icon: Icons.rocket_launch_rounded,
+          compact: compact,
+        ),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'number-neighbors' => [
+        _StageToken(label: '6', color: AppPalette.sky, size: tokenSize),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+        _StageToken(label: '8', color: AppPalette.sky, size: tokenSize),
+      ],
+    'cube-groups' => [
+        _CounterGroup(
+          colors: const [
+            AppPalette.sky,
+            AppPalette.sky,
+            AppPalette.lavender,
+            AppPalette.lavender,
+          ],
+          compact: compact,
+        ),
+        _MathSign(icon: Icons.call_split_rounded, color: accent),
+        _StageToken(
+          label: '2 + 2',
+          color: AppPalette.teal,
+          size: compact ? 58 : 66,
+          highlighted: true,
+        ),
+      ],
+    'more-less' => [
+        _CounterGroup(
+          colors: const [
+            AppPalette.teal,
+            AppPalette.teal,
+            AppPalette.teal,
+            AppPalette.teal,
+          ],
+          compact: compact,
+        ),
+        _MathSign(icon: Icons.compare_arrows_rounded, color: accent),
+        _CounterGroup(
+          colors: const [
+            AppPalette.lavender,
+            AppPalette.lavender,
+            AppPalette.lavender,
+          ],
+          compact: compact,
+        ),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'sticker-shop' => [
+        _StageToken(
+          icon: Icons.star_rounded,
+          color: AppPalette.mango,
+          size: smallTokenSize,
+        ),
+        _StageToken(
+          icon: Icons.star_rounded,
+          color: AppPalette.mango,
+          size: smallTokenSize,
+        ),
+        _StageToken(
+          icon: Icons.star_rounded,
+          color: AppPalette.mango,
+          size: smallTokenSize,
+        ),
+        _MathSign(icon: Icons.sell_rounded, color: accent),
+        _StageToken(
+          label: '?',
+          color: AppPalette.lavender,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    _ => [
+        _CounterGroup(
+          colors: const [
+            AppPalette.coral,
+            AppPalette.mango,
+            AppPalette.sky,
+          ],
+          icon: Icons.public_rounded,
+          compact: compact,
+        ),
+        _MathSign(icon: Icons.add_rounded, color: accent),
+        _CounterGroup(
+          colors: const [AppPalette.teal, AppPalette.lavender],
+          icon: Icons.public_rounded,
+          compact: compact,
+        ),
+        _StageToken(label: '=', color: AppPalette.muted, size: smallTokenSize),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+  };
 }
 
 class _MathSign extends StatelessWidget {
@@ -2545,46 +3255,213 @@ class _MathSign extends StatelessWidget {
 }
 
 class _PathStage extends StatelessWidget {
-  const _PathStage({required this.accent, required this.compact});
+  const _PathStage({
+    required this.puzzle,
+    required this.accent,
+    required this.compact,
+  });
 
+  final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final spec = _pathStageSpecFor(puzzle.id, accent, compact);
+
     return _StageShell(
       accent: accent,
       compact: compact,
-      child: Row(
-        children: [
-          _PathNode(
-            icon: Icons.flag_rounded,
-            color: accent,
-            compact: compact,
-          ),
-          _PathLink(color: accent),
-          _PathNode(
-            icon: Icons.arrow_forward_rounded,
-            color: AppPalette.sky,
-            compact: compact,
-          ),
-          _PathLink(color: accent),
-          _PathNode(
-            icon: Icons.turn_right_rounded,
-            color: AppPalette.lavender,
-            compact: compact,
-          ),
-          _PathLink(color: accent),
-          _StageToken(
-            label: '?',
-            color: AppPalette.mango,
-            size: compact ? 42 : 48,
-            highlighted: true,
-          ),
-        ],
-      ),
+      child: spec.linked
+          ? Row(children: _linkedPathChildren(spec, accent, compact))
+          : FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(
+                width: compact ? 286 : 328,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    for (final node in spec.nodes)
+                      _PathStageNode(node: node, compact: compact),
+                  ],
+                ),
+              ),
+            ),
     );
   }
+}
+
+class _PathStageSpec {
+  const _PathStageSpec({
+    required this.nodes,
+    this.linked = false,
+  });
+
+  final List<_PathNodeSpec> nodes;
+  final bool linked;
+}
+
+class _PathNodeSpec {
+  const _PathNodeSpec({
+    required this.color,
+    this.icon,
+    this.label,
+    this.highlighted = true,
+  });
+
+  final IconData? icon;
+  final String? label;
+  final Color color;
+  final bool highlighted;
+}
+
+class _PathStageNode extends StatelessWidget {
+  const _PathStageNode({
+    required this.node,
+    required this.compact,
+  });
+
+  final _PathNodeSpec node;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return _StageToken(
+      icon: node.icon,
+      label: node.label,
+      color: node.color,
+      size: compact ? 42 : 48,
+      highlighted: node.highlighted,
+    );
+  }
+}
+
+List<Widget> _linkedPathChildren(
+  _PathStageSpec spec,
+  Color accent,
+  bool compact,
+) {
+  return [
+    for (var index = 0; index < spec.nodes.length; index++) ...[
+      _PathStageNode(node: spec.nodes[index], compact: compact),
+      if (index != spec.nodes.length - 1) _PathLink(color: accent),
+    ],
+  ];
+}
+
+_PathStageSpec _pathStageSpecFor(
+  String puzzleId,
+  Color accent,
+  bool compact,
+) {
+  return switch (puzzleId) {
+    'code-grid' => const _PathStageSpec(
+        nodes: [
+          _PathNodeSpec(label: 'A', color: AppPalette.sky, highlighted: false),
+          _PathNodeSpec(label: 'B', color: AppPalette.teal),
+          _PathNodeSpec(
+              label: 'C', color: AppPalette.lavender, highlighted: false),
+          _PathNodeSpec(label: '?', color: AppPalette.mango),
+        ],
+      ),
+    'rocket-route' => const _PathStageSpec(
+        linked: true,
+        nodes: [
+          _PathNodeSpec(
+              icon: Icons.rocket_launch_rounded, color: AppPalette.coral),
+          _PathNodeSpec(
+              icon: Icons.arrow_forward_rounded, color: AppPalette.sky),
+          _PathNodeSpec(
+              icon: Icons.turn_right_rounded, color: AppPalette.lavender),
+          _PathNodeSpec(
+              icon: Icons.arrow_downward_rounded, color: AppPalette.mango),
+        ],
+      ),
+    'shape-turn' => const _PathStageSpec(
+        nodes: [
+          _PathNodeSpec(
+              icon: Icons.change_history_rounded,
+              color: AppPalette.sky,
+              highlighted: false),
+          _PathNodeSpec(
+              icon: Icons.rotate_right_rounded, color: AppPalette.lavender),
+          _PathNodeSpec(
+              icon: Icons.change_history_rounded, color: AppPalette.teal),
+          _PathNodeSpec(label: '?', color: AppPalette.mango),
+        ],
+      ),
+    'silhouette-build' => const _PathStageSpec(
+        nodes: [
+          _PathNodeSpec(
+              icon: Icons.contrast_rounded,
+              color: AppPalette.muted,
+              highlighted: false),
+          _PathNodeSpec(label: '1', color: AppPalette.sky, highlighted: false),
+          _PathNodeSpec(label: '2', color: AppPalette.teal),
+          _PathNodeSpec(
+              label: '3', color: AppPalette.lavender, highlighted: false),
+        ],
+      ),
+    'mirror-path' => const _PathStageSpec(
+        nodes: [
+          _PathNodeSpec(
+              icon: Icons.arrow_forward_rounded, color: AppPalette.sky),
+          _PathNodeSpec(icon: Icons.flip_rounded, color: AppPalette.lavender),
+          _PathNodeSpec(icon: Icons.arrow_back_rounded, color: AppPalette.teal),
+          _PathNodeSpec(label: '?', color: AppPalette.mango),
+        ],
+      ),
+    'arrow-maze' => const _PathStageSpec(
+        linked: true,
+        nodes: [
+          _PathNodeSpec(icon: Icons.flag_rounded, color: AppPalette.sky),
+          _PathNodeSpec(
+              icon: Icons.arrow_forward_rounded, color: AppPalette.sky),
+          _PathNodeSpec(
+              icon: Icons.arrow_downward_rounded, color: AppPalette.lavender),
+          _PathNodeSpec(label: 'C', color: AppPalette.mango),
+        ],
+      ),
+    'shape-tower' => const _PathStageSpec(
+        nodes: [
+          _PathNodeSpec(
+              icon: Icons.circle_rounded,
+              color: AppPalette.teal,
+              highlighted: false),
+          _PathNodeSpec(
+              icon: Icons.square_rounded,
+              color: AppPalette.sky,
+              highlighted: false),
+          _PathNodeSpec(
+              icon: Icons.change_history_rounded, color: AppPalette.lavender),
+          _PathNodeSpec(label: '?', color: AppPalette.mango),
+        ],
+      ),
+    'final-orbit' => const _PathStageSpec(
+        nodes: [
+          _PathNodeSpec(label: 'A', color: AppPalette.sky, highlighted: false),
+          _PathNodeSpec(icon: Icons.public_rounded, color: AppPalette.teal),
+          _PathNodeSpec(label: 'B', color: AppPalette.mango),
+          _PathNodeSpec(
+              label: 'C', color: AppPalette.lavender, highlighted: false),
+        ],
+      ),
+    _ => _PathStageSpec(
+        linked: true,
+        nodes: [
+          _PathNodeSpec(icon: Icons.flag_rounded, color: accent),
+          const _PathNodeSpec(
+            icon: Icons.arrow_forward_rounded,
+            color: AppPalette.sky,
+          ),
+          const _PathNodeSpec(
+            icon: Icons.turn_right_rounded,
+            color: AppPalette.lavender,
+          ),
+          const _PathNodeSpec(label: '?', color: AppPalette.mango),
+        ],
+      ),
+  };
 }
 
 class _StageToken extends StatelessWidget {
@@ -2648,10 +3525,12 @@ class _CounterGroup extends StatelessWidget {
   const _CounterGroup({
     required this.colors,
     required this.compact,
+    this.icon,
   });
 
   final List<Color> colors;
   final bool compact;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -2670,6 +3549,7 @@ class _CounterGroup extends StatelessWidget {
               top: index * stepY,
               child: _MiniBlock(
                 color: colors[index],
+                icon: icon,
                 size: blockSize,
               ),
             ),
@@ -2683,10 +3563,12 @@ class _MiniBlock extends StatelessWidget {
   const _MiniBlock({
     required this.color,
     required this.size,
+    this.icon,
   });
 
   final Color color;
   final double size;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -2697,7 +3579,9 @@ class _MiniBlock extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.white.withValues(alpha: 0.82), color],
+          colors: icon == null
+              ? [Colors.white.withValues(alpha: 0.82), color]
+              : [color.withValues(alpha: 0.66), color],
         ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white, width: 2),
@@ -2709,28 +3593,13 @@ class _MiniBlock extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _PathNode extends StatelessWidget {
-  const _PathNode({
-    required this.icon,
-    required this.color,
-    required this.compact,
-  });
-
-  final IconData icon;
-  final Color color;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return _StageToken(
-      icon: icon,
-      color: color,
-      size: compact ? 38 : 44,
-      highlighted: true,
+      child: icon == null
+          ? null
+          : Icon(
+              icon,
+              color: Colors.white.withValues(alpha: 0.94),
+              size: size * 0.50,
+            ),
     );
   }
 }
@@ -2756,13 +3625,20 @@ class _PathLink extends StatelessWidget {
 }
 
 class _PatternStrip extends StatelessWidget {
-  const _PatternStrip({required this.accent, required this.compact});
+  const _PatternStrip({
+    required this.puzzle,
+    required this.accent,
+    required this.compact,
+  });
 
+  final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final items = _logicStageItemsFor(puzzle.id, accent, compact);
+
     return _StageShell(
       accent: accent,
       compact: compact,
@@ -2772,34 +3648,128 @@ class _PatternStrip extends StatelessWidget {
           width: compact ? 284 : 330,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _PatternItem(
-                shape: _PatternShape.circle,
-                color: AppPalette.teal,
-                size: compact ? 38 : 42,
-              ),
-              _PatternItem(
-                shape: _PatternShape.square,
-                color: const Color(0xFF5F8BEF),
-                size: compact ? 38 : 42,
-              ),
-              _PatternItem(
-                shape: _PatternShape.circle,
-                color: AppPalette.teal,
-                size: compact ? 38 : 42,
-              ),
-              _PatternItem(
-                shape: _PatternShape.square,
-                color: const Color(0xFF5F8BEF),
-                size: compact ? 38 : 42,
-              ),
-              _PatternQuestion(size: compact ? 40 : 42),
-            ],
+            children: items,
           ),
         ),
       ),
     );
   }
+}
+
+List<Widget> _logicStageItemsFor(
+  String puzzleId,
+  Color accent,
+  bool compact,
+) {
+  final size = compact ? 38.0 : 42.0;
+  final tokenSize = compact ? 42.0 : 48.0;
+
+  return switch (puzzleId) {
+    'tower-rule' => [
+        _StageToken(label: '2-1', color: AppPalette.sky, size: tokenSize),
+        _StageToken(label: '2-1', color: AppPalette.teal, size: tokenSize),
+        _StageToken(
+          label: '?',
+          color: AppPalette.mango,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'home-clues' => [
+        _StageToken(
+            icon: Icons.home_rounded, color: AppPalette.sky, size: tokenSize),
+        _StageToken(
+            icon: Icons.home_rounded, color: AppPalette.mango, size: tokenSize),
+        _StageToken(
+          icon: Icons.home_rounded,
+          color: AppPalette.teal,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'odd-step' => [
+        _StageToken(label: '1', color: AppPalette.sky, size: tokenSize),
+        _StageToken(
+          icon: Icons.report_problem_rounded,
+          color: AppPalette.coral,
+          size: tokenSize,
+          highlighted: true,
+        ),
+        _StageToken(label: '3', color: AppPalette.sky, size: tokenSize),
+      ],
+    'secret-code' => [
+        _StageToken(
+            icon: Icons.star_rounded, color: AppPalette.mango, size: size),
+        _StageToken(
+            icon: Icons.vpn_key_rounded, color: AppPalette.teal, size: size),
+        _StageToken(
+            icon: Icons.star_rounded, color: AppPalette.mango, size: size),
+        _StageToken(
+          label: '?',
+          color: AppPalette.teal,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'why-chain' => [
+        _StageToken(
+            icon: Icons.flag_rounded, color: AppPalette.sky, size: size),
+        _StageToken(
+            icon: Icons.arrow_forward_rounded, color: accent, size: size),
+        _StageToken(
+            icon: Icons.lightbulb_rounded, color: AppPalette.mango, size: size),
+        _StageToken(
+            icon: Icons.check_rounded, color: AppPalette.teal, size: size),
+      ],
+    'space-proof' => [
+        _StageToken(label: 'A', color: AppPalette.sky, size: tokenSize),
+        _StageToken(label: 'B', color: AppPalette.lavender, size: tokenSize),
+        _StageToken(
+          icon: Icons.circle_rounded,
+          color: AppPalette.teal,
+          size: tokenSize,
+          highlighted: true,
+        ),
+      ],
+    'shape-path' => [
+        _PatternItem(
+          shape: _PatternShape.circle,
+          color: AppPalette.teal,
+          size: size,
+        ),
+        _PatternItem(
+          shape: _PatternShape.square,
+          color: const Color(0xFF5F8BEF),
+          size: size,
+        ),
+        _StageToken(
+            icon: Icons.arrow_forward_rounded, color: accent, size: size),
+        _PatternQuestion(size: compact ? 40 : 42),
+      ],
+    _ => [
+        _PatternItem(
+          shape: _PatternShape.circle,
+          color: AppPalette.teal,
+          size: size,
+        ),
+        _PatternItem(
+          shape: _PatternShape.square,
+          color: const Color(0xFF5F8BEF),
+          size: size,
+        ),
+        _PatternItem(
+          shape: _PatternShape.circle,
+          color: AppPalette.teal,
+          size: size,
+        ),
+        _PatternItem(
+          shape: _PatternShape.square,
+          color: const Color(0xFF5F8BEF),
+          size: size,
+        ),
+        _PatternQuestion(size: compact ? 40 : 42),
+      ],
+  };
 }
 
 enum _PatternShape { circle, square }
@@ -2937,7 +3907,7 @@ class _HintBox extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              _hintTextForArea(areaId),
+              context.l10n.hintForArea(areaId),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: const Color(0xFF7A5A1A),
                     fontWeight: FontWeight.w800,
@@ -2952,117 +3922,136 @@ class _HintBox extends StatelessWidget {
 
 class _AnswerOptionData {
   const _AnswerOptionData({
+    required this.answer,
     required this.label,
     required this.icon,
     required this.color,
   });
 
+  final String answer;
   final String label;
   final IconData icon;
   final Color color;
 }
 
-List<_AnswerOptionData> _answerOptionsFor(String areaId) {
-  return switch (areaId) {
-    'memory' => const [
-        _AnswerOptionData(
-          label: 'Звезда',
-          icon: Icons.star_rounded,
-          color: Color(0xFFFFF2C4),
-        ),
-        _AnswerOptionData(
-          label: 'Облако',
-          icon: Icons.cloud_rounded,
-          color: Color(0xFFE7F6FF),
-        ),
-        _AnswerOptionData(
-          label: 'Сердце',
-          icon: Icons.favorite_rounded,
-          color: Color(0xFFFFE6EE),
-        ),
-      ],
-    'attention' => const [
-        _AnswerOptionData(
-          label: 'Слева',
-          icon: Icons.arrow_back_rounded,
-          color: Color(0xFFE4EDFF),
-        ),
-        _AnswerOptionData(
-          label: 'В центре',
-          icon: Icons.center_focus_strong_rounded,
-          color: Color(0xFFDDF7F3),
-        ),
-        _AnswerOptionData(
-          label: 'Справа',
-          icon: Icons.arrow_forward_rounded,
-          color: Color(0xFFFFF2C4),
-        ),
-      ],
-    'math' => const [
-        _AnswerOptionData(
-          label: '6',
-          icon: Icons.filter_6_rounded,
-          color: Color(0xFFFFF2C4),
-        ),
-        _AnswerOptionData(
-          label: '7',
-          icon: Icons.filter_7_rounded,
-          color: Color(0xFFDDF7F3),
-        ),
-        _AnswerOptionData(
-          label: '8',
-          icon: Icons.filter_8_rounded,
-          color: Color(0xFFECE8FF),
-        ),
-      ],
-    'space' => const [
-        _AnswerOptionData(
-          label: 'Вверх',
-          icon: Icons.arrow_upward_rounded,
-          color: Color(0xFFE7F6FF),
-        ),
-        _AnswerOptionData(
-          label: 'Вперёд',
-          icon: Icons.arrow_forward_rounded,
-          color: Color(0xFFDDF7F3),
-        ),
-        _AnswerOptionData(
-          label: 'Вниз',
-          icon: Icons.arrow_downward_rounded,
-          color: Color(0xFFFFE6EE),
-        ),
-      ],
-    _ => const [
-        _AnswerOptionData(
-          label: 'Треугольник',
-          icon: Icons.change_history_rounded,
-          color: Color(0xFFECE8FF),
-        ),
-        _AnswerOptionData(
-          label: 'Круг',
-          icon: Icons.circle_rounded,
-          color: Color(0xFFDDF7F3),
-        ),
-        _AnswerOptionData(
-          label: 'Квадрат',
-          icon: Icons.square_rounded,
-          color: Color(0xFFE4EDFF),
-        ),
-      ],
-  };
+List<_AnswerOptionData> _answerOptionsFor(
+  PuzzleAnswerRule rule,
+  AppLocalizations l10n,
+) {
+  return [
+    for (var i = 0; i < rule.options.length; i++)
+      _AnswerOptionData(
+        answer: rule.options[i],
+        label: l10n.answerLabel(rule.options[i]),
+        icon: _iconForAnswer(rule.options[i]),
+        color: _colorForAnswerIndex(i),
+      ),
+  ];
 }
 
-String _hintTextForArea(String areaId) {
-  return switch (areaId) {
-    'memory' =>
-      'Сначала вспомни, какие картинки уже были открыты. Потом ищи такую же пару.',
-    'attention' =>
-      'Сравни детали по одной: цвет, форму, размер и место. Отличие обычно маленькое.',
-    'math' =>
-      'Считай не всё сразу, а маленькими группами. Так легче не сбиться.',
-    'space' =>
-      'Следи за дорожкой от старта к финишу и называй следующий поворот.',
-    _ => 'Правило повторяется. Найди начало нового повтора и продолжи ряд.',
+IconData _iconForAnswer(String label) {
+  if (label.contains('Картинка 1')) {
+    return Icons.filter_1_rounded;
+  }
+
+  if (label.contains('Картинка 2')) {
+    return Icons.filter_2_rounded;
+  }
+
+  if (label.contains('Картинка 3')) {
+    return Icons.filter_3_rounded;
+  }
+
+  if (label.contains('След 1')) {
+    return Icons.eco_rounded;
+  }
+
+  if (label.contains('След 2')) {
+    return Icons.pets_rounded;
+  }
+
+  if (label.contains('След 3')) {
+    return Icons.star_rounded;
+  }
+
+  if (RegExp(r'^\d').hasMatch(label)) {
+    return Icons.looks_one_rounded;
+  }
+
+  if (label.contains('Круг')) {
+    return Icons.circle_rounded;
+  }
+
+  if (label.contains('Квадрат') || label.contains('Кубик')) {
+    return Icons.square_rounded;
+  }
+
+  if (label.contains('Треугольник')) {
+    return Icons.change_history_rounded;
+  }
+
+  if (label.contains('Звезда')) {
+    return Icons.star_rounded;
+  }
+
+  if (label.contains('Сердце')) {
+    return Icons.favorite_rounded;
+  }
+
+  if (label.contains('Облако')) {
+    return Icons.cloud_rounded;
+  }
+
+  if (label.contains('Вверх') || label.contains('Сверху')) {
+    return Icons.arrow_upward_rounded;
+  }
+
+  if (label.contains('Вниз') || label.contains('Снизу')) {
+    return Icons.arrow_downward_rounded;
+  }
+
+  if (label.contains('Слева') || label.contains('Влево')) {
+    return Icons.arrow_back_rounded;
+  }
+
+  if (label.contains('Справа') ||
+      label.contains('Вправо') ||
+      label.contains('Вперёд')) {
+    return Icons.arrow_forward_rounded;
+  }
+
+  if (label.contains('центр')) {
+    return Icons.center_focus_strong_rounded;
+  }
+
+  if (label.contains('Тень')) {
+    return Icons.contrast_rounded;
+  }
+
+  if (label.contains('Клетка') || label.contains('Финиш')) {
+    return Icons.grid_view_rounded;
+  }
+
+  if (label.contains('Орбита')) {
+    return Icons.public_rounded;
+  }
+
+  if (label.contains('Детали')) {
+    return Icons.extension_rounded;
+  }
+
+  if (label.contains('наклейки')) {
+    return Icons.auto_awesome_rounded;
+  }
+
+  return Icons.touch_app_rounded;
+}
+
+Color _colorForAnswerIndex(int index) {
+  return switch (index % 3) {
+    0 => const Color(0xFFFFF2C4),
+    1 => const Color(0xFFDDF7F3),
+    _ => const Color(0xFFECE8FF),
   };
 }
 
@@ -3070,6 +4059,7 @@ class _AnswerOption extends StatelessWidget {
   const _AnswerOption({
     required this.option,
     required this.selected,
+    required this.state,
     required this.compact,
     required this.stacked,
     required this.onTap,
@@ -3077,6 +4067,7 @@ class _AnswerOption extends StatelessWidget {
 
   final _AnswerOptionData option;
   final bool selected;
+  final _AnswerCheckState state;
   final bool compact;
   final bool stacked;
   final VoidCallback onTap;
@@ -3084,6 +4075,28 @@ class _AnswerOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(stacked ? 22 : 20);
+    final isCorrect = state == _AnswerCheckState.correct;
+    final isWrong = state == _AnswerCheckState.wrong;
+    final borderColor = isCorrect
+        ? AppPalette.teal
+        : isWrong
+            ? AppPalette.coral
+            : selected
+                ? AppPalette.teal
+                : AppPalette.border;
+    final fillColor = isCorrect
+        ? AppPalette.mint.withValues(alpha: 0.58)
+        : isWrong
+            ? AppPalette.coral.withValues(alpha: 0.12)
+            : selected
+                ? AppPalette.mint.withValues(alpha: 0.44)
+                : Colors.white;
+    final statusIcon = isCorrect
+        ? Icons.check_circle_rounded
+        : isWrong
+            ? Icons.cancel_rounded
+            : Icons.check_circle_rounded;
+    final statusColor = isWrong ? AppPalette.coral : AppPalette.teal;
 
     return BouncyTap(
       borderRadius: borderRadius,
@@ -3099,18 +4112,16 @@ class _AnswerOption extends StatelessWidget {
             vertical: stacked ? 8 : (compact ? 7 : 9),
           ),
           decoration: BoxDecoration(
-            color: selected
-                ? AppPalette.mint.withValues(alpha: 0.44)
-                : Colors.white,
+            color: fillColor,
             borderRadius: borderRadius,
             border: Border.all(
-              color: selected ? AppPalette.teal : AppPalette.border,
-              width: selected ? 2 : 1.2,
+              color: borderColor,
+              width: selected || isCorrect || isWrong ? 2 : 1.2,
             ),
             boxShadow: [
-              if (selected)
+              if (selected || isCorrect || isWrong)
                 BoxShadow(
-                  color: AppPalette.teal.withValues(alpha: 0.18),
+                  color: statusColor.withValues(alpha: 0.18),
                   blurRadius: 14,
                   offset: const Offset(0, 7),
                 ),
@@ -3156,12 +4167,12 @@ class _AnswerOption extends StatelessWidget {
                         ),
                       ),
                       if (selected)
-                        const Positioned(
+                        Positioned(
                           top: -2,
                           right: -2,
                           child: Icon(
-                            Icons.check_circle_rounded,
-                            color: AppPalette.teal,
+                            statusIcon,
+                            color: statusColor,
                             size: 24,
                           ),
                         ),
@@ -3185,9 +4196,9 @@ class _AnswerOption extends StatelessWidget {
                       ),
                     ),
                     if (selected)
-                      const Icon(
-                        Icons.check_circle_rounded,
-                        color: AppPalette.teal,
+                      Icon(
+                        statusIcon,
+                        color: statusColor,
                         size: 28,
                       ),
                   ],
@@ -3198,23 +4209,97 @@ class _AnswerOption extends StatelessWidget {
   }
 }
 
+class _AnswerFeedbackPanel extends StatelessWidget {
+  const _AnswerFeedbackPanel({
+    required this.state,
+    required this.retryText,
+    required this.compact,
+  });
+
+  final _AnswerCheckState state;
+  final String retryText;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCorrect = state == _AnswerCheckState.correct;
+    final color = isCorrect ? AppPalette.teal : AppPalette.coral;
+    final icon = isCorrect ? Icons.celebration_rounded : Icons.refresh_rounded;
+    final title = isCorrect
+        ? context.l10n.challengeCorrectFeedbackTitle
+        : context.l10n.challengeRetryFeedbackTitle;
+    final text =
+        isCorrect ? context.l10n.challengeCorrectFeedbackText : retryText;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      padding: EdgeInsets.all(compact ? 10 : 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isCorrect ? 0.12 : 0.10),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.24)),
+      ),
+      child: Row(
+        children: [
+          IconBadge(
+            icon: icon,
+            color: Colors.white.withValues(alpha: 0.82),
+            iconColor: color,
+            size: compact ? 36 : 42,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                Text(
+                  text,
+                  maxLines: compact ? 1 : 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _StickyAnswerBar extends StatelessWidget {
   const _StickyAnswerBar({
     required this.enabled,
     required this.loading,
-    required this.selectedAnswer,
+    required this.selectedAnswerLabel,
+    required this.answerState,
     required this.compact,
     required this.onSubmit,
   });
 
   final bool enabled;
   final bool loading;
-  final String? selectedAnswer;
+  final String? selectedAnswerLabel;
+  final _AnswerCheckState answerState;
   final bool compact;
   final VoidCallback onSubmit;
 
   @override
   Widget build(BuildContext context) {
+    final label = _answerBarLabel(context);
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppPalette.surface,
@@ -3239,9 +4324,7 @@ class _StickyAnswerBar extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  selectedAnswer == null
-                      ? 'Выбери ответ'
-                      : 'Ответ: $selectedAnswer',
+                  label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -3275,7 +4358,11 @@ class _StickyAnswerBar extends StatelessWidget {
                             ),
                           )
                         : const Icon(Icons.check_rounded),
-                    label: Text(loading ? 'Проверяем' : 'Проверить'),
+                    label: Text(
+                      loading
+                          ? context.l10n.challengeChecking
+                          : context.l10n.challengeCheck,
+                    ),
                   ),
                 ),
               ),
@@ -3284,6 +4371,21 @@ class _StickyAnswerBar extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _answerBarLabel(BuildContext context) {
+    if (answerState == _AnswerCheckState.wrong) {
+      return context.l10n.challengePickDifferentAnswer;
+    }
+
+    if (answerState == _AnswerCheckState.correct) {
+      return context.l10n.challengeCorrectAnswer;
+    }
+
+    final answer = selectedAnswerLabel;
+    return answer == null
+        ? context.l10n.challengeChooseAnswer
+        : context.l10n.challengeSelectedAnswer(answer);
   }
 }
 

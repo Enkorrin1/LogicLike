@@ -217,9 +217,9 @@ List<BrainArea> puzzleAreasForAge(ChildAge age) {
         ),
         LearningPuzzle(
           id: 'shadow-match',
-          title: 'Найди тень',
-          prompt: 'Подбери тень, которая точно подходит герою.',
-          skill: 'Точное сравнение',
+          title: 'След героя',
+          prompt: 'Выбери след, который мог оставить герой.',
+          skill: 'Связь по признаку',
           minutes: 4,
           areaId: 'attention',
         ),

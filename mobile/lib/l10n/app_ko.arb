@@ -1,34 +1,407 @@
 {
-    "@@locale":  "ko",
-    "appTitle":  "LogicLike",
-    "loadingMission":  "Preparing the mission...",
-    "navHome":  "집",
-    "navChallenge":  "탐구",
-    "navParent":  "조상",
-    "onboardingSubmitSaving":  "Preparing route",
-    "onboardingSubmitCreateHero":  "Create hero",
-    "onboardingDefaultHero":  "Young hero",
-    "onboardingTitle":  "Create a hero",
-    "onboardingSubtitle":  "The lion will show the daily mission, then the child can choose brain games.",
-    "childNameLabel":  "Child name",
-    "childNameError":  "Enter hero name",
-    "onboardingMissionPill":  "임무 시작",
-    "onboardingAgeTitle":  "Hero age",
-    "unlockMission":  "사명",
-    "unlockGames":  "계략",
-    "unlockPrizes":  "상금",
-    "ageYears":  "{years} 세",
-    "languageArabic":  "العربية",
-    "languageGerman":  "Deutsch",
-    "languageEnglish":  "English",
-    "languageSpanish":  "Español",
-    "languageFrench":  "Français",
-    "languageHindi":  "हिन्दी",
-    "languageItalian":  "Italiano",
-    "languageJapanese":  "日本語",
-    "languageKorean":  "한국어",
-    "languagePortuguese":  "Português",
-    "languageRussian":  "Русский",
-    "languageChinese":  "中文",
-    "settingsLanguage":  "언어"
+  "appTitle": "BrainUp",
+  "loadingMission": "미션 준비중..",
+  "navHome": "집",
+  "navChallenge": "일",
+  "navParent": "조상",
+  "commonCancel": "취소",
+  "commonReset": "다시 놓기",
+  "languageChanged": "언어: {language}",
+  "languageButtonSemantics": "언어를 변경하세요. 현재: {language}",
+  "onboardingSubmitSaving": "경로 준비 중",
+  "onboardingSubmitCreateHero": "영웅 만들기",
+  "onboardingDefaultHero": "젊은 영웅",
+  "onboardingTitle": "영웅 만들기",
+  "onboardingHeroSummary": "{name}, {age}",
+  "onboardingSubtitle": "사자가 일일 미션을 보여주면 아이는 두뇌 훈련을 선택할 수 있습니다.",
+  "childNameLabel": "아이 이름",
+  "childNameError": "영웅 이름을 입력하세요",
+  "onboardingMissionPill": "임무 시작",
+  "onboardingAgeTitle": "영웅시대",
+  "unlockMission": "사명",
+  "unlockGames": "계략",
+  "unlockPrizes": "상금",
+  "ageYears": "{years}년",
+  "homeGreeting": "안녕하세요,\n{name}님",
+  "homeStarsHint": "임무를 통해 스타가 성장하고 새로운 상품을 잠금 해제할 수 있습니다.",
+  "homeLockedLevelHint": "이 레벨은 새로운 별 이후에 열립니다.",
+  "homeStreakSavedHint": "연속 기록이 저장되었습니다! 내일 새로운 임무가 도착합니다.",
+  "homeStreakNeedMissionHint": "연승을 저장하려면 일일 임무를 완료하세요.",
+  "homeStreakTitle": "일일 연속",
+  "homeStreakDays": "{days}일 연속!",
+  "homeStreakWaiting": "임무가 기다리고 있어요",
+  "homeMissionDaily": "일일미션",
+  "homeMissionFreePlay": "무료 플레이",
+  "homeTrainingOpen": "훈련이 열려있습니다",
+  "homeLevel": "레벨 {level}",
+  "homeMissionStart": "시작",
+  "homeMissionChoose": "선택하다",
+  "homeMissionTag": "주요 임무",
+  "homeFreePlayTitle": "자신을 플레이",
+  "homeFreePlaySubtitle": "영웅을 선택하고 두뇌를 훈련하세요",
+  "homeMiniGamesTitle": "미니게임",
+  "homeMiniGamesSubtitle": "레벨 후 빠른 훈련",
+  "homeQuickPairs": "한 쌍",
+  "homeQuickPath": "길",
+  "homeQuickCount": "세다",
+  "homeProgressTitle": "내 진행 상황",
+  "homeProgressStars": "{current} / {total} 별",
+  "homeCollectionTitle": "수집",
+  "homeCollectionStickers": "스티커",
+  "homeLevelsTitle": "레벨",
+  "homeLevelsSubtitle": "달력이 아닌 8가지 교육 테마",
+  "homeNodeCompleted": "완료",
+  "homeNodePlay": "놀다",
+  "homeNodeSoon": "곧",
+  "homeMapStart": "시작",
+  "homeMapShapes": "모양",
+  "homeMapPairs": "한 쌍",
+  "homeMapCount": "세다",
+  "homeMapPath": "길",
+  "homeMapRhythm": "율",
+  "homeMapCompare": "비교하다",
+  "homeMapFinal": "결정적인",
+  "parentTitle": "상위 영역",
+  "parentIntroTitle": "어른들을 위한 차분한 존",
+  "parentIntroBody": "프로필, 진행 상황, 언어 및 향후 구독은 하위 미션과 별도로 진행됩니다.",
+  "parentProfileTitle": "가족 프로필",
+  "parentLocalBadge": "현지의",
+  "parentChildLabel": "어린이",
+  "parentAgeLabel": "나이",
+  "parentCompletedTasksLabel": "완료된 작업",
+  "parentLanguageLabel": "언어",
+  "settingsLanguage": "앱 언어",
+  "parentSubscriptionTitle": "가족 구독",
+  "parentSubscriptionSoon": "곧",
+  "parentSubscriptionBody": "결제현황, 패밀리석, 요금제 관리가 여기에 표시됩니다.",
+  "parentFamilySeatsLabel": "패밀리석",
+  "parentFamilySeatsValue": "계획된",
+  "parentPaymentLabel": "지불",
+  "parentPaymentValue": "연결되지 않음",
+  "parentResetProfile": "프로필 재설정",
+  "parentResetTitle": "프로필을 재설정하시겠습니까?",
+  "parentResetBody": "온보딩이 다시 열리고 로컬 진행 상황이 지워집니다.",
+  "challengeTitle": "두뇌 게임",
+  "challengeDayDone": "일 완료",
+  "challengeDailyMission": "일일미션",
+  "challengeDayDoneBody": "보상을 받았습니다. 자유롭게 반복하거나 재생할 수 있습니다.",
+  "challengeDailyBody": "연속 기록을 저장하고 상품을 받으려면 3단계를 완료하세요.",
+  "challengePrize": "상",
+  "challengeMissionProgress": "미션 진행",
+  "countOfTotal": "{total}의 {count}",
+  "challengeRepeatMission": "반복 임무",
+  "challengeStepsTraining": "훈련을 위한 {steps} 단계",
+  "challengeStepNumber": "단계 {step}",
+  "challengeAgain": "다시",
+  "minutesShort": "{minutes}분",
+  "challengeBrainGymTitle": "브레인짐",
+  "challengeBrainGymSubtitle": "{count} 영역, 순서에 상관없이 플레이",
+  "challengeAreaLevels": "{done}/{total} 레벨",
+  "challengeAreaCompleted": "{total}의 {done} 완료",
+  "challengeStateCompleted": "완료",
+  "challengeStateNext": "다음",
+  "challengeStatePlay": "놀다",
+  "challengeLevelNumber": "레벨 {level}",
+  "challengeHideHint": "힌트 숨기기",
+  "challengeShowHint": "힌트 표시",
+  "challengeDailyTaskTitle": "일일 작업",
+  "challengePuzzleTaskTitle": "퍼즐",
+  "challengeDailyPath": "일일 경로",
+  "challengeFreePlay": "무료 플레이",
+  "challengeExcellent": "엄청난!",
+  "challengeFlyNext": "다음 비행",
+  "challengeAllDone": "모든 세트",
+  "challengePlayMore": "더 많이 플레이하세요",
+  "challengeMyCollection": "내 컬렉션",
+  "challengeDailyCompleteTitle": "일일미션 완료!",
+  "challengeDailyCompleteBody": "모든 단계를 완료했습니다. 상품을 모아 자유롭게 플레이해보세요.",
+  "challengeRewardStars": "별",
+  "challengeRewardStreak": "줄",
+  "challengeRewardSteps": "단계",
+  "challengeWhatNextTitle": "다음은 무엇입니까?",
+  "challengeWhatNextBody": "영웅을 선택하세요: 논리, 기억력, 주의력, 수, 경로.",
+  "challengeProgressStep": "{total}의 {current} 단계",
+  "challengeChooseAnswer": "답변을 선택하세요",
+  "challengeSelectedAnswer": "답: {answer}",
+  "challengePickDifferentAnswer": "다른 답변을 선택하세요",
+  "challengeCorrectAnswer": "옳은!",
+  "challengeChecking": "확인 중",
+  "challengeCheck": "확인하다",
+  "challengeCorrectFeedbackTitle": "엄청난!",
+  "challengeRetryFeedbackTitle": "거의 다 왔어",
+  "challengeCorrectFeedbackText": "대답은 정확합니다. 계속하세요!",
+  "hintLogic": "규칙이 반복됩니다. 다음 반복의 시작을 찾아 행을 계속하십시오.",
+  "hintMemory": "먼저 어떤 사진이 열렸는지 기억해 보세요. 그런 다음 일치하는 쌍을 찾으십시오.",
+  "hintAttention": "색상, 모양, 크기 및 위치 등 세부 사항을 하나씩 비교하십시오.",
+  "hintMath": "소그룹으로 나누어서 숫자를 세어 보면 길을 잃지 않는 것이 더 쉽습니다.",
+  "hintSpace": "처음부터 끝까지 경로를 따라가고 다음 차례의 이름을 지정하세요.",
+  "collectionTitle": "내 컬렉션",
+  "collectionDayPrize": "일상",
+  "collectionCosmoPrizes": "우주 상품",
+  "collectionUnlocked": "{total}의 {unlocked} 열림",
+  "collectionNewPrizeTitle": "뉴데이 경품",
+  "collectionNewPrizeBody": "우주비행사가 컬렉션에 추가되었습니다.",
+  "collectionSnackUnlocked": "{title}는 이미 컬렉션에 있습니다.",
+  "collectionSnackLocked": "새로운 레벨 이후에 열립니다.",
+  "collectionNewBadge": "새로운",
+  "collectionLockedLevel": "{level} 레벨.",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@languageButtonSemantics": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@onboardingHeroSummary": {
+    "placeholders": {
+      "age": {},
+      "name": {}
+    }
+  },
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@homeStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeProgressStars": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@countOfTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepsTraining": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepNumber": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeBrainGymSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaLevels": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaCompleted": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeLevelNumber": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeProgressStep": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeSelectedAnswer": {
+    "placeholders": {
+      "answer": {}
+    }
+  },
+  "@collectionUnlocked": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "unlocked": {
+        "type": "int"
+      }
+    }
+  },
+  "@collectionSnackUnlocked": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "@collectionLockedLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@@locale": "ko",
+  "parentOverviewTitle": "상위 개요",
+  "parentOverviewBody": "{name} 프로필, 진행 상황, 오늘의 계획, 집에서 연습할 때 필요한 팁을 알려드립니다.",
+  "@parentOverviewBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentStarsCount": "{stars} 별",
+  "@parentStarsCount": {
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "parentMissionClosed": "임무 완료",
+  "parentMissionWaiting": "임무 대기 중",
+  "parentProgressTitle": "아동 발달",
+  "parentOverviewBadge": "개요",
+  "parentLevelsLabel": "레벨",
+  "parentLevelsValue": "{total}의 {completed}",
+  "@parentLevelsValue": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayLabel": "오늘",
+  "parentTodayValue": "{total}의 {done}",
+  "@parentTodayValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentStarsLabel": "별",
+  "parentContentLabel": "콘텐츠",
+  "parentContentValue": "{total}의 {done}",
+  "@parentContentValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayPlanTitle": "오늘의 계획",
+  "parentTodayPlanBody": "압박감 없는 짧은 시리즈: 2~3회의 차분한 시도가 길고 피곤한 세션보다 낫습니다.",
+  "parentPuzzleMeta": "{skill} • {minutes}분",
+  "@parentPuzzleMeta": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "parentAreasTitle": "개발분야",
+  "parentBalanceBadge": "균형",
+  "parentAreasBody": "이것은 성인용 지도입니다. 아이들은 딱딱한 카테고리가 아닌 미션과 영웅을 보아야 합니다.",
+  "parentRecommendationDone": "오늘의 미션은 완료되었습니다. 속도가 아닌 노력을 칭찬하기에 좋은 순간이다.",
+  "parentRecommendationRemaining": "오늘 진행 상황이 있습니다. {remaining} 작업이 남았습니다.",
+  "@parentRecommendationRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "parentRecommendationStart": "오늘은 4~6분 정도의 짧은 미션 하나로 시작해 보세요.",
+  "parentRecommendationsTitle": "권장 사항",
+  "parentHomeBadge": "집에서",
+  "parentPaceLabel": "속도",
+  "parentWeekFocusLabel": "주간 집중",
+  "parentFocusArea": "지금 가장 주목해야 할 부분은 바로 \"{areaTitle}\": {areaSubtitle} 입니다.",
+  "@parentFocusArea": {
+    "placeholders": {
+      "areaTitle": {
+        "type": "String"
+      },
+      "areaSubtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "parentDiscussLabel": "토론하는 방법",
+  "parentDiscussBody": "작업이 끝나면 \"규칙을 어떻게 찾았나요?\"라고 질문하세요. 이것은 추측이 아닌 설명을 구축합니다.",
+  "parentFamilySecurityTitle": "가족과 안전",
+  "parentStorageLabel": "저장",
+  "parentStorageLocal": "기기에서"
 }

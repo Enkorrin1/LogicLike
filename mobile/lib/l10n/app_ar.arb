@@ -1,34 +1,407 @@
 {
-    "@@locale":  "ar",
-    "appTitle":  "LogicLike",
-    "loadingMission":  "تحضير المهمة...",
-    "navHome":  "بيت",
-    "navChallenge":  "كويست",
-    "navParent":  "الوالد",
-    "onboardingSubmitSaving":  "تحضير الطريق",
-    "onboardingSubmitCreateHero":  "خلق البطل",
-    "onboardingDefaultHero":  "البطل الشاب",
-    "onboardingTitle":  "خلق بطلا",
-    "onboardingSubtitle":  "سيظهر الأسد المهمة اليومية، ثم يمكن للطفل اختيار ألعاب الدماغ.",
-    "childNameLabel":  "اسم الطفل",
-    "childNameError":  "أدخل اسم البطل",
-    "onboardingMissionPill":  "بداية المهمة",
-    "onboardingAgeTitle":  "عمر البطل",
-    "unlockMission":  "مهمة",
-    "unlockGames":  "ألعاب",
-    "unlockPrizes":  "الجوائز",
-    "ageYears":  "{years, plural, zero{{years} سنين} one{{years} سنة} two{{years} سنين} few{{years} سنين} many{{years} سنين} other{{years} سنين}}",
-    "languageArabic":  "العربية",
-    "languageGerman":  "Deutsch",
-    "languageEnglish":  "English",
-    "languageSpanish":  "Español",
-    "languageFrench":  "Français",
-    "languageHindi":  "हिन्दी",
-    "languageItalian":  "Italiano",
-    "languageJapanese":  "日本語",
-    "languageKorean":  "한국어",
-    "languagePortuguese":  "Português",
-    "languageRussian":  "Русский",
-    "languageChinese":  "中文",
-    "settingsLanguage":  "اللغة"
+  "appTitle": "BrainUp",
+  "loadingMission": "تحضير المهمة...",
+  "navHome": "بيت",
+  "navChallenge": "مهمة",
+  "navParent": "الوالد",
+  "commonCancel": "يلغي",
+  "commonReset": "إعادة ضبط",
+  "languageChanged": "اللغة: {language}",
+  "languageButtonSemantics": "تغيير اللغة. الحالي: {language}",
+  "onboardingSubmitSaving": "تحضير الطريق",
+  "onboardingSubmitCreateHero": "خلق البطل",
+  "onboardingDefaultHero": "البطل الشاب",
+  "onboardingTitle": "خلق بطلا",
+  "onboardingHeroSummary": "{name}, {age}",
+  "onboardingSubtitle": "سيظهر الأسد المهمة اليومية، ثم يمكن لطفلك اختيار تدريب الدماغ.",
+  "childNameLabel": "اسم الطفل",
+  "childNameError": "أدخل اسم البطل",
+  "onboardingMissionPill": "بداية المهمة",
+  "onboardingAgeTitle": "عمر البطل",
+  "unlockMission": "مهمة",
+  "unlockGames": "ألعاب",
+  "unlockPrizes": "الجوائز",
+  "ageYears": "سنوات {years}",
+  "homeGreeting": "مرحبًا،\n{name}",
+  "homeStarsHint": "تنمو النجوم من خلال المهام وتفتح جوائز جديدة.",
+  "homeLockedLevelHint": "يفتح هذا المستوى بعد النجوم الجدد.",
+  "homeStreakSavedHint": "تم حفظ الخط! مهمة جديدة تصل غدا.",
+  "homeStreakNeedMissionHint": "أكمل المهمة اليومية لحفظ الخط.",
+  "homeStreakTitle": "خط يومي",
+  "homeStreakDays": "{days} أيام على التوالي!",
+  "homeStreakWaiting": "المهمة تنتظر",
+  "homeMissionDaily": "مهمة يومية",
+  "homeMissionFreePlay": "اللعب الحر",
+  "homeTrainingOpen": "التدريب مفتوح",
+  "homeLevel": "المستوى {level}",
+  "homeMissionStart": "يبدأ",
+  "homeMissionChoose": "يختار",
+  "homeMissionTag": "المهمة الرئيسية",
+  "homeFreePlayTitle": "العب بنفسك",
+  "homeFreePlaySubtitle": "اختيار البطل وتدريب دماغك",
+  "homeMiniGamesTitle": "ألعاب مصغرة",
+  "homeMiniGamesSubtitle": "التدريب السريع بعد المستويات",
+  "homeQuickPairs": "أزواج",
+  "homeQuickPath": "طريق",
+  "homeQuickCount": "عدد",
+  "homeProgressTitle": "تقدمي",
+  "homeProgressStars": "نجوم {current} / {total}",
+  "homeCollectionTitle": "مجموعة",
+  "homeCollectionStickers": "ملصقات",
+  "homeLevelsTitle": "المستويات",
+  "homeLevelsSubtitle": "8 مواضيع تدريبية، وليس التقويم",
+  "homeNodeCompleted": "منتهي",
+  "homeNodePlay": "يلعب",
+  "homeNodeSoon": "قريباً",
+  "homeMapStart": "يبدأ",
+  "homeMapShapes": "الأشكال",
+  "homeMapPairs": "أزواج",
+  "homeMapCount": "عدد",
+  "homeMapPath": "طريق",
+  "homeMapRhythm": "إيقاع",
+  "homeMapCompare": "يقارن",
+  "homeMapFinal": "أخير",
+  "parentTitle": "منطقة الوالدين",
+  "parentIntroTitle": "منطقة هادئة للبالغين",
+  "parentIntroBody": "الملف الشخصي والتقدم واللغة والاشتراك المستقبلي مباشر بشكل منفصل عن مهمة الطفل.",
+  "parentProfileTitle": "الملف الشخصي للعائلة",
+  "parentLocalBadge": "محلي",
+  "parentChildLabel": "طفل",
+  "parentAgeLabel": "عمر",
+  "parentCompletedTasksLabel": "اكتملت المهام",
+  "parentLanguageLabel": "لغة",
+  "settingsLanguage": "لغة التطبيق",
+  "parentSubscriptionTitle": "الاشتراك العائلي",
+  "parentSubscriptionSoon": "قريباً",
+  "parentSubscriptionBody": "ستظهر هنا حالة الدفع والمقاعد العائلية وإدارة الخطة.",
+  "parentFamilySeatsLabel": "مقاعد عائلية",
+  "parentFamilySeatsValue": "المخطط لها",
+  "parentPaymentLabel": "قسط",
+  "parentPaymentValue": "غير متصل",
+  "parentResetProfile": "إعادة تعيين الملف الشخصي",
+  "parentResetTitle": "إعادة تعيين الملف الشخصي؟",
+  "parentResetBody": "سيتم فتح عملية الإعداد مرة أخرى وسيتم مسح التقدم المحلي.",
+  "challengeTitle": "العاب الدماغ",
+  "challengeDayDone": "يوم كامل",
+  "challengeDailyMission": "مهمة يومية",
+  "challengeDayDoneBody": "تم استلام المكافأة. يمكنك تكرار أو اللعب بحرية.",
+  "challengeDailyBody": "أكمل 3 خطوات لحفظ الخط واستلام الجائزة.",
+  "challengePrize": "جائزة",
+  "challengeMissionProgress": "تقدم المهمة",
+  "countOfTotal": "{count} من {total}",
+  "challengeRepeatMission": "كرر المهمة",
+  "challengeStepsTraining": "خطوات {steps} للتدريب",
+  "challengeStepNumber": "الخطوة {step}",
+  "challengeAgain": "مرة أخرى",
+  "minutesShort": "{minutes} دقيقة",
+  "challengeBrainGymTitle": "صالة الألعاب الرياضية الدماغ",
+  "challengeBrainGymSubtitle": "مناطق {count}، العب بأي ترتيب",
+  "challengeAreaLevels": "مستويات {done}/{total}",
+  "challengeAreaCompleted": "اكتمل {done} من {total}",
+  "challengeStateCompleted": "منتهي",
+  "challengeStateNext": "التالي",
+  "challengeStatePlay": "يلعب",
+  "challengeLevelNumber": "المستوى {level}",
+  "challengeHideHint": "إخفاء التلميح",
+  "challengeShowHint": "إظهار التلميح",
+  "challengeDailyTaskTitle": "مهمة يومية",
+  "challengePuzzleTaskTitle": "لغز",
+  "challengeDailyPath": "المسار اليومي",
+  "challengeFreePlay": "اللعب الحر",
+  "challengeExcellent": "عظيم!",
+  "challengeFlyNext": "الطيران المقبل",
+  "challengeAllDone": "كل شيء جاهز",
+  "challengePlayMore": "العب أكثر",
+  "challengeMyCollection": "مجموعتي",
+  "challengeDailyCompleteTitle": "المهمة اليومية كاملة!",
+  "challengeDailyCompleteBody": "لقد انتهيت من جميع الخطوات. اجمع الجائزة والعب بحرية.",
+  "challengeRewardStars": "النجوم",
+  "challengeRewardStreak": "أثَر",
+  "challengeRewardSteps": "خطوات",
+  "challengeWhatNextTitle": "ماذا بعد؟",
+  "challengeWhatNextBody": "اختر البطل: المنطق أو الذاكرة أو الاهتمام أو العد أو المسار.",
+  "challengeProgressStep": "الخطوة {current} من {total}",
+  "challengeChooseAnswer": "اختر إجابة",
+  "challengeSelectedAnswer": "الجواب: {answer}",
+  "challengePickDifferentAnswer": "اختر إجابة أخرى",
+  "challengeCorrectAnswer": "صحيح!",
+  "challengeChecking": "التحقق",
+  "challengeCheck": "يفحص",
+  "challengeCorrectFeedbackTitle": "عظيم!",
+  "challengeRetryFeedbackTitle": "هناك تقريبا",
+  "challengeCorrectFeedbackText": "الجواب صحيح. المضي قدما!",
+  "hintLogic": "القاعدة تتكرر. ابحث عن بداية التكرار التالي واستمر في الصف.",
+  "hintMemory": "تذكر أولاً الصور التي تم فتحها. ثم ابحث عن الزوج المطابق.",
+  "hintAttention": "قارن التفاصيل واحدة تلو الأخرى: اللون والشكل والحجم والمكان.",
+  "hintMath": "قم بالعد في مجموعات صغيرة حتى يكون من الأسهل عدم فقدان المسار.",
+  "hintSpace": "اتبع المسار من البداية إلى النهاية وقم بتسمية المنعطف التالي.",
+  "collectionTitle": "مجموعتي",
+  "collectionDayPrize": "جائزة اليوم",
+  "collectionCosmoPrizes": "جوائز الفضاء",
+  "collectionUnlocked": "{unlocked} من {total} مفتوح",
+  "collectionNewPrizeTitle": "جائزة اليوم الجديد",
+  "collectionNewPrizeBody": "تمت إضافة رائد الفضاء إلى المجموعة.",
+  "collectionSnackUnlocked": "{title} موجود بالفعل في المجموعة.",
+  "collectionSnackLocked": "يفتح بعد مستويات جديدة.",
+  "collectionNewBadge": "جديد",
+  "collectionLockedLevel": "مستوى {level}.",
+  "@languageChanged": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@languageButtonSemantics": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "@onboardingHeroSummary": {
+    "placeholders": {
+      "age": {},
+      "name": {}
+    }
+  },
+  "@ageYears": {
+    "placeholders": {
+      "years": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "@homeStreakDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@homeProgressStars": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@countOfTotal": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepsTraining": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeStepNumber": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeBrainGymSubtitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaLevels": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeAreaCompleted": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "done": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeLevelNumber": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeProgressStep": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "current": {
+        "type": "int"
+      }
+    }
+  },
+  "@challengeSelectedAnswer": {
+    "placeholders": {
+      "answer": {}
+    }
+  },
+  "@collectionUnlocked": {
+    "placeholders": {
+      "total": {
+        "type": "int"
+      },
+      "unlocked": {
+        "type": "int"
+      }
+    }
+  },
+  "@collectionSnackUnlocked": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "@collectionLockedLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
+  "@@locale": "ar",
+  "parentOverviewTitle": "نظرة عامة على الوالدين",
+  "parentOverviewBody": "ملف تعريف {name} والتقدم وخطة اليوم ونصائح للتمرين في المنزل.",
+  "@parentOverviewBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentStarsCount": "نجوم {stars}",
+  "@parentStarsCount": {
+    "placeholders": {
+      "stars": {
+        "type": "int"
+      }
+    }
+  },
+  "parentMissionClosed": "تمت المهمة",
+  "parentMissionWaiting": "مهمة الانتظار",
+  "parentProgressTitle": "تقدم الطفل",
+  "parentOverviewBadge": "ملخص",
+  "parentLevelsLabel": "المستويات",
+  "parentLevelsValue": "{completed} من {total}",
+  "@parentLevelsValue": {
+    "placeholders": {
+      "completed": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayLabel": "اليوم",
+  "parentTodayValue": "{done} من {total}",
+  "@parentTodayValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentStarsLabel": "النجوم",
+  "parentContentLabel": "محتوى",
+  "parentContentValue": "{done} من {total}",
+  "@parentContentValue": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "parentTodayPlanTitle": "خطة اليوم",
+  "parentTodayPlanBody": "سلسلة قصيرة بدون ضغوط: 2-3 محاولات هادئة أفضل من جلسة طويلة متعبة.",
+  "parentPuzzleMeta": "{skill} • {minutes} دقيقة",
+  "@parentPuzzleMeta": {
+    "placeholders": {
+      "skill": {
+        "type": "String"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "parentAreasTitle": "مجالات التطوير",
+  "parentBalanceBadge": "توازن",
+  "parentAreasBody": "هذه خريطة للبالغين: يجب أن يرى الأطفال المهام والأبطال، وليس الفئات الجافة.",
+  "parentRecommendationDone": "تمت مهمة اليوم. هذه لحظة جيدة لثناء الجهد، وليس السرعة.",
+  "parentRecommendationRemaining": "هناك تقدم اليوم: تبقى مهام {remaining}.",
+  "@parentRecommendationRemaining": {
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "parentRecommendationStart": "اليوم، ابدأ بمهمة قصيرة مدتها 4-6 دقائق.",
+  "parentRecommendationsTitle": "التوصيات",
+  "parentHomeBadge": "في البيت",
+  "parentPaceLabel": "خطوة",
+  "parentWeekFocusLabel": "التركيز الأسبوعي",
+  "parentFocusArea": "المنطقة التي تحتاج إلى أكبر قدر من الاهتمام الآن هي \"{areaTitle}\": {areaSubtitle}.",
+  "@parentFocusArea": {
+    "placeholders": {
+      "areaTitle": {
+        "type": "String"
+      },
+      "areaSubtitle": {
+        "type": "String"
+      }
+    }
+  },
+  "parentDiscussLabel": "كيفية المناقشة",
+  "parentDiscussBody": "بعد انتهاء المهمة، اسأل: \"كيف وجدت القاعدة؟\" وهذا يبني تفسيرا، وليس التخمين.",
+  "parentFamilySecurityTitle": "الأسرة والسلامة",
+  "parentStorageLabel": "تخزين",
+  "parentStorageLocal": "على الجهاز"
 }

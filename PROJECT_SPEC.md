@@ -68,7 +68,9 @@ Localization must be planned from the start.
 - Preserve placeholders exactly and use ICU/library pluralization for counts.
 - Use locale-aware formatting for dates, numbers, percentages, currency, and relative time.
 - Avoid fixed text containers that break with longer translations.
-- Initial target locales: English and Russian, unless the product decision changes.
+- Target locales are `ar`, `de`, `en`, `es`, `fr`, `hi`, `it`, `ja`,
+  `ko`, `pt`, `ru`, and `zh` unless a specific project decision explicitly
+  replaces this list.
 - Existing hard-coded strings should be migrated incrementally when touching related screens.
 
 Recommended Flutter l10n direction:
@@ -142,7 +144,9 @@ QA Tester owns verification.
 Localization Lead owns i18n and copy readiness.
 
 - Review new user-visible strings and push them toward Flutter l10n.
-- Keep initial locale direction as English and Russian unless changed by product decision.
+- Keep the required locale set as `ar`, `de`, `en`, `es`, `fr`, `hi`, `it`,
+  `ja`, `ko`, `pt`, `ru`, and `zh` unless changed by an explicit product
+  decision.
 - Prefer stable semantic keys.
 - Preserve placeholders and use ICU/library pluralization for counts.
 - Check text expansion, mobile truncation risk, punctuation, tone, and terminology.

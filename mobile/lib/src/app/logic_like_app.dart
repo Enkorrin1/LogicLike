@@ -4,6 +4,7 @@ import '../data/family_profile_store.dart';
 import '../data/locale_store.dart';
 import '../features/home/family_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
+import '../l10n/generated/app_localizations.dart';
 import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import '../widgets/playful_ui.dart';
@@ -45,30 +46,39 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      onGenerateTitle: (context) => context.l10n.appTitle,
-      locale: widget.locale ?? _controller.locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      theme: buildAppTheme(),
-      home: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          if (_controller.isLoading) {
-            return const _LoadingScreen();
-          }
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        final familyProfile = _controller.familyProfile;
+        final appLocale = widget.locale ??
+            familyProfile?.language.locale ??
+            _controller.locale;
 
-          final familyProfile = _controller.familyProfile;
-          if (familyProfile == null) {
-            return OnboardingScreen(
-              onComplete: _controller.completeOnboarding,
-            );
-          }
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateTitle: (context) => context.l10n.appTitle,
+          theme: buildAppTheme(),
+          locale: appLocale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) {
+              if (_controller.isLoading) {
+                return const _LoadingScreen();
+              }
 
-          return FamilyShell(controller: _controller);
-        },
-      ),
+              final familyProfile = _controller.familyProfile;
+              if (familyProfile == null) {
+                return OnboardingScreen(
+                  onComplete: _controller.completeOnboarding,
+                );
+              }
+
+              return FamilyShell(controller: _controller);
+            },
+          ),
+        );
+      },
     );
   }
 }
@@ -79,28 +89,20 @@ class _LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const PlayfulBackground(
+      body: PlayfulBackground(
         child: Center(
           child: PlayfulCard(
-            padding: EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                AppMark(size: 56),
-                SizedBox(height: 18),
-                CircularProgressIndicator(),
-                SizedBox(height: 14),
+                const AppMark(size: 56),
+                const SizedBox(height: 18),
+                const CircularProgressIndicator(),
+                const SizedBox(height: 14),
+                Text(context.l10n.loadingMission),
               ],
             ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 18),
-          child: Text(
-            context.l10n.loadingMission,
-            textAlign: TextAlign.center,
           ),
         ),
       ),

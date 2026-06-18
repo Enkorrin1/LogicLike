@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
+import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 
@@ -19,57 +21,49 @@ class CollectionScreen extends StatelessWidget {
 
   static const _items = [
     _CollectionItemData(
-      title: 'Лев',
-      subtitle: 'первый герой',
+      id: 'lion',
       assetPath: 'assets/images/avatar_lion.png',
       unlockAfterLevels: 0,
       color: AppPalette.mango,
     ),
     _CollectionItemData(
-      title: 'Космонавт',
-      subtitle: 'миссия дня',
+      id: 'astronaut',
       assetPath: 'assets/images/home_astronaut_cutout.png',
       unlockAfterLevels: 1,
       color: AppPalette.sky,
     ),
     _CollectionItemData(
-      title: 'Рысь',
-      subtitle: 'логика',
+      id: 'lynx',
       assetPath: 'assets/images/areas/area_logic_lynx.png',
       unlockAfterLevels: 2,
       color: AppPalette.coral,
     ),
     _CollectionItemData(
-      title: 'Слон',
-      subtitle: 'память',
+      id: 'elephant',
       assetPath: 'assets/images/areas/area_memory_elephant.png',
       unlockAfterLevels: 3,
       color: AppPalette.lavender,
     ),
     _CollectionItemData(
-      title: 'Хамелеон',
-      subtitle: 'внимание',
+      id: 'chameleon',
       assetPath: 'assets/images/areas/area_attention_chameleon.png',
       unlockAfterLevels: 4,
       color: AppPalette.teal,
     ),
     _CollectionItemData(
-      title: 'Робот',
-      subtitle: 'счет',
+      id: 'robot',
       assetPath: 'assets/images/areas/area_math_robot.png',
       unlockAfterLevels: 5,
       color: AppPalette.mango,
     ),
     _CollectionItemData(
-      title: 'Черепаха',
-      subtitle: 'путь',
+      id: 'turtle',
       assetPath: 'assets/images/areas/area_path_turtle.png',
       unlockAfterLevels: 6,
       color: AppPalette.sky,
     ),
     _CollectionItemData(
-      title: 'Ракета',
-      subtitle: 'большой приз',
+      id: 'rocket',
       assetPath: 'assets/images/home_hero_astronaut.png',
       unlockAfterLevels: 8,
       color: AppPalette.coral,
@@ -83,7 +77,7 @@ class CollectionScreen extends StatelessWidget {
         _items.where((item) => progress >= item.unlockAfterLevels).length;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Моя коллекция')),
+      appBar: AppBar(title: Text(context.l10n.collectionTitle)),
       body: PlayfulBackground(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
@@ -211,7 +205,9 @@ class _CollectionHero extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      highlightDailyPrize ? 'Приз дня' : 'Космо-призы',
+                      highlightDailyPrize
+                          ? context.l10n.collectionDayPrize
+                          : context.l10n.collectionCosmoPrizes,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style:
@@ -222,7 +218,10 @@ class _CollectionHero extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      '$unlockedCount из $totalCount открыто',
+                      context.l10n.collectionUnlocked(
+                        unlockedCount,
+                        totalCount,
+                      ),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: AppPalette.ink,
                             fontWeight: FontWeight.w900,
@@ -329,7 +328,7 @@ class _NewPrizeBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Новый приз дня',
+                    context.l10n.collectionNewPrizeTitle,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -339,7 +338,7 @@ class _NewPrizeBanner extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    'Космонавт добавлен в коллекцию.',
+                    context.l10n.collectionNewPrizeBody,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodyMedium,
@@ -378,8 +377,10 @@ class _CollectionPrizeCard extends StatelessWidget {
           ),
           content: Text(
             unlocked
-                ? '${item.title} уже в коллекции.'
-                : 'Откроется после новых уровней.',
+                ? context.l10n.collectionSnackUnlocked(
+                    context.l10n.collectionItemTitle(item.id),
+                  )
+                : context.l10n.collectionSnackLocked,
           ),
           duration: const Duration(milliseconds: 1200),
         ),
@@ -433,7 +434,7 @@ class _CollectionPrizeCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
-                      'новый',
+                      context.l10n.collectionNewBadge,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: AppPalette.coral,
                             fontSize: 11,
@@ -485,7 +486,7 @@ class _CollectionPrizeCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    item.title,
+                    context.l10n.collectionItemTitle(item.id),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -495,7 +496,11 @@ class _CollectionPrizeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    unlocked ? item.subtitle : '${item.unlockAfterLevels} ур.',
+                    unlocked
+                        ? context.l10n.collectionItemSubtitle(item.id)
+                        : context.l10n.collectionLockedLevel(
+                            item.unlockAfterLevels,
+                          ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -515,15 +520,13 @@ class _CollectionPrizeCard extends StatelessWidget {
 
 class _CollectionItemData {
   const _CollectionItemData({
-    required this.title,
-    required this.subtitle,
+    required this.id,
     required this.assetPath,
     required this.unlockAfterLevels,
     required this.color,
   });
 
-  final String title;
-  final String subtitle;
+  final String id;
   final String assetPath;
   final int unlockAfterLevels;
   final Color color;

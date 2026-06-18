@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/family_profile.dart';
 import '../../l10n/l10n.dart';
+import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 
@@ -65,8 +66,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     return Scaffold(
       body: PlayfulBackground(
         child: SafeArea(
@@ -122,8 +121,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   : const Icon(Icons.rocket_launch_rounded),
               label: Text(
                 _isSaving
-                    ? l10n.onboardingSubmitSaving
-                    : l10n.onboardingSubmitCreateHero,
+                    ? context.l10n.onboardingSubmitSaving
+                    : context.l10n.onboardingSubmitCreateHero,
               ),
             ),
           ),
@@ -152,8 +151,8 @@ class _HeroPassport extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final childName = nameController.text.trim();
+    final l10n = context.l10n;
     final displayName =
         childName.isEmpty ? l10n.onboardingDefaultHero : childName;
 
@@ -244,7 +243,10 @@ class _HeroPassport extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '$displayName, ${l10n.ageYears(selectedAge.years)}',
+                            l10n.onboardingHeroSummary(
+                              displayName,
+                              l10n.childAgeLabel(selectedAge),
+                            ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context)
@@ -339,8 +341,6 @@ class _InlineAgeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -360,7 +360,7 @@ class _InlineAgeSelector extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Text(
-                l10n.onboardingAgeTitle,
+                context.l10n.onboardingAgeTitle,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppPalette.ink,
                       fontWeight: FontWeight.w900,
@@ -402,7 +402,6 @@ class _CompactAgeChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     final color = selected ? AppPalette.coral : Colors.white;
 
     return BouncyTap(
@@ -443,7 +442,7 @@ class _CompactAgeChip extends StatelessWidget {
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
-                l10n.ageYears(age.years),
+                context.l10n.childAgeLabel(age),
                 maxLines: 1,
                 softWrap: false,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(

@@ -5,22 +5,21 @@ import 'package:flutter/material.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
 import '../../l10n/l10n.dart';
+import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 
 class ParentScreen extends StatelessWidget {
   const ParentScreen({
     required this.profile,
-    required this.selectedLocale,
-    required this.onLocaleChanged,
     required this.onResetProfile,
+    required this.onLanguageChanged,
     super.key,
   });
 
   final FamilyProfile profile;
-  final Locale selectedLocale;
-  final ValueChanged<Locale> onLocaleChanged;
   final Future<void> Function() onResetProfile;
+  final Future<void> Function(AppLanguage language) onLanguageChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class ParentScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Родителю'),
+        title: Text(context.l10n.parentTitle),
       ),
       body: PlayfulBackground(
         child: ListView(
@@ -88,8 +87,7 @@ class ParentScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _FamilySettingsCard(
               profile: profile,
-              selectedLocale: selectedLocale,
-              onLocaleChanged: onLocaleChanged,
+              onLanguageChanged: onLanguageChanged,
               onResetPressed: () => _confirmReset(context),
             ),
           ],
@@ -103,21 +101,19 @@ class ParentScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Сбросить профиль?'),
-          content: const Text(
-            'Онбординг откроется заново, а локальный прогресс ребенка будет очищен.',
-          ),
+          title: Text(context.l10n.parentResetTitle),
+          content: Text(context.l10n.parentResetBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Отмена'),
+              child: Text(context.l10n.commonCancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: AppPalette.coral,
               ),
               onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Сбросить'),
+              child: Text(context.l10n.commonReset),
             ),
           ],
         );
@@ -207,12 +203,12 @@ class _ParentHeroCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Родительский обзор',
+                          context.l10n.parentOverviewTitle,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Профиль ${profile.childName}, прогресс, сегодняшний план и подсказки для занятий дома.',
+                          context.l10n.parentOverviewBody(profile.childName),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 12),
@@ -222,12 +218,14 @@ class _ParentHeroCard extends StatelessWidget {
                           children: [
                             InfoPill(
                               icon: Icons.cake_rounded,
-                              label: profile.childAge.label,
+                              label: context.l10n.childAgeLabel(
+                                profile.childAge,
+                              ),
                               color: AppPalette.mint,
                             ),
                             InfoPill(
                               icon: Icons.star_rounded,
-                              label: '$totalStars звезд',
+                              label: context.l10n.parentStarsCount(totalStars),
                               color: const Color(0xFFFFE7A8),
                             ),
                             InfoPill(
@@ -235,8 +233,8 @@ class _ParentHeroCard extends StatelessWidget {
                                   ? Icons.check_circle_rounded
                                   : Icons.flag_rounded,
                               label: completedToday
-                                  ? 'миссия закрыта'
-                                  : 'миссия ждет',
+                                  ? context.l10n.parentMissionClosed
+                                  : context.l10n.parentMissionWaiting,
                               color: completedToday
                                   ? AppPalette.mint
                                   : const Color(0xFFFFE5E5),
@@ -283,11 +281,11 @@ class _ProgressSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(
-            title: 'Прогресс ребенка',
+          SectionTitle(
+            title: context.l10n.parentProgressTitle,
             trailing: InfoPill(
               icon: Icons.insights_rounded,
-              label: 'обзор',
+              label: context.l10n.parentOverviewBadge,
               color: AppPalette.surfaceBlue,
             ),
           ),
@@ -298,8 +296,8 @@ class _ProgressSummaryCard extends StatelessWidget {
                 child: _StatTile(
                   icon: Icons.route_rounded,
                   color: AppPalette.teal,
-                  label: 'Уровни',
-                  value: '$completedLevels из 8',
+                  label: context.l10n.parentLevelsLabel,
+                  value: context.l10n.parentLevelsValue(completedLevels, 8),
                   progress: levelProgress,
                 ),
               ),
@@ -308,8 +306,8 @@ class _ProgressSummaryCard extends StatelessWidget {
                 child: _StatTile(
                   icon: Icons.today_rounded,
                   color: AppPalette.lavender,
-                  label: 'Сегодня',
-                  value: '$todayDone из $todayTotal',
+                  label: context.l10n.parentTodayLabel,
+                  value: context.l10n.parentTodayValue(todayDone, todayTotal),
                   progress: todayTotal == 0 ? 0 : todayDone / todayTotal,
                 ),
               ),
@@ -322,7 +320,7 @@ class _ProgressSummaryCard extends StatelessWidget {
                 child: _StatTile(
                   icon: Icons.auto_awesome_rounded,
                   color: AppPalette.mango,
-                  label: 'Звезды',
+                  label: context.l10n.parentStarsLabel,
                   value: '$totalStars',
                   progress: math.min(1, totalStars / 160),
                 ),
@@ -332,8 +330,11 @@ class _ProgressSummaryCard extends StatelessWidget {
                 child: _StatTile(
                   icon: Icons.extension_rounded,
                   color: AppPalette.coral,
-                  label: 'Контент',
-                  value: '$completedPuzzleCount из $totalPuzzleCount',
+                  label: context.l10n.parentContentLabel,
+                  value: context.l10n.parentContentValue(
+                    completedPuzzleCount,
+                    totalPuzzleCount,
+                  ),
                   progress: contentProgress,
                 ),
               ),
@@ -426,7 +427,7 @@ class _TodayPlanCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SectionTitle(
-            title: 'План на сегодня',
+            title: context.l10n.parentTodayPlanTitle,
             trailing: InfoPill(
               icon: Icons.event_available_rounded,
               label: '${completedIds.length}/${puzzles.length}',
@@ -435,7 +436,7 @@ class _TodayPlanCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Короткая серия без давления: лучше 2-3 спокойных подхода, чем длинная усталая сессия.',
+            context.l10n.parentTodayPlanBody,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 14),
@@ -488,14 +489,17 @@ class _TodayPuzzleRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  puzzle.title,
+                  context.l10n.puzzleTitle(puzzle),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  '${puzzle.skill} • ${puzzle.minutes} мин',
+                  context.l10n.parentPuzzleMeta(
+                    context.l10n.puzzleSkill(puzzle),
+                    puzzle.minutes,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall,
@@ -531,17 +535,17 @@ class _AreaProgressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(
-            title: 'Зоны развития',
+          SectionTitle(
+            title: context.l10n.parentAreasTitle,
             trailing: InfoPill(
               icon: Icons.psychology_rounded,
-              label: 'баланс',
-              color: Color(0xFFFFE7A8),
+              label: context.l10n.parentBalanceBadge,
+              color: const Color(0xFFFFE7A8),
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            'Это внутренняя карта для взрослых: ребенку лучше видеть миссии и героев, а не сухие категории.',
+            context.l10n.parentAreasBody,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 14),
@@ -590,7 +594,7 @@ class _AreaProgressRow extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      area.title,
+                      context.l10n.areaTitle(area.id),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium,
@@ -607,7 +611,7 @@ class _AreaProgressRow extends StatelessWidget {
               ),
               const SizedBox(height: 3),
               Text(
-                area.subtitle,
+                context.l10n.areaSubtitle(area.id),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall,
@@ -648,10 +652,12 @@ class _ParentRecommendationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusText = completedToday
-        ? 'Сегодняшняя миссия закрыта. Хороший момент похвалить за старание, а не за скорость.'
+        ? context.l10n.parentRecommendationDone
         : todayDone > 0
-            ? 'Сегодня уже есть прогресс: осталось ${todayTotal - todayDone} ${_taskWord(todayTotal - todayDone)}.'
-            : 'Сегодня лучше начать с одной короткой миссии на 4-6 минут.';
+            ? context.l10n.parentRecommendationRemaining(
+                todayTotal - todayDone,
+              )
+            : context.l10n.parentRecommendationStart;
 
     return PlayfulCard(
       color: const Color(0xFFFFFAEF),
@@ -659,11 +665,11 @@ class _ParentRecommendationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(
-            title: 'Рекомендации',
+          SectionTitle(
+            title: context.l10n.parentRecommendationsTitle,
             trailing: InfoPill(
               icon: Icons.tips_and_updates_rounded,
-              label: 'для дома',
+              label: context.l10n.parentHomeBadge,
               color: Colors.white,
             ),
           ),
@@ -671,24 +677,25 @@ class _ParentRecommendationCard extends StatelessWidget {
           _AdviceTile(
             icon: Icons.favorite_rounded,
             color: AppPalette.coral,
-            title: 'Темп',
+            title: context.l10n.parentPaceLabel,
             body: statusText,
           ),
           const SizedBox(height: 10),
           _AdviceTile(
             icon: Icons.explore_rounded,
             color: _areaColor(recommendedArea.id),
-            title: 'Фокус недели',
-            body:
-                'Больше всего сейчас просится зона "${recommendedArea.title}": ${recommendedArea.subtitle.toLowerCase()}.',
+            title: context.l10n.parentWeekFocusLabel,
+            body: context.l10n.parentFocusArea(
+              context.l10n.areaTitle(recommendedArea.id),
+              context.l10n.areaSubtitle(recommendedArea.id).toLowerCase(),
+            ),
           ),
           const SizedBox(height: 10),
-          const _AdviceTile(
+          _AdviceTile(
             icon: Icons.chat_bubble_rounded,
             color: AppPalette.lavender,
-            title: 'Как обсуждать',
-            body:
-                'После задания спросите: "Как ты понял правило?" Это развивает объяснение, а не угадывание.',
+            title: context.l10n.parentDiscussLabel,
+            body: context.l10n.parentDiscussBody,
           ),
         ],
       ),
@@ -753,14 +760,12 @@ class _AdviceTile extends StatelessWidget {
 class _FamilySettingsCard extends StatelessWidget {
   const _FamilySettingsCard({
     required this.profile,
-    required this.selectedLocale,
-    required this.onLocaleChanged,
+    required this.onLanguageChanged,
     required this.onResetPressed,
   });
 
   final FamilyProfile profile;
-  final Locale selectedLocale;
-  final ValueChanged<Locale> onLocaleChanged;
+  final Future<void> Function(AppLanguage language) onLanguageChanged;
   final VoidCallback onResetPressed;
 
   @override
@@ -771,11 +776,11 @@ class _FamilySettingsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionTitle(
-            title: 'Семья и безопасность',
+          SectionTitle(
+            title: context.l10n.parentFamilySecurityTitle,
             trailing: InfoPill(
               icon: Icons.lock_rounded,
-              label: 'локально',
+              label: context.l10n.parentLocalBadge,
               color: AppPalette.mint,
             ),
           ),
@@ -783,47 +788,50 @@ class _FamilySettingsCard extends StatelessWidget {
           _InfoRow(
             icon: Icons.child_care_rounded,
             color: AppPalette.surfaceBlue,
-            label: 'Ребенок',
+            label: context.l10n.parentChildLabel,
             value: profile.childName,
           ),
           _InfoRow(
             icon: Icons.cake_rounded,
             color: AppPalette.mango.withValues(alpha: 0.42),
-            label: 'Возраст',
-            value: profile.childAge.label,
+            label: context.l10n.parentAgeLabel,
+            value: context.l10n.childAgeLabel(profile.childAge),
           ),
-          const _InfoRow(
+          _InfoRow(
             icon: Icons.cloud_off_rounded,
             color: AppPalette.mint,
-            label: 'Хранение',
-            value: 'на устройстве',
+            label: context.l10n.parentStorageLabel,
+            value: context.l10n.parentStorageLocal,
           ),
-          const _InfoRow(
+          _InfoRow(
             icon: Icons.workspace_premium_rounded,
             color: AppPalette.surfaceBlue,
-            label: 'Подписка',
-            value: 'скоро',
+            label: context.l10n.parentSubscriptionTitle,
+            value: context.l10n.parentSubscriptionSoon,
           ),
-          DropdownButtonFormField<Locale>(
-            initialValue: selectedLocale,
-            decoration: InputDecoration(
-              labelText: l10n.settingsLanguage,
-              prefixIcon: const Icon(Icons.language_rounded),
+          const SizedBox(height: 8),
+          SectionTitle(
+            title: l10n.settingsLanguage,
+            trailing: InfoPill(
+              icon: Icons.language_rounded,
+              label: profile.language.shortLabel,
+              color: AppPalette.mint,
             ),
-            items: [
-              for (final option in _languageOptions(l10n))
-                DropdownMenuItem<Locale>(
-                  value: option.locale,
-                  child: Text(option.label),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final option in AppLanguage.values)
+                ChoiceChip(
+                  label: Text(context.l10n.languageName(option)),
+                  selected: option == profile.language,
+                  onSelected: (_) => onLanguageChanged(option),
                 ),
             ],
-            onChanged: (locale) {
-              if (locale != null) {
-                onLocaleChanged(locale);
-              }
-            },
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 12),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               foregroundColor: AppPalette.coral,
@@ -831,7 +839,7 @@ class _FamilySettingsCard extends StatelessWidget {
             ),
             onPressed: onResetPressed,
             icon: const Icon(Icons.restart_alt_rounded),
-            label: const Text('Сбросить профиль'),
+            label: Text(context.l10n.parentResetProfile),
           ),
         ],
       ),
@@ -889,30 +897,6 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _LanguageOption {
-  const _LanguageOption(this.locale, this.label);
-
-  final Locale locale;
-  final String label;
-}
-
-List<_LanguageOption> _languageOptions(AppLocalizations l10n) {
-  return [
-    _LanguageOption(const Locale('ar'), l10n.languageArabic),
-    _LanguageOption(const Locale('de'), l10n.languageGerman),
-    _LanguageOption(const Locale('en'), l10n.languageEnglish),
-    _LanguageOption(const Locale('es'), l10n.languageSpanish),
-    _LanguageOption(const Locale('fr'), l10n.languageFrench),
-    _LanguageOption(const Locale('hi'), l10n.languageHindi),
-    _LanguageOption(const Locale('it'), l10n.languageItalian),
-    _LanguageOption(const Locale('ja'), l10n.languageJapanese),
-    _LanguageOption(const Locale('ko'), l10n.languageKorean),
-    _LanguageOption(const Locale('pt'), l10n.languagePortuguese),
-    _LanguageOption(const Locale('ru'), l10n.languageRussian),
-    _LanguageOption(const Locale('zh'), l10n.languageChinese),
-  ];
-}
-
 Set<String> _todaysCompletedPuzzleIds(FamilyProfile profile, DateTime now) {
   final progressDate = profile.dailyProgressDate;
   if (progressDate == null || !_isSameDate(progressDate, now)) {
@@ -967,16 +951,4 @@ Color _areaColor(String areaId) {
     'space' => const Color(0xFF35B37E),
     _ => AppPalette.mango,
   };
-}
-
-String _taskWord(int count) {
-  final mod10 = count % 10;
-  final mod100 = count % 100;
-  if (mod10 == 1 && mod100 != 11) {
-    return 'задание';
-  }
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
-    return 'задания';
-  }
-  return 'заданий';
 }

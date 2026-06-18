@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logic_like/src/domain/family_profile.dart';
 import 'package:logic_like/src/features/parent/parent_screen.dart';
-import 'package:logic_like/src/l10n/l10n.dart';
+import 'package:logic_like/src/l10n/generated/app_localizations.dart';
+import 'package:logic_like/src/l10n/localized_content.dart';
 import 'package:logic_like/src/theme/app_theme.dart';
 
 void main() {
   testWidgets('shows parent dashboard sections and reset confirmation',
       (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     final now = DateTime.now();
     var resetCalled = false;
+    final l10n = lookupAppLocalizations(const Locale('ru'));
     final profile = FamilyProfile(
       childName: 'Lev',
       childAge: ChildAge.five,
@@ -29,51 +36,50 @@ void main() {
         locale: const Locale('ru'),
         home: ParentScreen(
           profile: profile,
-          selectedLocale: const Locale('ru'),
-          onLocaleChanged: (_) {},
           onResetProfile: () async {
             resetCalled = true;
           },
+          onLanguageChanged: (_) async {},
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Родительский обзор'), findsOneWidget);
-    expect(find.text('Прогресс ребенка'), findsOneWidget);
-    expect(find.text('1 из 3'), findsOneWidget);
+    expect(find.text(l10n.parentOverviewTitle), findsOneWidget);
+    expect(find.text(l10n.parentProgressTitle), findsOneWidget);
+    expect(find.text(l10n.parentTodayValue(1, 3)), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('План на сегодня'),
+      find.text(l10n.parentTodayPlanTitle),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('План на сегодня'), findsOneWidget);
+    expect(find.text(l10n.parentTodayPlanTitle), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('Зоны развития'),
+      find.text(l10n.parentAreasTitle),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('Зоны развития'), findsOneWidget);
+    expect(find.text(l10n.parentAreasTitle), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('Рекомендации'),
+      find.text(l10n.parentRecommendationsTitle),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('Рекомендации'), findsOneWidget);
+    expect(find.text(l10n.parentRecommendationsTitle), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('Сбросить профиль'),
+      find.text(l10n.parentResetProfile),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('Сбросить профиль'));
+    await tester.tap(find.text(l10n.parentResetProfile));
     await tester.pumpAndSettle();
 
-    expect(find.text('Сбросить профиль?'), findsOneWidget);
-    await tester.tap(find.text('Отмена'));
+    expect(find.text(l10n.parentResetTitle), findsOneWidget);
+    await tester.tap(find.text(l10n.commonCancel));
     await tester.pumpAndSettle();
     expect(resetCalled, isFalse);
   });
@@ -84,7 +90,8 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    Locale? selectedLocale;
+    AppLanguage? selectedLanguage;
+    final l10n = lookupAppLocalizations(const Locale('ru'));
     final profile = FamilyProfile(
       childName: 'Lev',
       childAge: ChildAge.five,
@@ -99,22 +106,18 @@ void main() {
         locale: const Locale('ru'),
         home: ParentScreen(
           profile: profile,
-          selectedLocale: const Locale('ru'),
-          onLocaleChanged: (locale) {
-            selectedLocale = locale;
-          },
           onResetProfile: () async {},
+          onLanguageChanged: (language) async {
+            selectedLanguage = language;
+          },
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    final dropdown = find.byType(DropdownButtonFormField<Locale>);
-    await tester.tap(dropdown);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('English').last);
+    await tester.tap(find.text(l10n.languageName(AppLanguage.en)));
     await tester.pumpAndSettle();
 
-    expect(selectedLocale, const Locale('en'));
+    expect(selectedLanguage, AppLanguage.en);
   });
 }

@@ -48,6 +48,7 @@ class _FamilyShellState extends State<FamilyShell> {
                 _pendingAreaId = areaId;
               });
             },
+            onLanguageChanged: widget.controller.changeLanguage,
           ),
           ChallengeScreen(
             profile: profile,
@@ -66,9 +67,8 @@ class _FamilyShellState extends State<FamilyShell> {
           ),
           ParentScreen(
             profile: profile,
-            selectedLocale: widget.controller.locale,
-            onLocaleChanged: widget.controller.changeLocale,
             onResetProfile: widget.controller.resetFamilyProfile,
+            onLanguageChanged: widget.controller.changeLanguage,
           ),
         ];
 
