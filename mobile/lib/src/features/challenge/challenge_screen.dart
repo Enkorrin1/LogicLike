@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -2368,6 +2369,14 @@ class _MemoryStage extends StatelessWidget {
       );
     }
 
+    if (puzzle.id == 'hidden-cards') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _HiddenCardsStage(accent: accent, compact: compact),
+      );
+    }
+
     final cardSize = compact ? 38.0 : 44.0;
     final spec = _memoryStageSpecFor(puzzle.id, accent);
 
@@ -2399,6 +2408,221 @@ class _MemoryStage extends StatelessWidget {
             color: spec.answerColor,
             size: compact ? 50 : 58,
             highlighted: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HiddenCardsStage extends StatefulWidget {
+  const _HiddenCardsStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_HiddenCardsStage> createState() => _HiddenCardsStageState();
+}
+
+class _HiddenCardsStageState extends State<_HiddenCardsStage> {
+  Timer? _timer;
+  bool _preview = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() => _preview = false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startPreview() {
+    _timer?.cancel();
+    setState(() => _preview = true);
+    _timer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() => _preview = false);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardSize = widget.compact ? 56.0 : 66.0;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 128 : 148,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFEDE6FF), Color(0xFFE8FBFF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _MemoryRevealCard(
+                      label: 'A',
+                      icon: Icons.rocket_launch_rounded,
+                      color: AppPalette.coral,
+                      size: cardSize,
+                      hidden: false,
+                    ),
+                    _MemoryRevealCard(
+                      label: 'B',
+                      icon: Icons.public_rounded,
+                      color: AppPalette.teal,
+                      size: cardSize,
+                      hidden: !_preview,
+                      target: true,
+                    ),
+                    _MemoryRevealCard(
+                      label: 'C',
+                      icon: Icons.star_rounded,
+                      color: AppPalette.mango,
+                      size: cardSize,
+                      hidden: false,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              BouncyTap(
+                borderRadius: BorderRadius.circular(22),
+                onTap: _startPreview,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: widget.compact ? 48 : 56,
+                  height: widget.compact ? 70 : 80,
+                  decoration: BoxDecoration(
+                    color: _preview ? AppPalette.mint : Colors.white,
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: widget.accent.withValues(alpha: 0.28),
+                      width: 1.4,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: widget.accent.withValues(alpha: 0.14),
+                        blurRadius: 12,
+                        offset: const Offset(0, 7),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    _preview ? Icons.visibility_rounded : Icons.replay_rounded,
+                    color: _preview ? Colors.white : widget.accent,
+                    size: 25,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MemoryRevealCard extends StatelessWidget {
+  const _MemoryRevealCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.size,
+    required this.hidden,
+    this.target = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final double size;
+  final bool hidden;
+  final bool target;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 240),
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: hidden ? AppPalette.ink.withValues(alpha: 0.18) : Colors.white,
+        borderRadius: BorderRadius.circular(size * 0.28),
+        border: Border.all(
+          color: target ? color.withValues(alpha: 0.55) : Colors.white,
+          width: target ? 2.4 : 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: hidden ? 0.10 : 0.24),
+            blurRadius: hidden ? 8 : 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            left: 7,
+            top: 5,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppPalette.ink.withValues(alpha: 0.45),
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+          ),
+          Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 180),
+              child: hidden
+                  ? Icon(
+                      Icons.lock_rounded,
+                      key: const ValueKey('locked'),
+                      color: AppPalette.muted,
+                      size: size * 0.42,
+                    )
+                  : Container(
+                      key: ValueKey(icon),
+                      width: size * 0.58,
+                      height: size * 0.58,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            color.withValues(alpha: 0.18),
+                            color.withValues(alpha: 0.08),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(size * 0.22),
+                      ),
+                      child: Icon(icon, color: color, size: size * 0.42),
+                    ),
+            ),
           ),
         ],
       ),
@@ -3809,48 +4033,229 @@ class _BridgeOrderStage extends StatelessWidget {
       textDirection: TextDirection.ltr,
       child: FittedBox(
         fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: compact ? 286 : 328,
+          height: compact ? 112 : 128,
+          child: CustomPaint(
+            painter: _BridgeOrderPainter(accent),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BridgeOrderPainter extends CustomPainter {
+  const _BridgeOrderPainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final radius = Radius.circular(size.height * 0.18);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, radius),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFE3FAF2), Color(0xFFBEEBFF)],
+        ).createShader(rect),
+    );
+
+    final river = Path()
+      ..moveTo(0, size.height * 0.62)
+      ..cubicTo(size.width * 0.22, size.height * 0.50, size.width * 0.36,
+          size.height * 0.76, size.width * 0.56, size.height * 0.60)
+      ..cubicTo(size.width * 0.72, size.height * 0.47, size.width * 0.86,
+          size.height * 0.70, size.width, size.height * 0.54)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(
+      river,
+      Paint()..color = const Color(0xFF76C8E8).withValues(alpha: 0.36),
+    );
+
+    final baseY = size.height * 0.54;
+    _drawPlank(canvas, Offset(size.width * 0.07, baseY), 46, AppPalette.teal);
+    _drawPlank(canvas, Offset(size.width * 0.26, baseY), 60, AppPalette.sky);
+    _drawGap(canvas, Offset(size.width * 0.49, baseY), 74);
+
+    final choiceY = size.height * 0.80;
+    _drawChoice(canvas, Offset(size.width * 0.20, choiceY), 'A', 52,
+        AppPalette.mango, false);
+    _drawChoice(
+        canvas, Offset(size.width * 0.50, choiceY), 'B', 74, accent, true);
+    _drawChoice(canvas, Offset(size.width * 0.80, choiceY), 'C', 96,
+        AppPalette.lavender, false);
+
+    final arrowPaint = Paint()
+      ..color = AppPalette.ink.withValues(alpha: 0.20)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(size.width * 0.18, size.height * 0.22),
+      Offset(size.width * 0.44, size.height * 0.22),
+      arrowPaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.44, size.height * 0.22),
+      Offset(size.width * 0.40, size.height * 0.18),
+      arrowPaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.44, size.height * 0.22),
+      Offset(size.width * 0.40, size.height * 0.26),
+      arrowPaint,
+    );
+  }
+
+  void _drawPlank(Canvas canvas, Offset center, double width, Color color) {
+    final rect = Rect.fromCenter(center: center, width: width, height: 18);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect.translate(0, 5), const Radius.circular(8)),
+      Paint()..color = AppPalette.ink.withValues(alpha: 0.08),
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(8)),
+      Paint()..color = color,
+    );
+  }
+
+  void _drawGap(Canvas canvas, Offset center, double width) {
+    final rect = Rect.fromCenter(center: center, width: width, height: 23);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(10)),
+      Paint()..color = Colors.white.withValues(alpha: 0.68),
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(10)),
+      Paint()
+        ..color = accent.withValues(alpha: 0.46)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+    _drawText(canvas, '?', center, accent, 18);
+  }
+
+  void _drawChoice(
+    Canvas canvas,
+    Offset center,
+    String label,
+    double width,
+    Color color,
+    bool highlighted,
+  ) {
+    _drawPlank(canvas, center, width, highlighted ? color : Colors.white);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(center: center, width: width, height: 18),
+        const Radius.circular(8),
+      ),
+      Paint()
+        ..color = color.withValues(alpha: highlighted ? 0.0 : 0.38)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = highlighted ? 0 : 1.5,
+    );
+    _drawText(
+      canvas,
+      label,
+      center.translate(0, 25),
+      highlighted ? color : AppPalette.muted,
+      12,
+    );
+  }
+
+  void _drawText(
+    Canvas canvas,
+    String text,
+    Offset center,
+    Color color,
+    double fontSize,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    painter.paint(
+        canvas, center - Offset(painter.width / 2, painter.height / 2));
+  }
+
+  @override
+  bool shouldRepaint(covariant _BridgeOrderPainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _TowerRuleStage extends StatelessWidget {
+  const _TowerRuleStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
         child: Container(
           width: compact ? 286 : 328,
-          height: compact ? 94 : 112,
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+          height: compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFFE5FBF3), Color(0xFFBFE8FF)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFECEF), Color(0xFFEAF8FF)],
             ),
-            borderRadius: BorderRadius.circular(22),
+            borderRadius: BorderRadius.circular(24),
           ),
-          child: Column(
+          child: Row(
             children: [
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const _BridgePlank(width: 46, color: AppPalette.teal),
-                    const SizedBox(width: 8),
-                    const _BridgePlank(width: 62, color: AppPalette.sky),
-                    const SizedBox(width: 8),
-                    _BridgeGap(accent: accent),
-                    const Spacer(),
-                    const _BridgeChoice(label: 'A', width: 54),
-                    const SizedBox(width: 5),
-                    _BridgeChoice(
-                      label: 'B',
-                      width: 78,
-                      color: accent,
-                      highlighted: true,
-                    ),
-                    const SizedBox(width: 5),
-                    const _BridgeChoice(label: 'C', width: 98),
-                  ],
+              const _TowerCard(
+                label: '=',
+                color: AppPalette.sky,
+                highlighted: true,
+                blocks: [2, 1],
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Icon(
+                  Icons.arrow_forward_rounded,
+                  color: accent,
+                  size: 24,
                 ),
               ),
-              Container(
-                height: 9,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF5AB0C8).withValues(alpha: 0.32),
-                  borderRadius: BorderRadius.circular(999),
+              const Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _TowerCard(
+                      label: '=',
+                      color: AppPalette.teal,
+                      highlighted: true,
+                      blocks: [2, 1],
+                    ),
+                    _TowerCard(
+                      label: '+',
+                      color: AppPalette.mango,
+                      blocks: [2, 2, 1],
+                    ),
+                    _TowerCard(
+                      label: '-',
+                      color: AppPalette.lavender,
+                      blocks: [1, 1],
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -3861,25 +4266,67 @@ class _BridgeOrderStage extends StatelessWidget {
   }
 }
 
-class _BridgePlank extends StatelessWidget {
-  const _BridgePlank({required this.width, required this.color});
+class _TowerCard extends StatelessWidget {
+  const _TowerCard({
+    required this.label,
+    required this.color,
+    required this.blocks,
+    this.highlighted = false,
+  });
 
-  final double width;
+  final String label;
   final Color color;
+  final List<int> blocks;
+  final bool highlighted;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: 22,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 58,
+      height: 86,
+      padding: const EdgeInsets.fromLTRB(6, 6, 6, 5),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(9),
+        color:
+            highlighted ? Colors.white : Colors.white.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withValues(alpha: highlighted ? 0.52 : 0.22),
+          width: highlighted ? 2 : 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.20),
-            blurRadius: 9,
-            offset: const Offset(0, 5),
+            color: color.withValues(alpha: highlighted ? 0.20 : 0.08),
+            blurRadius: highlighted ? 14 : 8,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Expanded(
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: _TowerBlocks(blocks: blocks, color: color),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            width: 23,
+            height: 20,
+            decoration: BoxDecoration(
+              color: highlighted ? color : color.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(11),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: highlighted ? Colors.white : color,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
         ],
       ),
@@ -3887,72 +4334,1197 @@ class _BridgePlank extends StatelessWidget {
   }
 }
 
-class _BridgeGap extends StatelessWidget {
-  const _BridgeGap({required this.accent});
+class _TowerBlocks extends StatelessWidget {
+  const _TowerBlocks({required this.blocks, required this.color});
 
-  final Color accent;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 78,
-      height: 26,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.62),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: accent.withValues(alpha: 0.34), width: 2),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        '?',
-        style: TextStyle(
-          color: accent,
-          fontSize: 19,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _BridgeChoice extends StatelessWidget {
-  const _BridgeChoice({
-    required this.label,
-    required this.width,
-    this.color = AppPalette.mango,
-    this.highlighted = false,
-  });
-
-  final String label;
-  final double width;
+  final List<int> blocks;
   final Color color;
-  final bool highlighted;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Container(
-          width: width,
-          height: highlighted ? 22 : 18,
-          decoration: BoxDecoration(
-            color: highlighted ? color : Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: color.withValues(alpha: 0.42)),
+        for (var row = blocks.length - 1; row >= 0; row--)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (var index = 0; index < blocks[row]; index++)
+                Container(
+                  width: 13,
+                  height: 13,
+                  margin: const EdgeInsets.all(1.1),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.white.withValues(alpha: 0.90), color],
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.white, width: 1.4),
+                  ),
+                ),
+            ],
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: TextStyle(
-            color: highlighted ? color : AppPalette.muted,
-            fontWeight: FontWeight.w900,
-            fontSize: 12,
-          ),
-        ),
       ],
     );
+  }
+}
+
+class _HomeCluesStage extends StatelessWidget {
+  const _HomeCluesStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE8FFF7), Color(0xFFFFF5D7)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: const Row(
+            children: [
+              SizedBox(
+                width: 76,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _ClueSignal(
+                      icon: Icons.star_rounded,
+                      secondIcon: Icons.block_rounded,
+                      color: AppPalette.sky,
+                    ),
+                    SizedBox(height: 8),
+                    _ClueSignal(
+                      icon: Icons.home_rounded,
+                      secondIcon: Icons.arrow_forward_rounded,
+                      color: AppPalette.mango,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _HomeClueHouse(
+                      label: 'A',
+                      color: AppPalette.sky,
+                      badge: Icons.close_rounded,
+                    ),
+                    _HomeClueHouse(
+                      label: 'B',
+                      color: AppPalette.mango,
+                      badge: Icons.arrow_forward_rounded,
+                    ),
+                    _HomeClueHouse(
+                      label: 'C',
+                      color: AppPalette.teal,
+                      badge: Icons.star_rounded,
+                      highlighted: true,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ClueSignal extends StatelessWidget {
+  const _ClueSignal({
+    required this.icon,
+    required this.secondIcon,
+    required this.color,
+  });
+
+  final IconData icon;
+  final IconData secondIcon;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 68,
+      height: 38,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 17),
+          const SizedBox(width: 4),
+          Icon(secondIcon, color: AppPalette.coral, size: 17),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeClueHouse extends StatelessWidget {
+  const _HomeClueHouse({
+    required this.label,
+    required this.color,
+    required this.badge,
+    this.highlighted = false,
+  });
+
+  final String label;
+  final Color color;
+  final IconData badge;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 58,
+      height: 92,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: highlighted ? 0.96 : 0.74),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withValues(alpha: highlighted ? 0.56 : 0.22),
+          width: highlighted ? 2.2 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: highlighted ? 0.22 : 0.08),
+            blurRadius: highlighted ? 14 : 8,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Positioned(
+            top: 10,
+            child: CustomPaint(
+              size: const Size(46, 58),
+              painter: _HousePainter(color, highlighted),
+            ),
+          ),
+          Positioned(
+            top: 7,
+            right: 5,
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: highlighted ? color : Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: color.withValues(alpha: 0.32)),
+              ),
+              child: Icon(
+                badge,
+                color: highlighted ? Colors.white : color,
+                size: 15,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 6,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: highlighted ? color : AppPalette.muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OddStepStage extends StatelessWidget {
+  const _OddStepStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFECEF), Color(0xFFEAF8FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              const _ActionStepCard(
+                label: '1',
+                icon: Icons.inventory_2_rounded,
+                color: AppPalette.sky,
+              ),
+              _BrokenLink(color: accent, broken: false),
+              const _ActionStepCard(
+                label: '2',
+                icon: Icons.bedtime_rounded,
+                color: AppPalette.coral,
+                highlighted: true,
+              ),
+              const _BrokenLink(color: AppPalette.coral, broken: true),
+              const _ActionStepCard(
+                label: '3',
+                icon: Icons.rocket_launch_rounded,
+                color: AppPalette.teal,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionStepCard extends StatelessWidget {
+  const _ActionStepCard({
+    required this.label,
+    required this.icon,
+    required this.color,
+    this.highlighted = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final Color color;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 58,
+      height: 86,
+      decoration: BoxDecoration(
+        color: highlighted ? color : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: highlighted ? 3 : 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: highlighted ? 0.24 : 0.10),
+            blurRadius: highlighted ? 16 : 9,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: highlighted ? Colors.white : color,
+            size: 28,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(
+              color: highlighted ? Colors.white : color,
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BrokenLink extends StatelessWidget {
+  const _BrokenLink({required this.color, required this.broken});
+
+  final Color color;
+  final bool broken;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Container(
+            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: broken ? 0.12 : 0.22),
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+          Icon(
+            broken ? Icons.close_rounded : Icons.arrow_forward_rounded,
+            color: broken ? AppPalette.coral : color,
+            size: 22,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SecretCodeStage extends StatelessWidget {
+  const _SecretCodeStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFEEF2), Color(0xFFE8F8FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.78),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: accent.withValues(alpha: 0.20)),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _CodeSymbolSlot(
+                            icon: Icons.star_rounded,
+                            color: AppPalette.mango,
+                          ),
+                          _CodeSymbolSlot(
+                            icon: Icons.vpn_key_rounded,
+                            color: AppPalette.teal,
+                          ),
+                          _CodeSymbolSlot(
+                            icon: Icons.star_rounded,
+                            color: AppPalette.mango,
+                          ),
+                          _CodeSymbolSlot(
+                            icon: Icons.vpn_key_rounded,
+                            color: AppPalette.teal,
+                            question: true,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.repeat_rounded, color: accent, size: 18),
+                          const SizedBox(width: 8),
+                          _CodePairBadge(color: accent),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                width: compact ? 54 : 64,
+                height: compact ? 76 : 88,
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accent.withValues(alpha: 0.22),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.lock_open_rounded,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeSymbolSlot extends StatelessWidget {
+  const _CodeSymbolSlot({
+    required this.icon,
+    required this.color,
+    this.question = false,
+  });
+
+  final IconData icon;
+  final Color color;
+  final bool question;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 42,
+      height: 42,
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        color: question ? color : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.36), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: question ? 0.24 : 0.10),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Icon(
+        question ? Icons.question_mark_rounded : icon,
+        color: question ? Colors.white : color,
+        size: 24,
+      ),
+    );
+  }
+}
+
+class _CodePairBadge extends StatelessWidget {
+  const _CodePairBadge({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 28,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const Row(
+        children: [
+          Icon(Icons.star_rounded, color: AppPalette.mango, size: 16),
+          SizedBox(width: 3),
+          Icon(Icons.add_rounded, color: AppPalette.muted, size: 13),
+          SizedBox(width: 3),
+          Icon(Icons.vpn_key_rounded, color: AppPalette.teal, size: 16),
+        ],
+      ),
+    );
+  }
+}
+
+class _WhyChainStage extends StatelessWidget {
+  const _WhyChainStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF1D5), Color(0xFFE3F9FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              const _CauseSceneCard(
+                scene: _CauseScene.rain,
+                color: AppPalette.sky,
+                highlighted: true,
+              ),
+              _StoryArrow(color: accent),
+              const _CauseSceneCard(
+                scene: _CauseScene.sprout,
+                color: AppPalette.teal,
+              ),
+              _StoryArrow(color: accent),
+              const _CauseSceneCard(
+                scene: _CauseScene.flower,
+                color: AppPalette.coral,
+              ),
+              const SizedBox(width: 8),
+              _CauseResultBadge(color: accent),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+enum _CauseScene { rain, sprout, flower }
+
+class _CauseSceneCard extends StatelessWidget {
+  const _CauseSceneCard({
+    required this.scene,
+    required this.color,
+    this.highlighted = false,
+  });
+
+  final _CauseScene scene;
+  final Color color;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 58,
+      height: 88,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: highlighted ? 0.98 : 0.76),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: color.withValues(alpha: highlighted ? 0.58 : 0.20),
+          width: highlighted ? 2.4 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: highlighted ? 0.22 : 0.08),
+            blurRadius: highlighted ? 15 : 8,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: CustomPaint(
+        painter: _CauseScenePainter(scene, color, highlighted),
+      ),
+    );
+  }
+}
+
+class _StoryArrow extends StatelessWidget {
+  const _StoryArrow({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: CustomPaint(
+        painter: _StoryArrowPainter(color),
+        size: const Size(double.infinity, 28),
+      ),
+    );
+  }
+}
+
+class _CauseResultBadge extends StatelessWidget {
+  const _CauseResultBadge({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 38,
+      height: 88,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.22),
+            blurRadius: 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: CustomPaint(painter: _CauseResultPainter()),
+    );
+  }
+}
+
+class _StoryArrowPainter extends CustomPainter {
+  const _StoryArrowPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final centerY = size.height / 2;
+    final paint = Paint()
+      ..color = color.withValues(alpha: 0.34)
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawLine(
+      Offset(4, centerY),
+      Offset(size.width - 9, centerY),
+      paint,
+    );
+    final head = Path()
+      ..moveTo(size.width - 4, centerY)
+      ..lineTo(size.width - 13, centerY - 7)
+      ..lineTo(size.width - 13, centerY + 7)
+      ..close();
+    canvas.drawPath(head, Paint()..color = color.withValues(alpha: 0.54));
+  }
+
+  @override
+  bool shouldRepaint(covariant _StoryArrowPainter oldDelegate) =>
+      oldDelegate.color != color;
+}
+
+class _CauseScenePainter extends CustomPainter {
+  const _CauseScenePainter(this.scene, this.color, this.highlighted);
+
+  final _CauseScene scene;
+  final Color color;
+  final bool highlighted;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final bg = Rect.fromLTWH(7, 7, size.width - 14, size.height - 14);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(bg, const Radius.circular(17)),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withValues(alpha: highlighted ? 0.22 : 0.12),
+            Colors.white.withValues(alpha: 0.88),
+          ],
+        ).createShader(bg),
+    );
+
+    _drawGround(canvas, size);
+    switch (scene) {
+      case _CauseScene.rain:
+        _drawRain(canvas, size);
+      case _CauseScene.sprout:
+        _drawSprout(canvas, size);
+      case _CauseScene.flower:
+        _drawFlower(canvas, size);
+    }
+  }
+
+  void _drawGround(Canvas canvas, Size size) {
+    final ground = Paint()..color = const Color(0xFF88D6A4);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.50, size.height * 0.72),
+        width: size.width * 0.62,
+        height: size.height * 0.20,
+      ),
+      ground,
+    );
+  }
+
+  void _drawRain(Canvas canvas, Size size) {
+    final cloud = Paint()..color = Colors.white;
+    final shadow = Paint()..color = color.withValues(alpha: 0.15);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.47, size.height * 0.25),
+        width: size.width * 0.54,
+        height: size.height * 0.20,
+      ),
+      shadow,
+    );
+    canvas.drawCircle(Offset(size.width * 0.34, size.height * 0.25), 9, cloud);
+    canvas.drawCircle(Offset(size.width * 0.48, size.height * 0.20), 12, cloud);
+    canvas.drawCircle(Offset(size.width * 0.62, size.height * 0.27), 9, cloud);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.28, size.height * 0.25, size.width * 0.42,
+            size.height * 0.13),
+        const Radius.circular(9),
+      ),
+      cloud,
+    );
+
+    final rain = Paint()
+      ..color = color
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    for (final x in [0.35, 0.50, 0.65]) {
+      canvas.drawLine(
+        Offset(size.width * x, size.height * 0.43),
+        Offset(size.width * (x - 0.04), size.height * 0.55),
+        rain,
+      );
+    }
+    final seed = Paint()..color = const Color(0xFF9B6747);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.52, size.height * 0.70),
+        width: 12,
+        height: 17,
+      ),
+      seed,
+    );
+  }
+
+  void _drawSprout(Canvas canvas, Size size) {
+    final stem = Paint()
+      ..color = const Color(0xFF26A673)
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(size.width * 0.50, size.height * 0.72),
+      Offset(size.width * 0.50, size.height * 0.38),
+      stem,
+    );
+    final leafPaint = Paint()..color = AppPalette.mint;
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.38, size.height * 0.48),
+        width: 24,
+        height: 14,
+      ),
+      leafPaint,
+    );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.62, size.height * 0.43),
+        width: 24,
+        height: 14,
+      ),
+      leafPaint,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.71, size.height * 0.22),
+      8,
+      Paint()..color = AppPalette.mango,
+    );
+  }
+
+  void _drawFlower(Canvas canvas, Size size) {
+    final stem = Paint()
+      ..color = const Color(0xFF26A673)
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(size.width * 0.50, size.height * 0.72),
+      Offset(size.width * 0.50, size.height * 0.44),
+      stem,
+    );
+
+    final petalPaint = Paint()..color = AppPalette.coral;
+    final center = Offset(size.width * 0.50, size.height * 0.36);
+    for (var index = 0; index < 6; index++) {
+      final angle = math.pi * 2 * index / 6;
+      canvas.drawOval(
+        Rect.fromCenter(
+          center: center + Offset(math.cos(angle) * 10, math.sin(angle) * 10),
+          width: 15,
+          height: 20,
+        ),
+        petalPaint,
+      );
+    }
+    canvas.drawCircle(center, 8, Paint()..color = AppPalette.mango);
+    final leafPaint = Paint()..color = AppPalette.mint;
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.37, size.height * 0.58),
+        width: 22,
+        height: 13,
+      ),
+      leafPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _CauseScenePainter oldDelegate) =>
+      oldDelegate.scene != scene ||
+      oldDelegate.color != color ||
+      oldDelegate.highlighted != highlighted;
+}
+
+class _CauseResultPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final sparkle = Paint()..color = Colors.white.withValues(alpha: 0.95);
+    final center = Offset(size.width / 2, size.height * 0.42);
+    canvas.drawCircle(center, 12, sparkle);
+    final check = Paint()
+      ..color = AppPalette.teal
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    final path = Path()
+      ..moveTo(center.dx - 7, center.dy)
+      ..lineTo(center.dx - 2, center.dy + 6)
+      ..lineTo(center.dx + 9, center.dy - 8);
+    canvas.drawPath(path, check);
+
+    final dotPaint = Paint()..color = Colors.white.withValues(alpha: 0.50);
+    canvas.drawCircle(
+        Offset(size.width * 0.34, size.height * 0.70), 2.5, dotPaint);
+    canvas.drawCircle(
+        Offset(size.width * 0.64, size.height * 0.76), 2, dotPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CauseResultPainter oldDelegate) => false;
+}
+
+class _SpaceProofStage extends StatelessWidget {
+  const _SpaceProofStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF202C64), Color(0xFF5D4C92)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomPaint(
+                  painter: _SpaceProofBoardPainter(accent),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const _ProofEliminationChip(
+                    shape: _ProofShape.triangle,
+                    color: AppPalette.mango,
+                  ),
+                  const SizedBox(height: 8),
+                  const _ProofEliminationChip(
+                    shape: _ProofShape.square,
+                    color: AppPalette.sky,
+                  ),
+                  const SizedBox(height: 8),
+                  _ProofAnswerChip(color: accent),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+enum _ProofShape { triangle, circle, square }
+
+class _ProofEliminationChip extends StatelessWidget {
+  const _ProofEliminationChip({required this.shape, required this.color});
+
+  final _ProofShape shape;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 46,
+      height: 32,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.90),
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: CustomPaint(
+        painter: _ProofShapePainter(
+          shape: shape,
+          color: color,
+          crossed: true,
+        ),
+      ),
+    );
+  }
+}
+
+class _ProofAnswerChip extends StatelessWidget {
+  const _ProofAnswerChip({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 46,
+      height: 44,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.34),
+            blurRadius: 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: CustomPaint(
+        painter: _ProofShapePainter(
+          shape: _ProofShape.circle,
+          color: color,
+          glowing: true,
+        ),
+      ),
+    );
+  }
+}
+
+class _SpaceProofBoardPainter extends CustomPainter {
+  const _SpaceProofBoardPainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final starPaint = Paint()..color = Colors.white.withValues(alpha: 0.70);
+    for (final offset in const [
+      Offset(0.10, 0.18),
+      Offset(0.26, 0.74),
+      Offset(0.40, 0.28),
+      Offset(0.70, 0.18),
+      Offset(0.84, 0.70),
+    ]) {
+      canvas.drawCircle(
+        Offset(size.width * offset.dx, size.height * offset.dy),
+        2.1,
+        starPaint,
+      );
+    }
+
+    final orbit = Paint()
+      ..color = Colors.white.withValues(alpha: 0.22)
+      ..strokeWidth = 2.2
+      ..style = PaintingStyle.stroke;
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.50, size.height * 0.54),
+        width: size.width * 0.82,
+        height: size.height * 0.54,
+      ),
+      orbit,
+    );
+
+    _drawPlanet(canvas, size, Offset(size.width * 0.26, size.height * 0.52),
+        AppPalette.mango, _ProofShape.triangle, false);
+    _drawPlanet(canvas, size, Offset(size.width * 0.50, size.height * 0.38),
+        AppPalette.sky, _ProofShape.square, false);
+    _drawPlanet(canvas, size, Offset(size.width * 0.72, size.height * 0.57),
+        accent, _ProofShape.circle, true);
+
+    final beam = Paint()
+      ..color = AppPalette.mint.withValues(alpha: 0.34)
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(size.width * 0.60, size.height * 0.76),
+      Offset(size.width * 0.78, size.height * 0.62),
+      beam,
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.58, size.height * 0.78),
+      7,
+      Paint()..color = AppPalette.mint,
+    );
+  }
+
+  void _drawPlanet(
+    Canvas canvas,
+    Size size,
+    Offset center,
+    Color color,
+    _ProofShape shape,
+    bool selected,
+  ) {
+    canvas.drawCircle(
+      center.translate(0, 6),
+      selected ? 23 : 18,
+      Paint()..color = Colors.black.withValues(alpha: 0.12),
+    );
+    canvas.drawCircle(
+      center,
+      selected ? 22 : 18,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [Colors.white.withValues(alpha: 0.88), color],
+        ).createShader(Rect.fromCircle(center: center, radius: 24)),
+    );
+    final glyphSize = selected ? 26.0 : 22.0;
+    _paintProofShape(
+      canvas,
+      Rect.fromCenter(center: center, width: glyphSize, height: glyphSize),
+      shape,
+      selected ? Colors.white : color.withValues(alpha: 0.88),
+      fill: selected,
+      strokeWidth: 3,
+    );
+    if (!selected) {
+      final cross = Paint()
+        ..color = AppPalette.coral
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(
+        center.translate(-14, -14),
+        center.translate(14, 14),
+        cross,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SpaceProofBoardPainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _ProofShapePainter extends CustomPainter {
+  const _ProofShapePainter({
+    required this.shape,
+    required this.color,
+    this.crossed = false,
+    this.glowing = false,
+  });
+
+  final _ProofShape shape;
+  final Color color;
+  final bool crossed;
+  final bool glowing;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Rect.fromCenter(
+      center: Offset(size.width / 2, size.height / 2),
+      width: size.width * 0.46,
+      height: size.height * 0.46,
+    );
+    if (glowing) {
+      canvas.drawCircle(
+        rect.center,
+        size.shortestSide * 0.36,
+        Paint()..color = color.withValues(alpha: 0.14),
+      );
+    }
+    _paintProofShape(canvas, rect, shape, color, fill: glowing);
+    if (crossed) {
+      final cross = Paint()
+        ..color = AppPalette.coral
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(
+        Offset(size.width * 0.28, size.height * 0.72),
+        Offset(size.width * 0.72, size.height * 0.28),
+        cross,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ProofShapePainter oldDelegate) =>
+      oldDelegate.shape != shape ||
+      oldDelegate.color != color ||
+      oldDelegate.crossed != crossed ||
+      oldDelegate.glowing != glowing;
+}
+
+void _paintProofShape(
+  Canvas canvas,
+  Rect rect,
+  _ProofShape shape,
+  Color color, {
+  bool fill = false,
+  double strokeWidth = 2.4,
+}) {
+  final paint = Paint()
+    ..color = color
+    ..strokeWidth = strokeWidth
+    ..strokeCap = StrokeCap.round
+    ..strokeJoin = StrokeJoin.round
+    ..style = fill ? PaintingStyle.fill : PaintingStyle.stroke;
+
+  switch (shape) {
+    case _ProofShape.triangle:
+      final path = Path()
+        ..moveTo(rect.center.dx, rect.top)
+        ..lineTo(rect.right, rect.bottom)
+        ..lineTo(rect.left, rect.bottom)
+        ..close();
+      canvas.drawPath(path, paint);
+    case _ProofShape.circle:
+      canvas.drawCircle(rect.center, rect.shortestSide / 2, paint);
+    case _ProofShape.square:
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, Radius.circular(rect.width * 0.18)),
+        paint,
+      );
   }
 }
 
@@ -5226,7 +6798,7 @@ class _DifferenceTapTarget extends StatelessWidget {
             color: found ? accent.withValues(alpha: 0.24) : Colors.transparent,
             shape: BoxShape.circle,
             border: Border.all(
-              color: found ? accent : Colors.white.withValues(alpha: 0.55),
+              color: found ? accent : Colors.transparent,
               width: found ? 3 : 1.5,
             ),
           ),
@@ -5250,36 +6822,84 @@ class _CampDifferencePainter extends CustomPainter {
         ..shader = const LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Color(0xFFBEEFFF), Color(0xFFC9F1C6)],
+          colors: [Color(0xFFBDEFFF), Color(0xFFFFF0C9)],
         ).createShader(rect),
     );
 
-    final tent = Path()
-      ..moveTo(size.width * 0.12, size.height * 0.70)
-      ..lineTo(size.width * 0.42, size.height * 0.24)
-      ..lineTo(size.width * 0.72, size.height * 0.70)
+    _drawCloud(canvas, Offset(size.width * 0.18, size.height * 0.19), 0.72);
+    _drawCloud(canvas, Offset(size.width * 0.74, size.height * 0.15), 0.50);
+    canvas.drawCircle(
+      Offset(size.width * 0.82, size.height * 0.26),
+      13,
+      Paint()..color = const Color(0xFFFFD46B).withValues(alpha: 0.72),
+    );
+
+    final farHill = Path()
+      ..moveTo(0, size.height * 0.64)
+      ..quadraticBezierTo(size.width * 0.28, size.height * 0.42,
+          size.width * 0.56, size.height * 0.63)
+      ..quadraticBezierTo(
+          size.width * 0.78, size.height * 0.78, size.width, size.height * 0.58)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
       ..close();
-    canvas.drawPath(tent, Paint()..color = AppPalette.lavender);
+    canvas.drawPath(
+      farHill,
+      Paint()..color = const Color(0xFF9FE4C5).withValues(alpha: 0.60),
+    );
+
+    final nearHill = Path()
+      ..moveTo(0, size.height * 0.78)
+      ..quadraticBezierTo(size.width * 0.34, size.height * 0.64,
+          size.width * 0.62, size.height * 0.76)
+      ..quadraticBezierTo(
+          size.width * 0.86, size.height * 0.88, size.width, size.height * 0.72)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(nearHill, Paint()..color = const Color(0xFFBFF0B9));
+
+    _drawTree(canvas, Offset(size.width * 0.08, size.height * 0.50), 0.72);
+    _drawTree(canvas, Offset(size.width * 0.94, size.height * 0.53), 0.58);
+    _drawCharacter(canvas, Offset(size.width * 0.20, size.height * 0.68));
+
+    final tent = Path()
+      ..moveTo(size.width * 0.23, size.height * 0.78)
+      ..lineTo(size.width * 0.48, size.height * 0.33)
+      ..lineTo(size.width * 0.74, size.height * 0.78)
+      ..close();
+    canvas.drawPath(
+      tent.shift(const Offset(0, 5)),
+      Paint()..color = AppPalette.ink.withValues(alpha: 0.08),
+    );
+    canvas.drawPath(tent, Paint()..color = const Color(0xFF8278FF));
     canvas.drawPath(
       Path()
-        ..moveTo(size.width * 0.42, size.height * 0.70)
-        ..lineTo(size.width * 0.55, size.height * 0.70)
-        ..lineTo(size.width * 0.42, size.height * 0.42)
+        ..moveTo(size.width * 0.48, size.height * 0.78)
+        ..lineTo(size.width * 0.60, size.height * 0.78)
+        ..lineTo(size.width * 0.48, size.height * 0.49)
         ..close(),
       Paint()..color = Colors.white.withValues(alpha: 0.80),
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.48, size.height * 0.33),
+      Offset(size.width * 0.48, size.height * 0.78),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.42)
+        ..strokeWidth = 2,
     );
 
     final flagColor = variant == 0 ? AppPalette.coral : AppPalette.teal;
     canvas.drawLine(
-      Offset(size.width * 0.28, size.height * 0.22),
-      Offset(size.width * 0.28, size.height * 0.08),
+      Offset(size.width * 0.33, size.height * 0.31),
+      Offset(size.width * 0.33, size.height * 0.14),
       Paint()
         ..color = AppPalette.ink.withValues(alpha: 0.52)
         ..strokeWidth = 2,
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.28, size.height * 0.08, 22, 13),
+        Rect.fromLTWH(size.width * 0.33, size.height * 0.14, 24, 15),
         const Radius.circular(4),
       ),
       Paint()..color = flagColor,
@@ -5288,8 +6908,8 @@ class _CampDifferencePainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(
-          size.width * 0.72,
-          size.height * 0.66,
+          size.width * 0.70,
+          size.height * 0.76,
           size.width * 0.18,
           size.height * 0.08,
         ),
@@ -5298,15 +6918,98 @@ class _CampDifferencePainter extends CustomPainter {
       Paint()..color = const Color(0xFF8D5A35),
     );
 
-    final flameCenter = Offset(size.width * 0.80, size.height * 0.58);
-    canvas.drawCircle(flameCenter, 11, Paint()..color = AppPalette.coral);
-    canvas.drawCircle(flameCenter, 6, Paint()..color = AppPalette.mango);
+    final flameCenter = Offset(size.width * 0.79, size.height * 0.67);
+    _drawFire(canvas, flameCenter);
 
     final starCenter = variant == 0
-        ? Offset(size.width * 0.88, size.height * 0.48)
-        : Offset(size.width * 0.88, size.height * 0.60);
+        ? Offset(size.width * 0.88, size.height * 0.51)
+        : Offset(size.width * 0.88, size.height * 0.65);
     _drawTinyStar(
         canvas, starCenter, variant == 0 ? AppPalette.mango : Colors.white);
+  }
+
+  void _drawCloud(Canvas canvas, Offset center, double scale) {
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.78);
+    canvas.drawCircle(
+        center.translate(-15 * scale, 2 * scale), 9 * scale, paint);
+    canvas.drawCircle(center, 13 * scale, paint);
+    canvas.drawCircle(
+        center.translate(16 * scale, 3 * scale), 8 * scale, paint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromCenter(
+          center: center.translate(0, 8 * scale),
+          width: 42 * scale,
+          height: 12 * scale,
+        ),
+        Radius.circular(9 * scale),
+      ),
+      paint,
+    );
+  }
+
+  void _drawTree(Canvas canvas, Offset base, double scale) {
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+            base.dx - 4 * scale, base.dy - 25 * scale, 8 * scale, 31 * scale),
+        Radius.circular(4 * scale),
+      ),
+      Paint()..color = const Color(0xFF8D5A35),
+    );
+    final leafPaint = Paint()..color = const Color(0xFF48BFA4);
+    canvas.drawCircle(
+        base.translate(-10 * scale, -28 * scale), 15 * scale, leafPaint);
+    canvas.drawCircle(
+        base.translate(7 * scale, -34 * scale), 17 * scale, leafPaint);
+    canvas.drawCircle(
+        base.translate(18 * scale, -22 * scale), 13 * scale, leafPaint);
+  }
+
+  void _drawCharacter(Canvas canvas, Offset center) {
+    canvas.drawOval(
+      Rect.fromCenter(center: center, width: 25, height: 30),
+      Paint()..color = const Color(0xFF57CDBB),
+    );
+    canvas.drawCircle(
+        center.translate(-7, -6), 3, Paint()..color = Colors.white);
+    canvas.drawCircle(
+        center.translate(7, -6), 3, Paint()..color = Colors.white);
+    canvas.drawCircle(
+        center.translate(-7, -6), 1.4, Paint()..color = AppPalette.ink);
+    canvas.drawCircle(
+        center.translate(7, -6), 1.4, Paint()..color = AppPalette.ink);
+    canvas.drawArc(
+      Rect.fromCenter(center: center.translate(0, 4), width: 12, height: 8),
+      0,
+      math.pi,
+      false,
+      Paint()
+        ..color = AppPalette.ink.withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.6,
+    );
+  }
+
+  void _drawFire(Canvas canvas, Offset center) {
+    canvas.drawOval(
+      Rect.fromCenter(center: center.translate(0, 8), width: 38, height: 12),
+      Paint()..color = const Color(0xFF8D5A35),
+    );
+    final outer = Path()
+      ..moveTo(center.dx, center.dy - 18)
+      ..cubicTo(center.dx - 16, center.dy - 3, center.dx - 12, center.dy + 14,
+          center.dx, center.dy + 14)
+      ..cubicTo(center.dx + 13, center.dy + 11, center.dx + 15, center.dy - 2,
+          center.dx, center.dy - 18);
+    canvas.drawPath(outer, Paint()..color = AppPalette.coral);
+    final inner = Path()
+      ..moveTo(center.dx + 1, center.dy - 9)
+      ..cubicTo(center.dx - 7, center.dy, center.dx - 5, center.dy + 9,
+          center.dx + 1, center.dy + 9)
+      ..cubicTo(center.dx + 8, center.dy + 7, center.dx + 9, center.dy,
+          center.dx + 1, center.dy - 9);
+    canvas.drawPath(inner, Paint()..color = AppPalette.mango);
   }
 
   void _drawTinyStar(Canvas canvas, Offset center, Color color) {
@@ -8248,6 +9951,54 @@ class _PatternStrip extends StatelessWidget {
         accent: accent,
         compact: compact,
         child: _BridgeOrderStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'tower-rule') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _TowerRuleStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'home-clues') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _HomeCluesStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'odd-step') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _OddStepStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'secret-code') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _SecretCodeStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'why-chain') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _WhyChainStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'space-proof') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _SpaceProofStage(accent: accent, compact: compact),
       );
     }
 
