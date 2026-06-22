@@ -40,6 +40,7 @@ void main() {
             resetCalled = true;
           },
           onLanguageChanged: (_) async {},
+          onReminderPreferenceChanged: (_) async {},
         ),
       ),
     );
@@ -110,6 +111,7 @@ void main() {
           onLanguageChanged: (language) async {
             selectedLanguage = language;
           },
+          onReminderPreferenceChanged: (_) async {},
         ),
       ),
     );
@@ -119,5 +121,49 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(selectedLanguage, AppLanguage.en);
+  });
+
+  testWidgets('toggles reminder preference from parent settings',
+      (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    bool? selectedReminderPreference;
+    final l10n = lookupAppLocalizations(const Locale('ru'));
+    final profile = FamilyProfile(
+      childName: 'Lev',
+      childAge: ChildAge.five,
+      createdAt: DateTime.now(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ru'),
+        home: ParentScreen(
+          profile: profile,
+          onResetProfile: () async {},
+          onLanguageChanged: (_) async {},
+          onReminderPreferenceChanged: (enabled) async {
+            selectedReminderPreference = enabled;
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.parentRemindersTitle),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text(l10n.parentReminderToggleLabel));
+    await tester.pumpAndSettle();
+
+    expect(selectedReminderPreference, isFalse);
   });
 }

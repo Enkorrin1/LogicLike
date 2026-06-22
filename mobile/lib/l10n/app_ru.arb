@@ -403,5 +403,34 @@
   "parentDiscussBody": "После задания спросите: «Как ты понял правило?» Это развивает объяснение, а не угадывание.",
   "parentFamilySecurityTitle": "Семья и безопасность",
   "parentStorageLabel": "Хранение",
-  "parentStorageLocal": "на устройстве"
+  "parentStorageLocal": "на устройстве",
+  "notificationDailyTitle": "Новая миссия ждет",
+  "notificationDailyBody": "{name}, реши одну маленькую головоломку и сохрани звездную серию.",
+  "notificationEveningTitle": "Один шаг перед сном?",
+  "notificationEveningBody": "У {name} осталась короткая миссия. Хватит 5 спокойных минут.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Напоминания",
+  "parentReminderStatusOn": "вкл",
+  "parentReminderStatusOff": "выкл",
+  "parentRemindersBody": "Мягкое ежедневное напоминание помогает вернуться к миссии без давления.",
+  "parentReminderDailyLabel": "Миссия дня",
+  "parentReminderDailyValue": "18:30 каждый день",
+  "parentReminderFollowUpLabel": "Вечерний повтор",
+  "parentReminderFollowUpValue": "20:15, если миссия ждет",
+  "parentReminderToggleLabel": "Напоминать вернуться",
+  "parentReminderToggleOn": "BrainUp позовет ребенка на одну короткую миссию.",
+  "parentReminderToggleOff": "Напоминания выключены. Приложение будет молчать."
 }

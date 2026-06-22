@@ -626,4 +626,56 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get parentStorageLocal => 'sur l\'appareil';
+
+  @override
+  String get notificationDailyTitle => 'Une nouvelle mission t\'attend';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name, résous une petite énigme et garde la série d\'étoiles allumée.';
+  }
+
+  @override
+  String get notificationEveningTitle => 'Un petit pas avant de dormir ?';
+
+  @override
+  String notificationEveningBody(String name) {
+    return 'Il reste une courte mission à $name. 5 minutes calmes suffisent.';
+  }
+
+  @override
+  String get parentRemindersTitle => 'Rappels';
+
+  @override
+  String get parentReminderStatusOn => 'activés';
+
+  @override
+  String get parentReminderStatusOff => 'désactivés';
+
+  @override
+  String get parentRemindersBody =>
+      'Un rappel quotidien doux aide à revenir à la mission sans pression.';
+
+  @override
+  String get parentReminderDailyLabel => 'Mission du jour';
+
+  @override
+  String get parentReminderDailyValue => '18:30 tous les jours';
+
+  @override
+  String get parentReminderFollowUpLabel => 'Rappel du soir';
+
+  @override
+  String get parentReminderFollowUpValue => '20:15 si la mission attend';
+
+  @override
+  String get parentReminderToggleLabel => 'Rappeler de revenir';
+
+  @override
+  String get parentReminderToggleOn =>
+      'BrainUp invitera l’enfant à une courte mission.';
+
+  @override
+  String get parentReminderToggleOff =>
+      'Les rappels sont désactivés. L’application restera silencieuse.';
 }

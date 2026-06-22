@@ -403,5 +403,34 @@
   "parentDiscussBody": "After a task, ask: \"How did you find the rule?\" This builds explanation, not guessing.",
   "parentFamilySecurityTitle": "Family and safety",
   "parentStorageLabel": "Storage",
-  "parentStorageLocal": "on device"
+  "parentStorageLocal": "on device",
+  "notificationDailyTitle": "A new mission is waiting",
+  "notificationDailyBody": "{name}, solve one small puzzle and keep the star streak glowing.",
+  "notificationEveningTitle": "One step before bedtime?",
+  "notificationEveningBody": "{name} has a short mission left. 5 calm minutes are enough.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Reminders",
+  "parentReminderStatusOn": "on",
+  "parentReminderStatusOff": "off",
+  "parentRemindersBody": "A gentle daily nudge helps return to the mission without pressure.",
+  "parentReminderDailyLabel": "Daily mission",
+  "parentReminderDailyValue": "18:30 every day",
+  "parentReminderFollowUpLabel": "Evening follow-up",
+  "parentReminderFollowUpValue": "20:15 if the mission is waiting",
+  "parentReminderToggleLabel": "Return reminders",
+  "parentReminderToggleOn": "BrainUp will invite the child back to one short mission.",
+  "parentReminderToggleOff": "Reminders are off. The app will stay quiet."
 }

@@ -68,6 +68,7 @@ class FamilyProfile {
     this.dailyCompletedPuzzleIds = const [],
     this.completedPracticePuzzleIds = const [],
     this.lastChallengeDate,
+    this.remindersEnabled = true,
   });
 
   final String childName;
@@ -80,6 +81,7 @@ class FamilyProfile {
   final List<String> dailyCompletedPuzzleIds;
   final List<String> completedPracticePuzzleIds;
   final DateTime? lastChallengeDate;
+  final bool remindersEnabled;
 
   bool completedOn(DateTime date) {
     final lastDate = lastChallengeDate;
@@ -101,6 +103,7 @@ class FamilyProfile {
     List<String>? dailyCompletedPuzzleIds,
     List<String>? completedPracticePuzzleIds,
     DateTime? lastChallengeDate,
+    bool? remindersEnabled,
   }) {
     return FamilyProfile(
       childName: childName ?? this.childName,
@@ -115,6 +118,7 @@ class FamilyProfile {
       completedPracticePuzzleIds:
           completedPracticePuzzleIds ?? this.completedPracticePuzzleIds,
       lastChallengeDate: lastChallengeDate ?? this.lastChallengeDate,
+      remindersEnabled: remindersEnabled ?? this.remindersEnabled,
     );
   }
 
@@ -130,6 +134,7 @@ class FamilyProfile {
       'dailyCompletedPuzzleIds': dailyCompletedPuzzleIds,
       'completedPracticePuzzleIds': completedPracticePuzzleIds,
       'lastChallengeDate': lastChallengeDate?.toIso8601String(),
+      'remindersEnabled': remindersEnabled,
     };
   }
 
@@ -162,6 +167,7 @@ class FamilyProfile {
       completedPracticePuzzleIds: completedPracticePuzzleIds,
       lastChallengeDate:
           lastChallengeDate == null ? null : DateTime.parse(lastChallengeDate),
+      remindersEnabled: json['remindersEnabled'] as bool? ?? true,
     );
   }
 
@@ -189,7 +195,8 @@ class FamilyProfile {
               completedPracticePuzzleIds,
               other.completedPracticePuzzleIds,
             ) &&
-            lastChallengeDate == other.lastChallengeDate;
+            lastChallengeDate == other.lastChallengeDate &&
+            remindersEnabled == other.remindersEnabled;
   }
 
   @override
@@ -205,6 +212,7 @@ class FamilyProfile {
       Object.hashAll(dailyCompletedPuzzleIds),
       Object.hashAll(completedPracticePuzzleIds),
       lastChallengeDate,
+      remindersEnabled,
     );
   }
 }

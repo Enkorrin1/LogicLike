@@ -38,7 +38,8 @@ extension LocalizedContent on AppLocalizations {
       _puzzleCopy(puzzle.id)?.skill ?? puzzle.skill;
 
   String retryTextForPuzzle(LearningPuzzle puzzle, String fallback) {
-    final localized = _lookupCurrentLocale(_retryText, puzzle.id);
+    final localized = _lookupCurrentLocale(_newRetryText, puzzle.id) ??
+        _lookupCurrentLocale(_retryText, puzzle.id);
     if (localized != null) {
       return localized;
     }
@@ -51,6 +52,11 @@ extension LocalizedContent on AppLocalizations {
   }
 
   String answerLabel(String source) {
+    final localized = _lookupCurrentLocale(_newAnswerLabels, source);
+    if (localized != null) {
+      return localized;
+    }
+
     if (!_containsCyrillic(source)) {
       return source;
     }
@@ -104,7 +110,9 @@ extension LocalizedContent on AppLocalizations {
 
   _PuzzleCopy? _puzzleCopy(String puzzleId) {
     final language = localeName.split('_').first;
-    return _puzzles[language]?[puzzleId] ??
+    return _newPuzzles[language]?[puzzleId] ??
+        _newPuzzles['en']?[puzzleId] ??
+        _puzzles[language]?[puzzleId] ??
         _puzzles['en']?[puzzleId] ??
         _puzzles['ru']?[puzzleId];
   }
@@ -127,6 +135,1937 @@ class _PuzzleCopy {
   final String prompt;
   final String skill;
 }
+
+const Map<String, Map<String, String>> _newAnswerLabels = {
+  'en': {
+    'Костер': 'Fire',
+    'Палатка': 'Tent',
+    'Подушка': 'Pillow',
+    'word_star': 'Star',
+    'word_moon': 'Moon',
+    'word_sun': 'Sun',
+    'shape_star': 'Star',
+    'shape_moon': 'Moon',
+    'shape_rocket': 'Rocket',
+    'house_blue': 'Blue house',
+    'house_green': 'Green house',
+    'house_yellow': 'Yellow house',
+    'piece_triangle': 'Triangle',
+    'piece_square': 'Square',
+    'piece_circle': 'Circle',
+    'path_A': 'Path A',
+    'path_B': 'Path B',
+    'path_C': 'Path C',
+  },
+  'ru': {
+    'Костер': 'Костер',
+    'Палатка': 'Палатка',
+    'Подушка': 'Подушка',
+    'word_star': 'Звезда',
+    'word_moon': 'Луна',
+    'word_sun': 'Солнце',
+    'shape_star': 'Звезда',
+    'shape_moon': 'Луна',
+    'shape_rocket': 'Ракета',
+    'house_blue': 'Синий дом',
+    'house_green': 'Зеленый дом',
+    'house_yellow': 'Желтый дом',
+    'piece_triangle': 'Треугольник',
+    'piece_square': 'Квадрат',
+    'piece_circle': 'Круг',
+    'path_A': 'Путь A',
+    'path_B': 'Путь B',
+    'path_C': 'Путь C',
+  },
+  'de': {
+    'Костер': 'Feuer',
+    'Палатка': 'Zelt',
+    'Подушка': 'Kissen',
+    'word_star': 'Stern',
+    'word_moon': 'Mond',
+    'word_sun': 'Sonne',
+    'shape_star': 'Stern',
+    'shape_moon': 'Mond',
+    'shape_rocket': 'Rakete',
+    'house_blue': 'Blaues Haus',
+    'house_green': 'Grünes Haus',
+    'house_yellow': 'Gelbes Haus',
+    'piece_triangle': 'Dreieck',
+    'piece_square': 'Quadrat',
+    'piece_circle': 'Kreis',
+    'path_A': 'Weg A',
+    'path_B': 'Weg B',
+    'path_C': 'Weg C',
+  },
+  'es': {
+    'Костер': 'Fogata',
+    'Палатка': 'Tienda',
+    'Подушка': 'Almohada',
+    'word_star': 'Estrella',
+    'word_moon': 'Luna',
+    'word_sun': 'Sol',
+    'shape_star': 'Estrella',
+    'shape_moon': 'Luna',
+    'shape_rocket': 'Cohete',
+    'house_blue': 'Casa azul',
+    'house_green': 'Casa verde',
+    'house_yellow': 'Casa amarilla',
+    'piece_triangle': 'Triángulo',
+    'piece_square': 'Cuadrado',
+    'piece_circle': 'Círculo',
+    'path_A': 'Ruta A',
+    'path_B': 'Ruta B',
+    'path_C': 'Ruta C',
+  },
+  'fr': {
+    'Костер': 'Feu',
+    'Палатка': 'Tente',
+    'Подушка': 'Oreiller',
+    'word_star': 'Étoile',
+    'word_moon': 'Lune',
+    'word_sun': 'Soleil',
+    'shape_star': 'Étoile',
+    'shape_moon': 'Lune',
+    'shape_rocket': 'Fusée',
+    'house_blue': 'Maison bleue',
+    'house_green': 'Maison verte',
+    'house_yellow': 'Maison jaune',
+    'piece_triangle': 'Triangle',
+    'piece_square': 'Carré',
+    'piece_circle': 'Cercle',
+    'path_A': 'Chemin A',
+    'path_B': 'Chemin B',
+    'path_C': 'Chemin C',
+  },
+  'hi': {
+    'Костер': 'आग',
+    'Палатка': 'तंबू',
+    'Подушка': 'तकिया',
+    'word_star': 'तारा',
+    'word_moon': 'चाँद',
+    'word_sun': 'सूरज',
+    'shape_star': 'तारा',
+    'shape_moon': 'चाँद',
+    'shape_rocket': 'रॉकेट',
+    'house_blue': 'नीला घर',
+    'house_green': 'हरा घर',
+    'house_yellow': 'पीला घर',
+    'piece_triangle': 'त्रिभुज',
+    'piece_square': 'वर्ग',
+    'piece_circle': 'वृत्त',
+    'path_A': 'रास्ता A',
+    'path_B': 'रास्ता B',
+    'path_C': 'रास्ता C',
+  },
+  'it': {
+    'Костер': 'Fuoco',
+    'Палатка': 'Tenda',
+    'Подушка': 'Cuscino',
+    'word_star': 'Stella',
+    'word_moon': 'Luna',
+    'word_sun': 'Sole',
+    'shape_star': 'Stella',
+    'shape_moon': 'Luna',
+    'shape_rocket': 'Razzo',
+    'house_blue': 'Casa blu',
+    'house_green': 'Casa verde',
+    'house_yellow': 'Casa gialla',
+    'piece_triangle': 'Triangolo',
+    'piece_square': 'Quadrato',
+    'piece_circle': 'Cerchio',
+    'path_A': 'Percorso A',
+    'path_B': 'Percorso B',
+    'path_C': 'Percorso C',
+  },
+  'ja': {
+    'Костер': 'たき火',
+    'Палатка': 'テント',
+    'Подушка': 'まくら',
+    'word_star': 'ほし',
+    'word_moon': 'つき',
+    'word_sun': 'たいよう',
+    'shape_star': 'ほし',
+    'shape_moon': 'つき',
+    'shape_rocket': 'ロケット',
+    'house_blue': '青い家',
+    'house_green': '緑の家',
+    'house_yellow': '黄色い家',
+    'piece_triangle': '三角',
+    'piece_square': '四角',
+    'piece_circle': '丸',
+    'path_A': '道 A',
+    'path_B': '道 B',
+    'path_C': '道 C',
+  },
+  'ko': {
+    'Костер': '모닥불',
+    'Палатка': '텐트',
+    'Подушка': '베개',
+    'word_star': '별',
+    'word_moon': '달',
+    'word_sun': '해',
+    'shape_star': '별',
+    'shape_moon': '달',
+    'shape_rocket': '로켓',
+    'house_blue': '파란 집',
+    'house_green': '초록 집',
+    'house_yellow': '노란 집',
+    'piece_triangle': '삼각형',
+    'piece_square': '정사각형',
+    'piece_circle': '원',
+    'path_A': '길 A',
+    'path_B': '길 B',
+    'path_C': '길 C',
+  },
+  'pt': {
+    'Костер': 'Fogueira',
+    'Палатка': 'Tenda',
+    'Подушка': 'Travesseiro',
+    'word_star': 'Estrela',
+    'word_moon': 'Lua',
+    'word_sun': 'Sol',
+    'shape_star': 'Estrela',
+    'shape_moon': 'Lua',
+    'shape_rocket': 'Foguete',
+    'house_blue': 'Casa azul',
+    'house_green': 'Casa verde',
+    'house_yellow': 'Casa amarela',
+    'piece_triangle': 'Triângulo',
+    'piece_square': 'Quadrado',
+    'piece_circle': 'Círculo',
+    'path_A': 'Rota A',
+    'path_B': 'Rota B',
+    'path_C': 'Rota C',
+  },
+  'ar': {
+    'Костер': 'نار المخيم',
+    'Палатка': 'خيمة',
+    'Подушка': 'وسادة',
+    'word_star': 'نجم',
+    'word_moon': 'قمر',
+    'word_sun': 'شمس',
+    'shape_star': 'نجمة',
+    'shape_moon': 'قمر',
+    'shape_rocket': 'صاروخ',
+    'house_blue': 'البيت الأزرق',
+    'house_green': 'البيت الأخضر',
+    'house_yellow': 'البيت الأصفر',
+    'piece_triangle': 'مثلث',
+    'piece_square': 'مربع',
+    'piece_circle': 'دائرة',
+    'path_A': 'المسار A',
+    'path_B': 'المسار B',
+    'path_C': 'المسار C',
+  },
+  'zh': {
+    'Костер': '营火',
+    'Палатка': '帐篷',
+    'Подушка': '枕头',
+    'word_star': '星星',
+    'word_moon': '月亮',
+    'word_sun': '太阳',
+    'shape_star': '星星',
+    'shape_moon': '月亮',
+    'shape_rocket': '火箭',
+    'house_blue': '蓝房子',
+    'house_green': '绿房子',
+    'house_yellow': '黄房子',
+    'piece_triangle': '三角形',
+    'piece_square': '正方形',
+    'piece_circle': '圆形',
+    'path_A': '路线 A',
+    'path_B': '路线 B',
+    'path_C': '路线 C',
+  },
+};
+
+const Map<String, Map<String, String>> _newRetryText = {
+  'en': {
+    'camp-story': 'The heroes were happy about the warm campfire.',
+    'word-grid': 'STAR is read left to right near the bottom of the grid.',
+    'animal-word': 'The clearing already shows D and O; the word needs G.',
+    'fruit-fizz': 'The recipe has 3 limes and 2 berries, so it needs 3 more.',
+    'moon-clock': 'The minute hand points to 12 and the hour hand points to 3.',
+    'notebook-sum': '15 plus 20 equals 35: add the tens and ones carefully.',
+    'bridge-order': 'The planks grow longer, so the middle plank B fits.',
+    'balloon-order': 'After sorting by number, balloon 1 comes first.',
+    'cookie-share': 'Six cookies shared by three friends gives 2 each.',
+    'constellation-route': 'The glowing line ends at star B.',
+    'word-builder': 'Use the big card letters to build the word “star”.',
+    'letter-field': 'The word “moon” is hidden as one connected path.',
+    'math-crossword': 'The crossing number is 8: 3 + 5 = 8 and 8 - 2 = 6.',
+    'picture-puzzle': 'Piece B fits the rocket middle and matches the lines.',
+    'mini-sudoku':
+        'The row already has a star and moon; the column needs a rocket.',
+    'logic-houses':
+        'The star is not in the blue house and is to the right of yellow.',
+    'camp-differences':
+        'The tent flag and the tiny star near the fire are different.',
+    'shape-tangram': 'The rocket nose is made from a triangle.',
+    'code-lock':
+        'Code 248 starts with 2, then adds 2, then doubles the middle digit.',
+    'story-order': 'First comes the map, then the flight, then the found star.',
+    'market-change':
+        'The hero has 5 stars and spends 3 on the rocket, so 2 remain.',
+    'route-maze': 'Path B goes right, up, and right again to the star.',
+  },
+  'ru': {
+    'camp-story': 'В истории герои радовались теплому костру в лагере.',
+    'word-grid': 'Слово STAR читается слева направо в нижней части сетки.',
+    'animal-word': 'На полянке уже видны буквы D и O, им нужна буква G.',
+    'fruit-fizz': 'В рецепте уже есть 3 лайма и 2 ягоды: до 8 не хватает 3.',
+    'moon-clock': 'Минутная стрелка смотрит на 12, часовая — на 3.',
+    'notebook-sum': '15 плюс 20 равно 35: десятки складываются отдельно.',
+    'bridge-order': 'Доски растут по длине, поэтому нужна средняя доска B.',
+    'balloon-order': 'После сортировки по числам первым будет шарик с 1.',
+    'cookie-share':
+        'Шесть печений делятся на трех друзей: каждому достанется 2.',
+    'constellation-route': 'Сияющая линия заканчивается у звезды B.',
+    'word-builder':
+        'Используй буквы большой карточки, чтобы собрать слово “звезда”.',
+    'letter-field': 'Слово “луна” спрятано одной непрерывной дорожкой.',
+    'math-crossword': 'В пересечении стоит 8: 3 + 5 = 8 и 8 - 2 = 6.',
+    'picture-puzzle':
+        'Кусочек B закрывает середину ракеты и совпадает с линиями.',
+    'mini-sudoku':
+        'В строке уже есть звезда и луна, а в столбце не хватает ракеты.',
+    'logic-houses':
+        'Звезда не в синем доме и стоит правее желтого, значит она в зеленом.',
+    'camp-differences':
+        'Отличаются флажок на палатке и маленькая звезда возле костра.',
+    'shape-tangram': 'Нос ракеты собирается из треугольника.',
+    'code-lock':
+        'Код 248: первая цифра 2, середина на 2 больше, последняя вдвое больше средней.',
+    'story-order': 'Сначала карта, потом полет, затем найденная звезда.',
+    'market-change': 'У героя 5 звезд, ракета стоит 3, значит останется 2.',
+    'route-maze': 'Путь B ведет вправо, вверх и снова вправо прямо к звезде.',
+  },
+  'de': {
+    'camp-story': 'Die Helden freuten sich über das warme Lagerfeuer.',
+    'word-grid': 'STAR liest du unten im Gitter von links nach rechts.',
+    'animal-word': 'Auf der Lichtung stehen schon D und O; es fehlt G.',
+    'fruit-fizz': 'Im Rezept sind 3 Limetten und 2 Beeren, es fehlen also 3.',
+    'moon-clock': 'Der Minutenzeiger zeigt auf 12, der Stundenzeiger auf 3.',
+    'notebook-sum': '15 plus 20 ist 35: addiere Zehner und Einer sorgfältig.',
+    'bridge-order': 'Die Bretter werden länger, daher passt Brett B.',
+    'balloon-order': 'Nach dem Sortieren nach Zahlen kommt Ballon 1 zuerst.',
+    'cookie-share': 'Sechs Kekse für drei Freunde ergeben 2 für jeden.',
+    'constellation-route': 'Die leuchtende Linie endet bei Stern B.',
+    'word-builder': 'Nutze die Buchstaben der großen Karte und bilde “Stern”.',
+    'letter-field': 'Das Wort “Mond” liegt als ein verbundener Pfad im Feld.',
+    'math-crossword': 'Die Kreuzungszahl ist 8: 3 + 5 = 8 und 8 - 2 = 6.',
+    'picture-puzzle': 'Teil B passt in die Raketenmitte und zu den Linien.',
+    'mini-sudoku':
+        'In der Reihe sind Stern und Mond; in der Spalte fehlt die Rakete.',
+    'logic-houses':
+        'Der Stern ist nicht im blauen Haus und steht rechts vom gelben.',
+    'camp-differences':
+        'Die Zeltflagge und der kleine Stern am Feuer sind anders.',
+    'shape-tangram': 'Die Raketenspitze besteht aus einem Dreieck.',
+    'code-lock':
+        'Der Code 248 beginnt mit 2, addiert 2 und verdoppelt dann die Mitte.',
+    'story-order':
+        'Zuerst kommt die Karte, dann der Flug, dann der gefundene Stern.',
+    'market-change':
+        'Der Held hat 5 Sterne und gibt 3 für die Rakete aus, also bleiben 2.',
+    'route-maze':
+        'Weg B führt nach rechts, nach oben und wieder rechts zum Stern.',
+  },
+  'es': {
+    'camp-story': 'Los héroes estaban felices con la fogata cálida.',
+    'word-grid': 'STAR se lee de izquierda a derecha cerca de la parte baja.',
+    'animal-word': 'En el claro ya están D y O; falta la G.',
+    'fruit-fizz': 'La receta tiene 3 limas y 2 bayas, así que faltan 3.',
+    'moon-clock': 'La aguja de minutos apunta al 12 y la de horas al 3.',
+    'notebook-sum': '15 más 20 es 35: suma decenas y unidades con cuidado.',
+    'bridge-order': 'Las tablas crecen en largo, así que encaja la tabla B.',
+    'balloon-order': 'Al ordenar por número, el globo 1 va primero.',
+    'cookie-share': 'Seis galletas entre tres amigos dan 2 para cada uno.',
+    'constellation-route': 'La línea brillante termina en la estrella B.',
+    'word-builder':
+        'Usa las letras de la tarjeta grande para formar “estrella”.',
+    'letter-field': 'La palabra “luna” está escondida en un camino continuo.',
+    'math-crossword': 'El cruce es 8: 3 + 5 = 8 y 8 - 2 = 6.',
+    'picture-puzzle': 'La pieza B encaja en el centro del cohete.',
+    'mini-sudoku':
+        'La fila ya tiene estrella y luna; la columna necesita un cohete.',
+    'logic-houses':
+        'La estrella no está en la casa azul y queda a la derecha de la amarilla.',
+    'camp-differences':
+        'Cambian la bandera de la tienda y la estrella junto al fuego.',
+    'shape-tangram': 'La punta del cohete se forma con un triángulo.',
+    'code-lock':
+        'El código 248 empieza con 2, suma 2 y luego duplica la cifra central.',
+    'story-order':
+        'Primero va el mapa, luego el vuelo y después la estrella encontrada.',
+    'market-change':
+        'El héroe tiene 5 estrellas y gasta 3 en el cohete, así que quedan 2.',
+    'route-maze':
+        'La ruta B va a la derecha, arriba y otra vez a la derecha hasta la estrella.',
+  },
+  'fr': {
+    'camp-story': 'Les héros étaient contents du feu de camp bien chaud.',
+    'word-grid': 'STAR se lit de gauche à droite vers le bas de la grille.',
+    'animal-word': 'La clairière montre déjà D et O; il manque G.',
+    'fruit-fizz': 'La recette a 3 citrons verts et 2 baies, il en manque 3.',
+    'moon-clock': 'La grande aiguille est sur 12 et la petite sur 3.',
+    'notebook-sum':
+        '15 plus 20 font 35: additionne les dizaines et les unités.',
+    'bridge-order': 'Les planches grandissent; la planche B convient.',
+    'balloon-order': 'Après le tri par nombre, le ballon 1 vient en premier.',
+    'cookie-share': 'Six biscuits pour trois amis donnent 2 chacun.',
+    'constellation-route': 'La ligne lumineuse finit à l’étoile B.',
+    'word-builder':
+        'Utilise les lettres de la grande carte pour former “étoile”.',
+    'letter-field': 'Le mot “lune” est caché dans un chemin continu.',
+    'math-crossword': 'Le nombre croisé est 8: 3 + 5 = 8 et 8 - 2 = 6.',
+    'picture-puzzle': 'La pièce B complète le centre de la fusée.',
+    'mini-sudoku':
+        'La ligne a déjà une étoile et une lune; la colonne veut une fusée.',
+    'logic-houses':
+        'L’étoile n’est pas dans la maison bleue et est à droite de la jaune.',
+    'camp-differences':
+        'Le drapeau de la tente et la petite étoile près du feu changent.',
+    'shape-tangram': 'Le nez de la fusée se fait avec un triangle.',
+    'code-lock':
+        'Le code 248 commence par 2, ajoute 2, puis double le chiffre du milieu.',
+    'story-order': 'D\'abord la carte, puis le vol, puis l\'étoile trouvée.',
+    'market-change':
+        'Le héros a 5 étoiles et dépense 3 pour la fusée : il en reste 2.',
+    'route-maze':
+        'Le chemin B va à droite, en haut, puis encore à droite vers l\'étoile.',
+  },
+  'hi': {
+    'camp-story': 'नायक गर्म अलाव से खुश थे।',
+    'word-grid': 'STAR ग्रिड के नीचे बाएं से दाएं पढ़ा जाता है।',
+    'animal-word': 'मैदान में D और O दिख रहे हैं; अब G चाहिए।',
+    'fruit-fizz': 'रेसिपी में 3 नींबू और 2 बेरी हैं, इसलिए 3 और चाहिए।',
+    'moon-clock': 'मिनट वाली सुई 12 पर है और घंटे वाली 3 पर।',
+    'notebook-sum': '15 और 20 मिलाकर 35 होते हैं।',
+    'bridge-order': 'तख्ते लंबे होते जा रहे हैं, इसलिए B सही है।',
+    'balloon-order': 'संख्या के क्रम में लगाने पर 1 वाला गुब्बारा पहले आता है।',
+    'cookie-share': '6 कुकी 3 दोस्तों में बांटने पर हर एक को 2 मिलती हैं।',
+    'constellation-route': 'चमकती रेखा तारे B पर खत्म होती है।',
+    'word-builder': 'बड़े कार्ड के अक्षरों से “तारा” बनाओ।',
+    'letter-field': '“चाँद” शब्द एक जुड़े रास्ते में छिपा है।',
+    'math-crossword': 'कटने वाली संख्या 8 है: 3 + 5 = 8 और 8 - 2 = 6।',
+    'picture-puzzle': 'टुकड़ा B रॉकेट के बीच में सही बैठता है।',
+    'mini-sudoku': 'पंक्ति में तारा और चाँद हैं; स्तंभ में रॉकेट चाहिए।',
+    'logic-houses': 'तारा नीले घर में नहीं है और पीले घर के दाईं ओर है।',
+    'camp-differences': 'तंबू का झंडा और आग के पास छोटा तारा अलग हैं।',
+    'shape-tangram': 'रॉकेट की नोक त्रिभुज से बनती है।',
+    'code-lock':
+        'कोड 248 में पहले 2 है, फिर 2 जोड़ते हैं, फिर बीच वाली संख्या दोगुनी होती है।',
+    'story-order': 'पहले नक्शा, फिर उड़ान, फिर मिली हुई तारा।',
+    'market-change':
+        'हीरो के पास 5 तारे हैं और रॉकेट पर 3 खर्च होते हैं, इसलिए 2 बचते हैं।',
+    'route-maze': 'रास्ता B दाएँ, ऊपर और फिर दाएँ जाकर तारे तक पहुँचता है।',
+  },
+  'it': {
+    'camp-story': 'Gli eroi erano felici per il falò caldo.',
+    'word-grid': 'STAR si legge da sinistra a destra in basso nella griglia.',
+    'animal-word': 'Nella radura ci sono già D e O; serve G.',
+    'fruit-fizz': 'La ricetta ha 3 lime e 2 bacche, quindi ne mancano 3.',
+    'moon-clock': 'La lancetta dei minuti è sul 12 e quella delle ore sul 3.',
+    'notebook-sum': '15 più 20 fa 35: somma bene decine e unità.',
+    'bridge-order': 'Le assi diventano più lunghe, quindi va bene la B.',
+    'balloon-order': 'Ordinando per numero, il palloncino 1 viene per primo.',
+    'cookie-share': 'Sei biscotti per tre amici fanno 2 a ciascuno.',
+    'constellation-route': 'La linea luminosa finisce sulla stella B.',
+    'word-builder': 'Usa le lettere della carta grande per formare “stella”.',
+    'letter-field': 'La parola “luna” è nascosta in un percorso continuo.',
+    'math-crossword': 'Il numero dell’incrocio è 8: 3 + 5 = 8 e 8 - 2 = 6.',
+    'picture-puzzle': 'Il pezzo B completa il centro del razzo.',
+    'mini-sudoku':
+        'La riga ha già stella e luna; nella colonna serve il razzo.',
+    'logic-houses':
+        'La stella non è nella casa blu ed è a destra di quella gialla.',
+    'camp-differences':
+        'Cambiano la bandiera della tenda e la stellina vicino al fuoco.',
+    'shape-tangram': 'La punta del razzo si costruisce con un triangolo.',
+    'code-lock':
+        'Il codice 248 inizia con 2, aggiunge 2 e poi raddoppia la cifra centrale.',
+    'story-order': 'Prima c\'è la mappa, poi il volo, poi la stella trovata.',
+    'market-change':
+        'L\'eroe ha 5 stelle e spende 3 per il razzo, quindi ne restano 2.',
+    'route-maze':
+        'Il percorso B va a destra, su e di nuovo a destra fino alla stella.',
+  },
+  'ja': {
+    'camp-story': 'ヒーローたちはあたたかいたき火をよろこんでいました。',
+    'word-grid': 'STAR は表の下の方で左から右に読めます。',
+    'animal-word': '広場には D と O が見えています。必要なのは G です。',
+    'fruit-fizz': 'レシピにはライム3個とベリー2個。あと3個必要です。',
+    'moon-clock': '長い針は12、短い針は3を指しています。',
+    'notebook-sum': '15 と 20 を足すと 35 です。',
+    'bridge-order': '板はだんだん長くなるので、B の板が合います。',
+    'balloon-order': '数の順に並べると、1 の風船が最初です。',
+    'cookie-share': '6枚のクッキーを3人で分けると、1人2枚です。',
+    'constellation-route': '光る線は星 B で終わります。',
+    'word-builder': '大きなカードの文字で「ほし」を作ろう。',
+    'letter-field': '「つき」はつながった道としてかくれています。',
+    'math-crossword': '交わる数は8です。3 + 5 = 8、8 - 2 = 6 です。',
+    'picture-puzzle': 'ピース B はロケットの真ん中に合います。',
+    'mini-sudoku': '行には星と月があります。列に必要なのはロケットです。',
+    'logic-houses': '星は青い家ではなく、黄色い家の右にあります。',
+    'camp-differences': 'テントの旗と、火の近くの小さな星が違います。',
+    'shape-tangram': 'ロケットの先は三角で作ります。',
+    'code-lock': '248 は、2から始まり、2を足して、真ん中の数を2倍にします。',
+    'story-order': '最初は地図、次に飛行、最後に見つけた星です。',
+    'market-change': 'ヒーローは星を5個持ち、ロケットに3個使うので、2個残ります。',
+    'route-maze': '道 B は右、上、また右へ進んで星に着きます。',
+  },
+  'ko': {
+    'camp-story': '영웅들은 따뜻한 모닥불을 좋아했어요.',
+    'word-grid': 'STAR는 격자 아래쪽에서 왼쪽에서 오른쪽으로 읽어요.',
+    'animal-word': '빈터에 D와 O가 보이고, G가 필요해요.',
+    'fruit-fizz': '레시피에는 라임 3개와 베리 2개가 있어 3개가 더 필요해요.',
+    'moon-clock': '분침은 12를, 시침은 3을 가리켜요.',
+    'notebook-sum': '15 더하기 20은 35예요.',
+    'bridge-order': '판자가 점점 길어지므로 B 판자가 맞아요.',
+    'balloon-order': '숫자 순서로 정렬하면 1 풍선이 먼저 와요.',
+    'cookie-share': '쿠키 6개를 친구 3명에게 나누면 각각 2개예요.',
+    'constellation-route': '빛나는 선은 별 B에서 끝나요.',
+    'word-builder': '큰 카드의 글자로 “별”을 만들어 보세요.',
+    'letter-field': '“달” 단어가 이어진 길로 숨어 있어요.',
+    'math-crossword': '교차 칸은 8이에요: 3 + 5 = 8, 8 - 2 = 6이에요.',
+    'picture-puzzle': '조각 B가 로켓 가운데에 딱 맞아요.',
+    'mini-sudoku': '줄에는 별과 달이 있고, 세로줄에는 로켓이 필요해요.',
+    'logic-houses': '별은 파란 집이 아니고 노란 집 오른쪽에 있어요.',
+    'camp-differences': '텐트 깃발과 불 옆 작은 별이 달라요.',
+    'shape-tangram': '로켓의 앞부분은 삼각형으로 만들어요.',
+    'code-lock': '코드 248은 2로 시작하고, 2를 더한 뒤 가운데 수를 두 배로 해요.',
+    'story-order': '먼저 지도, 그다음 비행, 마지막으로 찾은 별이에요.',
+    'market-change': '영웅은 별 5개가 있고 로켓에 3개를 써서 2개가 남아요.',
+    'route-maze': '길 B는 오른쪽, 위, 다시 오른쪽으로 가서 별에 닿아요.',
+  },
+  'pt': {
+    'camp-story': 'Os heróis ficaram felizes com a fogueira quentinha.',
+    'word-grid': 'STAR aparece da esquerda para a direita perto da base.',
+    'animal-word': 'A clareira já mostra D e O; falta G.',
+    'fruit-fizz': 'A receita tem 3 limões e 2 frutas; faltam mais 3.',
+    'moon-clock': 'O ponteiro dos minutos aponta para 12 e o das horas para 3.',
+    'notebook-sum': '15 mais 20 é 35: some dezenas e unidades com cuidado.',
+    'bridge-order': 'As tábuas ficam maiores, então a tábua B encaixa.',
+    'balloon-order': 'Ao ordenar por número, o balão 1 vem primeiro.',
+    'cookie-share': 'Seis biscoitos para três amigos dão 2 para cada um.',
+    'constellation-route': 'A linha brilhante termina na estrela B.',
+    'word-builder': 'Use as letras do cartão grande para formar “estrela”.',
+    'letter-field': 'A palavra “lua” está escondida em um caminho contínuo.',
+    'math-crossword': 'O cruzamento é 8: 3 + 5 = 8 e 8 - 2 = 6.',
+    'picture-puzzle': 'A peça B encaixa no meio do foguete.',
+    'mini-sudoku': 'A linha já tem estrela e lua; na coluna falta o foguete.',
+    'logic-houses':
+        'A estrela não está na casa azul e fica à direita da amarela.',
+    'camp-differences':
+        'Mudam a bandeira da tenda e a estrelinha perto do fogo.',
+    'shape-tangram': 'A ponta do foguete é feita com um triângulo.',
+    'code-lock':
+        'O código 248 começa com 2, soma 2 e depois dobra o número do meio.',
+    'story-order':
+        'Primeiro vem o mapa, depois o voo, depois a estrela encontrada.',
+    'market-change':
+        'O herói tem 5 estrelas e gasta 3 no foguete, então sobram 2.',
+    'route-maze':
+        'A rota B vai para a direita, para cima e de novo para a direita até a estrela.',
+  },
+  'ar': {
+    'camp-story': 'فرح الأبطال بنار المخيم الدافئة.',
+    'word-grid': 'تقرأ STAR من اليسار إلى اليمين قرب أسفل الشبكة.',
+    'animal-word': 'تظهر D و O في الساحة، وتحتاج الكلمة إلى G.',
+    'fruit-fizz': 'في الوصفة 3 ليمونات و2 من التوت، لذلك نحتاج 3 أخرى.',
+    'moon-clock': 'عقرب الدقائق عند 12 وعقرب الساعات عند 3.',
+    'notebook-sum': '15 زائد 20 يساوي 35.',
+    'bridge-order': 'تزداد الألواح طولا، لذلك يناسب اللوح B.',
+    'balloon-order': 'بعد الترتيب حسب الرقم، يأتي البالون 1 أولا.',
+    'cookie-share': 'ست كعكات بين ثلاثة أصدقاء تعني 2 لكل واحد.',
+    'constellation-route': 'ينتهي الخط المضيء عند النجمة B.',
+    'word-builder': 'استخدم حروف البطاقة الكبيرة لتكوين “نجم”.',
+    'letter-field': 'كلمة “قمر” مخفية في مسار متصل.',
+    'math-crossword': 'رقم التقاطع هو 8: ‏3 + 5 = 8 و8 - 2 = 6.',
+    'picture-puzzle': 'القطعة B تناسب وسط الصاروخ.',
+    'mini-sudoku': 'في الصف نجمة وقمر، والعمود يحتاج إلى صاروخ.',
+    'logic-houses': 'النجمة ليست في البيت الأزرق وهي على يمين البيت الأصفر.',
+    'camp-differences': 'يختلف علم الخيمة والنجمة الصغيرة قرب النار.',
+    'shape-tangram': 'مقدمة الصاروخ تتكون من مثلث.',
+    'code-lock': 'الرمز 248 يبدأ ب 2، ثم نضيف 2، ثم نضاعف الرقم الأوسط.',
+    'story-order': 'أولا الخريطة، ثم الرحلة، ثم النجمة التي تم العثور عليها.',
+    'market-change': 'لدى البطل 5 نجوم ويدفع 3 للصاروخ، لذلك تبقى نجمتان.',
+    'route-maze':
+        'المسار B يتحرك يمينا، ثم إلى الأعلى، ثم يمينا مرة أخرى نحو النجمة.',
+  },
+  'zh': {
+    'camp-story': '英雄们喜欢温暖的营火。',
+    'word-grid': 'STAR 在字母表下方从左向右读。',
+    'animal-word': '空地上已经有 D 和 O，还需要 G。',
+    'fruit-fizz': '配方里有3个青柠和2颗浆果，还差3个。',
+    'moon-clock': '分针指向12，时针指向3。',
+    'notebook-sum': '15 加 20 等于 35。',
+    'bridge-order': '木板越来越长，所以 B 木板正合适。',
+    'balloon-order': '按数字排序后，1号气球排第一。',
+    'cookie-share': '6块饼干分给3个朋友，每人2块。',
+    'constellation-route': '发光的线停在星星 B。',
+    'word-builder': '用大卡片上的字组成“星星”。',
+    'letter-field': '“月亮”藏在一条连续路径里。',
+    'math-crossword': '交叉处是8：3 + 5 = 8，8 - 2 = 6。',
+    'picture-puzzle': 'B 拼块正好补上火箭中间。',
+    'mini-sudoku': '这一行已有星星和月亮，这一列缺少火箭。',
+    'logic-houses': '星星不在蓝房子里，而且在黄房子的右边。',
+    'camp-differences': '帐篷旗子和火堆旁的小星星变了。',
+    'shape-tangram': '火箭头由三角形组成。',
+    'code-lock': '密码 248 从 2 开始，先加 2，再把中间数字翻倍。',
+    'story-order': '先是地图，然后飞行，最后找到星星。',
+    'market-change': '英雄有 5 颗星，买火箭花掉 3 颗，所以剩下 2 颗。',
+    'route-maze': '路线 B 向右、向上，再向右到达星星。',
+  },
+};
+
+const Map<String, Map<String, _PuzzleCopy>> _newPuzzles = {
+  'en': {
+    'camp-story': _PuzzleCopy(
+      'Campfire story',
+      'Remember what the heroes praised at the cozy camp.',
+      'Story memory',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Star grid',
+      'Find the hidden word in the letter grid.',
+      'Word search',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Forest word',
+      'Build the animal word from the letters in the clearing.',
+      'Letters and attention',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Fruit fizz',
+      'Count the fruit in the recipe and find the missing number.',
+      'Addition from clues',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Space clock',
+      'Look at the hands and choose the correct time.',
+      'Reading time',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Notebook sum',
+      'Add the numbers in columns and choose the answer.',
+      'Written addition',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Bridge by size',
+      'Choose the plank that continues the bridge from short to long.',
+      'Size comparison',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Balloon order',
+      'Find the balloon that will be first after sorting.',
+      'Order and focus',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Cookies for friends',
+      'Share the cookies equally between friends.',
+      'Equal sharing',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Constellation route',
+      'Follow the glowing path and choose the final star.',
+      'Map route',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Words from a word',
+      'Build a new word from the letters on the big card.',
+      'Word flexibility',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Word field',
+      'Find the word in the letter field and trace its path.',
+      'Word search',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Math crossword',
+      'Fill the crossing so both number clues are correct.',
+      'Number crossings',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Space puzzle',
+      'Assemble the picture pieces and choose the missing part.',
+      'Image assembly',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Picture sudoku',
+      'Place the missing symbol so the row and column do not repeat.',
+      'Logic grid',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Clue houses',
+      'Use the clues and choose the house where the star is hidden.',
+      'Clue reasoning',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Camp differences',
+      'Find the two details that changed in the cozy camp.',
+      'Picture comparison',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Rocket tangram',
+      'Build the rocket silhouette from bright geometric pieces.',
+      'Silhouette assembly',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Code lock',
+      'Use the panel clues to choose the lock code.',
+      'Logic code',
+    ),
+    'story-order': _PuzzleCopy(
+      'Story frames',
+      'Put the frames in order so the story makes sense.',
+      'Sequence memory',
+    ),
+    'market-change': _PuzzleCopy(
+      'Space shop',
+      'Count how many stars remain after the purchase.',
+      'Practical counting',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Command maze',
+      'Guide the hero through the grid to the star.',
+      'Route planning',
+    ),
+  },
+  'ru': {
+    'camp-story': _PuzzleCopy(
+      'История у костра',
+      'Вспомни, что герои хвалили в уютном лагере.',
+      'Смысловая память',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Звездная сетка',
+      'Найди спрятанное слово в сетке букв.',
+      'Поиск слова',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Лесное слово',
+      'Собери слово животного из букв на полянке.',
+      'Буквы и внимание',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Фруктовый микс',
+      'Посчитай фрукты в рецепте и найди недостающее число.',
+      'Сложение по условию',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Космические часы',
+      'Посмотри на стрелки и выбери правильное время.',
+      'Время по часам',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Пример в тетради',
+      'Сложи числа в столбик и выбери ответ.',
+      'Письменное сложение',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Мостик по росту',
+      'Выбери доску, которая продолжит мост от короткой к длинной.',
+      'Сравнение величин',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Шарики по порядку',
+      'Найди шарик, который станет первым после сортировки.',
+      'Порядок и фокус',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Печенье друзьям',
+      'Раздели печенье поровну между друзьями.',
+      'Деление на равные части',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Маршрут созвездия',
+      'Проследи сияющий путь и выбери конечную звезду.',
+      'Маршрут по схеме',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Слова из слова',
+      'Собери новое слово из букв большой карточки.',
+      'Словесная гибкость',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Филворд',
+      'Отыщи слово в поле букв и проследи его путь.',
+      'Поиск слова',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Математический сканворд',
+      'Заполни пересечение так, чтобы оба примера стали верными.',
+      'Числовые пересечения',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Космический пазл',
+      'Собери картинку из кусочков и выбери недостающую деталь.',
+      'Сборка изображения',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Судоку с картинками',
+      'Поставь недостающий значок так, чтобы строка и столбец не повторялись.',
+      'Логическая сетка',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Домики по подсказкам',
+      'Прочитай подсказки и выбери дом, где спряталась звезда.',
+      'Вывод по условиям',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Отличия в лагере',
+      'Найди две детали, которые изменились в уютном лагере.',
+      'Сравнение картинок',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Танграм ракеты',
+      'Сложи силуэт ракеты из ярких геометрических деталей.',
+      'Составление силуэта',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Кодовый замок',
+      'Подбери код по подсказкам на панели.',
+      'Логический код',
+    ),
+    'story-order': _PuzzleCopy(
+      'История по кадрам',
+      'Расставь кадры так, чтобы история стала понятной.',
+      'Последовательная память',
+    ),
+    'market-change': _PuzzleCopy(
+      'Космический магазин',
+      'Посчитай, сколько звезд останется после покупки.',
+      'Практический счет',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Лабиринт с командами',
+      'Проведи героя по клеткам к звезде.',
+      'Планирование маршрута',
+    ),
+  },
+  'de': {
+    'camp-story': _PuzzleCopy(
+      'Lagerfeuer-Geschichte',
+      'Merke dir, was die Helden im gemütlichen Camp gelobt haben.',
+      'Sinngedächtnis',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Sternengitter',
+      'Finde das versteckte Wort im Buchstabengitter.',
+      'Wortsuche',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Waldwort',
+      'Baue das Tierwort aus den Buchstaben auf der Lichtung.',
+      'Buchstaben und Aufmerksamkeit',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Fruchtmix',
+      'Zähle die Früchte im Rezept und finde die fehlende Zahl.',
+      'Addition mit Hinweisen',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Weltraumuhr',
+      'Sieh auf die Zeiger und wähle die richtige Zeit.',
+      'Uhrzeit lesen',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Heftaufgabe',
+      'Addiere die Zahlen untereinander und wähle die Antwort.',
+      'Schriftliche Addition',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Brücke nach Größe',
+      'Wähle das Brett, das die Brücke von kurz zu lang fortsetzt.',
+      'Größen vergleichen',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Ballon-Reihenfolge',
+      'Finde den Ballon, der nach dem Sortieren zuerst kommt.',
+      'Ordnen und Fokus',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Kekse für Freunde',
+      'Teile die Kekse gleichmäßig unter Freunden auf.',
+      'Gleiches Teilen',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Sternbild-Route',
+      'Folge dem leuchtenden Weg und wähle den letzten Stern.',
+      'Kartenroute',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Wörter aus Wörtern',
+      'Bilde ein neues Wort aus den Buchstaben der großen Karte.',
+      'Wortflexibilität',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Wortfeld',
+      'Finde das Wort im Buchstabenfeld und folge seinem Pfad.',
+      'Wortsuche',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Mathe-Kreuzwort',
+      'Fülle die Kreuzung, damit beide Zahlenhinweise stimmen.',
+      'Zahlenkreuzungen',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Weltraumpuzzle',
+      'Setze die Bildteile zusammen und wähle das fehlende Stück.',
+      'Bild zusammensetzen',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Bilder-Sudoku',
+      'Setze das fehlende Symbol, ohne Reihe und Spalte zu wiederholen.',
+      'Logikgitter',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Hinweis-Häuser',
+      'Nutze die Hinweise und wähle das Haus mit dem versteckten Stern.',
+      'Schlussfolgern',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Camp-Unterschiede',
+      'Finde zwei Details, die sich im gemütlichen Camp verändert haben.',
+      'Bilder vergleichen',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Raketen-Tangram',
+      'Baue die Rakete aus bunten geometrischen Teilen.',
+      'Silhouette bauen',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Codeschloss',
+      'Nutze die Hinweise auf der Tafel und wähle den Code.',
+      'Logischer Code',
+    ),
+    'story-order': _PuzzleCopy(
+      'Bildergeschichte',
+      'Ordne die Bilder so, dass die Geschichte Sinn ergibt.',
+      'Reihenfolge merken',
+    ),
+    'market-change': _PuzzleCopy(
+      'Weltraum-Laden',
+      'Zähle, wie viele Sterne nach dem Kauf übrig bleiben.',
+      'Alltagsrechnen',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Befehlslabyrinth',
+      'Führe den Helden durch das Raster zum Stern.',
+      'Routenplanung',
+    ),
+  },
+  'es': {
+    'camp-story': _PuzzleCopy(
+      'Historia de fogata',
+      'Recuerda qué elogiaron los héroes en el campamento acogedor.',
+      'Memoria de historia',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Cuadrícula estrella',
+      'Encuentra la palabra escondida en la cuadrícula de letras.',
+      'Sopa de letras',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Palabra del bosque',
+      'Forma la palabra del animal con las letras del claro.',
+      'Letras y atención',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Batido de frutas',
+      'Cuenta las frutas de la receta y halla el número que falta.',
+      'Suma con pistas',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Reloj espacial',
+      'Mira las agujas y elige la hora correcta.',
+      'Leer la hora',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Suma en cuaderno',
+      'Suma los números en columna y elige la respuesta.',
+      'Suma escrita',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Puente por tamaño',
+      'Elige la tabla que sigue el puente de corta a larga.',
+      'Comparar tamaños',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Orden de globos',
+      'Encuentra el globo que irá primero después de ordenar.',
+      'Orden y foco',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Galletas para amigos',
+      'Reparte las galletas por igual entre amigos.',
+      'Reparto igual',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Ruta de constelación',
+      'Sigue el camino brillante y elige la estrella final.',
+      'Ruta en mapa',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Palabras de una palabra',
+      'Forma una palabra nueva con las letras de la tarjeta grande.',
+      'Flexibilidad verbal',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Campo de palabras',
+      'Encuentra la palabra en el campo de letras y sigue su camino.',
+      'Búsqueda de palabras',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Crucigrama matemático',
+      'Rellena el cruce para que ambas pistas sean correctas.',
+      'Cruces numéricos',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Puzle espacial',
+      'Une las piezas de la imagen y elige la parte que falta.',
+      'Armar imágenes',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Sudoku con dibujos',
+      'Coloca el símbolo que falta sin repetir fila ni columna.',
+      'Cuadrícula lógica',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Casas con pistas',
+      'Usa las pistas y elige la casa donde se esconde la estrella.',
+      'Razonar con pistas',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Diferencias del campamento',
+      'Encuentra dos detalles que cambiaron en el campamento.',
+      'Comparar imágenes',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Tangram del cohete',
+      'Forma la silueta del cohete con piezas geométricas brillantes.',
+      'Armar siluetas',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Candado de código',
+      'Usa las pistas del panel y elige el código.',
+      'Código lógico',
+    ),
+    'story-order': _PuzzleCopy(
+      'Historia en viñetas',
+      'Ordena las escenas para que la historia tenga sentido.',
+      'Memoria secuencial',
+    ),
+    'market-change': _PuzzleCopy(
+      'Tienda espacial',
+      'Cuenta cuántas estrellas quedan después de comprar.',
+      'Cálculo práctico',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Laberinto de comandos',
+      'Guía al héroe por la cuadrícula hasta la estrella.',
+      'Planificación de ruta',
+    ),
+  },
+  'fr': {
+    'camp-story': _PuzzleCopy(
+      'Histoire du feu',
+      'Souviens-toi de ce que les héros ont aimé au camp.',
+      'Mémoire narrative',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Grille étoilée',
+      'Trouve le mot caché dans la grille de lettres.',
+      'Recherche de mot',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Mot de la forêt',
+      'Forme le mot de l’animal avec les lettres de la clairière.',
+      'Lettres et attention',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Mix fruité',
+      'Compte les fruits de la recette et trouve le nombre manquant.',
+      'Addition avec indices',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Horloge spatiale',
+      'Regarde les aiguilles et choisis la bonne heure.',
+      'Lire l’heure',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Somme du cahier',
+      'Additionne les nombres en colonne et choisis la réponse.',
+      'Addition posée',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Pont par taille',
+      'Choisis la planche qui continue le pont du court au long.',
+      'Comparer les tailles',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Ordre des ballons',
+      'Trouve le ballon qui viendra en premier après le tri.',
+      'Ordre et attention',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Biscuits pour amis',
+      'Partage les biscuits également entre les amis.',
+      'Partage égal',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Route des étoiles',
+      'Suis le chemin lumineux et choisis l’étoile finale.',
+      'Route sur carte',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Mots dans un mot',
+      'Forme un nouveau mot avec les lettres de la grande carte.',
+      'Souplesse verbale',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Champ de mots',
+      'Trouve le mot dans le champ de lettres et suis son chemin.',
+      'Recherche de mots',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Mots croisés maths',
+      'Remplis le croisement pour que les deux indices soient justes.',
+      'Croisements numériques',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Puzzle spatial',
+      'Assemble les morceaux de l’image et choisis la pièce manquante.',
+      'Assemblage d’image',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Sudoku illustré',
+      'Place le symbole manquant sans répéter la ligne ni la colonne.',
+      'Grille logique',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Maisons à indices',
+      'Utilise les indices et choisis la maison où l’étoile est cachée.',
+      'Raisonnement par indices',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Différences au camp',
+      'Trouve les deux détails qui ont changé dans le camp.',
+      'Comparaison d’images',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Tangram fusée',
+      'Construis la silhouette de la fusée avec des formes colorées.',
+      'Assembler une silhouette',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Cadenas codé',
+      'Utilise les indices du panneau pour choisir le code.',
+      'Code logique',
+    ),
+    'story-order': _PuzzleCopy(
+      'Histoire en images',
+      'Remets les images dans l\'ordre pour comprendre l\'histoire.',
+      'Mémoire séquentielle',
+    ),
+    'market-change': _PuzzleCopy(
+      'Boutique spatiale',
+      'Compte les étoiles qui restent après l\'achat.',
+      'Calcul pratique',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Labyrinthe de commandes',
+      'Guide le héros sur la grille jusqu\'à l\'étoile.',
+      'Planifier un trajet',
+    ),
+  },
+  'hi': {
+    'camp-story': _PuzzleCopy(
+      'अलाव की कहानी',
+      'याद करो कि आरामदेह कैंप में नायकों ने किसकी तारीफ की।',
+      'कहानी स्मृति',
+    ),
+    'word-grid': _PuzzleCopy(
+      'तारा ग्रिड',
+      'अक्षरों की ग्रिड में छिपा शब्द खोजो।',
+      'शब्द खोज',
+    ),
+    'animal-word': _PuzzleCopy(
+      'जंगल शब्द',
+      'मैदान के अक्षरों से जानवर का शब्द बनाओ।',
+      'अक्षर और ध्यान',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'फ्रूट मिक्स',
+      'रेसिपी में फल गिनो और गायब संख्या खोजो।',
+      'संकेतों से जोड़',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'अंतरिक्ष घड़ी',
+      'सुइयों को देखो और सही समय चुनो।',
+      'समय पढ़ना',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'कॉपी का जोड़',
+      'संख्याओं को कॉलम में जोड़ो और उत्तर चुनो।',
+      'लिखित जोड़',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'आकार का पुल',
+      'छोटे से बड़े क्रम में पुल पूरा करने वाला तख्ता चुनो।',
+      'आकार तुलना',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'गुब्बारा क्रम',
+      'छांटने के बाद पहले आने वाला गुब्बारा खोजो।',
+      'क्रम और ध्यान',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'दोस्तों के लिए कुकी',
+      'कुकी को दोस्तों में बराबर बांटो।',
+      'बराबर बांटना',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'तारों का रास्ता',
+      'चमकते रास्ते को देखो और अंतिम तारा चुनो।',
+      'नक्शा रास्ता',
+    ),
+    'word-builder': _PuzzleCopy(
+      'शब्द से शब्द',
+      'बड़े कार्ड के अक्षरों से नया शब्द बनाओ।',
+      'शब्द लचीलापन',
+    ),
+    'letter-field': _PuzzleCopy(
+      'शब्द मैदान',
+      'अक्षरों के मैदान में शब्द खोजो और उसका रास्ता देखो।',
+      'शब्द खोज',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'गणित क्रॉसवर्ड',
+      'मिलान वाला खाना भरो ताकि दोनों संकेत सही हों।',
+      'संख्या मिलान',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'अंतरिक्ष पहेली',
+      'चित्र के टुकड़े जोड़ो और गायब हिस्सा चुनो।',
+      'चित्र जोड़ना',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'चित्र सुडोकू',
+      'गायब चिन्ह रखो ताकि पंक्ति और स्तंभ में दोहराव न हो।',
+      'तर्क ग्रिड',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'संकेत वाले घर',
+      'संकेतों से वह घर चुनो जहाँ तारा छिपा है।',
+      'संकेत तर्क',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'कैंप में अंतर',
+      'आरामदेह कैंप में बदली दो चीजें खोजो।',
+      'चित्र तुलना',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'रॉकेट टैनग्राम',
+      'रंगीन ज्यामितीय टुकड़ों से रॉकेट की आकृति बनाओ।',
+      'आकृति जोड़ना',
+    ),
+    'code-lock': _PuzzleCopy(
+      'कोड लॉक',
+      'पैनल की बातों से लॉक का कोड चुनो।',
+      'तार्किक कोड',
+    ),
+    'story-order': _PuzzleCopy(
+      'चित्रों की कहानी',
+      'चित्रों को ऐसे क्रम में लगाओ कि कहानी समझ आए।',
+      'क्रम याद रखना',
+    ),
+    'market-change': _PuzzleCopy(
+      'अंतरिक्ष दुकान',
+      'खरीदारी के बाद कितने तारे बचेंगे, गिनो।',
+      'व्यावहारिक गिनती',
+    ),
+    'route-maze': _PuzzleCopy(
+      'कमांड भूलभुलैया',
+      'हीरो को खानों से तारे तक ले जाओ।',
+      'रास्ता बनाना',
+    ),
+  },
+  'it': {
+    'camp-story': _PuzzleCopy(
+      'Storia al falò',
+      'Ricorda che cosa hanno lodato gli eroi al campo accogliente.',
+      'Memoria narrativa',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Griglia stellare',
+      'Trova la parola nascosta nella griglia di lettere.',
+      'Ricerca di parole',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Parola del bosco',
+      'Costruisci la parola dell’animale con le lettere nella radura.',
+      'Lettere e attenzione',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Mix di frutta',
+      'Conta la frutta nella ricetta e trova il numero mancante.',
+      'Addizione da indizi',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Orologio spaziale',
+      'Guarda le lancette e scegli l’ora corretta.',
+      'Lettura dell’ora',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Somma sul quaderno',
+      'Somma i numeri in colonna e scegli la risposta.',
+      'Addizione scritta',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Ponte per misura',
+      'Scegli l’asse che continua il ponte da corta a lunga.',
+      'Confronto di misure',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Ordine dei palloncini',
+      'Trova il palloncino che sarà primo dopo l’ordine.',
+      'Ordine e attenzione',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Biscotti per amici',
+      'Dividi i biscotti in parti uguali tra gli amici.',
+      'Divisione equa',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Percorso stellare',
+      'Segui il percorso luminoso e scegli la stella finale.',
+      'Percorso su mappa',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Parole da una parola',
+      'Crea una parola nuova con le lettere della carta grande.',
+      'Flessibilità verbale',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Campo di parole',
+      'Trova la parola nel campo di lettere e segui il suo percorso.',
+      'Ricerca di parole',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Cruciverba matematico',
+      'Riempi l’incrocio così entrambe le tracce sono corrette.',
+      'Incroci numerici',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Puzzle spaziale',
+      'Assembla i pezzi dell’immagine e scegli la parte mancante.',
+      'Assemblaggio immagine',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Sudoku illustrato',
+      'Inserisci il simbolo mancante senza ripetere riga o colonna.',
+      'Griglia logica',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Case con indizi',
+      'Usa gli indizi e scegli la casa dove è nascosta la stella.',
+      'Ragionamento con indizi',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Differenze al campo',
+      'Trova due dettagli cambiati nel campo accogliente.',
+      'Confronto immagini',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Tangram del razzo',
+      'Costruisci la sagoma del razzo con pezzi geometrici colorati.',
+      'Assemblare sagome',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Lucchetto a codice',
+      'Usa gli indizi del pannello e scegli il codice.',
+      'Codice logico',
+    ),
+    'story-order': _PuzzleCopy(
+      'Storia in sequenza',
+      'Metti le scene in ordine per far capire la storia.',
+      'Memoria sequenziale',
+    ),
+    'market-change': _PuzzleCopy(
+      'Negozio spaziale',
+      'Conta quante stelle restano dopo l\'acquisto.',
+      'Calcolo pratico',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Labirinto comandi',
+      'Guida l\'eroe nella griglia fino alla stella.',
+      'Pianificare percorsi',
+    ),
+  },
+  'ja': {
+    'camp-story': _PuzzleCopy(
+      'たき火のお話',
+      '居心地のよいキャンプで、ヒーローたちがほめたものを思い出そう。',
+      'お話の記憶',
+    ),
+    'word-grid': _PuzzleCopy(
+      '星の文字表',
+      '文字の表にかくれた言葉を見つけよう。',
+      '言葉探し',
+    ),
+    'animal-word': _PuzzleCopy(
+      '森の言葉',
+      '広場の文字で動物の言葉を作ろう。',
+      '文字と注意',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'フルーツミックス',
+      'レシピのフルーツを数えて、足りない数を見つけよう。',
+      '手がかりのたし算',
+    ),
+    'moon-clock': _PuzzleCopy(
+      '宇宙の時計',
+      '針を見て、正しい時刻を選ぼう。',
+      '時刻を読む',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'ノートのたし算',
+      '数をたてに足して、答えを選ぼう。',
+      '筆算',
+    ),
+    'bridge-order': _PuzzleCopy(
+      '長さの橋',
+      '短い板から長い板へ続くように、合う板を選ぼう。',
+      '大きさ比べ',
+    ),
+    'balloon-order': _PuzzleCopy(
+      '風船の順番',
+      '並べ替えたあとで最初になる風船を見つけよう。',
+      '順番と注意',
+    ),
+    'cookie-share': _PuzzleCopy(
+      '友だちへのクッキー',
+      'クッキーを友だちに同じ数ずつ分けよう。',
+      '同じ分け方',
+    ),
+    'constellation-route': _PuzzleCopy(
+      '星座の道',
+      '光る道をたどって、最後の星を選ぼう。',
+      '地図の道',
+    ),
+    'word-builder': _PuzzleCopy(
+      '言葉作り',
+      '大きなカードの文字で新しい言葉を作ろう。',
+      '言葉の柔軟性',
+    ),
+    'letter-field': _PuzzleCopy(
+      '文字フィールド',
+      '文字の中から言葉を見つけて、道をたどろう。',
+      '言葉探し',
+    ),
+    'math-crossword': _PuzzleCopy(
+      '算数クロス',
+      '2つの式が正しくなるように、交わるマスを入れよう。',
+      '数の交差',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      '宇宙パズル',
+      '絵のピースを組み立てて、足りない部分を選ぼう。',
+      '絵の組み立て',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      '絵の数独',
+      '行と列で同じ記号が重ならないように、足りない記号を置こう。',
+      '論理グリッド',
+    ),
+    'logic-houses': _PuzzleCopy(
+      '手がかりの家',
+      '手がかりを使って、星がかくれた家を選ぼう。',
+      '手がかり推理',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'キャンプの違い',
+      '居心地のよいキャンプで変わった2つの細部を見つけよう。',
+      '絵の比較',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'ロケットタングラム',
+      '明るい形のピースでロケットのシルエットを作ろう。',
+      'シルエット作り',
+    ),
+    'code-lock': _PuzzleCopy(
+      'コードロック',
+      'パネルのヒントを見てロックのコードを選ぼう。',
+      '論理コード',
+    ),
+    'story-order': _PuzzleCopy(
+      'コマで作るお話',
+      'お話がわかる順番にコマを並べよう。',
+      '順番の記憶',
+    ),
+    'market-change': _PuzzleCopy(
+      '宇宙ショップ',
+      '買い物のあと星がいくつ残るか数えよう。',
+      '実用的な計算',
+    ),
+    'route-maze': _PuzzleCopy(
+      'コマンド迷路',
+      'マスを進んでヒーローを星まで案内しよう。',
+      '道順を考える',
+    ),
+  },
+  'ko': {
+    'camp-story': _PuzzleCopy(
+      '캠프 이야기',
+      '아늑한 캠프에서 영웅들이 칭찬한 것을 떠올려 보세요.',
+      '이야기 기억',
+    ),
+    'word-grid': _PuzzleCopy(
+      '별 글자판',
+      '글자판에 숨은 단어를 찾아보세요.',
+      '단어 찾기',
+    ),
+    'animal-word': _PuzzleCopy(
+      '숲속 단어',
+      '빈터의 글자로 동물 단어를 만들어 보세요.',
+      '글자와 주의',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      '과일 믹스',
+      '레시피의 과일을 세고 빠진 수를 찾으세요.',
+      '단서 덧셈',
+    ),
+    'moon-clock': _PuzzleCopy(
+      '우주 시계',
+      '시계 바늘을 보고 맞는 시간을 고르세요.',
+      '시간 읽기',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      '공책 덧셈',
+      '수를 세로로 더하고 답을 고르세요.',
+      '세로셈',
+    ),
+    'bridge-order': _PuzzleCopy(
+      '크기 다리',
+      '짧은 판자에서 긴 판자로 이어질 판자를 고르세요.',
+      '크기 비교',
+    ),
+    'balloon-order': _PuzzleCopy(
+      '풍선 순서',
+      '정렬한 뒤 첫 번째가 될 풍선을 찾으세요.',
+      '순서와 집중',
+    ),
+    'cookie-share': _PuzzleCopy(
+      '친구와 쿠키',
+      '쿠키를 친구들에게 똑같이 나누세요.',
+      '같게 나누기',
+    ),
+    'constellation-route': _PuzzleCopy(
+      '별자리 길',
+      '빛나는 길을 따라가 마지막 별을 고르세요.',
+      '지도 경로',
+    ),
+    'word-builder': _PuzzleCopy(
+      '낱말 만들기',
+      '큰 카드의 글자로 새 낱말을 만들어 보세요.',
+      '언어 유연성',
+    ),
+    'letter-field': _PuzzleCopy(
+      '글자 필드',
+      '글자판에서 낱말을 찾고 길을 따라가세요.',
+      '낱말 찾기',
+    ),
+    'math-crossword': _PuzzleCopy(
+      '수학 낱말풀이',
+      '두 숫자 단서가 맞도록 만나는 칸을 채우세요.',
+      '숫자 교차',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      '우주 퍼즐',
+      '그림 조각을 맞추고 빠진 부분을 고르세요.',
+      '그림 맞추기',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      '그림 스도쿠',
+      '줄과 칸에 반복되지 않게 빠진 표시를 놓으세요.',
+      '논리 격자',
+    ),
+    'logic-houses': _PuzzleCopy(
+      '단서 집',
+      '단서를 보고 별이 숨어 있는 집을 고르세요.',
+      '단서 추론',
+    ),
+    'camp-differences': _PuzzleCopy(
+      '캠프 차이 찾기',
+      '아늑한 캠프에서 바뀐 세부 사항 두 개를 찾으세요.',
+      '그림 비교',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      '로켓 탱그램',
+      '밝은 도형 조각으로 로켓 실루엣을 만드세요.',
+      '실루엣 만들기',
+    ),
+    'code-lock': _PuzzleCopy(
+      '코드 자물쇠',
+      '패널 힌트를 보고 자물쇠 코드를 고르세요.',
+      '논리 코드',
+    ),
+    'story-order': _PuzzleCopy(
+      '이야기 순서',
+      '이야기가 자연스럽도록 장면을 순서대로 놓으세요.',
+      '순서 기억',
+    ),
+    'market-change': _PuzzleCopy(
+      '우주 상점',
+      '물건을 산 뒤 별이 몇 개 남는지 세어 보세요.',
+      '생활 계산',
+    ),
+    'route-maze': _PuzzleCopy(
+      '명령 미로',
+      '격자를 따라 영웅을 별까지 안내하세요.',
+      '경로 계획',
+    ),
+  },
+  'pt': {
+    'camp-story': _PuzzleCopy(
+      'História da fogueira',
+      'Lembre o que os heróis elogiaram no acampamento aconchegante.',
+      'Memória de história',
+    ),
+    'word-grid': _PuzzleCopy(
+      'Grade estrelada',
+      'Encontre a palavra escondida na grade de letras.',
+      'Caça-palavras',
+    ),
+    'animal-word': _PuzzleCopy(
+      'Palavra da floresta',
+      'Monte a palavra do animal com as letras da clareira.',
+      'Letras e atenção',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'Mistura de frutas',
+      'Conte as frutas da receita e encontre o número que falta.',
+      'Adição por pistas',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'Relógio espacial',
+      'Olhe os ponteiros e escolha a hora correta.',
+      'Ler horas',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'Soma no caderno',
+      'Some os números em coluna e escolha a resposta.',
+      'Adição escrita',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'Ponte por tamanho',
+      'Escolha a tábua que continua a ponte da menor à maior.',
+      'Comparar tamanhos',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'Ordem dos balões',
+      'Encontre o balão que ficará primeiro depois da ordenação.',
+      'Ordem e foco',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'Biscoitos para amigos',
+      'Divida os biscoitos igualmente entre os amigos.',
+      'Divisão igual',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'Rota da constelação',
+      'Siga o caminho brilhante e escolha a estrela final.',
+      'Rota no mapa',
+    ),
+    'word-builder': _PuzzleCopy(
+      'Palavras de uma palavra',
+      'Monte uma palavra nova com as letras do cartão grande.',
+      'Flexibilidade verbal',
+    ),
+    'letter-field': _PuzzleCopy(
+      'Campo de palavras',
+      'Encontre a palavra no campo de letras e siga o caminho.',
+      'Caça-palavras',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'Cruzadinha matemática',
+      'Preencha o cruzamento para que as duas pistas fiquem certas.',
+      'Cruzamentos numéricos',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'Quebra-cabeça espacial',
+      'Monte as peças da imagem e escolha a parte que falta.',
+      'Montagem de imagem',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'Sudoku com figuras',
+      'Coloque o símbolo que falta sem repetir linha ou coluna.',
+      'Grade lógica',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'Casas com pistas',
+      'Use as pistas e escolha a casa onde a estrela está escondida.',
+      'Raciocínio por pistas',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'Diferenças no acampamento',
+      'Encontre dois detalhes que mudaram no acampamento aconchegante.',
+      'Comparar imagens',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'Tangram do foguete',
+      'Monte a silhueta do foguete com peças geométricas coloridas.',
+      'Montagem de silhueta',
+    ),
+    'code-lock': _PuzzleCopy(
+      'Cadeado de código',
+      'Use as pistas do painel e escolha o código.',
+      'Código lógico',
+    ),
+    'story-order': _PuzzleCopy(
+      'História em quadros',
+      'Coloque os quadros em ordem para a história fazer sentido.',
+      'Memória sequencial',
+    ),
+    'market-change': _PuzzleCopy(
+      'Loja espacial',
+      'Conte quantas estrelas sobram depois da compra.',
+      'Contagem prática',
+    ),
+    'route-maze': _PuzzleCopy(
+      'Labirinto de comandos',
+      'Guie o herói pela grade até a estrela.',
+      'Planejamento de rota',
+    ),
+  },
+  'ar': {
+    'camp-story': _PuzzleCopy(
+      'قصة المخيم',
+      'تذكر ما الذي مدحه الأبطال في المخيم المريح.',
+      'ذاكرة القصة',
+    ),
+    'word-grid': _PuzzleCopy(
+      'شبكة النجمة',
+      'اعثر على الكلمة المخفية في شبكة الحروف.',
+      'بحث عن كلمة',
+    ),
+    'animal-word': _PuzzleCopy(
+      'كلمة الغابة',
+      'كوّن كلمة الحيوان من الحروف في الساحة.',
+      'حروف وانتباه',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      'مزيج الفاكهة',
+      'عد الفاكهة في الوصفة واعثر على الرقم الناقص.',
+      'جمع من القرائن',
+    ),
+    'moon-clock': _PuzzleCopy(
+      'ساعة الفضاء',
+      'انظر إلى العقارب واختر الوقت الصحيح.',
+      'قراءة الوقت',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      'جمع الدفتر',
+      'اجمع الأعداد في أعمدة واختر الإجابة.',
+      'جمع كتابي',
+    ),
+    'bridge-order': _PuzzleCopy(
+      'جسر الأحجام',
+      'اختر اللوح الذي يكمل الجسر من القصير إلى الطويل.',
+      'مقارنة الأحجام',
+    ),
+    'balloon-order': _PuzzleCopy(
+      'ترتيب البالونات',
+      'اعثر على البالون الذي سيأتي أولا بعد الترتيب.',
+      'ترتيب وتركيز',
+    ),
+    'cookie-share': _PuzzleCopy(
+      'كعك للأصدقاء',
+      'اقسم الكعك بالتساوي بين الأصدقاء.',
+      'تقسيم متساو',
+    ),
+    'constellation-route': _PuzzleCopy(
+      'مسار الكوكبة',
+      'اتبع المسار المضيء واختر النجمة الأخيرة.',
+      'مسار الخريطة',
+    ),
+    'word-builder': _PuzzleCopy(
+      'كلمات من كلمة',
+      'كوّن كلمة جديدة من حروف البطاقة الكبيرة.',
+      'مرونة الكلمات',
+    ),
+    'letter-field': _PuzzleCopy(
+      'حقل الكلمات',
+      'اعثر على الكلمة في حقل الحروف واتبع مسارها.',
+      'بحث عن كلمة',
+    ),
+    'math-crossword': _PuzzleCopy(
+      'كلمات متقاطعة رياضية',
+      'املأ خانة التقاطع حتى تصبح المسألتان صحيحتين.',
+      'تقاطعات الأرقام',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      'أحجية الفضاء',
+      'ركب قطع الصورة واختر الجزء الناقص.',
+      'تركيب الصور',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      'سودوكو الصور',
+      'ضع الرمز الناقص من دون تكرار في الصف أو العمود.',
+      'شبكة منطقية',
+    ),
+    'logic-houses': _PuzzleCopy(
+      'بيوت القرائن',
+      'استخدم القرائن واختر البيت الذي تخفي فيه النجمة.',
+      'استنتاج من القرائن',
+    ),
+    'camp-differences': _PuzzleCopy(
+      'اختلافات المخيم',
+      'اعثر على تفصيلين تغيّرا في المخيم المريح.',
+      'مقارنة الصور',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      'تانغرام الصاروخ',
+      'كوّن شكل الصاروخ من قطع هندسية زاهية.',
+      'تكوين الشكل',
+    ),
+    'code-lock': _PuzzleCopy(
+      'قفل الرمز',
+      'استخدم تلميحات اللوحة لاختيار الرمز.',
+      'رمز منطقي',
+    ),
+    'story-order': _PuzzleCopy(
+      'قصة بالصور',
+      'رتب الصور حتى تصبح القصة واضحة.',
+      'ذاكرة التسلسل',
+    ),
+    'market-change': _PuzzleCopy(
+      'متجر الفضاء',
+      'احسب عدد النجوم المتبقية بعد الشراء.',
+      'عد عملي',
+    ),
+    'route-maze': _PuzzleCopy(
+      'متاهة الأوامر',
+      'قد البطل عبر المربعات حتى النجمة.',
+      'تخطيط المسار',
+    ),
+  },
+  'zh': {
+    'camp-story': _PuzzleCopy(
+      '营火故事',
+      '记住英雄们在舒适营地里称赞了什么。',
+      '故事记忆',
+    ),
+    'word-grid': _PuzzleCopy(
+      '星星字母表',
+      '在字母表中找出隐藏的单词。',
+      '找单词',
+    ),
+    'animal-word': _PuzzleCopy(
+      '森林单词',
+      '用空地上的字母拼出动物单词。',
+      '字母和注意力',
+    ),
+    'fruit-fizz': _PuzzleCopy(
+      '水果混合',
+      '数一数配方里的水果，找出缺少的数字。',
+      '线索加法',
+    ),
+    'moon-clock': _PuzzleCopy(
+      '太空时钟',
+      '看指针，选择正确时间。',
+      '读时间',
+    ),
+    'notebook-sum': _PuzzleCopy(
+      '本子加法',
+      '把数字竖着相加并选择答案。',
+      '竖式加法',
+    ),
+    'bridge-order': _PuzzleCopy(
+      '按长度搭桥',
+      '选择能让桥从短到长继续下去的木板。',
+      '大小比较',
+    ),
+    'balloon-order': _PuzzleCopy(
+      '气球顺序',
+      '找出排序后会排第一的气球。',
+      '顺序和专注',
+    ),
+    'cookie-share': _PuzzleCopy(
+      '给朋友分饼干',
+      '把饼干平均分给朋友。',
+      '平均分',
+    ),
+    'constellation-route': _PuzzleCopy(
+      '星座路线',
+      '沿着发光路线，选择最后的星星。',
+      '地图路线',
+    ),
+    'word-builder': _PuzzleCopy(
+      '词中造词',
+      '用大卡片上的字组成一个新词。',
+      '词语灵活性',
+    ),
+    'letter-field': _PuzzleCopy(
+      '字词迷宫',
+      '在字母区域里找到词语并沿着路径走。',
+      '找词',
+    ),
+    'math-crossword': _PuzzleCopy(
+      '数学填字',
+      '填好交叉格，让两个数字线索都正确。',
+      '数字交叉',
+    ),
+    'picture-puzzle': _PuzzleCopy(
+      '太空拼图',
+      '拼好图片碎片，并选择缺失的部分。',
+      '图像拼合',
+    ),
+    'mini-sudoku': _PuzzleCopy(
+      '图形数独',
+      '放入缺少的符号，让行和列都不重复。',
+      '逻辑网格',
+    ),
+    'logic-houses': _PuzzleCopy(
+      '线索房子',
+      '根据线索，选择星星藏在哪个房子里。',
+      '线索推理',
+    ),
+    'camp-differences': _PuzzleCopy(
+      '营地找不同',
+      '找出舒适营地里改变的两个细节。',
+      '图片比较',
+    ),
+    'shape-tangram': _PuzzleCopy(
+      '火箭七巧板',
+      '用明亮的几何块拼出火箭轮廓。',
+      '轮廓拼合',
+    ),
+    'code-lock': _PuzzleCopy(
+      '密码锁',
+      '根据面板提示选择开锁密码。',
+      '逻辑密码',
+    ),
+    'story-order': _PuzzleCopy(
+      '故事排序',
+      '把画面排成合理的故事顺序。',
+      '顺序记忆',
+    ),
+    'market-change': _PuzzleCopy(
+      '太空商店',
+      '算一算购买后还剩几颗星。',
+      '实用计算',
+    ),
+    'route-maze': _PuzzleCopy(
+      '指令迷宫',
+      '带领英雄沿格子走到星星。',
+      '路线规划',
+    ),
+  },
+};
 
 const Map<String, Map<String, String>> _areaTitles = {
   'en': {

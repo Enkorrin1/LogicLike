@@ -403,5 +403,34 @@
   "parentDiscussBody": "Dopo un compito, chiedi: \"Come hai trovato la regola?\" Questo crea spiegazioni, non supposizioni.",
   "parentFamilySecurityTitle": "Famiglia e sicurezza",
   "parentStorageLabel": "Magazzinaggio",
-  "parentStorageLocal": "sul dispositivo"
+  "parentStorageLocal": "sul dispositivo",
+  "notificationDailyTitle": "Una nuova missione ti aspetta",
+  "notificationDailyBody": "{name}, risolvi un piccolo rompicapo e tieni viva la serie di stelle.",
+  "notificationEveningTitle": "Un passo prima di dormire?",
+  "notificationEveningBody": "Per {name} resta una missione breve. Bastano 5 minuti tranquilli.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Promemoria",
+  "parentReminderStatusOn": "attivi",
+  "parentReminderStatusOff": "disattivi",
+  "parentRemindersBody": "Un promemoria quotidiano leggero aiuta a tornare alla missione senza pressione.",
+  "parentReminderDailyLabel": "Missione del giorno",
+  "parentReminderDailyValue": "18:30 ogni giorno",
+  "parentReminderFollowUpLabel": "Richiamo serale",
+  "parentReminderFollowUpValue": "20:15 se la missione è in attesa",
+  "parentReminderToggleLabel": "Ricorda di tornare",
+  "parentReminderToggleOn": "BrainUp inviterà il bambino a una missione breve.",
+  "parentReminderToggleOff": "I promemoria sono disattivati. L’app resterà silenziosa."
 }

@@ -6,6 +6,7 @@ import 'package:logic_like/src/data/family_profile_store.dart';
 import 'package:logic_like/src/data/locale_store.dart';
 import 'package:logic_like/src/domain/daily_challenge.dart';
 import 'package:logic_like/src/domain/family_profile.dart';
+import 'package:logic_like/src/notifications/app_notification_service.dart';
 
 void main() {
   group('AppController', () {
@@ -22,6 +23,24 @@ void main() {
 
       expect(controller.isLoading, isFalse);
       expect(controller.familyProfile, profile);
+    });
+
+    test('schedules reminders for loaded profile', () async {
+      final profile = FamilyProfile(
+        childName: 'Mira',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final reminders = _FakeReminderScheduler();
+      final controller = AppController(
+        _InMemoryFamilyProfileStore(profile),
+        reminderScheduler: reminders,
+      );
+
+      await controller.load();
+
+      expect(reminders.scheduledProfiles, [profile]);
+      expect(reminders.cancelCount, 0);
     });
 
     test('creates and saves profile from onboarding', () async {
@@ -127,6 +146,65 @@ void main() {
       expect(controller.familyProfile?.language, AppLanguage.en);
       expect(store.savedProfile?.language, AppLanguage.en);
     });
+
+    test('reschedules reminders after language changes', () async {
+      final profile = FamilyProfile(
+        childName: 'Mira',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final reminders = _FakeReminderScheduler();
+      final controller = AppController(
+        _InMemoryFamilyProfileStore(profile),
+        reminderScheduler: reminders,
+      );
+
+      await controller.load();
+      await controller.changeLanguage(AppLanguage.en);
+
+      expect(reminders.scheduledProfiles.length, 2);
+      expect(reminders.scheduledProfiles.last.language, AppLanguage.en);
+    });
+
+    test('changes and saves reminder preference', () async {
+      final profile = FamilyProfile(
+        childName: 'Mira',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final store = _InMemoryFamilyProfileStore(profile);
+      final reminders = _FakeReminderScheduler();
+      final controller = AppController(
+        store,
+        reminderScheduler: reminders,
+      );
+
+      await controller.load();
+      await controller.changeReminderPreference(false);
+
+      expect(controller.familyProfile?.remindersEnabled, isFalse);
+      expect(store.savedProfile?.remindersEnabled, isFalse);
+      expect(reminders.scheduledProfiles.last.remindersEnabled, isFalse);
+    });
+
+    test('cancels reminders when profile is reset', () async {
+      final profile = FamilyProfile(
+        childName: 'Mira',
+        childAge: ChildAge.six,
+        createdAt: DateTime(2026, 6, 8),
+      );
+      final reminders = _FakeReminderScheduler();
+      final controller = AppController(
+        _InMemoryFamilyProfileStore(profile),
+        reminderScheduler: reminders,
+      );
+
+      await controller.load();
+      await controller.resetFamilyProfile();
+
+      expect(controller.familyProfile, isNull);
+      expect(reminders.cancelCount, 1);
+    });
   });
 }
 
@@ -178,5 +256,20 @@ class _InMemoryLocaleStore implements LocaleStore {
   @override
   Future<void> save(Locale locale) async {
     savedLocale = locale;
+  }
+}
+
+class _FakeReminderScheduler implements ReminderScheduler {
+  final scheduledProfiles = <FamilyProfile>[];
+  int cancelCount = 0;
+
+  @override
+  Future<void> cancelAllReminders() async {
+    cancelCount += 1;
+  }
+
+  @override
+  Future<void> scheduleForProfile(FamilyProfile profile) async {
+    scheduledProfiles.add(profile);
   }
 }

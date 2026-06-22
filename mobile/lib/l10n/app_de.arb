@@ -403,5 +403,34 @@
   "parentDiscussBody": "Fragen Sie nach einer Aufgabe: „Wie haben Sie die Regel gefunden?“ Dies baut auf Erklärungen auf, nicht auf Vermutungen.",
   "parentFamilySecurityTitle": "Familie und Sicherheit",
   "parentStorageLabel": "Lagerung",
-  "parentStorageLocal": "auf dem Gerät"
+  "parentStorageLocal": "auf dem Gerät",
+  "notificationDailyTitle": "Eine neue Mission wartet",
+  "notificationDailyBody": "{name}, löse ein kleines Rätsel und halte die Sternenserie am Leuchten.",
+  "notificationEveningTitle": "Ein kleiner Schritt vor dem Schlafengehen?",
+  "notificationEveningBody": "Für {name} ist noch eine kurze Mission offen. 5 ruhige Minuten reichen.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Erinnerungen",
+  "parentReminderStatusOn": "an",
+  "parentReminderStatusOff": "aus",
+  "parentRemindersBody": "Eine sanfte tägliche Erinnerung hilft, ohne Druck zur Mission zurückzukehren.",
+  "parentReminderDailyLabel": "Tagesmission",
+  "parentReminderDailyValue": "18:30 jeden Tag",
+  "parentReminderFollowUpLabel": "Abendliche Erinnerung",
+  "parentReminderFollowUpValue": "20:15, wenn die Mission wartet",
+  "parentReminderToggleLabel": "Rückkehr erinnern",
+  "parentReminderToggleOn": "BrainUp lädt das Kind zu einer kurzen Mission ein.",
+  "parentReminderToggleOff": "Erinnerungen sind aus. Die App bleibt ruhig."
 }

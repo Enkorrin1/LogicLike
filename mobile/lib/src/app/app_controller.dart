@@ -6,15 +6,19 @@ import '../data/family_profile_store.dart';
 import '../data/locale_store.dart';
 import '../domain/daily_challenge.dart';
 import '../domain/family_profile.dart';
+import '../notifications/app_notification_service.dart';
 
 class AppController extends ChangeNotifier {
   AppController(
     this._familyProfileStore, {
     LocaleStore? localeStore,
-  }) : _localeStore = localeStore;
+    ReminderScheduler? reminderScheduler,
+  })  : _localeStore = localeStore,
+        _reminderScheduler = reminderScheduler;
 
   final FamilyProfileStore _familyProfileStore;
   final LocaleStore? _localeStore;
+  final ReminderScheduler? _reminderScheduler;
 
   bool _isLoading = true;
   FamilyProfile? _familyProfile;
@@ -33,6 +37,7 @@ class AppController extends ChangeNotifier {
     _locale = loaded[1] as Locale? ?? const Locale('ru');
     _isLoading = false;
     notifyListeners();
+    await _syncRemindersFor(_familyProfile);
   }
 
   Future<void> changeLocale(Locale locale) async {
@@ -58,6 +63,7 @@ class AppController extends ChangeNotifier {
     await _familyProfileStore.save(profile);
     _familyProfile = profile;
     notifyListeners();
+    await _syncRemindersFor(profile);
   }
 
   Future<void> completeDailyChallenge(DailyChallenge challenge) async {
@@ -105,6 +111,7 @@ class AppController extends ChangeNotifier {
     await _familyProfileStore.save(nextProfile);
     _familyProfile = nextProfile;
     notifyListeners();
+    await _syncRemindersFor(nextProfile);
   }
 
   Future<void> completePracticePuzzle(DailyChallenge challenge) async {
@@ -129,6 +136,7 @@ class AppController extends ChangeNotifier {
     await _familyProfileStore.save(nextProfile);
     _familyProfile = nextProfile;
     notifyListeners();
+    await _syncRemindersFor(nextProfile);
   }
 
   Future<void> changeLanguage(AppLanguage language) async {
@@ -142,11 +150,51 @@ class AppController extends ChangeNotifier {
     await _familyProfileStore.save(nextProfile);
     _familyProfile = nextProfile;
     notifyListeners();
+    await _syncRemindersFor(nextProfile);
+  }
+
+  Future<void> changeReminderPreference(bool enabled) async {
+    final currentProfile = _familyProfile;
+    if (currentProfile == null || currentProfile.remindersEnabled == enabled) {
+      return;
+    }
+
+    final nextProfile = currentProfile.copyWith(remindersEnabled: enabled);
+
+    await _familyProfileStore.save(nextProfile);
+    _familyProfile = nextProfile;
+    notifyListeners();
+    await _syncRemindersFor(nextProfile);
   }
 
   Future<void> resetFamilyProfile() async {
     await _familyProfileStore.clear();
     _familyProfile = null;
     notifyListeners();
+    await _syncRemindersFor(null);
+  }
+
+  Future<void> _syncRemindersFor(FamilyProfile? profile) async {
+    final scheduler = _reminderScheduler;
+    if (scheduler == null) {
+      return;
+    }
+
+    try {
+      if (profile == null) {
+        await scheduler.cancelAllReminders();
+      } else {
+        await scheduler.scheduleForProfile(profile);
+      }
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'app_controller',
+          context: ErrorDescription('syncing reminder notifications'),
+        ),
+      );
+    }
   }
 }

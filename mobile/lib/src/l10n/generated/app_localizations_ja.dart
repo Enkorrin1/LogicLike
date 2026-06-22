@@ -607,4 +607,53 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get parentStorageLocal => 'デバイス上で';
+
+  @override
+  String get notificationDailyTitle => '新しいミッションが待ってるよ';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name、小さなパズルを解いて星の連続記録を光らせよう。';
+  }
+
+  @override
+  String get notificationEveningTitle => '寝る前にもう1ステップ？';
+
+  @override
+  String notificationEveningBody(String name) {
+    return '$nameには短いミッションが残っています。落ち着いた5分で十分です。';
+  }
+
+  @override
+  String get parentRemindersTitle => 'リマインダー';
+
+  @override
+  String get parentReminderStatusOn => 'オン';
+
+  @override
+  String get parentReminderStatusOff => 'オフ';
+
+  @override
+  String get parentRemindersBody => 'やさしい毎日の通知で、プレッシャーなくミッションに戻れます。';
+
+  @override
+  String get parentReminderDailyLabel => '今日のミッション';
+
+  @override
+  String get parentReminderDailyValue => '毎日18:30';
+
+  @override
+  String get parentReminderFollowUpLabel => '夜のフォロー';
+
+  @override
+  String get parentReminderFollowUpValue => 'ミッションが残っている場合は20:15';
+
+  @override
+  String get parentReminderToggleLabel => '戻る通知';
+
+  @override
+  String get parentReminderToggleOn => 'BrainUpが短いミッションへそっと誘います。';
+
+  @override
+  String get parentReminderToggleOff => 'リマインダーはオフです。アプリは静かにしています。';
 }

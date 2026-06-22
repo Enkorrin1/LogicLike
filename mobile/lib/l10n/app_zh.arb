@@ -403,5 +403,34 @@
   "parentDiscussBody": "完成一项任务后，问：“你是如何发现规则的？”这建立了解释，而不是猜测。",
   "parentFamilySecurityTitle": "家庭与安全",
   "parentStorageLabel": "贮存",
-  "parentStorageLocal": "在设备上"
+  "parentStorageLocal": "在设备上",
+  "notificationDailyTitle": "新任务在等你",
+  "notificationDailyBody": "{name}，完成一个小谜题，让星星连胜继续发光。",
+  "notificationEveningTitle": "睡前再走一步？",
+  "notificationEveningBody": "{name} 还有一个短任务。安静练习 5 分钟就够了。",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "提醒",
+  "parentReminderStatusOn": "开启",
+  "parentReminderStatusOff": "关闭",
+  "parentRemindersBody": "温和的每日提醒帮助孩子无压力地回到任务。",
+  "parentReminderDailyLabel": "每日任务",
+  "parentReminderDailyValue": "每天 18:30",
+  "parentReminderFollowUpLabel": "晚间提醒",
+  "parentReminderFollowUpValue": "如果任务还在等待，20:15",
+  "parentReminderToggleLabel": "提醒回来",
+  "parentReminderToggleOn": "BrainUp 会邀请孩子完成一个短任务。",
+  "parentReminderToggleOff": "提醒已关闭。应用会保持安静。"
 }

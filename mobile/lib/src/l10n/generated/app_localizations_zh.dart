@@ -602,4 +602,53 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get parentStorageLocal => '在设备上';
+
+  @override
+  String get notificationDailyTitle => '新任务在等你';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name，完成一个小谜题，让星星连胜继续发光。';
+  }
+
+  @override
+  String get notificationEveningTitle => '睡前再走一步？';
+
+  @override
+  String notificationEveningBody(String name) {
+    return '$name 还有一个短任务。安静练习 5 分钟就够了。';
+  }
+
+  @override
+  String get parentRemindersTitle => '提醒';
+
+  @override
+  String get parentReminderStatusOn => '开启';
+
+  @override
+  String get parentReminderStatusOff => '关闭';
+
+  @override
+  String get parentRemindersBody => '温和的每日提醒帮助孩子无压力地回到任务。';
+
+  @override
+  String get parentReminderDailyLabel => '每日任务';
+
+  @override
+  String get parentReminderDailyValue => '每天 18:30';
+
+  @override
+  String get parentReminderFollowUpLabel => '晚间提醒';
+
+  @override
+  String get parentReminderFollowUpValue => '如果任务还在等待，20:15';
+
+  @override
+  String get parentReminderToggleLabel => '提醒回来';
+
+  @override
+  String get parentReminderToggleOn => 'BrainUp 会邀请孩子完成一个短任务。';
+
+  @override
+  String get parentReminderToggleOff => '提醒已关闭。应用会保持安静。';
 }

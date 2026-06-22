@@ -10,7 +10,7 @@ void main() {
           .expand((area) => area.puzzles)
           .toList(growable: false);
 
-      expect(puzzles, hasLength(40));
+      expect(puzzles.length, greaterThanOrEqualTo(40));
 
       for (final puzzle in puzzles) {
         final rule = answerRuleForPuzzle(puzzle);

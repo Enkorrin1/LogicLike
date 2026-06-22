@@ -607,4 +607,53 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get parentStorageLocal => '기기에서';
+
+  @override
+  String get notificationDailyTitle => '새 미션이 기다려요';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name, 작은 퍼즐을 풀고 별 연속 기록을 이어 가요.';
+  }
+
+  @override
+  String get notificationEveningTitle => '잠들기 전 한 단계 더?';
+
+  @override
+  String notificationEveningBody(String name) {
+    return '$name에게 짧은 미션이 남았어요. 차분한 5분이면 충분해요.';
+  }
+
+  @override
+  String get parentRemindersTitle => '알림';
+
+  @override
+  String get parentReminderStatusOn => '켜짐';
+
+  @override
+  String get parentReminderStatusOff => '꺼짐';
+
+  @override
+  String get parentRemindersBody => '부드러운 매일 알림이 부담 없이 미션으로 돌아오게 도와줘요.';
+
+  @override
+  String get parentReminderDailyLabel => '오늘의 미션';
+
+  @override
+  String get parentReminderDailyValue => '매일 18:30';
+
+  @override
+  String get parentReminderFollowUpLabel => '저녁 알림';
+
+  @override
+  String get parentReminderFollowUpValue => '미션이 남아 있으면 20:15';
+
+  @override
+  String get parentReminderToggleLabel => '돌아오기 알림';
+
+  @override
+  String get parentReminderToggleOn => 'BrainUp이 짧은 미션으로 아이를 초대해요.';
+
+  @override
+  String get parentReminderToggleOff => '알림이 꺼져 있어요. 앱은 조용히 있을게요.';
 }

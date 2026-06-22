@@ -55,6 +55,12 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     correctAnswer: 'Ключ',
     retryText: 'Код повторяет пару: знак, ключ, знак, ключ.',
   ),
+  'code-lock': PuzzleAnswerRule(
+    options: ['246', '248', '268'],
+    correctAnswer: '248',
+    retryText:
+        'Код 248: первая цифра 2, середина на 2 больше, последняя вдвое больше средней.',
+  ),
   'why-chain': PuzzleAnswerRule(
     options: ['Причина', 'Следствие', 'Лишнее'],
     correctAnswer: 'Причина',
@@ -64,6 +70,23 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     options: ['Треугольник', 'Круг', 'Квадрат'],
     correctAnswer: 'Круг',
     retryText: 'Обе подсказки оставляют только один вариант.',
+  ),
+  'bridge-order': PuzzleAnswerRule(
+    options: ['A', 'B', 'C'],
+    correctAnswer: 'B',
+    retryText: 'Доски растут по длине, поэтому нужна средняя доска B.',
+  ),
+  'mini-sudoku': PuzzleAnswerRule(
+    options: ['shape_star', 'shape_moon', 'shape_rocket'],
+    correctAnswer: 'shape_rocket',
+    retryText:
+        'В строке уже есть звезда и луна, а в столбце не хватает ракеты.',
+  ),
+  'logic-houses': PuzzleAnswerRule(
+    options: ['house_blue', 'house_green', 'house_yellow'],
+    correctAnswer: 'house_green',
+    retryText:
+        'Звезда не в синем доме и стоит правее желтого, значит она в зеленом.',
   ),
   'memory-pairs': PuzzleAnswerRule(
     options: ['Звезда', 'Облако', 'Сердце'],
@@ -84,6 +107,16 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     options: ['Ракета', 'Планета', 'Звезда'],
     correctAnswer: 'Планета',
     retryText: 'Представь, где лежала закрытая карточка.',
+  ),
+  'camp-story': PuzzleAnswerRule(
+    options: ['Костер', 'Палатка', 'Подушка'],
+    correctAnswer: 'Костер',
+    retryText: 'В истории герои радовались теплому костру в лагере.',
+  ),
+  'story-order': PuzzleAnswerRule(
+    options: ['1-2-3', '2-1-3', '3-1-2'],
+    correctAnswer: '1-2-3',
+    retryText: 'Сначала карта, потом полет, затем найденная звезда.',
   ),
   'color-rhythm': PuzzleAnswerRule(
     options: ['Красный', 'Синий', 'Желтый'],
@@ -115,6 +148,11 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     correctAnswer: 'Сверху',
     retryText: 'Маленькая деталь спряталась ближе к верхнему краю.',
   ),
+  'word-grid': PuzzleAnswerRule(
+    options: ['STAR', 'MARCH', 'ARM'],
+    correctAnswer: 'STAR',
+    retryText: 'Слово STAR читается слева направо в нижней части сетки.',
+  ),
   'shadow-match': PuzzleAnswerRule(
     options: ['След 1', 'След 2', 'След 3'],
     correctAnswer: 'След 2',
@@ -126,6 +164,27 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     retryText:
         'Сначала найди образец, потом выбери карточку с таким же знаком.',
   ),
+  'animal-word': PuzzleAnswerRule(
+    options: ['DOG', 'CAT', 'FOX'],
+    correctAnswer: 'DOG',
+    retryText: 'На полянке уже видны буквы D и O, им нужна буква G.',
+  ),
+  'balloon-order': PuzzleAnswerRule(
+    options: ['1', '2', '3'],
+    correctAnswer: '1',
+    retryText: 'После сортировки по числам первым будет шарик с 1.',
+  ),
+  'word-builder': PuzzleAnswerRule(
+    options: ['word_star', 'word_moon', 'word_sun'],
+    correctAnswer: 'word_star',
+    retryText:
+        'Используй буквы большой карточки, чтобы собрать слово “звезда”.',
+  ),
+  'letter-field': PuzzleAnswerRule(
+    options: ['word_star', 'word_moon', 'word_sun'],
+    correctAnswer: 'word_moon',
+    retryText: 'Слово “луна” спрятано одной непрерывной дорожкой.',
+  ),
   'hidden-star': PuzzleAnswerRule(
     options: ['Планета', 'Звезда', 'Облако'],
     correctAnswer: 'Звезда',
@@ -135,6 +194,11 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     options: ['1 отличие', '2 отличия', '3 отличия'],
     correctAnswer: '2 отличия',
     retryText: 'Сравни картинки по частям: верх, центр и низ.',
+  ),
+  'camp-differences': PuzzleAnswerRule(
+    options: ['1', '2', '3'],
+    correctAnswer: '2',
+    retryText: 'Отличаются флажок на палатке и маленькая звезда возле костра.',
   ),
   'clean-row': PuzzleAnswerRule(
     options: ['Круг', 'Кубик', 'Звезда'],
@@ -181,10 +245,40 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     correctAnswer: '5',
     retryText: 'Сложи первую группу со второй: 3 плюс 2.',
   ),
+  'fruit-fizz': PuzzleAnswerRule(
+    options: ['1', '2', '3'],
+    correctAnswer: '3',
+    retryText: 'В рецепте уже есть 3 лайма и 2 ягоды: до 8 не хватает 3.',
+  ),
+  'moon-clock': PuzzleAnswerRule(
+    options: ['3:00', '6:00', '12:15'],
+    correctAnswer: '3:00',
+    retryText: 'Минутная стрелка смотрит на 12, часовая — на 3.',
+  ),
+  'notebook-sum': PuzzleAnswerRule(
+    options: ['25', '35', '45'],
+    correctAnswer: '35',
+    retryText: '15 плюс 20 равно 35: десятки складываются отдельно.',
+  ),
+  'cookie-share': PuzzleAnswerRule(
+    options: ['1', '2', '3'],
+    correctAnswer: '2',
+    retryText: 'Шесть печений делятся на трех друзей: каждому достанется 2.',
+  ),
+  'math-crossword': PuzzleAnswerRule(
+    options: ['7', '8', '9'],
+    correctAnswer: '8',
+    retryText: 'В пересечении стоит 8: 3 + 5 = 8 и 8 - 2 = 6.',
+  ),
   'sticker-shop': PuzzleAnswerRule(
     options: ['2 наклейки', '3 наклейки', '4 наклейки'],
     correctAnswer: '3 наклейки',
     retryText: 'Выбирай столько, чтобы звезд хватило без остатка.',
+  ),
+  'market-change': PuzzleAnswerRule(
+    options: ['1', '2', '3'],
+    correctAnswer: '2',
+    retryText: 'У героя 5 звезд, ракета стоит 3, значит останется 2.',
   ),
   'code-grid': PuzzleAnswerRule(
     options: ['Клетка A', 'Клетка B', 'Клетка C'],
@@ -216,15 +310,36 @@ const _rulesByPuzzleId = <String, PuzzleAnswerRule>{
     correctAnswer: 'Финиш C',
     retryText: 'Следуй стрелкам по очереди до последней клетки.',
   ),
+  'route-maze': PuzzleAnswerRule(
+    options: ['path_A', 'path_B', 'path_C'],
+    correctAnswer: 'path_B',
+    retryText: 'Путь B ведет вправо, вверх и снова вправо прямо к звезде.',
+  ),
   'shape-tower': PuzzleAnswerRule(
     options: ['Круг сверху', 'Квадрат сверху', 'Треугольник сверху'],
     correctAnswer: 'Треугольник сверху',
     retryText: 'Сравни башню с образцом сверху вниз.',
   ),
+  'picture-puzzle': PuzzleAnswerRule(
+    options: ['A', 'B', 'C'],
+    correctAnswer: 'B',
+    retryText: 'Кусочек B закрывает середину ракеты и совпадает с линиями.',
+  ),
+  'shape-tangram': PuzzleAnswerRule(
+    options: ['piece_triangle', 'piece_square', 'piece_circle'],
+    correctAnswer: 'piece_triangle',
+    retryText:
+        'Нос ракеты собирается из треугольника, а не из круга или квадрата.',
+  ),
   'final-orbit': PuzzleAnswerRule(
     options: ['Орбита A', 'Орбита B', 'Орбита C'],
     correctAnswer: 'Орбита B',
     retryText: 'Соедини форму, стрелку и поворот в один путь.',
+  ),
+  'constellation-route': PuzzleAnswerRule(
+    options: ['A', 'B', 'C'],
+    correctAnswer: 'B',
+    retryText: 'Сияющая линия заканчивается у звезды B.',
   ),
 };
 

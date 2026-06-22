@@ -35,10 +35,9 @@ void main() {
       language: AppLanguage.it,
     );
     final l10n = lookupAppLocalizations(const Locale('it'));
-    final puzzle = puzzleAreasForAge(ChildAge.six)
-        .firstWhere((area) => area.id == 'logic')
-        .puzzles
-        .first;
+    final logicArea = puzzleAreasForAge(ChildAge.six)
+        .firstWhere((area) => area.id == 'logic');
+    final puzzle = logicArea.puzzles.first;
 
     await tester.pumpWidget(
       MaterialApp(
@@ -62,7 +61,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text(l10n.challengeFreePlay), findsOneWidget);
-    expect(find.text(l10n.challengeProgressStep(1, 8)), findsOneWidget);
+    expect(
+      find.text(l10n.challengeProgressStep(1, logicArea.puzzles.length)),
+      findsOneWidget,
+    );
     expect(find.text(l10n.puzzleTitle(puzzle)), findsOneWidget);
     expect(find.text(l10n.puzzleSkill(puzzle)), findsOneWidget);
     expect(find.text(l10n.puzzlePrompt(puzzle)), findsOneWidget);

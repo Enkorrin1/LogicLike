@@ -619,4 +619,55 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get parentStorageLocal => 'على الجهاز';
+
+  @override
+  String get notificationDailyTitle => 'مهمة جديدة بانتظارك';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name، حل لغزا صغيرا وحافظ على سلسلة النجوم.';
+  }
+
+  @override
+  String get notificationEveningTitle => 'خطوة صغيرة قبل النوم؟';
+
+  @override
+  String notificationEveningBody(String name) {
+    return 'لدى $name مهمة قصيرة متبقية. خمس دقائق هادئة تكفي.';
+  }
+
+  @override
+  String get parentRemindersTitle => 'التذكيرات';
+
+  @override
+  String get parentReminderStatusOn => 'مفعلة';
+
+  @override
+  String get parentReminderStatusOff => 'متوقفة';
+
+  @override
+  String get parentRemindersBody =>
+      'يساعد تذكير يومي لطيف على العودة إلى المهمة دون ضغط.';
+
+  @override
+  String get parentReminderDailyLabel => 'مهمة اليوم';
+
+  @override
+  String get parentReminderDailyValue => '18:30 كل يوم';
+
+  @override
+  String get parentReminderFollowUpLabel => 'تذكير المساء';
+
+  @override
+  String get parentReminderFollowUpValue => '20:15 إذا كانت المهمة تنتظر';
+
+  @override
+  String get parentReminderToggleLabel => 'التذكير بالعودة';
+
+  @override
+  String get parentReminderToggleOn => 'سيدعو BrainUp الطفل إلى مهمة قصيرة.';
+
+  @override
+  String get parentReminderToggleOff =>
+      'التذكيرات متوقفة. سيبقى التطبيق هادئا.';
 }

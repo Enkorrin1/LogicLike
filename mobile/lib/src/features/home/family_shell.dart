@@ -69,6 +69,8 @@ class _FamilyShellState extends State<FamilyShell> {
             profile: profile,
             onResetProfile: widget.controller.resetFamilyProfile,
             onLanguageChanged: widget.controller.changeLanguage,
+            onReminderPreferenceChanged:
+                widget.controller.changeReminderPreference,
           ),
         ];
 

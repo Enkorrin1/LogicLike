@@ -403,5 +403,34 @@
   "parentDiscussBody": "Después de una tarea, pregunte: \"¿Cómo encontraste la regla?\" Esto genera explicaciones, no conjeturas.",
   "parentFamilySecurityTitle": "Familia y seguridad",
   "parentStorageLabel": "Almacenamiento",
-  "parentStorageLocal": "en el dispositivo"
+  "parentStorageLocal": "en el dispositivo",
+  "notificationDailyTitle": "Hay una nueva misión",
+  "notificationDailyBody": "{name}, resuelve un pequeño acertijo y mantén encendida la racha de estrellas.",
+  "notificationEveningTitle": "¿Un paso antes de dormir?",
+  "notificationEveningBody": "A {name} le queda una misión corta. Bastan 5 minutos tranquilos.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Recordatorios",
+  "parentReminderStatusOn": "activos",
+  "parentReminderStatusOff": "inactivos",
+  "parentRemindersBody": "Un aviso diario suave ayuda a volver a la misión sin presión.",
+  "parentReminderDailyLabel": "Misión diaria",
+  "parentReminderDailyValue": "18:30 cada día",
+  "parentReminderFollowUpLabel": "Seguimiento de la tarde",
+  "parentReminderFollowUpValue": "20:15 si la misión está esperando",
+  "parentReminderToggleLabel": "Recordar volver",
+  "parentReminderToggleOn": "BrainUp invitará al niño a una misión corta.",
+  "parentReminderToggleOff": "Los recordatorios están desactivados. La app quedará en silencio."
 }

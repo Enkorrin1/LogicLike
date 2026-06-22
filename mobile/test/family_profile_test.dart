@@ -13,6 +13,7 @@ void main() {
         completedLevels: 3,
         completedPracticePuzzleIds: const ['logic-1', 'memory-2'],
         lastChallengeDate: DateTime(2026, 6, 8),
+        remindersEnabled: false,
       );
 
       final restored = FamilyProfile.fromJson(profile.toJson());
@@ -29,6 +30,7 @@ void main() {
 
       expect(restored.completedPracticePuzzleIds, isEmpty);
       expect(restored.language, AppLanguage.ru);
+      expect(restored.remindersEnabled, isTrue);
     });
 
     test('detects challenge completion by calendar date', () {

@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
@@ -2350,6 +2352,22 @@ class _MemoryStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (puzzle.id == 'camp-story') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _CampStoryStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'story-order') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _StoryOrderStage(accent: accent, compact: compact),
+      );
+    }
+
     final cardSize = compact ? 38.0 : 44.0;
     final spec = _memoryStageSpecFor(puzzle.id, accent);
 
@@ -2386,6 +2404,203 @@ class _MemoryStage extends StatelessWidget {
       ),
     );
   }
+}
+
+class _StoryOrderStage extends StatefulWidget {
+  const _StoryOrderStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_StoryOrderStage> createState() => _StoryOrderStageState();
+}
+
+class _StoryOrderStageState extends State<_StoryOrderStage> {
+  List<String> _frames = const ['rocket', 'map', 'star'];
+
+  bool get _solved =>
+      _frames[0] == 'map' && _frames[1] == 'rocket' && _frames[2] == 'star';
+
+  void _moveFrame(int index) {
+    setState(() {
+      final next = [..._frames];
+      final item = next.removeAt(index);
+      next.insert(index == 0 ? next.length : index - 1, item);
+      _frames = next;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cardWidth = widget.compact ? 72.0 : 82.0;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 108 : 126,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF3D9), Color(0xFFE8F8FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Positioned(
+                left: 38,
+                right: 38,
+                top: widget.compact ? 45 : 54,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: (_solved ? AppPalette.mint : widget.accent)
+                        .withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  for (var index = 0; index < _frames.length; index++)
+                    _StoryFrameCard(
+                      frame: _frames[index],
+                      index: index,
+                      width: cardWidth,
+                      accent: widget.accent,
+                      solved: _solved,
+                      onTap: () => _moveFrame(index),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryFrameCard extends StatelessWidget {
+  const _StoryFrameCard({
+    required this.frame,
+    required this.index,
+    required this.width,
+    required this.accent,
+    required this.solved,
+    required this.onTap,
+  });
+
+  final String frame;
+  final int index;
+  final double width;
+  final Color accent;
+  final bool solved;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _storyFrameColor(frame, accent);
+
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(22),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: width,
+        height: width * 1.08,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(
+            color: solved ? AppPalette.mint : color.withValues(alpha: 0.38),
+            width: solved ? 3 : 1.4,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: solved ? 0.26 : 0.14),
+              blurRadius: 14,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              top: 8,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  width: width * 0.58,
+                  height: width * 0.58,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        color.withValues(alpha: 0.20),
+                        color.withValues(alpha: 0.07),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Icon(_storyFrameIcon(frame), color: color, size: 34),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: solved ? AppPalette.mint : accent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  '${index + 1}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+IconData _storyFrameIcon(String frame) {
+  return switch (frame) {
+    'map' => Icons.map_rounded,
+    'rocket' => Icons.rocket_launch_rounded,
+    'star' => Icons.star_rounded,
+    _ => Icons.auto_awesome_rounded,
+  };
+}
+
+Color _storyFrameColor(String frame, Color accent) {
+  return switch (frame) {
+    'map' => AppPalette.teal,
+    'rocket' => AppPalette.coral,
+    'star' => AppPalette.mango,
+    _ => accent,
+  };
 }
 
 class _MemoryStageSpec {
@@ -2685,6 +2900,25 @@ class _AttentionStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final customStage = switch (puzzle.id) {
+      'word-grid' => _WordGridStage(accent: accent, compact: compact),
+      'animal-word' => _AnimalWordStage(accent: accent, compact: compact),
+      'balloon-order' => _BalloonOrderStage(accent: accent, compact: compact),
+      'word-builder' => _WordBuilderStage(accent: accent, compact: compact),
+      'letter-field' => _LetterFieldStage(accent: accent, compact: compact),
+      'camp-differences' =>
+        _CampDifferencesStage(accent: accent, compact: compact),
+      _ => null,
+    };
+
+    if (customStage != null) {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: customStage,
+      );
+    }
+
     final items = _attentionStageItemsFor(puzzle.id, accent, compact);
 
     return _StageShell(
@@ -2905,6 +3139,2201 @@ List<Widget> _attentionStageItemsFor(
   };
 }
 
+class _CampStoryStage extends StatelessWidget {
+  const _CampStoryStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: SizedBox(
+        width: compact ? 286 : 328,
+        height: compact ? 92 : 112,
+        child: CustomPaint(
+          painter: _CampStoryPainter(accent),
+        ),
+      ),
+    );
+  }
+}
+
+class _CampStoryPainter extends CustomPainter {
+  const _CampStoryPainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final radius = Radius.circular(size.height * 0.22);
+    final sky = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          AppPalette.sky.withValues(alpha: 0.42),
+          AppPalette.mint.withValues(alpha: 0.50),
+        ],
+      ).createShader(rect);
+    canvas.drawRRect(RRect.fromRectAndRadius(rect, radius), sky);
+
+    final ground = Paint()..color = const Color(0xFFBFEBCF);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, size.height * 0.62, size.width, size.height * 0.38),
+        radius,
+      ),
+      ground,
+    );
+
+    final tent = Path()
+      ..moveTo(size.width * 0.12, size.height * 0.70)
+      ..lineTo(size.width * 0.30, size.height * 0.22)
+      ..lineTo(size.width * 0.48, size.height * 0.70)
+      ..close();
+    canvas.drawPath(tent, Paint()..color = AppPalette.lavender);
+
+    final tentDoor = Path()
+      ..moveTo(size.width * 0.30, size.height * 0.70)
+      ..lineTo(size.width * 0.39, size.height * 0.70)
+      ..lineTo(size.width * 0.30, size.height * 0.36)
+      ..close();
+    canvas.drawPath(
+        tentDoor, Paint()..color = Colors.white.withValues(alpha: 0.86));
+
+    final logPaint = Paint()
+      ..color = const Color(0xFF8D5A35)
+      ..strokeWidth = 6
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(size.width * 0.57, size.height * 0.76),
+      Offset(size.width * 0.76, size.height * 0.66),
+      logPaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.58, size.height * 0.66),
+      Offset(size.width * 0.76, size.height * 0.76),
+      logPaint,
+    );
+
+    final flameOuter = Path()
+      ..moveTo(size.width * 0.67, size.height * 0.66)
+      ..cubicTo(size.width * 0.56, size.height * 0.55, size.width * 0.70,
+          size.height * 0.38, size.width * 0.65, size.height * 0.28)
+      ..cubicTo(size.width * 0.83, size.height * 0.45, size.width * 0.76,
+          size.height * 0.59, size.width * 0.67, size.height * 0.66)
+      ..close();
+    canvas.drawPath(flameOuter, Paint()..color = AppPalette.coral);
+
+    final flameInner = Path()
+      ..moveTo(size.width * 0.68, size.height * 0.63)
+      ..cubicTo(size.width * 0.61, size.height * 0.55, size.width * 0.70,
+          size.height * 0.47, size.width * 0.69, size.height * 0.38)
+      ..cubicTo(size.width * 0.79, size.height * 0.50, size.width * 0.74,
+          size.height * 0.58, size.width * 0.68, size.height * 0.63)
+      ..close();
+    canvas.drawPath(flameInner, Paint()..color = AppPalette.mango);
+
+    _drawCamper(
+      canvas,
+      Offset(size.width * 0.86, size.height * 0.57),
+      size.height * 0.18,
+      accent,
+    );
+    _drawCamper(
+      canvas,
+      Offset(size.width * 0.08, size.height * 0.58),
+      size.height * 0.15,
+      AppPalette.teal,
+    );
+  }
+
+  void _drawCamper(Canvas canvas, Offset center, double radius, Color color) {
+    final body = Paint()..color = color;
+    final face = Paint()..color = const Color(0xFFFFD8A8);
+    final eye = Paint()..color = AppPalette.ink;
+
+    canvas.drawCircle(center + Offset(0, radius * 1.2), radius * 1.05, body);
+    canvas.drawCircle(center, radius, face);
+    canvas.drawCircle(
+        center + Offset(-radius * 0.32, -radius * 0.08), radius * 0.10, eye);
+    canvas.drawCircle(
+        center + Offset(radius * 0.32, -radius * 0.08), radius * 0.10, eye);
+    canvas.drawArc(
+      Rect.fromCenter(
+        center: center + Offset(0, radius * 0.12),
+        width: radius * 0.74,
+        height: radius * 0.52,
+      ),
+      0.15,
+      math.pi - 0.30,
+      false,
+      Paint()
+        ..color = AppPalette.ink
+        ..strokeWidth = radius * 0.10
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _CampStoryPainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _WordGridStage extends StatelessWidget {
+  const _WordGridStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    const letters = [
+      ['M', 'H', 'X', 'B', 'S'],
+      ['A', 'R', 'M', 'E', 'T'],
+      ['R', 'J', 'C', 'I', 'A'],
+      ['C', 'S', 'T', 'A', 'R'],
+      ['H', 'K', 'T', 'V', 'T'],
+    ];
+    final cellSize = compact ? 28.0 : 32.0;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          padding: EdgeInsets.all(compact ? 10 : 12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF26255C), Color(0xFF58355F)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var row = 0; row < letters.length; row++)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (var col = 0; col < letters[row].length; col++)
+                          _LetterCell(
+                            letter: letters[row][col],
+                            size: cellSize,
+                            highlighted: row == 3 && col >= 1,
+                          ),
+                      ],
+                    ),
+                ],
+              ),
+              SizedBox(width: compact ? 12 : 18),
+              const Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _WordChip(label: 'ARM', muted: true),
+                    SizedBox(height: 7),
+                    _WordChip(label: 'STAR'),
+                    SizedBox(height: 7),
+                    _WordChip(label: 'MARCH', muted: true),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LetterCell extends StatelessWidget {
+  const _LetterCell({
+    required this.letter,
+    required this.size,
+    required this.highlighted,
+  });
+
+  final String letter;
+  final double size;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      margin: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: highlighted
+            ? AppPalette.mint
+            : Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(
+          color:
+              highlighted ? Colors.white : Colors.white.withValues(alpha: 0.12),
+          width: highlighted ? 1.6 : 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        letter,
+        style: TextStyle(
+          color: highlighted ? AppPalette.ink : Colors.white,
+          fontWeight: FontWeight.w900,
+          fontSize: size * 0.52,
+        ),
+      ),
+    );
+  }
+}
+
+class _WordChip extends StatelessWidget {
+  const _WordChip({required this.label, this.muted = false});
+
+  final String label;
+  final bool muted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: muted ? Colors.white.withValues(alpha: 0.12) : AppPalette.coral,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        maxLines: 1,
+        style: TextStyle(
+          color: muted ? Colors.white70 : Colors.white,
+          fontWeight: FontWeight.w900,
+          fontSize: 13,
+        ),
+      ),
+    );
+  }
+}
+
+class _AnimalWordStage extends StatelessWidget {
+  const _AnimalWordStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 92 : 108,
+          padding: EdgeInsets.all(compact ? 8 : 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE4F9D8), Color(0xFFBEEED4)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: compact ? 78 : 92,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      bottom: 4,
+                      child: Container(
+                        width: compact ? 70 : 82,
+                        height: compact ? 24 : 28,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF8B5E34),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ),
+                    ),
+                    _DogFace(color: accent, size: compact ? 58 : 68),
+                  ],
+                ),
+              ),
+              const Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _LetterTile(letter: 'D', color: AppPalette.sky),
+                    _LetterTile(letter: 'O', color: AppPalette.teal),
+                    _LetterTile(
+                        letter: 'G', color: AppPalette.mango, missing: true),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DogFace extends StatelessWidget {
+  const _DogFace({required this.color, required this.size});
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Positioned(
+            left: size * 0.05,
+            top: size * 0.08,
+            child: _Ear(color: color, size: size * 0.34),
+          ),
+          Positioned(
+            right: size * 0.05,
+            top: size * 0.08,
+            child: Transform.scale(
+              scaleX: -1,
+              child: _Ear(color: color, size: size * 0.34),
+            ),
+          ),
+          Container(
+            width: size * 0.76,
+            height: size * 0.76,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.24),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            top: size * 0.33,
+            child: Container(
+              width: size * 0.42,
+              height: size * 0.30,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFE0B7),
+                borderRadius: BorderRadius.circular(size * 0.18),
+              ),
+            ),
+          ),
+          Positioned(
+            top: size * 0.28,
+            left: size * 0.24,
+            child: _FaceDot(size: size * 0.07),
+          ),
+          Positioned(
+            top: size * 0.28,
+            right: size * 0.24,
+            child: _FaceDot(size: size * 0.07),
+          ),
+          Positioned(
+            top: size * 0.43,
+            child: Container(
+              width: size * 0.10,
+              height: size * 0.08,
+              decoration: const BoxDecoration(
+                color: AppPalette.ink,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Ear extends StatelessWidget {
+  const _Ear({required this.color, required this.size});
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: -0.55,
+      child: Container(
+        width: size,
+        height: size * 1.28,
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.88),
+          borderRadius: BorderRadius.circular(size),
+        ),
+      ),
+    );
+  }
+}
+
+class _FaceDot extends StatelessWidget {
+  const _FaceDot({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(
+        color: AppPalette.ink,
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+}
+
+class _LetterTile extends StatelessWidget {
+  const _LetterTile({
+    required this.letter,
+    required this.color,
+    this.missing = false,
+  });
+
+  final String letter;
+  final Color color;
+  final bool missing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 48,
+      height: 52,
+      decoration: BoxDecoration(
+        color: missing ? const Color(0xFFFFEDAD) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.35), width: 1.4),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.14),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        missing ? '?' : letter,
+        style: TextStyle(
+          color: missing ? const Color(0xFFFFA12B) : color,
+          fontSize: 25,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _BalloonOrderStage extends StatelessWidget {
+  const _BalloonOrderStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 94 : 112,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFEAF8FF), Color(0xFFFFF2D0)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const _Balloon(number: '3', color: AppPalette.coral, height: 78),
+              _Balloon(
+                number: '1',
+                color: accent,
+                height: 60,
+                highlighted: true,
+              ),
+              const _Balloon(
+                  number: '2', color: AppPalette.lavender, height: 70),
+              Container(
+                width: 58,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.80),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: accent.withValues(alpha: 0.24)),
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  '1 2 3',
+                  style: TextStyle(
+                    color: AppPalette.ink,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Balloon extends StatelessWidget {
+  const _Balloon({
+    required this.number,
+    required this.color,
+    required this.height,
+    this.highlighted = false,
+  });
+
+  final String number;
+  final Color color;
+  final double height;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    final width = height * 0.62;
+
+    return SizedBox(
+      width: width + 10,
+      height: height + 16,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Positioned(
+            top: 0,
+            child: Container(
+              width: width,
+              height: height * 0.72,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: highlighted
+                      ? Colors.white
+                      : color.withValues(alpha: 0.20),
+                  width: highlighted ? 3 : 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: highlighted ? 0.28 : 0.16),
+                    blurRadius: highlighted ? 16 : 10,
+                    offset: const Offset(0, 7),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                number,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: height * 0.62,
+            child: Container(
+              width: 10,
+              height: 8,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ),
+          Positioned(
+            top: height * 0.72,
+            child: Container(
+              width: 2,
+              height: height * 0.28,
+              color: AppPalette.muted.withValues(alpha: 0.52),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BridgeOrderStage extends StatelessWidget {
+  const _BridgeOrderStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 94 : 112,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFE5FBF3), Color(0xFFBFE8FF)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const _BridgePlank(width: 46, color: AppPalette.teal),
+                    const SizedBox(width: 8),
+                    const _BridgePlank(width: 62, color: AppPalette.sky),
+                    const SizedBox(width: 8),
+                    _BridgeGap(accent: accent),
+                    const Spacer(),
+                    const _BridgeChoice(label: 'A', width: 54),
+                    const SizedBox(width: 5),
+                    _BridgeChoice(
+                      label: 'B',
+                      width: 78,
+                      color: accent,
+                      highlighted: true,
+                    ),
+                    const SizedBox(width: 5),
+                    const _BridgeChoice(label: 'C', width: 98),
+                  ],
+                ),
+              ),
+              Container(
+                height: 9,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF5AB0C8).withValues(alpha: 0.32),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BridgePlank extends StatelessWidget {
+  const _BridgePlank({required this.width, required this.color});
+
+  final double width;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: 22,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(9),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.20),
+            blurRadius: 9,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BridgeGap extends StatelessWidget {
+  const _BridgeGap({required this.accent});
+
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 78,
+      height: 26,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.62),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: accent.withValues(alpha: 0.34), width: 2),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '?',
+        style: TextStyle(
+          color: accent,
+          fontSize: 19,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _BridgeChoice extends StatelessWidget {
+  const _BridgeChoice({
+    required this.label,
+    required this.width,
+    this.color = AppPalette.mango,
+    this.highlighted = false,
+  });
+
+  final String label;
+  final double width;
+  final Color color;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Container(
+          width: width,
+          height: highlighted ? 22 : 18,
+          decoration: BoxDecoration(
+            color: highlighted ? color : Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: color.withValues(alpha: 0.42)),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: highlighted ? color : AppPalette.muted,
+            fontWeight: FontWeight.w900,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _WordBuilderStage extends StatefulWidget {
+  const _WordBuilderStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_WordBuilderStage> createState() => _WordBuilderStageState();
+}
+
+class _WordBuilderStageState extends State<_WordBuilderStage> {
+  final Set<int> _picked = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final target = _wordTokensFor(context, 'word_star');
+    final letters = _wordBuilderLettersFor(context);
+    final pickedLetters = [
+      for (var index = 0; index < letters.length; index++)
+        if (_picked.contains(index)) letters[index],
+    ];
+    final solved = _sameTokenList(pickedLetters, target);
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 98 : 116,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF2C6), Color(0xFFE6F8F5)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Wrap(
+                  spacing: 7,
+                  runSpacing: 7,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (var index = 0; index < letters.length; index++)
+                      _InteractiveLetterTile(
+                        label: letters[index],
+                        selected: _picked.contains(index),
+                        color: widget.accent,
+                        onTap: () => setState(() {
+                          if (_picked.contains(index)) {
+                            _picked.remove(index);
+                          } else {
+                            _picked.add(index);
+                          }
+                        }),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                width: 96,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: solved ? AppPalette.mint : Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: solved
+                        ? AppPalette.teal
+                        : widget.accent.withValues(alpha: 0.24),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: widget.accent.withValues(alpha: 0.12),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        pickedLetters.isEmpty ? '?' : pickedLetters.join(),
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: solved ? AppPalette.teal : AppPalette.ink,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    BouncyTap(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => setState(_picked.clear),
+                      child: Icon(
+                        Icons.refresh_rounded,
+                        color: widget.accent,
+                        size: 22,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LetterFieldStage extends StatefulWidget {
+  const _LetterFieldStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_LetterFieldStage> createState() => _LetterFieldStageState();
+}
+
+class _LetterFieldStageState extends State<_LetterFieldStage> {
+  final Set<int> _selected = {};
+
+  @override
+  Widget build(BuildContext context) {
+    final target = _wordTokensFor(context, 'word_moon');
+    final grid = _letterFieldGridFor(context);
+    final targetIndexes = _letterFieldTargetIndexes(target.length);
+    final solved = targetIndexes.every(_selected.contains);
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 106 : 124,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF26316A), Color(0xFF5B3E82)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: GridView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: grid.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 5,
+                    mainAxisSpacing: 5,
+                    crossAxisSpacing: 5,
+                  ),
+                  itemBuilder: (context, index) {
+                    final selected = _selected.contains(index);
+                    final isTarget = targetIndexes.contains(index);
+                    return _FieldLetterCell(
+                      label: grid[index],
+                      selected: selected,
+                      hinted: isTarget && solved,
+                      color: widget.accent,
+                      onTap: () => setState(() {
+                        if (selected) {
+                          _selected.remove(index);
+                        } else {
+                          _selected.add(index);
+                        }
+                      }),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              Container(
+                width: 82,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.13),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: Colors.white24),
+                ),
+                alignment: Alignment.center,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    context.l10n.answerLabel('word_moon'),
+                    maxLines: 1,
+                    style: TextStyle(
+                      color: solved ? AppPalette.mint : Colors.white,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InteractiveLetterTile extends StatelessWidget {
+  const _InteractiveLetterTile({
+    required this.label,
+    required this.selected,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: selected ? color : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? Colors.white : color.withValues(alpha: 0.28),
+            width: selected ? 2 : 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: selected ? 0.24 : 0.10),
+              blurRadius: 9,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: selected ? Colors.white : color,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FieldLetterCell extends StatelessWidget {
+  const _FieldLetterCell({
+    required this.label,
+    required this.selected,
+    required this.hinted,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final bool hinted;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        decoration: BoxDecoration(
+          color:
+              selected || hinted ? color : Colors.white.withValues(alpha: 0.10),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected || hinted ? Colors.white : Colors.white24,
+            width: selected || hinted ? 2 : 1,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: selected || hinted ? Colors.white : Colors.white70,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+List<String> _wordBuilderLettersFor(BuildContext context) {
+  final language = Localizations.localeOf(context).languageCode;
+  return switch (language) {
+    'ru' => const ['З', 'Л', 'В', 'Е', 'З', 'Д', 'А', 'О'],
+    'de' => const ['S', 'M', 'T', 'E', 'R', 'N', 'O'],
+    'es' => const ['E', 'S', 'T', 'R', 'E', 'L', 'L', 'A'],
+    'fr' => const ['É', 'T', 'O', 'I', 'L', 'E', 'U'],
+    'hi' => const ['ता', 'रा', 'सू', 'रज', 'चाँ', 'द'],
+    'it' => const ['S', 'T', 'E', 'L', 'L', 'A', 'O'],
+    'ja' => const ['ほ', 'し', 'つ', 'き', 'た', 'い'],
+    'ko' => const ['별', '달', '해', '빛'],
+    'pt' => const ['E', 'S', 'T', 'R', 'E', 'L', 'A'],
+    'ar' => const ['ن', 'ج', 'م', 'ق', 'ر', 'ش'],
+    'zh' => const ['星', '星', '月', '亮', '太', '阳'],
+    _ => const ['S', 'M', 'T', 'A', 'R', 'O', 'N'],
+  };
+}
+
+List<String> _wordTokensFor(BuildContext context, String key) {
+  final language = Localizations.localeOf(context).languageCode;
+  if (key == 'word_moon') {
+    return switch (language) {
+      'ru' => const ['Л', 'У', 'Н', 'А'],
+      'de' => const ['M', 'O', 'N', 'D'],
+      'es' => const ['L', 'U', 'N', 'A'],
+      'fr' => const ['L', 'U', 'N', 'E'],
+      'hi' => const ['चाँ', 'द'],
+      'it' => const ['L', 'U', 'N', 'A'],
+      'ja' => const ['つ', 'き'],
+      'ko' => const ['달'],
+      'pt' => const ['L', 'U', 'A'],
+      'ar' => const ['ق', 'م', 'ر'],
+      'zh' => const ['月', '亮'],
+      _ => const ['M', 'O', 'O', 'N'],
+    };
+  }
+
+  if (key == 'word_sun') {
+    return switch (language) {
+      'ru' => const ['С', 'О', 'Л', 'Н', 'Ц', 'Е'],
+      'de' => const ['S', 'O', 'N', 'N', 'E'],
+      'es' => const ['S', 'O', 'L'],
+      'fr' => const ['S', 'O', 'L', 'E', 'I', 'L'],
+      'hi' => const ['सू', 'रज'],
+      'it' => const ['S', 'O', 'L', 'E'],
+      'ja' => const ['た', 'い', 'よ', 'う'],
+      'ko' => const ['해'],
+      'pt' => const ['S', 'O', 'L'],
+      'ar' => const ['ش', 'م', 'س'],
+      'zh' => const ['太', '阳'],
+      _ => const ['S', 'U', 'N'],
+    };
+  }
+
+  return switch (language) {
+    'ru' => const ['З', 'В', 'Е', 'З', 'Д', 'А'],
+    'de' => const ['S', 'T', 'E', 'R', 'N'],
+    'es' => const ['E', 'S', 'T', 'R', 'E', 'L', 'L', 'A'],
+    'fr' => const ['É', 'T', 'O', 'I', 'L', 'E'],
+    'hi' => const ['ता', 'रा'],
+    'it' => const ['S', 'T', 'E', 'L', 'L', 'A'],
+    'ja' => const ['ほ', 'し'],
+    'ko' => const ['별'],
+    'pt' => const ['E', 'S', 'T', 'R', 'E', 'L', 'A'],
+    'ar' => const ['ن', 'ج', 'م'],
+    'zh' => const ['星', '星'],
+    _ => const ['S', 'T', 'A', 'R'],
+  };
+}
+
+List<String> _letterFieldGridFor(BuildContext context) {
+  final target = _wordTokensFor(context, 'word_moon');
+  final filler = [
+    ..._wordTokensFor(context, 'word_star'),
+    ..._wordTokensFor(context, 'word_sun'),
+    ..._wordBuilderLettersFor(context),
+  ];
+  final cells =
+      List<String>.generate(20, (index) => filler[index % filler.length]);
+  final start = _letterFieldTargetIndexes(target.length).first;
+  for (var i = 0; i < target.length; i++) {
+    cells[start + i] = target[i];
+  }
+  return cells;
+}
+
+List<int> _letterFieldTargetIndexes(int length) {
+  const start = 6;
+  return [for (var i = 0; i < length.clamp(1, 5); i++) start + i];
+}
+
+bool _sameTokenList(List<String> left, List<String> right) {
+  if (left.length != right.length) {
+    return false;
+  }
+
+  for (var index = 0; index < left.length; index++) {
+    if (left[index] != right[index]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+class _MiniSudokuStage extends StatefulWidget {
+  const _MiniSudokuStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_MiniSudokuStage> createState() => _MiniSudokuStageState();
+}
+
+class _MiniSudokuStageState extends State<_MiniSudokuStage> {
+  String? _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    const rows = [
+      ['star', 'moon', 'rocket', 'planet'],
+      ['planet', 'rocket', 'star', 'moon'],
+      ['moon', 'star', null, 'planet'],
+      ['rocket', 'planet', 'moon', 'star'],
+    ];
+    final solved = _selected == 'rocket';
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 132,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE9F9FF), Color(0xFFFFF4CF)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 128,
+                child: GridView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 16,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 4,
+                    crossAxisSpacing: 4,
+                  ),
+                  itemBuilder: (context, index) {
+                    final row = index ~/ 4;
+                    final col = index % 4;
+                    final symbol = rows[row][col] ?? _selected;
+                    return _SudokuSymbolTile(
+                      symbol: symbol,
+                      accent: widget.accent,
+                      missing: rows[row][col] == null,
+                      solved: solved && rows[row][col] == null,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (final symbol in const ['star', 'moon', 'rocket'])
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: _SudokuChoice(
+                          symbol: symbol,
+                          selected: _selected == symbol,
+                          accent: widget.accent,
+                          onTap: () => setState(() => _selected = symbol),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SudokuSymbolTile extends StatelessWidget {
+  const _SudokuSymbolTile({
+    required this.symbol,
+    required this.accent,
+    required this.missing,
+    required this.solved,
+  });
+
+  final String? symbol;
+  final Color accent;
+  final bool missing;
+  final bool solved;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _sudokuColorFor(symbol, accent);
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      decoration: BoxDecoration(
+        color: solved ? AppPalette.mint : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: missing ? accent : color.withValues(alpha: 0.28),
+          width: missing ? 2 : 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Text(
+          _sudokuGlyphFor(symbol),
+          style: TextStyle(
+            color: symbol == null ? accent : color,
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SudokuChoice extends StatelessWidget {
+  const _SudokuChoice({
+    required this.symbol,
+    required this.selected,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String symbol;
+  final bool selected;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        height: 30,
+        decoration: BoxDecoration(
+          color: selected ? accent : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: selected ? Colors.white : accent),
+          boxShadow: [
+            BoxShadow(
+              color: accent.withValues(alpha: selected ? 0.22 : 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          _sudokuGlyphFor(symbol),
+          style: TextStyle(
+            color: selected ? Colors.white : _sudokuColorFor(symbol, accent),
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+String _sudokuGlyphFor(String? symbol) {
+  return switch (symbol) {
+    'star' => '★',
+    'moon' => '◐',
+    'rocket' => '▲',
+    'planet' => '●',
+    _ => '?',
+  };
+}
+
+Color _sudokuColorFor(String? symbol, Color accent) {
+  return switch (symbol) {
+    'star' => AppPalette.mango,
+    'moon' => AppPalette.lavender,
+    'rocket' => accent,
+    'planet' => AppPalette.teal,
+    _ => accent,
+  };
+}
+
+class _LogicHousesStage extends StatefulWidget {
+  const _LogicHousesStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_LogicHousesStage> createState() => _LogicHousesStageState();
+}
+
+class _LogicHousesStageState extends State<_LogicHousesStage> {
+  String? _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 108 : 124,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE7FAF1), Color(0xFFE9ECFF)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _ClueHouse(
+                      id: 'blue',
+                      color: AppPalette.sky,
+                      selected: _selected == 'blue',
+                      onTap: () => setState(() => _selected = 'blue'),
+                    ),
+                    _ClueHouse(
+                      id: 'yellow',
+                      color: AppPalette.mango,
+                      selected: _selected == 'yellow',
+                      onTap: () => setState(() => _selected = 'yellow'),
+                    ),
+                    _ClueHouse(
+                      id: 'green',
+                      color: AppPalette.teal,
+                      selected: _selected == 'green',
+                      onTap: () => setState(() => _selected = 'green'),
+                      marked: _selected == 'green',
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _ClueChip(label: '★ ≠', color: AppPalette.sky),
+                  SizedBox(height: 7),
+                  _ClueChip(label: '★ >', color: AppPalette.mango),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ClueHouse extends StatelessWidget {
+  const _ClueHouse({
+    required this.id,
+    required this.color,
+    required this.selected,
+    required this.onTap,
+    this.marked = false,
+  });
+
+  final String id;
+  final Color color;
+  final bool selected;
+  final bool marked;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: SizedBox(
+        width: 54,
+        height: 82,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            CustomPaint(
+              size: const Size(54, 74),
+              painter: _HousePainter(color, selected),
+            ),
+            Positioned(
+              bottom: 15,
+              child: Text(
+                id == 'blue'
+                    ? 'A'
+                    : id == 'yellow'
+                        ? 'B'
+                        : 'C',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            if (marked)
+              Positioned(
+                top: 3,
+                right: 3,
+                child: Container(
+                  width: 22,
+                  height: 22,
+                  decoration: const BoxDecoration(
+                    color: AppPalette.mango,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    '★',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HousePainter extends CustomPainter {
+  const _HousePainter(this.color, this.selected);
+
+  final Color color;
+  final bool selected;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final body = Rect.fromLTWH(9, 30, size.width - 18, size.height - 34);
+    final roof = Path()
+      ..moveTo(size.width / 2, 7)
+      ..lineTo(size.width - 4, 33)
+      ..lineTo(4, 33)
+      ..close();
+
+    canvas.drawPath(
+      roof.shift(const Offset(0, 3)),
+      Paint()..color = AppPalette.ink.withValues(alpha: 0.08),
+    );
+    canvas.drawPath(roof, Paint()..color = color);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(body, const Radius.circular(11)),
+      Paint()..color = selected ? color : color.withValues(alpha: 0.76),
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(body, const Radius.circular(11)),
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = selected ? 3 : 1.5,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _HousePainter oldDelegate) =>
+      oldDelegate.color != color || oldDelegate.selected != selected;
+}
+
+class _ClueChip extends StatelessWidget {
+  const _ClueChip({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 62,
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.34)),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.w900,
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeLockStage extends StatefulWidget {
+  const _CodeLockStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_CodeLockStage> createState() => _CodeLockStageState();
+}
+
+class _CodeLockStageState extends State<_CodeLockStage> {
+  final List<String> _digits = [];
+
+  bool get _solved => _digits.join() == '248';
+
+  void _press(String digit) {
+    if (_digits.length == 3) {
+      return;
+    }
+    setState(() => _digits.add(digit));
+  }
+
+  void _backspace() {
+    if (_digits.isEmpty) {
+      return;
+    }
+    setState(() => _digits.removeLast());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final keypad = ['2', '4', '6', '8'];
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE8F8FF), Color(0xFFFFF4CF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 6,
+                child: Container(
+                  height: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.84),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(
+                      color: (_solved ? AppPalette.mint : widget.accent)
+                          .withValues(alpha: 0.32),
+                      width: _solved ? 2.4 : 1.2,
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _CodeHintPill(label: '2', color: AppPalette.sky),
+                          _CodeHintPill(label: '+2', color: AppPalette.teal),
+                          _CodeHintPill(label: 'x2', color: AppPalette.coral),
+                        ],
+                      ),
+                      Icon(
+                        _solved ? Icons.lock_open_rounded : Icons.lock_rounded,
+                        color: _solved ? AppPalette.mint : widget.accent,
+                        size: widget.compact ? 24 : 30,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          for (var index = 0; index < 3; index++)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
+                              child: _CodeDigitSlot(
+                                value: index < _digits.length
+                                    ? _digits[index]
+                                    : null,
+                                solved: _solved,
+                                accent: widget.accent,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 4,
+                child: GridView.count(
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: 1.32,
+                  children: [
+                    for (final digit in keypad)
+                      _CodePadButton(
+                        label: digit,
+                        color: widget.accent,
+                        selected: _digits.contains(digit),
+                        onTap: () => _press(digit),
+                      ),
+                    _CodePadButton(
+                      icon: Icons.backspace_rounded,
+                      color: AppPalette.coral,
+                      selected: false,
+                      onTap: _backspace,
+                    ),
+                    _CodePadButton(
+                      icon: _solved
+                          ? Icons.check_rounded
+                          : Icons.auto_awesome_rounded,
+                      color: _solved ? AppPalette.mint : AppPalette.mango,
+                      selected: _solved,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeHintPill extends StatelessWidget {
+  const _CodeHintPill({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36,
+      height: 24,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.28)),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeDigitSlot extends StatelessWidget {
+  const _CodeDigitSlot({
+    required this.value,
+    required this.solved,
+    required this.accent,
+  });
+
+  final String? value;
+  final bool solved;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = solved ? AppPalette.mint : accent;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 34,
+      height: 34,
+      decoration: BoxDecoration(
+        color: value == null ? Colors.white : color,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color.withValues(alpha: 0.42), width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: value == null ? 0.08 : 0.24),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        value ?? '?',
+        style: TextStyle(
+          color: value == null ? color : Colors.white,
+          fontSize: 17,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _CodePadButton extends StatelessWidget {
+  const _CodePadButton({
+    required this.color,
+    required this.selected,
+    this.label,
+    this.icon,
+    this.onTap,
+  });
+
+  final String? label;
+  final IconData? icon;
+  final Color color;
+  final bool selected;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        decoration: BoxDecoration(
+          color: selected ? color : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.42)),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: selected ? 0.24 : 0.10),
+              blurRadius: 9,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: icon == null
+            ? Text(
+                label ?? '',
+                style: TextStyle(
+                  color: selected ? Colors.white : color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              )
+            : Icon(icon, color: selected ? Colors.white : color, size: 20),
+      ),
+    );
+  }
+}
+
+class _CampDifferencesStage extends StatefulWidget {
+  const _CampDifferencesStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_CampDifferencesStage> createState() => _CampDifferencesStageState();
+}
+
+class _CampDifferencesStageState extends State<_CampDifferencesStage> {
+  final Set<int> _found = {};
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 112 : 128,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF0C8), Color(0xFFDDF7F3)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _CampPicture(
+                  variant: 0,
+                  found: const <int>{},
+                  accent: widget.accent,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _CampPicture(
+                  variant: 1,
+                  found: _found,
+                  accent: widget.accent,
+                  onTapDifference: (index) => setState(() => _found.add(index)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var index = 0; index < 2; index++)
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: 28,
+                      height: 28,
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: _found.contains(index)
+                            ? AppPalette.teal
+                            : Colors.white,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: widget.accent),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          color: _found.contains(index)
+                              ? Colors.white
+                              : widget.accent,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CampPicture extends StatelessWidget {
+  const _CampPicture({
+    required this.variant,
+    required this.found,
+    required this.accent,
+    this.onTapDifference,
+  });
+
+  final int variant;
+  final Set<int> found;
+  final Color accent;
+  final ValueChanged<int>? onTapDifference;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(17),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          CustomPaint(painter: _CampDifferencePainter(variant)),
+          if (variant == 1) ...[
+            _DifferenceTapTarget(
+              left: 28,
+              top: 18,
+              found: found.contains(0),
+              accent: accent,
+              onTap: () => onTapDifference?.call(0),
+            ),
+            _DifferenceTapTarget(
+              left: 86,
+              top: 62,
+              found: found.contains(1),
+              accent: accent,
+              onTap: () => onTapDifference?.call(1),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DifferenceTapTarget extends StatelessWidget {
+  const _DifferenceTapTarget({
+    required this.left,
+    required this.top,
+    required this.found,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final double left;
+  final double top;
+  final bool found;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: left,
+      top: top,
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: found ? accent.withValues(alpha: 0.24) : Colors.transparent,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: found ? accent : Colors.white.withValues(alpha: 0.55),
+              width: found ? 3 : 1.5,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CampDifferencePainter extends CustomPainter {
+  const _CampDifferencePainter(this.variant);
+
+  final int variant;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(17)),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFFBEEFFF), Color(0xFFC9F1C6)],
+        ).createShader(rect),
+    );
+
+    final tent = Path()
+      ..moveTo(size.width * 0.12, size.height * 0.70)
+      ..lineTo(size.width * 0.42, size.height * 0.24)
+      ..lineTo(size.width * 0.72, size.height * 0.70)
+      ..close();
+    canvas.drawPath(tent, Paint()..color = AppPalette.lavender);
+    canvas.drawPath(
+      Path()
+        ..moveTo(size.width * 0.42, size.height * 0.70)
+        ..lineTo(size.width * 0.55, size.height * 0.70)
+        ..lineTo(size.width * 0.42, size.height * 0.42)
+        ..close(),
+      Paint()..color = Colors.white.withValues(alpha: 0.80),
+    );
+
+    final flagColor = variant == 0 ? AppPalette.coral : AppPalette.teal;
+    canvas.drawLine(
+      Offset(size.width * 0.28, size.height * 0.22),
+      Offset(size.width * 0.28, size.height * 0.08),
+      Paint()
+        ..color = AppPalette.ink.withValues(alpha: 0.52)
+        ..strokeWidth = 2,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(size.width * 0.28, size.height * 0.08, 22, 13),
+        const Radius.circular(4),
+      ),
+      Paint()..color = flagColor,
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width * 0.72,
+          size.height * 0.66,
+          size.width * 0.18,
+          size.height * 0.08,
+        ),
+        const Radius.circular(8),
+      ),
+      Paint()..color = const Color(0xFF8D5A35),
+    );
+
+    final flameCenter = Offset(size.width * 0.80, size.height * 0.58);
+    canvas.drawCircle(flameCenter, 11, Paint()..color = AppPalette.coral);
+    canvas.drawCircle(flameCenter, 6, Paint()..color = AppPalette.mango);
+
+    final starCenter = variant == 0
+        ? Offset(size.width * 0.88, size.height * 0.48)
+        : Offset(size.width * 0.88, size.height * 0.60);
+    _drawTinyStar(
+        canvas, starCenter, variant == 0 ? AppPalette.mango : Colors.white);
+  }
+
+  void _drawTinyStar(Canvas canvas, Offset center, Color color) {
+    final path = Path();
+    const radius = 7.0;
+    for (var point = 0; point < 10; point++) {
+      final currentRadius = point.isEven ? radius : radius * 0.45;
+      final angle = -math.pi / 2 + point * math.pi / 5;
+      final offset = Offset(
+        center.dx + math.cos(angle) * currentRadius,
+        center.dy + math.sin(angle) * currentRadius,
+      );
+      if (point == 0) {
+        path.moveTo(offset.dx, offset.dy);
+      } else {
+        path.lineTo(offset.dx, offset.dy);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(covariant _CampDifferencePainter oldDelegate) =>
+      oldDelegate.variant != variant;
+}
+
 class _SearchSpot extends StatelessWidget {
   const _SearchSpot({
     required this.color,
@@ -3031,6 +5460,16 @@ class _MathStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final customStage = _customMathStageFor(puzzle.id, accent, compact);
+
+    if (customStage != null) {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: customStage,
+      );
+    }
+
     final children = _mathStageItemsFor(puzzle.id, accent, compact);
 
     return _StageShell(
@@ -3044,6 +5483,1119 @@ class _MathStage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: children,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+Widget? _customMathStageFor(String puzzleId, Color accent, bool compact) {
+  return switch (puzzleId) {
+    'fruit-fizz' => _FruitFizzStage(accent: accent, compact: compact),
+    'moon-clock' => _MoonClockStage(accent: accent, compact: compact),
+    'notebook-sum' => _NotebookSumStage(accent: accent, compact: compact),
+    'cookie-share' => _CookieShareStage(accent: accent, compact: compact),
+    'math-crossword' => _MathCrosswordStage(accent: accent, compact: compact),
+    'market-change' => _MarketChangeStage(accent: accent, compact: compact),
+    _ => null,
+  };
+}
+
+class _FruitFizzStage extends StatelessWidget {
+  const _FruitFizzStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: compact ? 286 : 328,
+          height: compact ? 92 : 110,
+          child: Row(
+            children: [
+              _RecipeCard(accent: accent),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CustomPaint(
+                  painter: _BlenderPainter(accent),
+                  child: const SizedBox.expand(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RecipeCard extends StatelessWidget {
+  const _RecipeCard({required this.accent});
+
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 118,
+      height: 100,
+      padding: const EdgeInsets.fromLTRB(12, 14, 12, 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: 0.14),
+            blurRadius: 14,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: const Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _RecipeRow(number: '3', color: AppPalette.teal),
+          _RecipeRow(number: '2', color: AppPalette.lavender),
+          _RecipeRow(number: '?', color: AppPalette.mango),
+          _RecipeTotal(),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecipeRow extends StatelessWidget {
+  const _RecipeRow({required this.number, required this.color});
+
+  final String number;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          number,
+          style: const TextStyle(
+            color: AppPalette.ink,
+            fontWeight: FontWeight.w900,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(width: 8),
+        _FruitDot(color: color),
+        const Spacer(),
+        Container(
+          width: 26,
+          height: 2,
+          decoration: BoxDecoration(
+            color: AppPalette.border,
+            borderRadius: BorderRadius.circular(999),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _RecipeTotal extends StatelessWidget {
+  const _RecipeTotal();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(
+          '= 8',
+          style: TextStyle(
+            color: AppPalette.teal,
+            fontWeight: FontWeight.w900,
+            fontSize: 15,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _FruitDot extends StatelessWidget {
+  const _FruitDot({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 18,
+      height: 18,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.22),
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Container(
+          width: 7,
+          height: 7,
+          margin: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.58),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BlenderPainter extends CustomPainter {
+  const _BlenderPainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final base = Paint()..color = AppPalette.lavender;
+    final glass = Paint()
+      ..color = Colors.white.withValues(alpha: 0.80)
+      ..style = PaintingStyle.fill;
+    final glassStroke = Paint()
+      ..color = accent.withValues(alpha: 0.34)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.4;
+
+    final jar = Path()
+      ..moveTo(size.width * 0.26, size.height * 0.14)
+      ..lineTo(size.width * 0.76, size.height * 0.14)
+      ..lineTo(size.width * 0.66, size.height * 0.74)
+      ..lineTo(size.width * 0.34, size.height * 0.74)
+      ..close();
+    canvas.drawPath(jar, glass);
+    canvas.drawPath(jar, glassStroke);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width * 0.31,
+          size.height * 0.73,
+          size.width * 0.38,
+          size.height * 0.12,
+        ),
+        const Radius.circular(12),
+      ),
+      base,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width * 0.38,
+          size.height * 0.84,
+          size.width * 0.24,
+          size.height * 0.10,
+        ),
+        const Radius.circular(10),
+      ),
+      Paint()..color = accent,
+    );
+
+    _drawFruit(canvas, size, const Offset(0.40, 0.34), AppPalette.teal);
+    _drawFruit(canvas, size, const Offset(0.56, 0.38), AppPalette.lavender);
+    _drawFruit(canvas, size, const Offset(0.49, 0.54), AppPalette.mango);
+    _drawFruit(canvas, size, const Offset(0.62, 0.58), AppPalette.teal);
+  }
+
+  void _drawFruit(Canvas canvas, Size size, Offset position, Color color) {
+    final center = Offset(size.width * position.dx, size.height * position.dy);
+    final radius = size.height * 0.08;
+    canvas.drawCircle(center, radius, Paint()..color = color);
+    canvas.drawCircle(
+      center + Offset(-radius * 0.35, -radius * 0.38),
+      radius * 0.30,
+      Paint()..color = Colors.white.withValues(alpha: 0.56),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _BlenderPainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _MoonClockStage extends StatelessWidget {
+  const _MoonClockStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 94 : 112,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF20225B), Color(0xFF0F6FA8)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 86,
+                height: 86,
+                child: CustomPaint(painter: _ClockFacePainter(accent)),
+              ),
+              const Spacer(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _SpacePebble(
+                      color: AppPalette.lavender, size: compact ? 26 : 30),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppPalette.ink,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Text(
+                      '3:00',
+                      style: TextStyle(
+                        color: AppPalette.mint,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              _SpacePebble(color: AppPalette.mango, size: compact ? 34 : 40),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ClockFacePainter extends CustomPainter {
+  const _ClockFacePainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.shortestSide * 0.46;
+    canvas.drawCircle(center, radius, Paint()..color = const Color(0xFFFFD86B));
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..color = Colors.white
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 3,
+    );
+
+    for (var index = 1; index <= 12; index++) {
+      final angle = (index - 3) * math.pi / 6;
+      final labelOffset = Offset(
+        math.cos(angle) * radius * 0.72,
+        math.sin(angle) * radius * 0.72,
+      );
+      final painter = TextPainter(
+        text: TextSpan(
+          text: '$index',
+          style: const TextStyle(
+            color: AppPalette.ink,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      )..layout();
+      painter.paint(
+        canvas,
+        center + labelOffset - Offset(painter.width / 2, painter.height / 2),
+      );
+    }
+
+    final minutePaint = Paint()
+      ..color = AppPalette.coral
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+    final hourPaint = Paint()
+      ..color = accent
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(center, center + Offset(0, -radius * 0.64), minutePaint);
+    canvas.drawLine(center, center + Offset(radius * 0.55, 0), hourPaint);
+    canvas.drawCircle(center, radius * 0.11, Paint()..color = AppPalette.coral);
+  }
+
+  @override
+  bool shouldRepaint(covariant _ClockFacePainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _SpacePebble extends StatelessWidget {
+  const _SpacePebble({required this.color, required this.size});
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.28),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Container(
+          width: size * 0.32,
+          height: size * 0.32,
+          margin: EdgeInsets.all(size * 0.18),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.34),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NotebookSumStage extends StatelessWidget {
+  const _NotebookSumStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 94 : 112,
+          padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFD9AA), Color(0xFFE8D7FF)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 126,
+                padding: const EdgeInsets.fromLTRB(18, 12, 16, 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: accent.withValues(alpha: 0.16),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _NotebookLine(text: '15'),
+                    _NotebookLine(text: '+ 20'),
+                    Divider(height: 10, thickness: 2, color: AppPalette.sky),
+                    _NotebookLine(text: '?', highlighted: true),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _NumberTile(label: '25', color: AppPalette.sky),
+                  SizedBox(height: 7),
+                  _NumberTile(
+                      label: '35', color: AppPalette.teal, selected: true),
+                  SizedBox(height: 7),
+                  _NumberTile(label: '45', color: AppPalette.lavender),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NotebookLine extends StatelessWidget {
+  const _NotebookLine({required this.text, this.highlighted = false});
+
+  final String text;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        color: highlighted ? AppPalette.coral : AppPalette.ink,
+        fontWeight: FontWeight.w900,
+        fontSize: highlighted ? 18 : 17,
+        height: 1.05,
+      ),
+    );
+  }
+}
+
+class _NumberTile extends StatelessWidget {
+  const _NumberTile({
+    required this.label,
+    required this.color,
+    this.selected = false,
+  });
+
+  final String label;
+  final Color color;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: selected ? color : Colors.white.withValues(alpha: 0.82),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: selected ? Colors.white : color, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: selected ? 0.24 : 0.12),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: selected ? Colors.white : color,
+          fontWeight: FontWeight.w900,
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
+}
+
+class _CookieShareStage extends StatelessWidget {
+  const _CookieShareStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: compact ? 286 : 328,
+          height: compact ? 94 : 112,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF4D9), Color(0xFFE5F8F4)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 122,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _CookieDot(),
+                    _CookieDot(),
+                    _CookieDot(),
+                    _CookieDot(),
+                    _CookieDot(),
+                    _CookieDot(),
+                  ],
+                ),
+              ),
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: accent,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                alignment: Alignment.center,
+                child: const Text(
+                  '÷',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _CookiePlate(label: '2'),
+                  SizedBox(height: 6),
+                  _CookiePlate(label: '2'),
+                  SizedBox(height: 6),
+                  _CookiePlate(label: '2'),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CookieDot extends StatelessWidget {
+  const _CookieDot();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+        color: const Color(0xFFD9924B),
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFD9924B).withValues(alpha: 0.20),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: const Stack(
+        children: [
+          _CookieChip(left: 8, top: 8),
+          _CookieChip(left: 18, top: 11),
+          _CookieChip(left: 13, top: 19),
+        ],
+      ),
+    );
+  }
+}
+
+class _CookieChip extends StatelessWidget {
+  const _CookieChip({required this.left, required this.top});
+
+  final double left;
+  final double top;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: left,
+      top: top,
+      child: Container(
+        width: 4,
+        height: 4,
+        decoration: const BoxDecoration(
+          color: Color(0xFF7B4A25),
+          shape: BoxShape.circle,
+        ),
+      ),
+    );
+  }
+}
+
+class _CookiePlate extends StatelessWidget {
+  const _CookiePlate({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 86,
+      height: 24,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppPalette.teal.withValues(alpha: 0.30)),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: AppPalette.teal,
+          fontWeight: FontWeight.w900,
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
+}
+
+class _MathCrosswordStage extends StatefulWidget {
+  const _MathCrosswordStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_MathCrosswordStage> createState() => _MathCrosswordStageState();
+}
+
+class _MathCrosswordStageState extends State<_MathCrosswordStage> {
+  String? _selected;
+
+  @override
+  Widget build(BuildContext context) {
+    final solved = _selected == '8';
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 98 : 116,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE8F5FF), Color(0xFFFFF1C6)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: 8,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const _CrosswordCell(label: '3'),
+                          const _CrosswordCell(label: '+'),
+                          const _CrosswordCell(label: '5'),
+                          const _CrosswordCell(label: '='),
+                          _CrosswordCell(
+                            label: _selected ?? '?',
+                            color: solved ? AppPalette.teal : widget.accent,
+                            filled: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 40,
+                      child: Column(
+                        children: [
+                          _CrosswordCell(
+                            label: _selected ?? '?',
+                            color: solved ? AppPalette.teal : widget.accent,
+                            filled: true,
+                          ),
+                          const _CrosswordCell(label: '-'),
+                          const _CrosswordCell(label: '2'),
+                          const _CrosswordCell(label: '='),
+                          const _CrosswordCell(label: '6'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (final value in const ['7', '8', '9'])
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      child: _NumberChoiceChip(
+                        label: value,
+                        selected: _selected == value,
+                        color: widget.accent,
+                        onTap: () => setState(() => _selected = value),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CrosswordCell extends StatelessWidget {
+  const _CrosswordCell({
+    required this.label,
+    this.color = AppPalette.sky,
+    this.filled = false,
+  });
+
+  final String label;
+  final Color color;
+  final bool filled;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 30,
+      height: 30,
+      margin: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+        color: filled ? color : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.34)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: filled ? 0.22 : 0.08),
+            blurRadius: 7,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: filled ? Colors.white : AppPalette.ink,
+          fontSize: 15,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _NumberChoiceChip extends StatelessWidget {
+  const _NumberChoiceChip({
+    required this.label,
+    required this.selected,
+    required this.color,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        width: 46,
+        height: 28,
+        decoration: BoxDecoration(
+          color: selected ? color : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: selected ? Colors.white : color),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : color,
+            fontWeight: FontWeight.w900,
+            fontSize: 15,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MarketChangeStage extends StatefulWidget {
+  const _MarketChangeStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_MarketChangeStage> createState() => _MarketChangeStageState();
+}
+
+class _MarketChangeStageState extends State<_MarketChangeStage> {
+  bool _bought = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final remaining = _bought ? 2 : 5;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 110 : 128,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF6D8), Color(0xFFEAF7FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (var index = 0; index < 5; index++)
+                      _MarketStarCoin(spent: _bought && index < 3),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              _ShopRocketCard(
+                bought: _bought,
+                accent: widget.accent,
+                onTap: () => setState(() => _bought = !_bought),
+              ),
+              const SizedBox(width: 10),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: widget.compact ? 62 : 72,
+                height: widget.compact ? 78 : 92,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: (_bought ? AppPalette.mint : widget.accent)
+                        .withValues(alpha: 0.34),
+                    width: _bought ? 2 : 1.2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (_bought ? AppPalette.mint : widget.accent)
+                          .withValues(alpha: 0.14),
+                      blurRadius: 12,
+                      offset: const Offset(0, 7),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.star_rounded,
+                      color: AppPalette.mango,
+                      size: widget.compact ? 24 : 30,
+                    ),
+                    Text(
+                      '$remaining',
+                      style: TextStyle(
+                        color: _bought ? AppPalette.mint : widget.accent,
+                        fontSize: widget.compact ? 22 : 28,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MarketStarCoin extends StatelessWidget {
+  const _MarketStarCoin({required this.spent});
+
+  final bool spent;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 180),
+      opacity: spent ? 0.28 : 1,
+      child: AnimatedScale(
+        duration: const Duration(milliseconds: 180),
+        scale: spent ? 0.82 : 1,
+        child: Container(
+          width: 30,
+          height: 30,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF2A6), Color(0xFFFFC84D)],
+            ),
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: AppPalette.mango.withValues(alpha: 0.24),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.star_rounded,
+            color: Colors.white,
+            size: 19,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShopRocketCard extends StatelessWidget {
+  const _ShopRocketCard({
+    required this.bought,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final bool bought;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(24),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 82,
+        height: 92,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color:
+              bought ? AppPalette.mint.withValues(alpha: 0.16) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: (bought ? AppPalette.mint : accent).withValues(alpha: 0.36),
+            width: bought ? 2.2 : 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: accent.withValues(alpha: 0.14),
+              blurRadius: 12,
+              offset: const Offset(0, 7),
+            ),
+          ],
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              top: 5,
+              child: Icon(
+                Icons.rocket_launch_rounded,
+                color: bought ? AppPalette.mint : AppPalette.coral,
+                size: 38,
+              ),
+            ),
+            Positioned(
+              bottom: 2,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppPalette.mango.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Row(
+                  children: [
+                    Text(
+                      '3',
+                      style: TextStyle(
+                        color: AppPalette.ink,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    SizedBox(width: 2),
+                    Icon(
+                      Icons.star_rounded,
+                      color: AppPalette.mango,
+                      size: 15,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -3254,6 +6806,1028 @@ class _MathSign extends StatelessWidget {
   }
 }
 
+class _ConstellationRouteStage extends StatelessWidget {
+  const _ConstellationRouteStage({
+    required this.accent,
+    required this.compact,
+  });
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: SizedBox(
+          width: compact ? 286 : 328,
+          height: compact ? 94 : 112,
+          child: CustomPaint(
+            painter: _ConstellationPainter(accent),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ConstellationPainter extends CustomPainter {
+  const _ConstellationPainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(22)),
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF1F255F), Color(0xFF173E70)],
+        ).createShader(rect),
+    );
+
+    final stars = [
+      Offset(size.width * 0.12, size.height * 0.68),
+      Offset(size.width * 0.30, size.height * 0.42),
+      Offset(size.width * 0.48, size.height * 0.56),
+      Offset(size.width * 0.66, size.height * 0.30),
+      Offset(size.width * 0.84, size.height * 0.52),
+    ];
+    final pathPaint = Paint()
+      ..color = AppPalette.mint
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round;
+
+    for (var index = 0; index < stars.length - 1; index++) {
+      canvas.drawLine(stars[index], stars[index + 1], pathPaint);
+    }
+
+    for (var index = 0; index < stars.length; index++) {
+      final isFinish = index == stars.length - 1;
+      _drawStar(
+        canvas,
+        stars[index],
+        isFinish ? size.height * 0.11 : size.height * 0.075,
+        isFinish ? accent : Colors.white,
+        glow: isFinish,
+      );
+    }
+
+    _drawFinishLabel(canvas, 'A', Offset(size.width * 0.74, size.height * 0.78),
+        AppPalette.lavender);
+    _drawFinishLabel(
+        canvas, 'B', Offset(size.width * 0.88, size.height * 0.52), accent,
+        highlighted: true);
+    _drawFinishLabel(canvas, 'C', Offset(size.width * 0.92, size.height * 0.20),
+        AppPalette.mango);
+  }
+
+  void _drawStar(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color color, {
+    bool glow = false,
+  }) {
+    if (glow) {
+      canvas.drawCircle(
+        center,
+        radius * 1.85,
+        Paint()..color = color.withValues(alpha: 0.20),
+      );
+    }
+
+    final path = Path();
+    for (var point = 0; point < 10; point++) {
+      final currentRadius = point.isEven ? radius : radius * 0.46;
+      final angle = -math.pi / 2 + point * math.pi / 5;
+      final offset = Offset(
+        center.dx + math.cos(angle) * currentRadius,
+        center.dy + math.sin(angle) * currentRadius,
+      );
+      if (point == 0) {
+        path.moveTo(offset.dx, offset.dy);
+      } else {
+        path.lineTo(offset.dx, offset.dy);
+      }
+    }
+    path.close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  void _drawFinishLabel(
+    Canvas canvas,
+    String label,
+    Offset center,
+    Color color, {
+    bool highlighted = false,
+  }) {
+    final radius = highlighted ? 16.0 : 13.0;
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..color = highlighted ? color : Colors.white.withValues(alpha: 0.86),
+    );
+    if (highlighted) {
+      canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..color = Colors.white
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2,
+      );
+    }
+
+    final painter = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: highlighted ? Colors.white : color,
+          fontSize: highlighted ? 17 : 14,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    painter.paint(
+      canvas,
+      center - Offset(painter.width / 2, painter.height / 2),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _ConstellationPainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _PicturePuzzleStage extends StatefulWidget {
+  const _PicturePuzzleStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_PicturePuzzleStage> createState() => _PicturePuzzleStageState();
+}
+
+class _PicturePuzzleStageState extends State<_PicturePuzzleStage> {
+  String? _centerPiece;
+
+  @override
+  Widget build(BuildContext context) {
+    final solved = _centerPiece == 'B';
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 108 : 126,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF17255E), Color(0xFF1FA7C1)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 134,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.16),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: Column(
+                  children: [
+                    const _RocketPuzzleSlot(pieceId: 'A', fixed: true),
+                    const SizedBox(height: 5),
+                    DragTarget<String>(
+                      onWillAcceptWithDetails: (_) => true,
+                      onAcceptWithDetails: (details) {
+                        setState(() => _centerPiece = details.data);
+                      },
+                      builder: (context, candidateData, rejectedData) {
+                        return _RocketPuzzleSlot(
+                          pieceId: _centerPiece,
+                          fixed: false,
+                          highlighted: candidateData.isNotEmpty || solved,
+                          accent: widget.accent,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 5),
+                    const _RocketPuzzleSlot(pieceId: 'C', fixed: true),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (final piece in const ['A', 'B', 'C'])
+                      _DraggableRocketPiece(
+                        pieceId: piece,
+                        selected: _centerPiece == piece,
+                        accent: widget.accent,
+                        onTap: () => setState(() => _centerPiece = piece),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RocketPuzzleSlot extends StatelessWidget {
+  const _RocketPuzzleSlot({
+    required this.pieceId,
+    required this.fixed,
+    this.highlighted = false,
+    this.accent = AppPalette.teal,
+  });
+
+  final String? pieceId;
+  final bool fixed;
+  final bool highlighted;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 112,
+      height: 28,
+      decoration: BoxDecoration(
+        color: pieceId == null
+            ? Colors.white.withValues(alpha: 0.14)
+            : Colors.white.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: highlighted ? accent : Colors.white.withValues(alpha: 0.38),
+          width: highlighted ? 2 : 1,
+        ),
+      ),
+      child: pieceId == null
+          ? Center(
+              child: Text(
+                '?',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.78),
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            )
+          : CustomPaint(
+              painter: _RocketPuzzlePiecePainter(pieceId!, fixed),
+              child: const SizedBox.expand(),
+            ),
+    );
+  }
+}
+
+class _DraggableRocketPiece extends StatelessWidget {
+  const _DraggableRocketPiece({
+    required this.pieceId,
+    required this.selected,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String pieceId;
+  final bool selected;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final piece = _RocketPieceThumb(
+      pieceId: pieceId,
+      selected: selected,
+      accent: accent,
+    );
+
+    return Draggable<String>(
+      data: pieceId,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.08, child: piece),
+      ),
+      childWhenDragging: Opacity(opacity: 0.38, child: piece),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: piece,
+      ),
+    );
+  }
+}
+
+class _RocketPieceThumb extends StatelessWidget {
+  const _RocketPieceThumb({
+    required this.pieceId,
+    required this.selected,
+    required this.accent,
+  });
+
+  final String pieceId;
+  final bool selected;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 58,
+      height: 42,
+      decoration: BoxDecoration(
+        color: selected ? accent : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white, width: selected ? 2 : 1),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: selected ? 0.28 : 0.13),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          CustomPaint(
+            painter: _RocketPuzzlePiecePainter(pieceId, false),
+            child: const SizedBox.expand(),
+          ),
+          Positioned(
+            right: 5,
+            bottom: 3,
+            child: Text(
+              pieceId,
+              style: TextStyle(
+                color: selected ? Colors.white : accent,
+                fontWeight: FontWeight.w900,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RocketPuzzlePiecePainter extends CustomPainter {
+  const _RocketPuzzlePiecePainter(this.pieceId, this.fixed);
+
+  final String pieceId;
+  final bool fixed;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final scaleY = size.height / 28;
+    final scaleX = size.width / 112;
+    canvas.save();
+    canvas.scale(scaleX, scaleY);
+
+    final bodyPaint = Paint()..color = const Color(0xFFFF6F61);
+    final glassPaint = Paint()..color = AppPalette.sky;
+    final firePaint = Paint()..color = AppPalette.mango;
+    final shadowPaint = Paint()..color = AppPalette.ink.withValues(alpha: 0.10);
+
+    if (pieceId == 'A') {
+      final nose = Path()
+        ..moveTo(56, 2)
+        ..lineTo(84, 26)
+        ..lineTo(28, 26)
+        ..close();
+      canvas.drawPath(nose.shift(const Offset(0, 2)), shadowPaint);
+      canvas.drawPath(nose, bodyPaint);
+      canvas.drawCircle(const Offset(56, 19), 7, glassPaint);
+      canvas.drawCircle(
+        const Offset(53, 16),
+        2.5,
+        Paint()..color = Colors.white.withValues(alpha: 0.68),
+      );
+    } else if (pieceId == 'B') {
+      final body = RRect.fromRectAndRadius(
+        const Rect.fromLTWH(31, 1, 50, 26),
+        const Radius.circular(12),
+      );
+      canvas.drawRRect(body.shift(const Offset(0, 2)), shadowPaint);
+      canvas.drawRRect(body, Paint()..color = Colors.white);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          const Rect.fromLTWH(40, 7, 32, 14),
+          const Radius.circular(7),
+        ),
+        Paint()..color = AppPalette.teal,
+      );
+      canvas.drawCircle(const Offset(56, 14), 5, glassPaint);
+    } else {
+      final leftFin = Path()
+        ..moveTo(33, 2)
+        ..lineTo(18, 25)
+        ..lineTo(45, 20)
+        ..close();
+      final rightFin = Path()
+        ..moveTo(79, 2)
+        ..lineTo(94, 25)
+        ..lineTo(67, 20)
+        ..close();
+      canvas.drawPath(leftFin, Paint()..color = AppPalette.lavender);
+      canvas.drawPath(rightFin, Paint()..color = AppPalette.lavender);
+      canvas.drawOval(
+        const Rect.fromLTWH(43, 1, 26, 22),
+        Paint()..color = const Color(0xFFFF6F61),
+      );
+      final flame = Path()
+        ..moveTo(56, 27)
+        ..lineTo(46, 16)
+        ..lineTo(66, 16)
+        ..close();
+      canvas.drawPath(flame, firePaint);
+    }
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(covariant _RocketPuzzlePiecePainter oldDelegate) =>
+      oldDelegate.pieceId != pieceId || oldDelegate.fixed != fixed;
+}
+
+class _RouteMazeStage extends StatefulWidget {
+  const _RouteMazeStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_RouteMazeStage> createState() => _RouteMazeStageState();
+}
+
+class _RouteMazeStageState extends State<_RouteMazeStage> {
+  static const _starCell = 6;
+  static const _obstacles = {1, 7, 13, 15};
+
+  int _row = 2;
+  int _col = 0;
+
+  bool get _solved => _cellCode(_row, _col) == _starCell;
+
+  void _move(int rowDelta, int colDelta) {
+    final nextRow = (_row + rowDelta).clamp(0, 3);
+    final nextCol = (_col + colDelta).clamp(0, 3);
+    final nextCell = _cellCode(nextRow, nextCol);
+    if (_obstacles.contains(nextCell)) {
+      return;
+    }
+
+    setState(() {
+      _row = nextRow;
+      _col = nextCol;
+    });
+  }
+
+  static int _cellCode(int row, int col) => row * 4 + col;
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 134,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFEAF7FF), Color(0xFFF5E9FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: widget.compact ? 116 : 132,
+                height: widget.compact ? 92 : 108,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.86),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: (_solved ? AppPalette.mint : widget.accent)
+                        .withValues(alpha: 0.24),
+                  ),
+                ),
+                child: GridView.builder(
+                  padding: EdgeInsets.zero,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 16,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 4,
+                    crossAxisSpacing: 4,
+                  ),
+                  itemBuilder: (context, index) {
+                    final hero = index == _cellCode(_row, _col);
+                    final star = index == _starCell;
+                    final blocked = _obstacles.contains(index);
+                    return _MazeCell(
+                      hero: hero,
+                      star: star,
+                      blocked: blocked,
+                      solved: _solved,
+                      accent: widget.accent,
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _MazeArrowButton(
+                      icon: Icons.keyboard_arrow_up_rounded,
+                      color: widget.accent,
+                      onTap: () => _move(-1, 0),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _MazeArrowButton(
+                          icon: Icons.keyboard_arrow_left_rounded,
+                          color: AppPalette.teal,
+                          onTap: () => _move(0, -1),
+                        ),
+                        const SizedBox(width: 10),
+                        _MazeArrowButton(
+                          icon: _solved
+                              ? Icons.check_rounded
+                              : Icons.my_location_rounded,
+                          color: _solved ? AppPalette.mint : AppPalette.mango,
+                        ),
+                        const SizedBox(width: 10),
+                        _MazeArrowButton(
+                          icon: Icons.keyboard_arrow_right_rounded,
+                          color: AppPalette.coral,
+                          onTap: () => _move(0, 1),
+                        ),
+                      ],
+                    ),
+                    _MazeArrowButton(
+                      icon: Icons.keyboard_arrow_down_rounded,
+                      color: AppPalette.lavender,
+                      onTap: () => _move(1, 0),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MazeCell extends StatelessWidget {
+  const _MazeCell({
+    required this.hero,
+    required this.star,
+    required this.blocked,
+    required this.solved,
+    required this.accent,
+  });
+
+  final bool hero;
+  final bool star;
+  final bool blocked;
+  final bool solved;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = blocked
+        ? AppPalette.muted
+        : star
+            ? AppPalette.mango
+            : accent;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      decoration: BoxDecoration(
+        color: blocked
+            ? AppPalette.ink.withValues(alpha: 0.10)
+            : Colors.white.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: hero
+              ? (solved ? AppPalette.mint : accent)
+              : color.withValues(alpha: 0.16),
+          width: hero ? 2.4 : 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 160),
+        child: hero
+            ? Icon(
+                solved ? Icons.emoji_events_rounded : Icons.face_rounded,
+                key: ValueKey('hero-$solved'),
+                color: solved ? AppPalette.mint : accent,
+                size: 18,
+              )
+            : star
+                ? const Icon(Icons.star_rounded,
+                    key: ValueKey('star'), color: AppPalette.mango, size: 18)
+                : blocked
+                    ? Icon(Icons.circle,
+                        key: const ValueKey('blocked'),
+                        color: AppPalette.muted.withValues(alpha: 0.42),
+                        size: 10)
+                    : const SizedBox(key: ValueKey('empty')),
+      ),
+    );
+  }
+}
+
+class _MazeArrowButton extends StatelessWidget {
+  const _MazeArrowButton({
+    required this.icon,
+    required this.color,
+    this.onTap,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(16),
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        width: 36,
+        height: 30,
+        margin: const EdgeInsets.symmetric(vertical: 3),
+        decoration: BoxDecoration(
+          color: onTap == null ? color.withValues(alpha: 0.18) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.32)),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.12),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Icon(icon, color: color, size: 22),
+      ),
+    );
+  }
+}
+
+class _ShapeTangramStage extends StatefulWidget {
+  const _ShapeTangramStage({required this.accent, required this.compact});
+
+  final Color accent;
+  final bool compact;
+
+  @override
+  State<_ShapeTangramStage> createState() => _ShapeTangramStageState();
+}
+
+class _ShapeTangramStageState extends State<_ShapeTangramStage> {
+  String? _nosePiece;
+
+  @override
+  Widget build(BuildContext context) {
+    final solved = _nosePiece == 'triangle';
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 112 : 128,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE8F8FF), Color(0xFFF4E8FF)],
+            ),
+            borderRadius: BorderRadius.circular(22),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 124,
+                height: 104,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.78),
+                  borderRadius: BorderRadius.circular(20),
+                  border:
+                      Border.all(color: widget.accent.withValues(alpha: 0.20)),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      top: 7,
+                      child: DragTarget<String>(
+                        onWillAcceptWithDetails: (_) => true,
+                        onAcceptWithDetails: (details) {
+                          setState(() => _nosePiece = details.data);
+                        },
+                        builder: (context, candidateData, rejectedData) {
+                          return _TangramSlot(
+                            piece: _nosePiece,
+                            accent: widget.accent,
+                            highlighted: candidateData.isNotEmpty || solved,
+                          );
+                        },
+                      ),
+                    ),
+                    const Positioned(
+                      top: 40,
+                      child: Row(
+                        children: [
+                          _TangramPlacedBlock(color: AppPalette.sky),
+                          SizedBox(width: 5),
+                          _TangramPlacedBlock(color: AppPalette.teal),
+                        ],
+                      ),
+                    ),
+                    const Positioned(
+                      bottom: 11,
+                      child: Row(
+                        children: [
+                          _TangramFin(color: AppPalette.lavender),
+                          SizedBox(width: 24),
+                          _TangramFin(color: AppPalette.mango),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (final piece in const ['triangle', 'square', 'circle'])
+                      _DraggableTangramPiece(
+                        piece: piece,
+                        selected: _nosePiece == piece,
+                        accent: widget.accent,
+                        onTap: () => setState(() => _nosePiece = piece),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TangramSlot extends StatelessWidget {
+  const _TangramSlot({
+    required this.piece,
+    required this.accent,
+    required this.highlighted,
+  });
+
+  final String? piece;
+  final Color accent;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 54,
+      height: 38,
+      decoration: BoxDecoration(
+        color: piece == null ? Colors.white : AppPalette.mint,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: highlighted ? accent : accent.withValues(alpha: 0.24),
+          width: highlighted ? 2 : 1,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: piece == null
+          ? Text(
+              '?',
+              style: TextStyle(
+                color: accent,
+                fontWeight: FontWeight.w900,
+                fontSize: 19,
+              ),
+            )
+          : CustomPaint(
+              painter: _TangramPiecePainter(piece!, accent),
+              child: const SizedBox(width: 42, height: 30),
+            ),
+    );
+  }
+}
+
+class _TangramPlacedBlock extends StatelessWidget {
+  const _TangramPlacedBlock({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 30,
+      height: 34,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+    );
+  }
+}
+
+class _TangramFin extends StatelessWidget {
+  const _TangramFin({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.rotate(
+      angle: 0.7,
+      child: Container(
+        width: 24,
+        height: 20,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: Colors.white, width: 2),
+        ),
+      ),
+    );
+  }
+}
+
+class _DraggableTangramPiece extends StatelessWidget {
+  const _DraggableTangramPiece({
+    required this.piece,
+    required this.selected,
+    required this.accent,
+    required this.onTap,
+  });
+
+  final String piece;
+  final bool selected;
+  final Color accent;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final child = _TangramPieceChip(
+      piece: piece,
+      selected: selected,
+      accent: accent,
+    );
+
+    return Draggable<String>(
+      data: piece,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.08, child: child),
+      ),
+      childWhenDragging: Opacity(opacity: 0.36, child: child),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: child,
+      ),
+    );
+  }
+}
+
+class _TangramPieceChip extends StatelessWidget {
+  const _TangramPieceChip({
+    required this.piece,
+    required this.selected,
+    required this.accent,
+  });
+
+  final String piece;
+  final bool selected;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 56,
+      height: 44,
+      decoration: BoxDecoration(
+        color: selected ? accent : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white, width: selected ? 2 : 1),
+        boxShadow: [
+          BoxShadow(
+            color: accent.withValues(alpha: selected ? 0.24 : 0.10),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: CustomPaint(
+        painter: _TangramPiecePainter(piece, selected ? Colors.white : accent),
+        child: const SizedBox.expand(),
+      ),
+    );
+  }
+}
+
+class _TangramPiecePainter extends CustomPainter {
+  const _TangramPiecePainter(this.piece, this.color);
+
+  final String piece;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+
+    if (piece == 'triangle') {
+      final path = Path()
+        ..moveTo(size.width / 2, size.height * 0.12)
+        ..lineTo(size.width * 0.82, size.height * 0.82)
+        ..lineTo(size.width * 0.18, size.height * 0.82)
+        ..close();
+      canvas.drawPath(path, paint);
+    } else if (piece == 'square') {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: Offset(size.width / 2, size.height / 2),
+            width: size.width * 0.54,
+            height: size.width * 0.54,
+          ),
+          const Radius.circular(7),
+        ),
+        paint,
+      );
+    } else {
+      canvas.drawCircle(
+        Offset(size.width / 2, size.height / 2),
+        size.shortestSide * 0.30,
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _TangramPiecePainter oldDelegate) =>
+      oldDelegate.piece != piece || oldDelegate.color != color;
+}
+
 class _PathStage extends StatelessWidget {
   const _PathStage({
     required this.puzzle,
@@ -3267,6 +7841,38 @@ class _PathStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (puzzle.id == 'constellation-route') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _ConstellationRouteStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'picture-puzzle') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _PicturePuzzleStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'shape-tangram') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _ShapeTangramStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'route-maze') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _RouteMazeStage(accent: accent, compact: compact),
+      );
+    }
+
     final spec = _pathStageSpecFor(puzzle.id, accent, compact);
 
     return _StageShell(
@@ -3637,6 +8243,38 @@ class _PatternStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (puzzle.id == 'bridge-order') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _BridgeOrderStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'mini-sudoku') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _MiniSudokuStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'logic-houses') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _LogicHousesStage(accent: accent, compact: compact),
+      );
+    }
+
+    if (puzzle.id == 'code-lock') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _CodeLockStage(accent: accent, compact: compact),
+      );
+    }
+
     final items = _logicStageItemsFor(puzzle.id, accent, compact);
 
     return _StageShell(
@@ -3992,6 +8630,72 @@ IconData _iconForAnswer(String label) {
 
   if (label.contains('Звезда')) {
     return Icons.star_rounded;
+  }
+
+  if (label == 'STAR') {
+    return Icons.star_rounded;
+  }
+
+  if (label == 'word_star') {
+    return Icons.star_rounded;
+  }
+
+  if (label == 'word_moon') {
+    return Icons.nightlight_round;
+  }
+
+  if (label == 'word_sun') {
+    return Icons.wb_sunny_rounded;
+  }
+
+  if (label == 'shape_star') {
+    return Icons.star_rounded;
+  }
+
+  if (label == 'shape_moon') {
+    return Icons.nightlight_round;
+  }
+
+  if (label == 'shape_rocket') {
+    return Icons.rocket_launch_rounded;
+  }
+
+  if (label == 'house_blue' ||
+      label == 'house_green' ||
+      label == 'house_yellow') {
+    return Icons.home_rounded;
+  }
+
+  if (label == 'piece_triangle') {
+    return Icons.change_history_rounded;
+  }
+
+  if (label == 'piece_square') {
+    return Icons.square_rounded;
+  }
+
+  if (label == 'piece_circle') {
+    return Icons.circle_rounded;
+  }
+
+  if (label == 'path_A' || label == 'path_B' || label == 'path_C') {
+    return Icons.alt_route_rounded;
+  }
+
+  if (label == 'DOG' || label == 'CAT' || label == 'FOX') {
+    return Icons.pets_rounded;
+  }
+
+  if (label.contains('Костер')) {
+    return Icons.local_fire_department_rounded;
+  }
+
+  if (label.contains('Палатка')) {
+    return Icons.festival_rounded;
+  }
+
+  if (label.contains('Подушка')) {
+    return Icons.bed_rounded;
   }
 
   if (label.contains('Сердце')) {

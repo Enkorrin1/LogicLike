@@ -1191,6 +1191,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'on device'**
   String get parentStorageLocal;
+
+  /// No description provided for @notificationDailyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A new mission is waiting'**
+  String get notificationDailyTitle;
+
+  /// No description provided for @notificationDailyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}, solve one small puzzle and keep the star streak glowing.'**
+  String notificationDailyBody(String name);
+
+  /// No description provided for @notificationEveningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One step before bedtime?'**
+  String get notificationEveningTitle;
+
+  /// No description provided for @notificationEveningBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has a short mission left. 5 calm minutes are enough.'**
+  String notificationEveningBody(String name);
+
+  /// No description provided for @parentRemindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get parentRemindersTitle;
+
+  /// No description provided for @parentReminderStatusOn.
+  ///
+  /// In en, this message translates to:
+  /// **'on'**
+  String get parentReminderStatusOn;
+
+  /// No description provided for @parentReminderStatusOff.
+  ///
+  /// In en, this message translates to:
+  /// **'off'**
+  String get parentReminderStatusOff;
+
+  /// No description provided for @parentRemindersBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle daily nudge helps return to the mission without pressure.'**
+  String get parentRemindersBody;
+
+  /// No description provided for @parentReminderDailyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily mission'**
+  String get parentReminderDailyLabel;
+
+  /// No description provided for @parentReminderDailyValue.
+  ///
+  /// In en, this message translates to:
+  /// **'18:30 every day'**
+  String get parentReminderDailyValue;
+
+  /// No description provided for @parentReminderFollowUpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening follow-up'**
+  String get parentReminderFollowUpLabel;
+
+  /// No description provided for @parentReminderFollowUpValue.
+  ///
+  /// In en, this message translates to:
+  /// **'20:15 if the mission is waiting'**
+  String get parentReminderFollowUpValue;
+
+  /// No description provided for @parentReminderToggleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return reminders'**
+  String get parentReminderToggleLabel;
+
+  /// No description provided for @parentReminderToggleOn.
+  ///
+  /// In en, this message translates to:
+  /// **'BrainUp will invite the child back to one short mission.'**
+  String get parentReminderToggleOn;
+
+  /// No description provided for @parentReminderToggleOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders are off. The app will stay quiet.'**
+  String get parentReminderToggleOff;
 }
 
 class _AppLocalizationsDelegate

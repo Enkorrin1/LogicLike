@@ -623,4 +623,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parentStorageLocal => 'on device';
+
+  @override
+  String get notificationDailyTitle => 'A new mission is waiting';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name, solve one small puzzle and keep the star streak glowing.';
+  }
+
+  @override
+  String get notificationEveningTitle => 'One step before bedtime?';
+
+  @override
+  String notificationEveningBody(String name) {
+    return '$name has a short mission left. 5 calm minutes are enough.';
+  }
+
+  @override
+  String get parentRemindersTitle => 'Reminders';
+
+  @override
+  String get parentReminderStatusOn => 'on';
+
+  @override
+  String get parentReminderStatusOff => 'off';
+
+  @override
+  String get parentRemindersBody =>
+      'A gentle daily nudge helps return to the mission without pressure.';
+
+  @override
+  String get parentReminderDailyLabel => 'Daily mission';
+
+  @override
+  String get parentReminderDailyValue => '18:30 every day';
+
+  @override
+  String get parentReminderFollowUpLabel => 'Evening follow-up';
+
+  @override
+  String get parentReminderFollowUpValue => '20:15 if the mission is waiting';
+
+  @override
+  String get parentReminderToggleLabel => 'Return reminders';
+
+  @override
+  String get parentReminderToggleOn =>
+      'BrainUp will invite the child back to one short mission.';
+
+  @override
+  String get parentReminderToggleOff =>
+      'Reminders are off. The app will stay quiet.';
 }

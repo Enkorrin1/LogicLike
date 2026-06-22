@@ -403,5 +403,34 @@
   "parentDiscussBody": "タスクの後で、「ルールをどうやって見つけましたか?」と尋ねます。これにより、推測ではなく説明が構築されます。",
   "parentFamilySecurityTitle": "家族と安全",
   "parentStorageLabel": "ストレージ",
-  "parentStorageLocal": "デバイス上で"
+  "parentStorageLocal": "デバイス上で",
+  "notificationDailyTitle": "新しいミッションが待ってるよ",
+  "notificationDailyBody": "{name}、小さなパズルを解いて星の連続記録を光らせよう。",
+  "notificationEveningTitle": "寝る前にもう1ステップ？",
+  "notificationEveningBody": "{name}には短いミッションが残っています。落ち着いた5分で十分です。",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "リマインダー",
+  "parentReminderStatusOn": "オン",
+  "parentReminderStatusOff": "オフ",
+  "parentRemindersBody": "やさしい毎日の通知で、プレッシャーなくミッションに戻れます。",
+  "parentReminderDailyLabel": "今日のミッション",
+  "parentReminderDailyValue": "毎日18:30",
+  "parentReminderFollowUpLabel": "夜のフォロー",
+  "parentReminderFollowUpValue": "ミッションが残っている場合は20:15",
+  "parentReminderToggleLabel": "戻る通知",
+  "parentReminderToggleOn": "BrainUpが短いミッションへそっと誘います。",
+  "parentReminderToggleOff": "リマインダーはオフです。アプリは静かにしています。"
 }

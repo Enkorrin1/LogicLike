@@ -403,5 +403,34 @@
   "parentDiscussBody": "किसी कार्य के बाद पूछें: \"आपको नियम कैसे मिला?\" इससे स्पष्टीकरण बनता है, अनुमान नहीं।",
   "parentFamilySecurityTitle": "परिवार और सुरक्षा",
   "parentStorageLabel": "भंडारण",
-  "parentStorageLocal": "उपकरण पर"
+  "parentStorageLocal": "उपकरण पर",
+  "notificationDailyTitle": "नई मिशन इंतज़ार कर रही है",
+  "notificationDailyBody": "{name}, एक छोटी पहेली हल करो और सितारों की श्रृंखला चमकती रखो।",
+  "notificationEveningTitle": "सोने से पहले एक छोटा कदम?",
+  "notificationEveningBody": "{name} के लिए एक छोटी मिशन बाकी है। 5 शांत मिनट काफी हैं।",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "रिमाइंडर",
+  "parentReminderStatusOn": "चालू",
+  "parentReminderStatusOff": "बंद",
+  "parentRemindersBody": "एक हल्का दैनिक रिमाइंडर बिना दबाव मिशन पर लौटने में मदद करता है।",
+  "parentReminderDailyLabel": "दैनिक मिशन",
+  "parentReminderDailyValue": "हर दिन 18:30",
+  "parentReminderFollowUpLabel": "शाम का रिमाइंडर",
+  "parentReminderFollowUpValue": "20:15, अगर मिशन इंतज़ार कर रही है",
+  "parentReminderToggleLabel": "वापस आने की याद दिलाएं",
+  "parentReminderToggleOn": "BrainUp बच्चे को एक छोटे मिशन के लिए बुलाएगा।",
+  "parentReminderToggleOff": "रिमाइंडर बंद हैं। ऐप शांत रहेगा।"
 }

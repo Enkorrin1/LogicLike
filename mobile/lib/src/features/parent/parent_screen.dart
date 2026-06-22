@@ -14,12 +14,14 @@ class ParentScreen extends StatelessWidget {
     required this.profile,
     required this.onResetProfile,
     required this.onLanguageChanged,
+    required this.onReminderPreferenceChanged,
     super.key,
   });
 
   final FamilyProfile profile;
   final Future<void> Function() onResetProfile;
   final Future<void> Function(AppLanguage language) onLanguageChanged;
+  final Future<void> Function(bool enabled) onReminderPreferenceChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +85,11 @@ class ParentScreen extends StatelessWidget {
               completedToday: completedToday,
               todayDone: todaysCompletedIds.length,
               todayTotal: todaysPuzzles.length,
+            ),
+            const SizedBox(height: 16),
+            _ReminderSettingsCard(
+              profile: profile,
+              onReminderPreferenceChanged: onReminderPreferenceChanged,
             ),
             const SizedBox(height: 16),
             _FamilySettingsCard(
@@ -749,6 +756,80 @@ class _AdviceTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReminderSettingsCard extends StatelessWidget {
+  const _ReminderSettingsCard({
+    required this.profile,
+    required this.onReminderPreferenceChanged,
+  });
+
+  final FamilyProfile profile;
+  final Future<void> Function(bool enabled) onReminderPreferenceChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final enabled = profile.remindersEnabled;
+
+    return PlayfulCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionTitle(
+            title: l10n.parentRemindersTitle,
+            trailing: InfoPill(
+              icon: enabled
+                  ? Icons.notifications_active_rounded
+                  : Icons.notifications_off_rounded,
+              label: enabled
+                  ? l10n.parentReminderStatusOn
+                  : l10n.parentReminderStatusOff,
+              color: enabled ? AppPalette.mint : const Color(0xFFFFE5E5),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.parentRemindersBody,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 14),
+          _InfoRow(
+            icon: Icons.wb_twilight_rounded,
+            color: AppPalette.surfaceBlue,
+            label: l10n.parentReminderDailyLabel,
+            value: l10n.parentReminderDailyValue,
+          ),
+          _InfoRow(
+            icon: Icons.nights_stay_rounded,
+            color: AppPalette.lavender.withValues(alpha: 0.34),
+            label: l10n.parentReminderFollowUpLabel,
+            value: l10n.parentReminderFollowUpValue,
+          ),
+          Material(
+            color: Colors.transparent,
+            child: SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                l10n.parentReminderToggleLabel,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              subtitle: Text(
+                enabled
+                    ? l10n.parentReminderToggleOn
+                    : l10n.parentReminderToggleOff,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              value: enabled,
+              activeThumbColor: AppPalette.teal,
+              activeTrackColor: AppPalette.teal.withValues(alpha: 0.28),
+              onChanged: onReminderPreferenceChanged,
             ),
           ),
         ],

@@ -403,5 +403,34 @@
   "parentDiscussBody": "Après une tâche, demandez : « Comment avez-vous trouvé la règle ? Cela construit une explication, pas une supposition.",
   "parentFamilySecurityTitle": "Famille et sécurité",
   "parentStorageLabel": "Stockage",
-  "parentStorageLocal": "sur l'appareil"
+  "parentStorageLocal": "sur l'appareil",
+  "notificationDailyTitle": "Une nouvelle mission t'attend",
+  "notificationDailyBody": "{name}, résous une petite énigme et garde la série d'étoiles allumée.",
+  "notificationEveningTitle": "Un petit pas avant de dormir ?",
+  "notificationEveningBody": "Il reste une courte mission à {name}. 5 minutes calmes suffisent.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Rappels",
+  "parentReminderStatusOn": "activés",
+  "parentReminderStatusOff": "désactivés",
+  "parentRemindersBody": "Un rappel quotidien doux aide à revenir à la mission sans pression.",
+  "parentReminderDailyLabel": "Mission du jour",
+  "parentReminderDailyValue": "18:30 tous les jours",
+  "parentReminderFollowUpLabel": "Rappel du soir",
+  "parentReminderFollowUpValue": "20:15 si la mission attend",
+  "parentReminderToggleLabel": "Rappeler de revenir",
+  "parentReminderToggleOn": "BrainUp invitera l’enfant à une courte mission.",
+  "parentReminderToggleOff": "Les rappels sont désactivés. L’application restera silencieuse."
 }

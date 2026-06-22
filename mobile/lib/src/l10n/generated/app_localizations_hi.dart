@@ -623,4 +623,55 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get parentStorageLocal => 'उपकरण पर';
+
+  @override
+  String get notificationDailyTitle => 'नई मिशन इंतज़ार कर रही है';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name, एक छोटी पहेली हल करो और सितारों की श्रृंखला चमकती रखो।';
+  }
+
+  @override
+  String get notificationEveningTitle => 'सोने से पहले एक छोटा कदम?';
+
+  @override
+  String notificationEveningBody(String name) {
+    return '$name के लिए एक छोटी मिशन बाकी है। 5 शांत मिनट काफी हैं।';
+  }
+
+  @override
+  String get parentRemindersTitle => 'रिमाइंडर';
+
+  @override
+  String get parentReminderStatusOn => 'चालू';
+
+  @override
+  String get parentReminderStatusOff => 'बंद';
+
+  @override
+  String get parentRemindersBody =>
+      'एक हल्का दैनिक रिमाइंडर बिना दबाव मिशन पर लौटने में मदद करता है।';
+
+  @override
+  String get parentReminderDailyLabel => 'दैनिक मिशन';
+
+  @override
+  String get parentReminderDailyValue => 'हर दिन 18:30';
+
+  @override
+  String get parentReminderFollowUpLabel => 'शाम का रिमाइंडर';
+
+  @override
+  String get parentReminderFollowUpValue => '20:15, अगर मिशन इंतज़ार कर रही है';
+
+  @override
+  String get parentReminderToggleLabel => 'वापस आने की याद दिलाएं';
+
+  @override
+  String get parentReminderToggleOn =>
+      'BrainUp बच्चे को एक छोटे मिशन के लिए बुलाएगा।';
+
+  @override
+  String get parentReminderToggleOff => 'रिमाइंडर बंद हैं। ऐप शांत रहेगा।';
 }

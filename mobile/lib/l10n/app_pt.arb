@@ -403,5 +403,34 @@
   "parentDiscussBody": "Após uma tarefa, pergunte: “Como você encontrou a regra?” Isso constrói explicação, não adivinhação.",
   "parentFamilySecurityTitle": "Família e segurança",
   "parentStorageLabel": "Armazenar",
-  "parentStorageLocal": "no dispositivo"
+  "parentStorageLocal": "no dispositivo",
+  "notificationDailyTitle": "Uma nova missão espera",
+  "notificationDailyBody": "{name}, resolva um pequeno desafio e mantenha a sequência de estrelas brilhando.",
+  "notificationEveningTitle": "Um passo antes de dormir?",
+  "notificationEveningBody": "{name} ainda tem uma missão curta. 5 minutos tranquilos bastam.",
+  "@notificationDailyBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@notificationEveningBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "parentRemindersTitle": "Lembretes",
+  "parentReminderStatusOn": "ativos",
+  "parentReminderStatusOff": "inativos",
+  "parentRemindersBody": "Um lembrete diário leve ajuda a voltar à missão sem pressão.",
+  "parentReminderDailyLabel": "Missão diária",
+  "parentReminderDailyValue": "18:30 todos os dias",
+  "parentReminderFollowUpLabel": "Lembrete da noite",
+  "parentReminderFollowUpValue": "20:15 se a missão estiver esperando",
+  "parentReminderToggleLabel": "Lembrar de voltar",
+  "parentReminderToggleOn": "O BrainUp chamará a criança para uma missão curta.",
+  "parentReminderToggleOff": "Os lembretes estão desligados. O app ficará silencioso."
 }

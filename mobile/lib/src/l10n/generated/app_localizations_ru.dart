@@ -623,4 +623,56 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get parentStorageLocal => 'на устройстве';
+
+  @override
+  String get notificationDailyTitle => 'Новая миссия ждет';
+
+  @override
+  String notificationDailyBody(String name) {
+    return '$name, реши одну маленькую головоломку и сохрани звездную серию.';
+  }
+
+  @override
+  String get notificationEveningTitle => 'Один шаг перед сном?';
+
+  @override
+  String notificationEveningBody(String name) {
+    return 'У $name осталась короткая миссия. Хватит 5 спокойных минут.';
+  }
+
+  @override
+  String get parentRemindersTitle => 'Напоминания';
+
+  @override
+  String get parentReminderStatusOn => 'вкл';
+
+  @override
+  String get parentReminderStatusOff => 'выкл';
+
+  @override
+  String get parentRemindersBody =>
+      'Мягкое ежедневное напоминание помогает вернуться к миссии без давления.';
+
+  @override
+  String get parentReminderDailyLabel => 'Миссия дня';
+
+  @override
+  String get parentReminderDailyValue => '18:30 каждый день';
+
+  @override
+  String get parentReminderFollowUpLabel => 'Вечерний повтор';
+
+  @override
+  String get parentReminderFollowUpValue => '20:15, если миссия ждет';
+
+  @override
+  String get parentReminderToggleLabel => 'Напоминать вернуться';
+
+  @override
+  String get parentReminderToggleOn =>
+      'BrainUp позовет ребенка на одну короткую миссию.';
+
+  @override
+  String get parentReminderToggleOff =>
+      'Напоминания выключены. Приложение будет молчать.';
 }

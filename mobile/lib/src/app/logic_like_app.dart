@@ -6,6 +6,7 @@ import '../features/home/family_shell.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../l10n/l10n.dart';
+import '../notifications/app_notification_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/playful_ui.dart';
 import 'app_controller.dart';
@@ -14,12 +15,14 @@ class LogicLikeApp extends StatefulWidget {
   const LogicLikeApp({
     required this.familyProfileStore,
     this.localeStore,
+    this.reminderScheduler,
     this.locale,
     super.key,
   });
 
   final FamilyProfileStore familyProfileStore;
   final LocaleStore? localeStore;
+  final ReminderScheduler? reminderScheduler;
   final Locale? locale;
 
   @override
@@ -35,6 +38,7 @@ class _LogicLikeAppState extends State<LogicLikeApp> {
     _controller = AppController(
       widget.familyProfileStore,
       localeStore: widget.localeStore,
+      reminderScheduler: widget.reminderScheduler,
     )..load();
   }
 
