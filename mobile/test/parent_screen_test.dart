@@ -76,6 +76,8 @@ void main() {
       300,
       scrollable: find.byType(Scrollable).first,
     );
+    await tester.ensureVisible(find.text(l10n.parentResetProfile));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.parentResetProfile));
     await tester.pumpAndSettle();
 
@@ -165,5 +167,47 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(selectedReminderPreference, isFalse);
+  });
+
+  testWidgets('opens account sign in from parent settings', (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final l10n = lookupAppLocalizations(const Locale('ru'));
+    final profile = FamilyProfile(
+      childName: 'Lev',
+      childAge: ChildAge.five,
+      createdAt: DateTime.now(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ru'),
+        home: ParentScreen(
+          profile: profile,
+          onResetProfile: () async {},
+          onLanguageChanged: (_) async {},
+          onReminderPreferenceChanged: (_) async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.parentAccountAction),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text(l10n.parentAccountAction));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.accountTitle), findsOneWidget);
+    expect(find.text(l10n.accountAppleButton), findsOneWidget);
+    expect(find.text(l10n.accountSubmitSignIn), findsOneWidget);
   });
 }

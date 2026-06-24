@@ -674,4 +674,122 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get parentReminderToggleOff => 'रिमाइंडर बंद हैं। ऐप शांत रहेगा।';
+
+  @override
+  String get parentAccountTitle => 'Account';
+
+  @override
+  String get parentAccountBody =>
+      'Sign in to sync progress, unlock subscriptions and restore purchases on another device.';
+
+  @override
+  String get parentAccountStatusGuest => 'guest';
+
+  @override
+  String get parentAccountAction => 'Sign in';
+
+  @override
+  String get accountTitle => 'Account sign in';
+
+  @override
+  String get accountHeroTitle => 'Keep the family profile close';
+
+  @override
+  String get accountHeroBody =>
+      'Use Apple or email to prepare cloud sync, purchases and safe parent access.';
+
+  @override
+  String get accountStatusGuest => 'guest mode';
+
+  @override
+  String get accountAppleButton => 'Continue with Apple';
+
+  @override
+  String get accountEmailTitle => 'Email access';
+
+  @override
+  String get accountSignInTab => 'Sign in';
+
+  @override
+  String get accountCreateTab => 'Create';
+
+  @override
+  String get accountEmailLabel => 'Email';
+
+  @override
+  String get accountPasswordLabel => 'Password';
+
+  @override
+  String get accountConfirmPasswordLabel => 'Confirm password';
+
+  @override
+  String get accountRememberDevice => 'Remember this device';
+
+  @override
+  String get accountSubmitSignIn => 'Sign in';
+
+  @override
+  String get accountSubmitCreate => 'Create account';
+
+  @override
+  String get accountForgotPassword => 'Forgot password';
+
+  @override
+  String get accountRestorePurchases => 'Restore purchases';
+
+  @override
+  String get accountPrivacyNote =>
+      'Children keep playing locally until account services are connected.';
+
+  @override
+  String get accountBenefitSyncTitle => 'Progress sync';
+
+  @override
+  String get accountBenefitSyncBody =>
+      'A signed-in profile can later move stars and practice history between devices.';
+
+  @override
+  String get accountBenefitAppleTitle => 'Apple sign-in ready';
+
+  @override
+  String get accountBenefitAppleBody =>
+      'The button is in place for Sign in with Apple credentials.';
+
+  @override
+  String get accountBenefitPurchaseTitle => 'Purchases and subscriptions';
+
+  @override
+  String get accountBenefitPurchaseBody =>
+      'Restore access after reinstalling or changing devices.';
+
+  @override
+  String get accountEmailError => 'Enter a valid email';
+
+  @override
+  String get accountPasswordError => 'Use at least 6 characters';
+
+  @override
+  String get accountPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get accountDemoSnack =>
+      'Account UI is ready. Connect auth service to finish sign-in.';
+
+  @override
+  String get accountAppleSnack =>
+      'Apple sign-in UI is ready for the native auth handler.';
+
+  @override
+  String get accountRestoreSnack =>
+      'Purchase restore UI is ready for StoreKit.';
+
+  @override
+  String get accountResetDialogTitle => 'Reset password';
+
+  @override
+  String get accountResetDialogBody =>
+      'Password reset emails will be sent after account backend is connected.';
+
+  @override
+  String get accountResetDialogAction => 'Got it';
 }

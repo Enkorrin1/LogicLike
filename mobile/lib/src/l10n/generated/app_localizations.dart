@@ -1281,6 +1281,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reminders are off. The app will stay quiet.'**
   String get parentReminderToggleOff;
+
+  /// No description provided for @parentAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get parentAccountTitle;
+
+  /// No description provided for @parentAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to sync progress, unlock subscriptions and restore purchases on another device.'**
+  String get parentAccountBody;
+
+  /// No description provided for @parentAccountStatusGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'guest'**
+  String get parentAccountStatusGuest;
+
+  /// No description provided for @parentAccountAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get parentAccountAction;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account sign in'**
+  String get accountTitle;
+
+  /// No description provided for @accountHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the family profile close'**
+  String get accountHeroTitle;
+
+  /// No description provided for @accountHeroBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Apple or email to prepare cloud sync, purchases and safe parent access.'**
+  String get accountHeroBody;
+
+  /// No description provided for @accountStatusGuest.
+  ///
+  /// In en, this message translates to:
+  /// **'guest mode'**
+  String get accountStatusGuest;
+
+  /// No description provided for @accountAppleButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Apple'**
+  String get accountAppleButton;
+
+  /// No description provided for @accountEmailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Email access'**
+  String get accountEmailTitle;
+
+  /// No description provided for @accountSignInTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get accountSignInTab;
+
+  /// No description provided for @accountCreateTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get accountCreateTab;
+
+  /// No description provided for @accountEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountEmailLabel;
+
+  /// No description provided for @accountPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get accountPasswordLabel;
+
+  /// No description provided for @accountConfirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get accountConfirmPasswordLabel;
+
+  /// No description provided for @accountRememberDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember this device'**
+  String get accountRememberDevice;
+
+  /// No description provided for @accountSubmitSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get accountSubmitSignIn;
+
+  /// No description provided for @accountSubmitCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get accountSubmitCreate;
+
+  /// No description provided for @accountForgotPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get accountForgotPassword;
+
+  /// No description provided for @accountRestorePurchases.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get accountRestorePurchases;
+
+  /// No description provided for @accountPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Children keep playing locally until account services are connected.'**
+  String get accountPrivacyNote;
+
+  /// No description provided for @accountBenefitSyncTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress sync'**
+  String get accountBenefitSyncTitle;
+
+  /// No description provided for @accountBenefitSyncBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A signed-in profile can later move stars and practice history between devices.'**
+  String get accountBenefitSyncBody;
+
+  /// No description provided for @accountBenefitAppleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple sign-in ready'**
+  String get accountBenefitAppleTitle;
+
+  /// No description provided for @accountBenefitAppleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The button is in place for Sign in with Apple credentials.'**
+  String get accountBenefitAppleBody;
+
+  /// No description provided for @accountBenefitPurchaseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases and subscriptions'**
+  String get accountBenefitPurchaseTitle;
+
+  /// No description provided for @accountBenefitPurchaseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore access after reinstalling or changing devices.'**
+  String get accountBenefitPurchaseBody;
+
+  /// No description provided for @accountEmailError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get accountEmailError;
+
+  /// No description provided for @accountPasswordError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 6 characters'**
+  String get accountPasswordError;
+
+  /// No description provided for @accountPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get accountPasswordMismatch;
+
+  /// No description provided for @accountDemoSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Account UI is ready. Connect auth service to finish sign-in.'**
+  String get accountDemoSnack;
+
+  /// No description provided for @accountAppleSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple sign-in UI is ready for the native auth handler.'**
+  String get accountAppleSnack;
+
+  /// No description provided for @accountRestoreSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase restore UI is ready for StoreKit.'**
+  String get accountRestoreSnack;
+
+  /// No description provided for @accountResetDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get accountResetDialogTitle;
+
+  /// No description provided for @accountResetDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset emails will be sent after account backend is connected.'**
+  String get accountResetDialogBody;
+
+  /// No description provided for @accountResetDialogAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get accountResetDialogAction;
 }
 
 class _AppLocalizationsDelegate

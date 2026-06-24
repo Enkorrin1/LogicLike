@@ -675,4 +675,122 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get parentReminderToggleOff =>
       'Напоминания выключены. Приложение будет молчать.';
+
+  @override
+  String get parentAccountTitle => 'Аккаунт';
+
+  @override
+  String get parentAccountBody =>
+      'Войдите, чтобы синхронизировать прогресс, открыть подписки и восстановить покупки на другом устройстве.';
+
+  @override
+  String get parentAccountStatusGuest => 'гость';
+
+  @override
+  String get parentAccountAction => 'Войти';
+
+  @override
+  String get accountTitle => 'Вход в аккаунт';
+
+  @override
+  String get accountHeroTitle => 'Семейный профиль рядом';
+
+  @override
+  String get accountHeroBody =>
+      'Используйте Apple или email, чтобы подготовить синхронизацию, покупки и безопасный родительский доступ.';
+
+  @override
+  String get accountStatusGuest => 'режим гостя';
+
+  @override
+  String get accountAppleButton => 'Продолжить с Apple';
+
+  @override
+  String get accountEmailTitle => 'Вход по email';
+
+  @override
+  String get accountSignInTab => 'Вход';
+
+  @override
+  String get accountCreateTab => 'Создать';
+
+  @override
+  String get accountEmailLabel => 'Email';
+
+  @override
+  String get accountPasswordLabel => 'Пароль';
+
+  @override
+  String get accountConfirmPasswordLabel => 'Повторите пароль';
+
+  @override
+  String get accountRememberDevice => 'Запомнить это устройство';
+
+  @override
+  String get accountSubmitSignIn => 'Войти';
+
+  @override
+  String get accountSubmitCreate => 'Создать аккаунт';
+
+  @override
+  String get accountForgotPassword => 'Забыли пароль';
+
+  @override
+  String get accountRestorePurchases => 'Восстановить покупки';
+
+  @override
+  String get accountPrivacyNote =>
+      'Ребенок продолжает играть локально, пока сервисы аккаунта не подключены.';
+
+  @override
+  String get accountBenefitSyncTitle => 'Синхронизация прогресса';
+
+  @override
+  String get accountBenefitSyncBody =>
+      'После входа профиль сможет переносить звезды и историю занятий между устройствами.';
+
+  @override
+  String get accountBenefitAppleTitle => 'Вход через Apple готов';
+
+  @override
+  String get accountBenefitAppleBody =>
+      'Кнопка уже на месте для подключения нативной авторизации Apple.';
+
+  @override
+  String get accountBenefitPurchaseTitle => 'Покупки и подписки';
+
+  @override
+  String get accountBenefitPurchaseBody =>
+      'Восстановление доступа после переустановки или смены устройства.';
+
+  @override
+  String get accountEmailError => 'Введите корректный email';
+
+  @override
+  String get accountPasswordError => 'Минимум 6 символов';
+
+  @override
+  String get accountPasswordMismatch => 'Пароли не совпадают';
+
+  @override
+  String get accountDemoSnack =>
+      'Окно аккаунта готово. Осталось подключить сервис авторизации.';
+
+  @override
+  String get accountAppleSnack =>
+      'Окно Apple-входа готово для нативного обработчика.';
+
+  @override
+  String get accountRestoreSnack =>
+      'Окно восстановления покупок готово для StoreKit.';
+
+  @override
+  String get accountResetDialogTitle => 'Сброс пароля';
+
+  @override
+  String get accountResetDialogBody =>
+      'Письма для сброса пароля будут отправляться после подключения backend аккаунтов.';
+
+  @override
+  String get accountResetDialogAction => 'Понятно';
 }

@@ -8,6 +8,7 @@ import '../../l10n/l10n.dart';
 import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
+import '../account/account_sign_in_screen.dart';
 
 class ParentScreen extends StatelessWidget {
   const ParentScreen({
@@ -90,6 +91,19 @@ class ParentScreen extends StatelessWidget {
             _ReminderSettingsCard(
               profile: profile,
               onReminderPreferenceChanged: onReminderPreferenceChanged,
+            ),
+            const SizedBox(height: 16),
+            _AccountSettingsCard(
+              profile: profile,
+              onOpenAccount: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => AccountSignInScreen(
+                      profile: profile,
+                    ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
             _FamilySettingsCard(
@@ -757,6 +771,63 @@ class _AdviceTile extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AccountSettingsCard extends StatelessWidget {
+  const _AccountSettingsCard({
+    required this.profile,
+    required this.onOpenAccount,
+  });
+
+  final FamilyProfile profile;
+  final VoidCallback onOpenAccount;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+
+    return PlayfulCard(
+      color: const Color(0xFFFFFAEF),
+      borderColor: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionTitle(
+            title: l10n.parentAccountTitle,
+            trailing: InfoPill(
+              icon: Icons.cloud_off_rounded,
+              label: l10n.parentAccountStatusGuest,
+              color: const Color(0xFFFFE7A8),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.parentAccountBody,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 14),
+          _InfoRow(
+            icon: Icons.child_care_rounded,
+            color: AppPalette.mint,
+            label: l10n.parentChildLabel,
+            value: profile.childName,
+          ),
+          _InfoRow(
+            icon: Icons.workspace_premium_rounded,
+            color: AppPalette.surfaceBlue,
+            label: l10n.parentSubscriptionTitle,
+            value: l10n.parentSubscriptionSoon,
+          ),
+          const SizedBox(height: 2),
+          FilledButton.icon(
+            onPressed: onOpenAccount,
+            icon: const Icon(Icons.account_circle_rounded),
+            label: Text(l10n.parentAccountAction),
           ),
         ],
       ),
