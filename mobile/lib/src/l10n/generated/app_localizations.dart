@@ -121,7 +121,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'BrainUp'**
+  /// **'LogicUpX'**
   String get appTitle;
 
   /// No description provided for @loadingMission.
@@ -1273,7 +1273,7 @@ abstract class AppLocalizations {
   /// No description provided for @parentReminderToggleOn.
   ///
   /// In en, this message translates to:
-  /// **'BrainUp will invite the child back to one short mission.'**
+  /// **'LogicUpX will invite the child back to one short mission.'**
   String get parentReminderToggleOn;
 
   /// No description provided for @parentReminderToggleOff.

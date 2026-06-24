@@ -9,7 +9,7 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'BrainUp';
+  String get appTitle => 'LogicUpX';
 
   @override
   String get loadingMission => 'Готовим миссию...';
@@ -670,7 +670,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'BrainUp позовет ребенка на одну короткую миссию.';
+      'LogicUpX позовет ребенка на одну короткую миссию.';
 
   @override
   String get parentReminderToggleOff =>

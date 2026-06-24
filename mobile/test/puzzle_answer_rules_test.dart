@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logic_like/src/domain/daily_challenge.dart';
-import 'package:logic_like/src/domain/family_profile.dart';
-import 'package:logic_like/src/domain/puzzle_answer_rules.dart';
+import 'package:logicx/src/domain/daily_challenge.dart';
+import 'package:logicx/src/domain/family_profile.dart';
+import 'package:logicx/src/domain/puzzle_answer_rules.dart';
 
 void main() {
   group('puzzle answer rules', () {

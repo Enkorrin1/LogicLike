@@ -1,4 +1,4 @@
-package com.logiclike.logic_like
+package com.logicx.mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

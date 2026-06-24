@@ -1,5 +1,5 @@
 {
-  "appTitle": "BrainUp",
+  "appTitle": "LogicUpX",
   "loadingMission": "मिशन की तैयारी...",
   "navHome": "घर",
   "navChallenge": "काम",
@@ -431,6 +431,6 @@
   "parentReminderFollowUpLabel": "शाम का रिमाइंडर",
   "parentReminderFollowUpValue": "20:15, अगर मिशन इंतज़ार कर रही है",
   "parentReminderToggleLabel": "वापस आने की याद दिलाएं",
-  "parentReminderToggleOn": "BrainUp बच्चे को एक छोटे मिशन के लिए बुलाएगा।",
+  "parentReminderToggleOn": "LogicUpX बच्चे को एक छोटे मिशन के लिए बुलाएगा।",
   "parentReminderToggleOff": "रिमाइंडर बंद हैं। ऐप शांत रहेगा।"
 }

@@ -1,8 +1,8 @@
-# LogicLike Project Spec
+# LogicX Project Spec
 
 ## Product
 
-LogicLike is a family-edtech mobile product for children aged 4-8.
+LogicX is a family-edtech mobile product for children aged 4-8.
 
 Product goal:
 

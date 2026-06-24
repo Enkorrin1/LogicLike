@@ -11,8 +11,8 @@ import '../theme/app_theme.dart';
 import '../widgets/playful_ui.dart';
 import 'app_controller.dart';
 
-class LogicLikeApp extends StatefulWidget {
-  const LogicLikeApp({
+class LogicXApp extends StatefulWidget {
+  const LogicXApp({
     required this.familyProfileStore,
     this.localeStore,
     this.reminderScheduler,
@@ -26,10 +26,10 @@ class LogicLikeApp extends StatefulWidget {
   final Locale? locale;
 
   @override
-  State<LogicLikeApp> createState() => _LogicLikeAppState();
+  State<LogicXApp> createState() => _LogicXAppState();
 }
 
-class _LogicLikeAppState extends State<LogicLikeApp> {
+class _LogicXAppState extends State<LogicXApp> {
   late final AppController _controller;
 
   @override

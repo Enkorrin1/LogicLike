@@ -1,5 +1,5 @@
 {
-  "appTitle": "BrainUp",
+  "appTitle": "LogicUpX",
   "loadingMission": "Préparation de la mission...",
   "navHome": "Maison",
   "navChallenge": "Tâche",
@@ -431,6 +431,6 @@
   "parentReminderFollowUpLabel": "Rappel du soir",
   "parentReminderFollowUpValue": "20:15 si la mission attend",
   "parentReminderToggleLabel": "Rappeler de revenir",
-  "parentReminderToggleOn": "BrainUp invitera l’enfant à une courte mission.",
+  "parentReminderToggleOn": "LogicUpX invitera l’enfant à une courte mission.",
   "parentReminderToggleOff": "Les rappels sont désactivés. L’application restera silencieuse."
 }

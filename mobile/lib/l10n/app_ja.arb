@@ -1,5 +1,5 @@
 {
-  "appTitle": "BrainUp",
+  "appTitle": "LogicUpX",
   "loadingMission": "ミッションの準備中...",
   "navHome": "家",
   "navChallenge": "タスク",
@@ -431,6 +431,6 @@
   "parentReminderFollowUpLabel": "夜のフォロー",
   "parentReminderFollowUpValue": "ミッションが残っている場合は20:15",
   "parentReminderToggleLabel": "戻る通知",
-  "parentReminderToggleOn": "BrainUpが短いミッションへそっと誘います。",
+  "parentReminderToggleOn": "LogicUpXが短いミッションへそっと誘います。",
   "parentReminderToggleOff": "リマインダーはオフです。アプリは静かにしています。"
 }

@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => 'BrainUp';
+  String get appTitle => 'LogicUpX';
 
   @override
   String get loadingMission => '미션 준비중..';
@@ -652,7 +652,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentReminderToggleLabel => '돌아오기 알림';
 
   @override
-  String get parentReminderToggleOn => 'BrainUp이 짧은 미션으로 아이를 초대해요.';
+  String get parentReminderToggleOn => 'LogicUpX이 짧은 미션으로 아이를 초대해요.';
 
   @override
   String get parentReminderToggleOff => '알림이 꺼져 있어요. 앱은 조용히 있을게요.';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logic_like/src/domain/family_profile.dart';
-import 'package:logic_like/src/features/parent/parent_screen.dart';
-import 'package:logic_like/src/l10n/generated/app_localizations.dart';
-import 'package:logic_like/src/l10n/localized_content.dart';
-import 'package:logic_like/src/theme/app_theme.dart';
+import 'package:logicx/src/domain/family_profile.dart';
+import 'package:logicx/src/features/parent/parent_screen.dart';
+import 'package:logicx/src/l10n/generated/app_localizations.dart';
+import 'package:logicx/src/l10n/localized_content.dart';
+import 'package:logicx/src/theme/app_theme.dart';
 
 void main() {
   testWidgets('shows parent dashboard sections and reset confirmation',

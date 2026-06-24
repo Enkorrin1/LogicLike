@@ -1,5 +1,5 @@
 {
-  "appTitle": "BrainUp",
+  "appTitle": "LogicUpX",
   "loadingMission": "미션 준비중..",
   "navHome": "집",
   "navChallenge": "일",
@@ -431,6 +431,6 @@
   "parentReminderFollowUpLabel": "저녁 알림",
   "parentReminderFollowUpValue": "미션이 남아 있으면 20:15",
   "parentReminderToggleLabel": "돌아오기 알림",
-  "parentReminderToggleOn": "BrainUp이 짧은 미션으로 아이를 초대해요.",
+  "parentReminderToggleOn": "LogicUpX이 짧은 미션으로 아이를 초대해요.",
   "parentReminderToggleOff": "알림이 꺼져 있어요. 앱은 조용히 있을게요."
 }

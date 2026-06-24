@@ -1,5 +1,5 @@
 {
-  "appTitle": "BrainUp",
+  "appTitle": "LogicUpX",
   "loadingMission": "准备任务...",
   "navHome": "家",
   "navChallenge": "任务",
@@ -431,6 +431,6 @@
   "parentReminderFollowUpLabel": "晚间提醒",
   "parentReminderFollowUpValue": "如果任务还在等待，20:15",
   "parentReminderToggleLabel": "提醒回来",
-  "parentReminderToggleOn": "BrainUp 会邀请孩子完成一个短任务。",
+  "parentReminderToggleOn": "LogicUpX 会邀请孩子完成一个短任务。",
   "parentReminderToggleOff": "提醒已关闭。应用会保持安静。"
 }

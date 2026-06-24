@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'BrainUp';
+  String get appTitle => 'LogicUpX';
 
   @override
   String get loadingMission => 'Preparing the mission...';
@@ -670,7 +670,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'BrainUp will invite the child back to one short mission.';
+      'LogicUpX will invite the child back to one short mission.';
 
   @override
   String get parentReminderToggleOff =>

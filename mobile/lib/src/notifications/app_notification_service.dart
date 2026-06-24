@@ -18,11 +18,11 @@ class AppNotificationService implements ReminderScheduler {
     FlutterLocalNotificationsPlugin? plugin,
   }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
-  static const _channelId = 'brainup_reminders';
-  static const _channelName = 'BrainUp reminders';
+  static const _channelId = 'logicx_reminders';
+  static const _channelName = 'LogicUpX reminders';
   static const _channelDescription =
       'Daily mission and calm practice reminders';
-  static const _notificationIcon = 'ic_stat_brainup';
+  static const _notificationIcon = 'ic_stat_logicx';
   static const _dailyMissionReminderId = 3101;
   static const _eveningMissionReminderId = 3102;
 

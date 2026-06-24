@@ -1,11 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logic_like/src/domain/daily_challenge.dart';
-import 'package:logic_like/src/domain/family_profile.dart';
-import 'package:logic_like/src/domain/puzzle_answer_rules.dart';
-import 'package:logic_like/src/l10n/generated/app_localizations.dart';
-import 'package:logic_like/src/l10n/localized_content.dart';
+import 'package:logicx/src/domain/daily_challenge.dart';
+import 'package:logicx/src/domain/family_profile.dart';
+import 'package:logicx/src/domain/puzzle_answer_rules.dart';
+import 'package:logicx/src/l10n/generated/app_localizations.dart';
+import 'package:logicx/src/l10n/localized_content.dart';
 
 void main() {
   group('localized learning content', () {

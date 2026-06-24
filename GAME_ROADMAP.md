@@ -1,8 +1,8 @@
-# LogicLike Game Roadmap
+# LogicX Game Roadmap
 
 ## Product Direction
 
-LogicLike is a Duolingo-style learning app for children aged 4-8.
+LogicX is a Duolingo-style learning app for children aged 4-8.
 
 The child follows one main level map. The map is not split into child-facing
 categories like Logic, Math, Memory, or Attention. Each level contains mixed

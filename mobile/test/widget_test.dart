@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logic_like/src/app/logic_like_app.dart';
-import 'package:logic_like/src/data/family_profile_store.dart';
-import 'package:logic_like/src/domain/daily_challenge.dart';
-import 'package:logic_like/src/domain/family_profile.dart';
-import 'package:logic_like/src/features/challenge/challenge_screen.dart';
-import 'package:logic_like/src/l10n/generated/app_localizations.dart';
-import 'package:logic_like/src/l10n/localized_content.dart';
+import 'package:logicx/src/app/logicx_app.dart';
+import 'package:logicx/src/data/family_profile_store.dart';
+import 'package:logicx/src/domain/daily_challenge.dart';
+import 'package:logicx/src/domain/family_profile.dart';
+import 'package:logicx/src/features/challenge/challenge_screen.dart';
+import 'package:logicx/src/l10n/generated/app_localizations.dart';
+import 'package:logicx/src/l10n/localized_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -16,7 +16,7 @@ void main() {
     final l10n = lookupAppLocalizations(const Locale('ru'));
 
     await tester.pumpWidget(
-      LogicLikeApp(
+      LogicXApp(
         familyProfileStore: SharedPreferencesFamilyProfileStore(preferences),
       ),
     );

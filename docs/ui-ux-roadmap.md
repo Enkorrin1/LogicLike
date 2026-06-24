@@ -1,4 +1,4 @@
-# UI/UX план BrainUp
+# UI/UX план LogicX
 
 ## Цель
 

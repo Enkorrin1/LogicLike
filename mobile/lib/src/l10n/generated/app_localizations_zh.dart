@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'BrainUp';
+  String get appTitle => 'LogicUpX';
 
   @override
   String get loadingMission => '准备任务...';
@@ -647,7 +647,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentReminderToggleLabel => '提醒回来';
 
   @override
-  String get parentReminderToggleOn => 'BrainUp 会邀请孩子完成一个短任务。';
+  String get parentReminderToggleOn => 'LogicUpX 会邀请孩子完成一个短任务。';
 
   @override
   String get parentReminderToggleOff => '提醒已关闭。应用会保持安静。';

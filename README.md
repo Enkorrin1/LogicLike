@@ -1,6 +1,6 @@
-# LogicLike
+# LogicX
 
-LogicLike is a family-edtech mobile product for children aged 4-8.
+LogicX is a family-edtech mobile product for children aged 4-8.
 
 The current product direction is Duolingo-style cognitive training focused on logic
 and math through short lessons, repetition loops, and one clear level-by-level

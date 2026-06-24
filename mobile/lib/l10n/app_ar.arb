@@ -1,5 +1,5 @@
 {
-  "appTitle": "BrainUp",
+  "appTitle": "LogicUpX",
   "loadingMission": "تحضير المهمة...",
   "navHome": "بيت",
   "navChallenge": "مهمة",
@@ -431,6 +431,6 @@
   "parentReminderFollowUpLabel": "تذكير المساء",
   "parentReminderFollowUpValue": "20:15 إذا كانت المهمة تنتظر",
   "parentReminderToggleLabel": "التذكير بالعودة",
-  "parentReminderToggleOn": "سيدعو BrainUp الطفل إلى مهمة قصيرة.",
+  "parentReminderToggleOn": "سيدعو LogicUpX الطفل إلى مهمة قصيرة.",
   "parentReminderToggleOff": "التذكيرات متوقفة. سيبقى التطبيق هادئا."
 }

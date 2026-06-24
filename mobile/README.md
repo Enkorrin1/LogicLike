@@ -1,6 +1,6 @@
-# LogicLike Mobile
+# LogicUpX Mobile
 
-Flutter implementation of the LogicLike family-edtech app.
+Flutter implementation of the LogicUpX family-edtech app.
 
 ## First product slice
 
@@ -20,7 +20,7 @@ flutter test
 
 ## iOS
 
-The iOS runner is generated in `ios` with bundle id `com.logiclike.mobile`.
+The iOS runner is generated in `ios` with bundle id `com.logicx.mobile`.
 
 On macOS with Xcode and CocoaPods installed:
 
