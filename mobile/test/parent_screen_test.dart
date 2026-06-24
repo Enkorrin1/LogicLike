@@ -207,7 +207,60 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text(l10n.accountTitle), findsOneWidget);
-    expect(find.text(l10n.accountAppleButton), findsOneWidget);
+    expect(find.text(l10n.accountProviderGoogle), findsOneWidget);
+    expect(find.text(l10n.accountProviderApple), findsOneWidget);
     expect(find.text(l10n.accountSubmitSignIn), findsOneWidget);
+  });
+
+  testWidgets('signs in locally with email and password', (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final l10n = lookupAppLocalizations(const Locale('ru'));
+    final profile = FamilyProfile(
+      childName: 'Lev',
+      childAge: ChildAge.five,
+      createdAt: DateTime.now(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ru'),
+        home: ParentScreen(
+          profile: profile,
+          onResetProfile: () async {},
+          onLanguageChanged: (_) async {},
+          onReminderPreferenceChanged: (_) async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.parentAccountAction),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text(l10n.parentAccountAction));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, l10n.accountEmailLabel),
+      'parent@example.com',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, l10n.accountPasswordLabel),
+      'secret123',
+    );
+    await tester.tap(find.text(l10n.accountSubmitSignIn));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.accountSignedInTitle), findsOneWidget);
+    expect(find.textContaining('parent@example.com'), findsWidgets);
   });
 }

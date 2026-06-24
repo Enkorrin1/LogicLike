@@ -700,13 +700,60 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountHeroBody =>
-      'Use Apple or email to prepare cloud sync, purchases and safe parent access.';
+      'Use Google, Apple or email to prepare cloud sync, purchases and safe parent access.';
 
   @override
   String get accountStatusGuest => 'guest mode';
 
   @override
   String get accountAppleButton => 'Continue with Apple';
+
+  @override
+  String get accountGoogleButton => 'Continue with Google';
+
+  @override
+  String get accountAuthLoading => 'Checking...';
+
+  @override
+  String get accountProviderGoogle => 'Google';
+
+  @override
+  String get accountProviderApple => 'Apple';
+
+  @override
+  String get accountProviderEmail => 'Email';
+
+  @override
+  String get accountSignedInTitle => 'Signed in';
+
+  @override
+  String get accountSignOut => 'Sign out';
+
+  @override
+  String get accountGoogleSuccessSnack => 'Signed in with Google.';
+
+  @override
+  String get accountGoogleCanceledSnack => 'Google sign-in was canceled.';
+
+  @override
+  String get accountGoogleUnsupportedSnack =>
+      'Google sign-in is not supported on this platform yet.';
+
+  @override
+  String get accountGoogleConfigSnack =>
+      'Google sign-in needs OAuth client configuration for this app.';
+
+  @override
+  String accountGoogleErrorSnack(Object error) {
+    return 'Google sign-in failed: $error';
+  }
+
+  @override
+  String get accountBenefitGoogleTitle => 'Google sign-in';
+
+  @override
+  String get accountBenefitGoogleBody =>
+      'Use a Google account for quick parent access once OAuth is configured.';
 
   @override
   String get accountEmailTitle => 'Email access';
@@ -777,7 +824,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get accountDemoSnack =>
-      'Account UI is ready. Connect auth service to finish sign-in.';
+      'Signed in with email locally. Connect a backend to verify passwords on the server.';
 
   @override
   String get accountAppleSnack =>

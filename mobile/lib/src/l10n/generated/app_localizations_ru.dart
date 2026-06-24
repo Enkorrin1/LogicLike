@@ -697,13 +697,60 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountHeroBody =>
-      'Используйте Apple или email, чтобы подготовить синхронизацию, покупки и безопасный родительский доступ.';
+      'Используйте Google, Apple или email, чтобы подготовить синхронизацию, покупки и безопасный родительский доступ.';
 
   @override
   String get accountStatusGuest => 'режим гостя';
 
   @override
   String get accountAppleButton => 'Продолжить с Apple';
+
+  @override
+  String get accountGoogleButton => 'Продолжить с Google';
+
+  @override
+  String get accountAuthLoading => 'Проверяем...';
+
+  @override
+  String get accountProviderGoogle => 'Google';
+
+  @override
+  String get accountProviderApple => 'Apple';
+
+  @override
+  String get accountProviderEmail => 'Email';
+
+  @override
+  String get accountSignedInTitle => 'Вход выполнен';
+
+  @override
+  String get accountSignOut => 'Выйти';
+
+  @override
+  String get accountGoogleSuccessSnack => 'Вход через Google выполнен.';
+
+  @override
+  String get accountGoogleCanceledSnack => 'Вход через Google отменен.';
+
+  @override
+  String get accountGoogleUnsupportedSnack =>
+      'Вход через Google пока не поддерживается на этой платформе.';
+
+  @override
+  String get accountGoogleConfigSnack =>
+      'Для входа через Google нужна OAuth-настройка этого приложения.';
+
+  @override
+  String accountGoogleErrorSnack(Object error) {
+    return 'Ошибка входа через Google: $error';
+  }
+
+  @override
+  String get accountBenefitGoogleTitle => 'Вход через Google';
+
+  @override
+  String get accountBenefitGoogleBody =>
+      'Используйте Google-аккаунт для быстрого родительского доступа после настройки OAuth.';
 
   @override
   String get accountEmailTitle => 'Вход по email';
@@ -774,7 +821,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountDemoSnack =>
-      'Окно аккаунта готово. Осталось подключить сервис авторизации.';
+      'Вход по email выполнен локально. Подключите backend, чтобы проверять пароль на сервере.';
 
   @override
   String get accountAppleSnack =>

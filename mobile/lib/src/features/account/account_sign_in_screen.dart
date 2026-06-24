@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../domain/family_profile.dart';
 import '../../l10n/l10n.dart';
@@ -6,6 +7,12 @@ import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 
 enum _AccountMode { signIn, createAccount }
+
+Future<void>? _googleSignInInitialization;
+
+Future<void> _ensureGoogleSignInInitialized() {
+  return _googleSignInInitialization ??= GoogleSignIn.instance.initialize();
+}
 
 class AccountSignInScreen extends StatefulWidget {
   const AccountSignInScreen({
@@ -26,9 +33,11 @@ class _AccountSignInScreenState extends State<AccountSignInScreen> {
   final _confirmPasswordController = TextEditingController();
 
   _AccountMode _mode = _AccountMode.signIn;
+  _AccountSession? _session;
   bool _rememberDevice = true;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -50,19 +59,20 @@ class _AccountSignInScreenState extends State<AccountSignInScreen> {
         child: SafeArea(
           top: false,
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
             children: [
-              _AccountHeroCard(profile: widget.profile),
-              const SizedBox(height: 16),
               _SignInCard(
+                profile: widget.profile,
                 formKey: _formKey,
                 mode: _mode,
+                session: _session,
                 emailController: _emailController,
                 passwordController: _passwordController,
                 confirmPasswordController: _confirmPasswordController,
                 rememberDevice: _rememberDevice,
                 obscurePassword: _obscurePassword,
                 obscureConfirmPassword: _obscureConfirmPassword,
+                isSubmitting: _isSubmitting,
                 onModeChanged: (mode) {
                   setState(() {
                     _mode = mode;
@@ -84,12 +94,12 @@ class _AccountSignInScreenState extends State<AccountSignInScreen> {
                   });
                 },
                 onSubmit: _submitEmailForm,
+                onGooglePressed: _handleGoogleSignIn,
                 onApplePressed: _showAppleState,
                 onForgotPasswordPressed: _showResetDialog,
                 onRestorePurchasesPressed: _showRestoreState,
+                onSignOutPressed: _signOut,
               ),
-              const SizedBox(height: 16),
-              const _AccountBenefitsCard(),
             ],
           ),
         ),
@@ -97,26 +107,120 @@ class _AccountSignInScreenState extends State<AccountSignInScreen> {
     );
   }
 
-  void _submitEmailForm() {
+  Future<void> _submitEmailForm() async {
     FocusScope.of(context).unfocus();
     if (_formKey.currentState?.validate() != true) {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.accountDemoSnack)),
-    );
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 320));
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = false;
+      _session = _AccountSession(
+        providerLabel: context.l10n.accountProviderEmail,
+        email: _emailController.text.trim(),
+      );
+    });
+
+    _showSnack(context.l10n.accountDemoSnack);
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    if (_isSubmitting) {
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      await _ensureGoogleSignInInitialized();
+      if (!mounted) {
+        return;
+      }
+
+      if (!GoogleSignIn.instance.supportsAuthenticate()) {
+        _showSnack(context.l10n.accountGoogleUnsupportedSnack);
+        return;
+      }
+
+      final account = await GoogleSignIn.instance.authenticate();
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _session = _AccountSession(
+          providerLabel: context.l10n.accountProviderGoogle,
+          email: account.email,
+          displayName: account.displayName,
+        );
+      });
+
+      _showSnack(context.l10n.accountGoogleSuccessSnack);
+    } on GoogleSignInException catch (error) {
+      if (error.code == GoogleSignInExceptionCode.canceled) {
+        _showSnack(context.l10n.accountGoogleCanceledSnack);
+      } else if (error.code ==
+              GoogleSignInExceptionCode.clientConfigurationError ||
+          error.code == GoogleSignInExceptionCode.providerConfigurationError) {
+        _showSnack(context.l10n.accountGoogleConfigSnack);
+      } else {
+        _showSnack(
+          context.l10n.accountGoogleErrorSnack(
+            error.description ?? error.code.name,
+          ),
+        );
+      }
+    } catch (error) {
+      _showSnack(context.l10n.accountGoogleErrorSnack(error.toString()));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
   }
 
   void _showAppleState() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.accountAppleSnack)),
-    );
+    _showSnack(context.l10n.accountAppleSnack);
   }
 
   void _showRestoreState() {
+    _showSnack(context.l10n.accountRestoreSnack);
+  }
+
+  Future<void> _signOut() async {
+    setState(() {
+      _session = null;
+    });
+
+    try {
+      await GoogleSignIn.instance.signOut();
+    } catch (_) {
+      // The session may have been created through email/password, or Google
+      // Sign-In may not have been initialized on this platform yet.
+    }
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) {
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(context.l10n.accountRestoreSnack)),
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -145,112 +249,64 @@ class _AccountSignInScreenState extends State<AccountSignInScreen> {
   }
 }
 
-class _AccountHeroCard extends StatelessWidget {
-  const _AccountHeroCard({
-    required this.profile,
+class _AccountSession {
+  const _AccountSession({
+    required this.providerLabel,
+    required this.email,
+    this.displayName,
   });
 
-  final FamilyProfile profile;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-
-    return PlayfulCard(
-      padding: EdgeInsets.zero,
-      borderColor: Colors.white,
-      gradient: const LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xFFFFFFFF),
-          Color(0xFFEAF7FF),
-          Color(0xFFEDEAFF),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const AppMark(size: 64),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.accountHeroTitle,
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    l10n.accountHeroBody,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      InfoPill(
-                        icon: Icons.person_rounded,
-                        label: profile.childName,
-                        color: AppPalette.mint,
-                      ),
-                      InfoPill(
-                        icon: Icons.cloud_off_rounded,
-                        label: l10n.accountStatusGuest,
-                        color: const Color(0xFFFFE7A8),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  final String providerLabel;
+  final String email;
+  final String? displayName;
 }
 
 class _SignInCard extends StatelessWidget {
   const _SignInCard({
+    required this.profile,
     required this.formKey,
     required this.mode,
+    required this.session,
     required this.emailController,
     required this.passwordController,
     required this.confirmPasswordController,
     required this.rememberDevice,
     required this.obscurePassword,
     required this.obscureConfirmPassword,
+    required this.isSubmitting,
     required this.onModeChanged,
     required this.onRememberDeviceChanged,
     required this.onPasswordVisibilityChanged,
     required this.onConfirmPasswordVisibilityChanged,
     required this.onSubmit,
+    required this.onGooglePressed,
     required this.onApplePressed,
     required this.onForgotPasswordPressed,
     required this.onRestorePurchasesPressed,
+    required this.onSignOutPressed,
   });
 
+  final FamilyProfile profile;
   final GlobalKey<FormState> formKey;
   final _AccountMode mode;
+  final _AccountSession? session;
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final bool rememberDevice;
   final bool obscurePassword;
   final bool obscureConfirmPassword;
+  final bool isSubmitting;
   final ValueChanged<_AccountMode> onModeChanged;
   final ValueChanged<bool> onRememberDeviceChanged;
   final VoidCallback onPasswordVisibilityChanged;
   final VoidCallback onConfirmPasswordVisibilityChanged;
-  final VoidCallback onSubmit;
+  final Future<void> Function() onSubmit;
+  final Future<void> Function() onGooglePressed;
   final VoidCallback onApplePressed;
   final VoidCallback onForgotPasswordPressed;
   final VoidCallback onRestorePurchasesPressed;
+  final Future<void> Function() onSignOutPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -258,28 +314,68 @@ class _SignInCard extends StatelessWidget {
     final creatingAccount = mode == _AccountMode.createAccount;
 
     return PlayfulCard(
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionTitle(
-            title: l10n.accountEmailTitle,
-            trailing: InfoPill(
-              icon: Icons.lock_rounded,
-              label: l10n.accountStatusGuest,
-              color: AppPalette.surfaceBlue,
-            ),
+          Row(
+            children: [
+              const AppMark(size: 44),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.accountEmailTitle,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      profile.childName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              InfoPill(
+                icon: session == null
+                    ? Icons.lock_rounded
+                    : Icons.verified_user_rounded,
+                label: session?.providerLabel ?? l10n.accountStatusGuest,
+                color:
+                    session == null ? AppPalette.surfaceBlue : AppPalette.mint,
+              ),
+            ],
           ),
-          const SizedBox(height: 14),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: AppPalette.ink,
-              foregroundColor: Colors.white,
-            ),
-            onPressed: onApplePressed,
-            icon: const Icon(Icons.apple),
-            label: Text(l10n.accountAppleButton),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isSubmitting ? null : () => onGooglePressed(),
+                  icon: const Icon(Icons.g_mobiledata_rounded),
+                  label: Text(l10n.accountProviderGoogle),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppPalette.ink,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(52),
+                  ),
+                  onPressed: isSubmitting ? null : onApplePressed,
+                  icon: const Icon(Icons.apple),
+                  label: Text(l10n.accountProviderApple),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           SegmentedButton<_AccountMode>(
             segments: [
               ButtonSegment(
@@ -298,7 +394,14 @@ class _SignInCard extends StatelessWidget {
               onModeChanged(selection.first);
             },
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
+          if (session != null) ...[
+            _SignedInBanner(
+              session: session!,
+              onSignOutPressed: onSignOutPressed,
+            ),
+            const SizedBox(height: 12),
+          ],
           AutofillGroup(
             child: Form(
               key: formKey,
@@ -321,7 +424,7 @@ class _SignInCard extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   TextFormField(
                     controller: passwordController,
                     autofillHints: const [AutofillHints.password],
@@ -354,7 +457,7 @@ class _SignInCard extends StatelessWidget {
                     },
                   ),
                   if (creatingAccount) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 10),
                     TextFormField(
                       controller: confirmPasswordController,
                       autofillHints: const [AutofillHints.newPassword],
@@ -385,59 +488,74 @@ class _SignInCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 4),
-          Material(
-            color: Colors.transparent,
-            child: CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              value: rememberDevice,
-              controlAffinity: ListTileControlAffinity.leading,
-              activeColor: AppPalette.teal,
-              title: Text(
-                l10n.accountRememberDevice,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppPalette.ink,
-                      fontWeight: FontWeight.w800,
+          const SizedBox(height: 8),
+          InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => onRememberDeviceChanged(!rememberDevice),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                children: [
+                  Checkbox(
+                    value: rememberDevice,
+                    activeColor: AppPalette.teal,
+                    visualDensity: VisualDensity.compact,
+                    onChanged: (value) =>
+                        onRememberDeviceChanged(value ?? false),
+                  ),
+                  Expanded(
+                    child: Text(
+                      l10n.accountRememberDevice,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: AppPalette.ink,
+                            fontWeight: FontWeight.w800,
+                          ),
                     ),
+                  ),
+                ],
               ),
-              onChanged: (value) => onRememberDeviceChanged(value ?? false),
-            ),
-          ),
-          const SizedBox(height: 6),
-          FilledButton.icon(
-            onPressed: onSubmit,
-            icon: Icon(
-              creatingAccount
-                  ? Icons.person_add_alt_1_rounded
-                  : Icons.login_rounded,
-            ),
-            label: Text(
-              creatingAccount
-                  ? l10n.accountSubmitCreate
-                  : l10n.accountSubmitSignIn,
             ),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
+          FilledButton.icon(
+            onPressed: isSubmitting ? null : () => onSubmit(),
+            icon: isSubmitting
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Icon(
+                    creatingAccount
+                        ? Icons.person_add_alt_1_rounded
+                        : Icons.login_rounded,
+                  ),
+            label: Text(
+              isSubmitting
+                  ? l10n.accountAuthLoading
+                  : creatingAccount
+                      ? l10n.accountSubmitCreate
+                      : l10n.accountSubmitSignIn,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
             children: [
-              TextButton.icon(
-                onPressed: onForgotPasswordPressed,
-                icon: const Icon(Icons.help_outline_rounded),
-                label: Text(l10n.accountForgotPassword),
+              Expanded(
+                child: TextButton(
+                  onPressed: onForgotPasswordPressed,
+                  child: Text(l10n.accountForgotPassword),
+                ),
               ),
-              TextButton.icon(
-                onPressed: onRestorePurchasesPressed,
-                icon: const Icon(Icons.workspace_premium_rounded),
-                label: Text(l10n.accountRestorePurchases),
+              Expanded(
+                child: TextButton(
+                  onPressed: onRestorePurchasesPressed,
+                  child: Text(l10n.accountRestorePurchases),
+                ),
               ),
             ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.accountPrivacyNote,
-            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),
@@ -445,86 +563,61 @@ class _SignInCard extends StatelessWidget {
   }
 }
 
-class _AccountBenefitsCard extends StatelessWidget {
-  const _AccountBenefitsCard();
+class _SignedInBanner extends StatelessWidget {
+  const _SignedInBanner({
+    required this.session,
+    required this.onSignOutPressed,
+  });
+
+  final _AccountSession session;
+  final Future<void> Function() onSignOutPressed;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final displayName = session.displayName;
 
-    return PlayfulCard(
-      color: const Color(0xFFFFFAEF),
-      child: Column(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppPalette.mint.withValues(alpha: 0.42),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 1.4),
+      ),
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _BenefitRow(
-            icon: Icons.sync_rounded,
+          const IconBadge(
+            icon: Icons.verified_rounded,
             color: AppPalette.teal,
-            title: l10n.accountBenefitSyncTitle,
-            body: l10n.accountBenefitSyncBody,
+            iconColor: Colors.white,
+            size: 36,
           ),
-          const SizedBox(height: 10),
-          _BenefitRow(
-            icon: Icons.apple,
-            color: AppPalette.ink,
-            title: l10n.accountBenefitAppleTitle,
-            body: l10n.accountBenefitAppleBody,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.accountSignedInTitle,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  displayName == null || displayName.isEmpty
+                      ? session.email
+                      : '$displayName - ${session.email}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 10),
-          _BenefitRow(
-            icon: Icons.workspace_premium_rounded,
-            color: AppPalette.mango,
-            title: l10n.accountBenefitPurchaseTitle,
-            body: l10n.accountBenefitPurchaseBody,
+          TextButton(
+            onPressed: onSignOutPressed,
+            child: Text(l10n.accountSignOut),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _BenefitRow extends StatelessWidget {
-  const _BenefitRow({
-    required this.icon,
-    required this.color,
-    required this.title,
-    required this.body,
-  });
-
-  final IconData icon;
-  final Color color;
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        IconBadge(
-          icon: icon,
-          color: color.withValues(alpha: 0.16),
-          iconColor: color,
-          size: 42,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 3),
-              Text(
-                body,
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

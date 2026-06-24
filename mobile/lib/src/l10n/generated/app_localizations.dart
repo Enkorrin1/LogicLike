@@ -1321,7 +1321,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountHeroBody.
   ///
   /// In en, this message translates to:
-  /// **'Use Apple or email to prepare cloud sync, purchases and safe parent access.'**
+  /// **'Use Google, Apple or email to prepare cloud sync, purchases and safe parent access.'**
   String get accountHeroBody;
 
   /// No description provided for @accountStatusGuest.
@@ -1335,6 +1335,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue with Apple'**
   String get accountAppleButton;
+
+  /// No description provided for @accountGoogleButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get accountGoogleButton;
+
+  /// No description provided for @accountAuthLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking...'**
+  String get accountAuthLoading;
+
+  /// No description provided for @accountProviderGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google'**
+  String get accountProviderGoogle;
+
+  /// No description provided for @accountProviderApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple'**
+  String get accountProviderApple;
+
+  /// No description provided for @accountProviderEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get accountProviderEmail;
+
+  /// No description provided for @accountSignedInTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in'**
+  String get accountSignedInTitle;
+
+  /// No description provided for @accountSignOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get accountSignOut;
+
+  /// No description provided for @accountGoogleSuccessSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in with Google.'**
+  String get accountGoogleSuccessSnack;
+
+  /// No description provided for @accountGoogleCanceledSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was canceled.'**
+  String get accountGoogleCanceledSnack;
+
+  /// No description provided for @accountGoogleUnsupportedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in is not supported on this platform yet.'**
+  String get accountGoogleUnsupportedSnack;
+
+  /// No description provided for @accountGoogleConfigSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in needs OAuth client configuration for this app.'**
+  String get accountGoogleConfigSnack;
+
+  /// No description provided for @accountGoogleErrorSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed: {error}'**
+  String accountGoogleErrorSnack(Object error);
+
+  /// No description provided for @accountBenefitGoogleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in'**
+  String get accountBenefitGoogleTitle;
+
+  /// No description provided for @accountBenefitGoogleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a Google account for quick parent access once OAuth is configured.'**
+  String get accountBenefitGoogleBody;
 
   /// No description provided for @accountEmailTitle.
   ///
@@ -1465,7 +1549,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDemoSnack.
   ///
   /// In en, this message translates to:
-  /// **'Account UI is ready. Connect auth service to finish sign-in.'**
+  /// **'Signed in with email locally. Connect a backend to verify passwords on the server.'**
   String get accountDemoSnack;
 
   /// No description provided for @accountAppleSnack.
