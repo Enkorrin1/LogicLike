@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -10,6 +9,9 @@ import '../../l10n/l10n.dart';
 import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
+import 'game_scenes/camp_differences_game.dart';
+import 'game_scenes/rocket_puzzle_game.dart';
+import 'game_scenes/secret_cards_game.dart';
 import '../rewards/collection_screen.dart';
 
 class ChallengeScreen extends StatefulWidget {
@@ -1351,6 +1353,25 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     });
   }
 
+  Future<void> _selectSceneAnswerAndSubmit(String answer) async {
+    if (_isSubmitting) {
+      return;
+    }
+
+    Feedback.forTap(context);
+    setState(() {
+      _selectedAnswer = answer;
+      _answerState = _AnswerCheckState.idle;
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 120));
+    if (!mounted || _isSubmitting) {
+      return;
+    }
+
+    await _submit();
+  }
+
   Future<void> _submit() async {
     if (_selectedAnswer == null || _isSubmitting) {
       return;
@@ -1426,6 +1447,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     final answerOptions = _answerOptionsFor(answerRule, l10n);
     final correctAnswer = answerRule.correctAnswer;
     final compact = MediaQuery.sizeOf(context).height < 700;
+    final sceneAnswerPicker = _usesSceneAnswerPicker(widget.puzzle.id);
     final canSubmit =
         _selectedAnswer != null && _answerState != _AnswerCheckState.wrong;
     final hintButton = OutlinedButton.icon(
@@ -1458,7 +1480,12 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
         children: [
           PlayfulBackground(
             child: ListView(
-              padding: EdgeInsets.fromLTRB(18, compact ? 6 : 8, 18, 96),
+              padding: EdgeInsets.fromLTRB(
+                18,
+                compact ? 6 : 8,
+                18,
+                sceneAnswerPicker ? 24 : 96,
+              ),
               children: [
                 _ProgressHeader(
                   current: widget.number,
@@ -1489,6 +1516,9 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                         puzzle: widget.puzzle,
                         accent: accent,
                         compact: compact,
+                        onAnswerSelected: sceneAnswerPicker
+                            ? _selectSceneAnswerAndSubmit
+                            : _selectAnswer,
                       ),
                       SizedBox(height: compact ? 8 : 12),
                       _QuestionBubble(
@@ -1497,7 +1527,9 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                         compact: compact,
                       ),
                       SizedBox(height: compact ? 8 : 10),
-                      if (compact)
+                      if (sceneAnswerPicker)
+                        const SizedBox.shrink()
+                      else if (compact)
                         Row(
                           children: [
                             for (var i = 0; i < answerOptions.length; i++) ...[
@@ -1575,15 +1607,18 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
             ),
         ],
       ),
-      bottomNavigationBar: _StickyAnswerBar(
-        enabled: canSubmit,
-        loading: _isSubmitting,
-        selectedAnswerLabel:
-            _selectedAnswer == null ? null : l10n.answerLabel(_selectedAnswer!),
-        answerState: _answerState,
-        compact: compact,
-        onSubmit: _submit,
-      ),
+      bottomNavigationBar: sceneAnswerPicker
+          ? null
+          : _StickyAnswerBar(
+              enabled: canSubmit,
+              loading: _isSubmitting,
+              selectedAnswerLabel: _selectedAnswer == null
+                  ? null
+                  : l10n.answerLabel(_selectedAnswer!),
+              answerState: _answerState,
+              compact: compact,
+              onSubmit: _submit,
+            ),
     );
   }
 
@@ -2235,11 +2270,13 @@ class _PuzzleStage extends StatelessWidget {
     required this.puzzle,
     required this.accent,
     required this.compact,
+    required this.onAnswerSelected,
   });
 
   final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -2248,26 +2285,31 @@ class _PuzzleStage extends StatelessWidget {
           puzzle: puzzle,
           accent: accent,
           compact: compact,
+          onAnswerSelected: onAnswerSelected,
         ),
       'attention' => _AttentionStage(
           puzzle: puzzle,
           accent: accent,
           compact: compact,
+          onAnswerSelected: onAnswerSelected,
         ),
       'math' => _MathStage(
           puzzle: puzzle,
           accent: accent,
           compact: compact,
+          onAnswerSelected: onAnswerSelected,
         ),
       'space' => _PathStage(
           puzzle: puzzle,
           accent: accent,
           compact: compact,
+          onAnswerSelected: onAnswerSelected,
         ),
       _ => _PatternStrip(
           puzzle: puzzle,
           accent: accent,
           compact: compact,
+          onAnswerSelected: onAnswerSelected,
         ),
     };
 
@@ -2290,6 +2332,37 @@ class _PuzzleStage extends StatelessWidget {
       child: stage,
     );
   }
+}
+
+bool _usesSceneAnswerPicker(String puzzleId) {
+  return const {
+    'hidden-cards',
+    'logic-train',
+    'shape-path',
+    'tower-rule',
+    'home-clues',
+    'odd-step',
+    'secret-code',
+    'code-lock',
+    'mini-sudoku',
+    'logic-houses',
+    'bridge-order',
+    'number-bridge',
+    'star-balance',
+    'count-rockets',
+    'number-neighbors',
+    'planet-sum',
+    'fruit-fizz',
+    'moon-clock',
+    'notebook-sum',
+    'cookie-share',
+    'word-builder',
+    'letter-field',
+    'math-crossword',
+    'market-change',
+    'camp-differences',
+    'picture-puzzle',
+  }.contains(puzzleId);
 }
 
 class _StageShell extends StatelessWidget {
@@ -2345,11 +2418,13 @@ class _MemoryStage extends StatelessWidget {
     required this.puzzle,
     required this.accent,
     required this.compact,
+    required this.onAnswerSelected,
   });
 
   final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -2373,7 +2448,11 @@ class _MemoryStage extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _HiddenCardsStage(accent: accent, compact: compact),
+        child: SecretCardsGameView(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -2408,221 +2487,6 @@ class _MemoryStage extends StatelessWidget {
             color: spec.answerColor,
             size: compact ? 50 : 58,
             highlighted: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HiddenCardsStage extends StatefulWidget {
-  const _HiddenCardsStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  State<_HiddenCardsStage> createState() => _HiddenCardsStageState();
-}
-
-class _HiddenCardsStageState extends State<_HiddenCardsStage> {
-  Timer? _timer;
-  bool _preview = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() => _preview = false);
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  void _startPreview() {
-    _timer?.cancel();
-    setState(() => _preview = true);
-    _timer = Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        setState(() => _preview = false);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final cardSize = widget.compact ? 56.0 : 66.0;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 128 : 148,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFEDE6FF), Color(0xFFE8FBFF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _MemoryRevealCard(
-                      label: 'A',
-                      icon: Icons.rocket_launch_rounded,
-                      color: AppPalette.coral,
-                      size: cardSize,
-                      hidden: false,
-                    ),
-                    _MemoryRevealCard(
-                      label: 'B',
-                      icon: Icons.public_rounded,
-                      color: AppPalette.teal,
-                      size: cardSize,
-                      hidden: !_preview,
-                      target: true,
-                    ),
-                    _MemoryRevealCard(
-                      label: 'C',
-                      icon: Icons.star_rounded,
-                      color: AppPalette.mango,
-                      size: cardSize,
-                      hidden: false,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              BouncyTap(
-                borderRadius: BorderRadius.circular(22),
-                onTap: _startPreview,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  width: widget.compact ? 48 : 56,
-                  height: widget.compact ? 70 : 80,
-                  decoration: BoxDecoration(
-                    color: _preview ? AppPalette.mint : Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: widget.accent.withValues(alpha: 0.28),
-                      width: 1.4,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.accent.withValues(alpha: 0.14),
-                        blurRadius: 12,
-                        offset: const Offset(0, 7),
-                      ),
-                    ],
-                  ),
-                  child: Icon(
-                    _preview ? Icons.visibility_rounded : Icons.replay_rounded,
-                    color: _preview ? Colors.white : widget.accent,
-                    size: 25,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MemoryRevealCard extends StatelessWidget {
-  const _MemoryRevealCard({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.size,
-    required this.hidden,
-    this.target = false,
-  });
-
-  final String label;
-  final IconData icon;
-  final Color color;
-  final double size;
-  final bool hidden;
-  final bool target;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 240),
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: hidden ? AppPalette.ink.withValues(alpha: 0.18) : Colors.white,
-        borderRadius: BorderRadius.circular(size * 0.28),
-        border: Border.all(
-          color: target ? color.withValues(alpha: 0.55) : Colors.white,
-          width: target ? 2.4 : 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: hidden ? 0.10 : 0.24),
-            blurRadius: hidden ? 8 : 14,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            left: 7,
-            top: 5,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppPalette.ink.withValues(alpha: 0.45),
-                    fontWeight: FontWeight.w900,
-                  ),
-            ),
-          ),
-          Center(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 180),
-              child: hidden
-                  ? Icon(
-                      Icons.lock_rounded,
-                      key: const ValueKey('locked'),
-                      color: AppPalette.muted,
-                      size: size * 0.42,
-                    )
-                  : Container(
-                      key: ValueKey(icon),
-                      width: size * 0.58,
-                      height: size * 0.58,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            color.withValues(alpha: 0.18),
-                            color.withValues(alpha: 0.08),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(size * 0.22),
-                      ),
-                      child: Icon(icon, color: color, size: size * 0.42),
-                    ),
-            ),
           ),
         ],
       ),
@@ -2959,7 +2823,7 @@ _MemoryStageSpec _memoryStageSpecFor(String puzzleId, Color accent) {
             color: AppPalette.sky,
           ),
           _MemoryCardSpec(
-            label: '→',
+            label: 'в†’',
             icon: Icons.swap_horiz_rounded,
             color: AppPalette.lavender,
           ),
@@ -3116,11 +2980,13 @@ class _AttentionStage extends StatelessWidget {
     required this.puzzle,
     required this.accent,
     required this.compact,
+    required this.onAnswerSelected,
   });
 
   final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -3128,10 +2994,21 @@ class _AttentionStage extends StatelessWidget {
       'word-grid' => _WordGridStage(accent: accent, compact: compact),
       'animal-word' => _AnimalWordStage(accent: accent, compact: compact),
       'balloon-order' => _BalloonOrderStage(accent: accent, compact: compact),
-      'word-builder' => _WordBuilderStage(accent: accent, compact: compact),
-      'letter-field' => _LetterFieldStage(accent: accent, compact: compact),
-      'camp-differences' =>
-        _CampDifferencesStage(accent: accent, compact: compact),
+      'word-builder' => _WordBuilderStage(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'letter-field' => _LetterFieldStage(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'camp-differences' => CampDifferencesGameView(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
       _ => null,
     };
 
@@ -3200,20 +3077,20 @@ List<Widget> _attentionStageItemsFor(
       ],
     'tiny-detail' => [
         _SearchChoiceCard(
-          label: '↑',
+          label: 'в†‘',
           icon: Icons.auto_awesome_rounded,
           color: AppPalette.mango,
           highlighted: true,
           compact: compact,
         ),
         _SearchChoiceCard(
-          label: '•',
+          label: 'вЂў',
           icon: Icons.crop_free_rounded,
           color: accent,
           compact: compact,
         ),
         _SearchChoiceCard(
-          label: '↓',
+          label: 'в†“',
           icon: Icons.circle_rounded,
           color: AppPalette.sky,
           compact: compact,
@@ -3221,7 +3098,7 @@ List<Widget> _attentionStageItemsFor(
       ],
     'shadow-match' => [
         _SearchChoiceCard(
-          label: '★',
+          label: 'в…',
           icon: Icons.pets_rounded,
           color: AppPalette.teal,
           compact: compact,
@@ -3324,13 +3201,13 @@ List<Widget> _attentionStageItemsFor(
       ],
     'beacon-signal' => [
         _SearchChoiceCard(
-          label: '−',
+          label: 'в€’',
           icon: Icons.circle_rounded,
           color: AppPalette.coral,
           compact: compact,
         ),
         _SearchChoiceCard(
-          label: '✓',
+          label: 'вњ“',
           icon: Icons.circle_rounded,
           color: AppPalette.teal,
           highlighted: true,
@@ -3891,7 +3768,7 @@ class _BalloonOrderStage extends StatelessWidget {
         fit: BoxFit.scaleDown,
         child: Container(
           width: compact ? 286 : 328,
-          height: compact ? 94 : 112,
+          height: compact ? 98 : 116,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -4021,23 +3898,233 @@ class _Balloon extends StatelessWidget {
   }
 }
 
-class _BridgeOrderStage extends StatelessWidget {
-  const _BridgeOrderStage({required this.accent, required this.compact});
+class _BridgeOrderStage extends StatefulWidget {
+  const _BridgeOrderStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_BridgeOrderStage> createState() => _BridgeOrderStageState();
+}
+
+class _BridgeOrderStageState extends State<_BridgeOrderStage> {
+  bool _placed = false;
+  String? _wrongChoice;
+
+  void _choose(String label) {
+    if (label == 'B') {
+      setState(() {
+        _placed = true;
+        _wrongChoice = null;
+      });
+      widget.onAnswerSelected(widget.correctAnswer);
+      return;
+    }
+
+    setState(() => _wrongChoice = label);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final width = widget.compact ? 286.0 : 328.0;
+    final height = widget.compact ? 112.0 : 128.0;
+
     return Directionality(
       textDirection: TextDirection.ltr,
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: SizedBox(
-          width: compact ? 286 : 328,
-          height: compact ? 112 : 128,
-          child: CustomPaint(
-            painter: _BridgeOrderPainter(accent),
+          width: width,
+          height: height,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              CustomPaint(
+                size: Size(width, height),
+                painter: _BridgeOrderPainter(widget.accent),
+              ),
+              Positioned(
+                left: width * 0.49 - 39,
+                top: height * 0.54 - 17,
+                child: DragTarget<String>(
+                  onWillAcceptWithDetails: (_) => true,
+                  onAcceptWithDetails: (details) => _choose(details.data),
+                  builder: (context, candidateData, rejectedData) {
+                    final hovering = candidateData.isNotEmpty;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 160),
+                      width: 78,
+                      height: 34,
+                      decoration: BoxDecoration(
+                        color: _placed
+                            ? AppPalette.mint
+                            : hovering
+                                ? widget.accent.withValues(alpha: 0.16)
+                                : Colors.transparent,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: _placed
+                              ? AppPalette.teal
+                              : widget.accent.withValues(alpha: 0.48),
+                          width: _placed ? 2.5 : 1.5,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: _placed
+                          ? _BridgePlankVisual(
+                              label: 'B',
+                              width: 74,
+                              color: widget.accent,
+                              selected: true,
+                            )
+                          : null,
+                    );
+                  },
+                ),
+              ),
+              Positioned(
+                left: 20,
+                right: 20,
+                bottom: 5,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _BridgePlankDraggable(
+                      label: 'A',
+                      plankWidth: 52,
+                      color: AppPalette.mango,
+                      wrong: _wrongChoice == 'A',
+                      onTap: () => _choose('A'),
+                    ),
+                    _BridgePlankDraggable(
+                      label: 'B',
+                      plankWidth: 74,
+                      color: widget.accent,
+                      selected: _placed,
+                      onTap: () => _choose('B'),
+                    ),
+                    _BridgePlankDraggable(
+                      label: 'C',
+                      plankWidth: 96,
+                      color: AppPalette.lavender,
+                      wrong: _wrongChoice == 'C',
+                      onTap: () => _choose('C'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BridgePlankDraggable extends StatelessWidget {
+  const _BridgePlankDraggable({
+    required this.label,
+    required this.plankWidth,
+    required this.color,
+    required this.onTap,
+    this.selected = false,
+    this.wrong = false,
+  });
+
+  final String label;
+  final double plankWidth;
+  final Color color;
+  final VoidCallback onTap;
+  final bool selected;
+  final bool wrong;
+
+  @override
+  Widget build(BuildContext context) {
+    final visual = _BridgePlankVisual(
+      label: label,
+      width: plankWidth,
+      color: wrong ? AppPalette.coral : color,
+      selected: selected,
+      wrong: wrong,
+    );
+
+    return Draggable<String>(
+      data: label,
+      feedback: Material(
+        color: Colors.transparent,
+        child: _BridgePlankVisual(
+          label: label,
+          width: plankWidth,
+          color: color,
+          selected: true,
+          lifted: true,
+        ),
+      ),
+      childWhenDragging: Opacity(opacity: 0.32, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: visual,
+      ),
+    );
+  }
+}
+
+class _BridgePlankVisual extends StatelessWidget {
+  const _BridgePlankVisual({
+    required this.label,
+    required this.width,
+    required this.color,
+    required this.selected,
+    this.lifted = false,
+    this.wrong = false,
+  });
+
+  final String label;
+  final double width;
+  final Color color;
+  final bool selected;
+  final bool lifted;
+  final bool wrong;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 150),
+      scale: lifted || selected ? 1.06 : 1,
+      child: Container(
+        width: width,
+        height: 34,
+        decoration: BoxDecoration(
+          color: selected ? color : Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            color: wrong ? AppPalette.coral : color.withValues(alpha: 0.48),
+            width: selected ? 2.4 : 1.6,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: lifted || selected ? 0.26 : 0.12),
+              blurRadius: lifted || selected ? 14 : 8,
+              offset: Offset(0, lifted ? 9 : 5),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : color,
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ),
@@ -4195,11 +4282,39 @@ class _BridgeOrderPainter extends CustomPainter {
       oldDelegate.accent != accent;
 }
 
-class _TowerRuleStage extends StatelessWidget {
-  const _TowerRuleStage({required this.accent, required this.compact});
+class _TowerRuleStage extends StatefulWidget {
+  const _TowerRuleStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_TowerRuleStage> createState() => _TowerRuleStageState();
+}
+
+class _TowerRuleStageState extends State<_TowerRuleStage> {
+  String? _placed;
+  String? _wrong;
+
+  void _choose(String id) {
+    if (id == 'same') {
+      setState(() {
+        _placed = id;
+        _wrong = null;
+      });
+      widget.onAnswerSelected(widget.correctAnswer);
+      return;
+    }
+
+    setState(() => _wrong = id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -4208,8 +4323,8 @@ class _TowerRuleStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 116 : 134,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 134,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -4228,32 +4343,49 @@ class _TowerRuleStage extends StatelessWidget {
                 blocks: [2, 1],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Icon(
                   Icons.arrow_forward_rounded,
-                  color: accent,
-                  size: 24,
+                  color: widget.accent,
+                  size: 23,
                 ),
               ),
-              const Expanded(
+              DragTarget<String>(
+                onWillAcceptWithDetails: (_) => true,
+                onAcceptWithDetails: (details) => _choose(details.data),
+                builder: (context, candidateData, rejectedData) {
+                  return _TowerDropPedestal(
+                    color: widget.accent,
+                    placed: _placed == 'same',
+                    active: candidateData.isNotEmpty,
+                  );
+                },
+              ),
+              const SizedBox(width: 9),
+              Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _TowerCard(
-                      label: '=',
+                    _TowerDragChoice(
+                      id: 'same',
                       color: AppPalette.teal,
-                      highlighted: true,
-                      blocks: [2, 1],
+                      blocks: const [2, 1],
+                      selected: _placed == 'same',
+                      onTap: () => _choose('same'),
                     ),
-                    _TowerCard(
-                      label: '+',
+                    _TowerDragChoice(
+                      id: 'higher',
                       color: AppPalette.mango,
-                      blocks: [2, 2, 1],
+                      blocks: const [2, 2, 1],
+                      wrong: _wrong == 'higher',
+                      onTap: () => _choose('higher'),
                     ),
-                    _TowerCard(
-                      label: '-',
+                    _TowerDragChoice(
+                      id: 'lower',
                       color: AppPalette.lavender,
-                      blocks: [1, 1],
+                      blocks: const [1, 1],
+                      wrong: _wrong == 'lower',
+                      onTap: () => _choose('lower'),
                     ),
                   ],
                 ),
@@ -4261,6 +4393,104 @@ class _TowerRuleStage extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _TowerDropPedestal extends StatelessWidget {
+  const _TowerDropPedestal({
+    required this.color,
+    required this.placed,
+    required this.active,
+  });
+
+  final Color color;
+  final bool placed;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: 58,
+      height: 86,
+      decoration: BoxDecoration(
+        color: placed
+            ? AppPalette.mint
+            : active
+                ? color.withValues(alpha: 0.14)
+                : Colors.white.withValues(alpha: 0.68),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: placed ? AppPalette.teal : color.withValues(alpha: 0.36),
+          width: placed || active ? 2.4 : 1.3,
+        ),
+      ),
+      child: placed
+          ? const _TowerBlocks(blocks: [2, 1], color: AppPalette.teal)
+          : Icon(Icons.add_rounded, color: color, size: 25),
+    );
+  }
+}
+
+class _TowerDragChoice extends StatelessWidget {
+  const _TowerDragChoice({
+    required this.id,
+    required this.color,
+    required this.blocks,
+    required this.onTap,
+    this.selected = false,
+    this.wrong = false,
+  });
+
+  final String id;
+  final Color color;
+  final List<int> blocks;
+  final VoidCallback onTap;
+  final bool selected;
+  final bool wrong;
+
+  @override
+  Widget build(BuildContext context) {
+    final visual = AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: 43,
+      height: 68,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: selected ? color.withValues(alpha: 0.18) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: wrong ? AppPalette.coral : color.withValues(alpha: 0.36),
+          width: selected || wrong ? 2 : 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: selected ? 0.18 : 0.08),
+            blurRadius: selected ? 12 : 7,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child:
+          _TowerBlocks(blocks: blocks, color: wrong ? AppPalette.coral : color),
+    );
+
+    return Draggable<String>(
+      data: id,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(
+          scale: 1.14,
+          child: visual,
+        ),
+      ),
+      childWhenDragging: Opacity(opacity: 0.36, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: visual,
       ),
     );
   }
@@ -4371,11 +4601,39 @@ class _TowerBlocks extends StatelessWidget {
   }
 }
 
-class _HomeCluesStage extends StatelessWidget {
-  const _HomeCluesStage({required this.accent, required this.compact});
+class _HomeCluesStage extends StatefulWidget {
+  const _HomeCluesStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_HomeCluesStage> createState() => _HomeCluesStageState();
+}
+
+class _HomeCluesStageState extends State<_HomeCluesStage> {
+  String? _placedHouse;
+  String? _wrongHouse;
+
+  void _choose(String house) {
+    if (house == 'green') {
+      setState(() {
+        _placedHouse = house;
+        _wrongHouse = null;
+      });
+      widget.onAnswerSelected(widget.correctAnswer);
+      return;
+    }
+
+    setState(() => _wrongHouse = house);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -4384,8 +4642,8 @@ class _HomeCluesStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 116 : 134,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 134,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -4395,9 +4653,9 @@ class _HomeCluesStage extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(24),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 76,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -4407,7 +4665,20 @@ class _HomeCluesStage extends StatelessWidget {
                       secondIcon: Icons.block_rounded,
                       color: AppPalette.sky,
                     ),
-                    SizedBox(height: 8),
+                    SizedBox(height: 7),
+                    Draggable<String>(
+                      data: 'star',
+                      feedback: Material(
+                        color: Colors.transparent,
+                        child: _HomeStarToken(lifted: true),
+                      ),
+                      childWhenDragging: Opacity(
+                        opacity: 0.35,
+                        child: _HomeStarToken(),
+                      ),
+                      child: _HomeStarToken(),
+                    ),
+                    SizedBox(height: 7),
                     _ClueSignal(
                       icon: Icons.home_rounded,
                       secondIcon: Icons.arrow_forward_rounded,
@@ -4416,26 +4687,36 @@ class _HomeCluesStage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _HomeClueHouse(
+                    _HomeDropHouse(
+                      id: 'blue',
                       label: 'A',
                       color: AppPalette.sky,
                       badge: Icons.close_rounded,
+                      wrong: _wrongHouse == 'blue',
+                      selected: _placedHouse == 'blue',
+                      onChoose: _choose,
                     ),
-                    _HomeClueHouse(
+                    _HomeDropHouse(
+                      id: 'yellow',
                       label: 'B',
                       color: AppPalette.mango,
                       badge: Icons.arrow_forward_rounded,
+                      wrong: _wrongHouse == 'yellow',
+                      selected: _placedHouse == 'yellow',
+                      onChoose: _choose,
                     ),
-                    _HomeClueHouse(
+                    _HomeDropHouse(
+                      id: 'green',
                       label: 'C',
                       color: AppPalette.teal,
                       badge: Icons.star_rounded,
-                      highlighted: true,
+                      selected: _placedHouse == 'green',
+                      onChoose: _choose,
                     ),
                   ],
                 ),
@@ -4444,6 +4725,81 @@ class _HomeCluesStage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _HomeStarToken extends StatelessWidget {
+  const _HomeStarToken({this.lifted = false});
+
+  final bool lifted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      scale: lifted ? 1.12 : 1,
+      child: Container(
+        width: 48,
+        height: 34,
+        decoration: BoxDecoration(
+          color: AppPalette.mango,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: AppPalette.mango.withValues(alpha: lifted ? 0.30 : 0.16),
+              blurRadius: lifted ? 16 : 9,
+              offset: Offset(0, lifted ? 8 : 5),
+            ),
+          ],
+        ),
+        child: const Icon(Icons.star_rounded, color: Colors.white, size: 21),
+      ),
+    );
+  }
+}
+
+class _HomeDropHouse extends StatelessWidget {
+  const _HomeDropHouse({
+    required this.id,
+    required this.label,
+    required this.color,
+    required this.badge,
+    required this.selected,
+    required this.onChoose,
+    this.wrong = false,
+  });
+
+  final String id;
+  final String label;
+  final Color color;
+  final IconData badge;
+  final bool selected;
+  final bool wrong;
+  final ValueChanged<String> onChoose;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<String>(
+      onWillAcceptWithDetails: (_) => true,
+      onAcceptWithDetails: (_) => onChoose(id),
+      builder: (context, candidateData, rejectedData) {
+        final active = candidateData.isNotEmpty;
+        return AnimatedScale(
+          duration: const Duration(milliseconds: 150),
+          scale: active ? 1.05 : 1,
+          child: BouncyTap(
+            borderRadius: BorderRadius.circular(20),
+            onTap: () => onChoose(id),
+            child: _HomeClueHouse(
+              label: label,
+              color: wrong ? AppPalette.coral : color,
+              badge: selected ? Icons.star_rounded : badge,
+              highlighted: selected || active,
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -4560,11 +4916,39 @@ class _HomeClueHouse extends StatelessWidget {
   }
 }
 
-class _OddStepStage extends StatelessWidget {
-  const _OddStepStage({required this.accent, required this.compact});
+class _OddStepStage extends StatefulWidget {
+  const _OddStepStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_OddStepStage> createState() => _OddStepStageState();
+}
+
+class _OddStepStageState extends State<_OddStepStage> {
+  String? _removed;
+  String? _wrong;
+
+  void _remove(String id) {
+    if (id == 'middle') {
+      setState(() {
+        _removed = id;
+        _wrong = null;
+      });
+      widget.onAnswerSelected(widget.correctAnswer);
+      return;
+    }
+
+    setState(() => _wrong = id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -4573,8 +4957,8 @@ class _OddStepStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 116 : 134,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 134,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -4586,27 +4970,147 @@ class _OddStepStage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const _ActionStepCard(
+              _ActionStepDraggable(
+                id: 'first',
                 label: '1',
                 icon: Icons.inventory_2_rounded,
-                color: AppPalette.sky,
+                color: _wrong == 'first' ? AppPalette.coral : AppPalette.sky,
+                onRemove: _remove,
               ),
-              _BrokenLink(color: accent, broken: false),
-              const _ActionStepCard(
-                label: '2',
-                icon: Icons.bedtime_rounded,
-                color: AppPalette.coral,
-                highlighted: true,
-              ),
+              _BrokenLink(color: widget.accent, broken: false),
+              if (_removed == 'middle')
+                _RemovedStepPlaceholder(color: widget.accent)
+              else
+                _ActionStepDraggable(
+                  id: 'middle',
+                  label: '2',
+                  icon: Icons.bedtime_rounded,
+                  color: AppPalette.coral,
+                  highlighted: true,
+                  onRemove: _remove,
+                ),
               const _BrokenLink(color: AppPalette.coral, broken: true),
-              const _ActionStepCard(
+              _ActionStepDraggable(
+                id: 'last',
                 label: '3',
                 icon: Icons.rocket_launch_rounded,
-                color: AppPalette.teal,
+                color: _wrong == 'last' ? AppPalette.coral : AppPalette.teal,
+                onRemove: _remove,
+              ),
+              const SizedBox(width: 8),
+              DragTarget<String>(
+                onWillAcceptWithDetails: (_) => true,
+                onAcceptWithDetails: (details) => _remove(details.data),
+                builder: (context, candidateData, rejectedData) {
+                  return _RepairDropZone(
+                    color: widget.accent,
+                    active: candidateData.isNotEmpty,
+                    solved: _removed == 'middle',
+                  );
+                },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ActionStepDraggable extends StatelessWidget {
+  const _ActionStepDraggable({
+    required this.id,
+    required this.label,
+    required this.icon,
+    required this.color,
+    required this.onRemove,
+    this.highlighted = false,
+  });
+
+  final String id;
+  final String label;
+  final IconData icon;
+  final Color color;
+  final ValueChanged<String> onRemove;
+  final bool highlighted;
+
+  @override
+  Widget build(BuildContext context) {
+    final visual = _ActionStepCard(
+      label: label,
+      icon: icon,
+      color: color,
+      highlighted: highlighted,
+    );
+
+    return Draggable<String>(
+      data: id,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.08, child: visual),
+      ),
+      childWhenDragging: Opacity(opacity: 0.32, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => onRemove(id),
+        child: visual,
+      ),
+    );
+  }
+}
+
+class _RemovedStepPlaceholder extends StatelessWidget {
+  const _RemovedStepPlaceholder({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 58,
+      height: 86,
+      decoration: BoxDecoration(
+        color: AppPalette.mint,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppPalette.teal, width: 2.2),
+      ),
+      child: const Icon(Icons.check_rounded, color: AppPalette.teal, size: 30),
+    );
+  }
+}
+
+class _RepairDropZone extends StatelessWidget {
+  const _RepairDropZone({
+    required this.color,
+    required this.active,
+    required this.solved,
+  });
+
+  final Color color;
+  final bool active;
+  final bool solved;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: 46,
+      height: 86,
+      decoration: BoxDecoration(
+        color: solved
+            ? AppPalette.mint
+            : active
+                ? color.withValues(alpha: 0.18)
+                : Colors.white.withValues(alpha: 0.74),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: solved ? AppPalette.teal : color.withValues(alpha: 0.38),
+          width: active || solved ? 2.2 : 1.2,
+        ),
+      ),
+      child: Icon(
+        solved ? Icons.check_rounded : Icons.construction_rounded,
+        color: solved ? AppPalette.teal : color,
       ),
     );
   }
@@ -4697,21 +5201,51 @@ class _BrokenLink extends StatelessWidget {
   }
 }
 
-class _SecretCodeStage extends StatelessWidget {
-  const _SecretCodeStage({required this.accent, required this.compact});
+class _SecretCodeStage extends StatefulWidget {
+  const _SecretCodeStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_SecretCodeStage> createState() => _SecretCodeStageState();
+}
+
+class _SecretCodeStageState extends State<_SecretCodeStage> {
+  IconData? _placedIcon;
+  String? _wrongSymbol;
+
+  void _place(String symbol) {
+    if (symbol == 'key') {
+      setState(() {
+        _placedIcon = Icons.vpn_key_rounded;
+        _wrongSymbol = null;
+      });
+      widget.onAnswerSelected(widget.correctAnswer);
+      return;
+    }
+
+    setState(() => _wrongSymbol = symbol);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final solved = _placedIcon != null;
+
     return Directionality(
       textDirection: TextDirection.ltr,
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 116 : 134,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 134,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -4730,64 +5264,91 @@ class _SecretCodeStage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.78),
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: accent.withValues(alpha: 0.20)),
+                    border: Border.all(
+                      color: widget.accent.withValues(alpha: 0.20),
+                    ),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          _CodeSymbolSlot(
+                          const _CodeSymbolSlot(
                             icon: Icons.star_rounded,
                             color: AppPalette.mango,
                           ),
-                          _CodeSymbolSlot(
+                          const _CodeSymbolSlot(
                             icon: Icons.vpn_key_rounded,
                             color: AppPalette.teal,
                           ),
-                          _CodeSymbolSlot(
+                          const _CodeSymbolSlot(
                             icon: Icons.star_rounded,
                             color: AppPalette.mango,
                           ),
-                          _CodeSymbolSlot(
-                            icon: Icons.vpn_key_rounded,
-                            color: AppPalette.teal,
-                            question: true,
+                          DragTarget<String>(
+                            onWillAcceptWithDetails: (_) => true,
+                            onAcceptWithDetails: (details) =>
+                                _place(details.data),
+                            builder: (context, candidateData, rejectedData) {
+                              return _CodeSymbolSlot(
+                                icon: _placedIcon ?? Icons.vpn_key_rounded,
+                                color: AppPalette.teal,
+                                question: !solved,
+                                active: candidateData.isNotEmpty,
+                              );
+                            },
                           ),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.repeat_rounded, color: accent, size: 18),
+                          Icon(
+                            solved
+                                ? Icons.lock_open_rounded
+                                : Icons.repeat_rounded,
+                            color: solved ? AppPalette.teal : widget.accent,
+                            size: 18,
+                          ),
                           const SizedBox(width: 8),
-                          _CodePairBadge(color: accent),
+                          _CodePairBadge(color: widget.accent),
                         ],
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
-              Container(
-                width: compact ? 54 : 64,
-                height: compact ? 76 : 88,
-                decoration: BoxDecoration(
-                  color: accent,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: accent.withValues(alpha: 0.22),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
+              const SizedBox(width: 10),
+              SizedBox(
+                width: widget.compact ? 60 : 70,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _CodeSymbolChoice(
+                      symbol: 'star',
+                      icon: Icons.star_rounded,
+                      color: AppPalette.mango,
+                      wrong: _wrongSymbol == 'star',
+                      onTap: () => _place('star'),
+                    ),
+                    const SizedBox(height: 7),
+                    _CodeSymbolChoice(
+                      symbol: 'key',
+                      icon: Icons.vpn_key_rounded,
+                      color: AppPalette.teal,
+                      selected: solved,
+                      onTap: () => _place('key'),
+                    ),
+                    const SizedBox(height: 7),
+                    _CodeSymbolChoice(
+                      symbol: 'bolt',
+                      icon: Icons.bolt_rounded,
+                      color: AppPalette.lavender,
+                      wrong: _wrongSymbol == 'bolt',
+                      onTap: () => _place('bolt'),
                     ),
                   ],
-                ),
-                child: const Icon(
-                  Icons.lock_open_rounded,
-                  color: Colors.white,
-                  size: 32,
                 ),
               ),
             ],
@@ -4803,34 +5364,104 @@ class _CodeSymbolSlot extends StatelessWidget {
     required this.icon,
     required this.color,
     this.question = false,
+    this.active = false,
   });
 
   final IconData icon;
   final Color color;
   final bool question;
+  final bool active;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 42,
-      height: 42,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 150),
+      scale: active ? 1.08 : 1,
+      child: Container(
+        width: 42,
+        height: 42,
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        decoration: BoxDecoration(
+          color: question ? color : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: active ? Colors.white : color.withValues(alpha: 0.36),
+            width: active ? 2.2 : 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: question || active ? 0.24 : 0.10),
+              blurRadius: active ? 14 : 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Icon(
+          question ? Icons.question_mark_rounded : icon,
+          color: question ? Colors.white : color,
+          size: 24,
+        ),
+      ),
+    );
+  }
+}
+
+class _CodeSymbolChoice extends StatelessWidget {
+  const _CodeSymbolChoice({
+    required this.symbol,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    this.selected = false,
+    this.wrong = false,
+  });
+
+  final String symbol;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final bool selected;
+  final bool wrong;
+
+  @override
+  Widget build(BuildContext context) {
+    final visual = AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      width: 46,
+      height: 30,
       decoration: BoxDecoration(
-        color: question ? color : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.36), width: 1.5),
+        color: selected ? color : Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: wrong ? AppPalette.coral : color.withValues(alpha: 0.42),
+          width: selected || wrong ? 2 : 1.2,
+        ),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: question ? 0.24 : 0.10),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            color: color.withValues(alpha: selected ? 0.22 : 0.08),
+            blurRadius: selected ? 12 : 7,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Icon(
-        question ? Icons.question_mark_rounded : icon,
-        color: question ? Colors.white : color,
-        size: 24,
+        icon,
+        color: selected ? Colors.white : color,
+        size: 19,
+      ),
+    );
+
+    return Draggable<String>(
+      data: symbol,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.14, child: visual),
+      ),
+      childWhenDragging: Opacity(opacity: 0.35, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(15),
+        onTap: onTap,
+        child: visual,
       ),
     );
   }
@@ -5529,26 +6160,29 @@ void _paintProofShape(
 }
 
 class _WordBuilderStage extends StatefulWidget {
-  const _WordBuilderStage({required this.accent, required this.compact});
+  const _WordBuilderStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_WordBuilderStage> createState() => _WordBuilderStageState();
 }
 
 class _WordBuilderStageState extends State<_WordBuilderStage> {
-  final Set<int> _picked = {};
+  final List<int> _picked = [];
+  bool _submitted = false;
 
   @override
   Widget build(BuildContext context) {
     final target = _wordTokensFor(context, 'word_star');
     final letters = _wordBuilderLettersFor(context);
-    final pickedLetters = [
-      for (var index = 0; index < letters.length; index++)
-        if (_picked.contains(index)) letters[index],
-    ];
+    final pickedLetters = [for (final index in _picked) letters[index]];
     final solved = _sameTokenList(pickedLetters, target);
 
     return Directionality(
@@ -5580,13 +6214,29 @@ class _WordBuilderStageState extends State<_WordBuilderStage> {
                         label: letters[index],
                         selected: _picked.contains(index),
                         color: widget.accent,
-                        onTap: () => setState(() {
-                          if (_picked.contains(index)) {
-                            _picked.remove(index);
-                          } else {
-                            _picked.add(index);
+                        onTap: () {
+                          setState(() {
+                            if (_picked.contains(index)) {
+                              _picked.remove(index);
+                              _submitted = false;
+                            } else {
+                              if (_picked.length >= target.length) {
+                                _picked.removeAt(0);
+                              }
+                              _picked.add(index);
+                            }
+                          });
+
+                          final candidate = [
+                            for (final pickedIndex in _picked)
+                              letters[pickedIndex],
+                          ];
+                          if (!_submitted &&
+                              _sameTokenList(candidate, target)) {
+                            _submitted = true;
+                            widget.onAnswerSelected('word_star');
                           }
-                        }),
+                        },
                       ),
                   ],
                 ),
@@ -5615,22 +6265,28 @@ class _WordBuilderStageState extends State<_WordBuilderStage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        pickedLetters.isEmpty ? '?' : pickedLetters.join(),
-                        maxLines: 1,
-                        style: TextStyle(
-                          color: solved ? AppPalette.teal : AppPalette.ink,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
+                    Wrap(
+                      spacing: 3,
+                      runSpacing: 3,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        for (var index = 0; index < target.length; index++)
+                          _WordBuildSlot(
+                            label: index < pickedLetters.length
+                                ? pickedLetters[index]
+                                : '',
+                            solved: solved,
+                            color: widget.accent,
+                          ),
+                      ],
                     ),
                     const SizedBox(height: 7),
                     BouncyTap(
                       borderRadius: BorderRadius.circular(12),
-                      onTap: () => setState(_picked.clear),
+                      onTap: () => setState(() {
+                        _picked.clear();
+                        _submitted = false;
+                      }),
                       child: Icon(
                         Icons.refresh_rounded,
                         color: widget.accent,
@@ -5649,10 +6305,15 @@ class _WordBuilderStageState extends State<_WordBuilderStage> {
 }
 
 class _LetterFieldStage extends StatefulWidget {
-  const _LetterFieldStage({required this.accent, required this.compact});
+  const _LetterFieldStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_LetterFieldStage> createState() => _LetterFieldStageState();
@@ -5660,13 +6321,15 @@ class _LetterFieldStage extends StatefulWidget {
 
 class _LetterFieldStageState extends State<_LetterFieldStage> {
   final Set<int> _selected = {};
+  bool _submitted = false;
 
   @override
   Widget build(BuildContext context) {
     final target = _wordTokensFor(context, 'word_moon');
     final grid = _letterFieldGridFor(context);
     final targetIndexes = _letterFieldTargetIndexes(target.length);
-    final solved = targetIndexes.every(_selected.contains);
+    final solved = targetIndexes.every(_selected.contains) &&
+        _selected.length == target.length;
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -5707,8 +6370,16 @@ class _LetterFieldStageState extends State<_LetterFieldStage> {
                       onTap: () => setState(() {
                         if (selected) {
                           _selected.remove(index);
+                          _submitted = false;
                         } else {
                           _selected.add(index);
+                        }
+                        final solvedNow =
+                            targetIndexes.every(_selected.contains) &&
+                                _selected.length == target.length;
+                        if (!_submitted && solvedNow) {
+                          _submitted = true;
+                          widget.onAnswerSelected('word_moon');
                         }
                       }),
                     );
@@ -5799,6 +6470,58 @@ class _InteractiveLetterTile extends StatelessWidget {
   }
 }
 
+class _WordBuildSlot extends StatelessWidget {
+  const _WordBuildSlot({
+    required this.label,
+    required this.solved,
+    required this.color,
+  });
+
+  final String label;
+  final bool solved;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: 24,
+      height: 28,
+      decoration: BoxDecoration(
+        color: solved
+            ? AppPalette.mint
+            : label.isEmpty
+                ? color.withValues(alpha: 0.10)
+                : Colors.white,
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(
+          color: solved
+              ? AppPalette.teal
+              : label.isEmpty
+                  ? color.withValues(alpha: 0.26)
+                  : color.withValues(alpha: 0.48),
+          width: solved ? 2 : 1.2,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label.isEmpty ? 'вЂў' : label,
+        maxLines: 1,
+        overflow: TextOverflow.clip,
+        style: TextStyle(
+          color: solved
+              ? AppPalette.teal
+              : label.isEmpty
+                  ? color.withValues(alpha: 0.38)
+                  : AppPalette.ink,
+          fontSize: label.length > 1 ? 10 : 14,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
 class _FieldLetterCell extends StatelessWidget {
   const _FieldLetterCell({
     required this.label,
@@ -5850,17 +6573,17 @@ class _FieldLetterCell extends StatelessWidget {
 List<String> _wordBuilderLettersFor(BuildContext context) {
   final language = Localizations.localeOf(context).languageCode;
   return switch (language) {
-    'ru' => const ['З', 'Л', 'В', 'Е', 'З', 'Д', 'А', 'О'],
+    'ru' => const ['Р—', 'Р›', 'Р’', 'Р•', 'Р—', 'Р”', 'Рђ', 'Рћ'],
     'de' => const ['S', 'M', 'T', 'E', 'R', 'N', 'O'],
     'es' => const ['E', 'S', 'T', 'R', 'E', 'L', 'L', 'A'],
-    'fr' => const ['É', 'T', 'O', 'I', 'L', 'E', 'U'],
-    'hi' => const ['ता', 'रा', 'सू', 'रज', 'चाँ', 'द'],
+    'fr' => const ['Г‰', 'T', 'O', 'I', 'L', 'E', 'U'],
+    'hi' => const ['а¤¤а¤ѕ', 'а¤°а¤ѕ', 'а¤ёаҐ‚', 'а¤°а¤њ', 'а¤ља¤ѕа¤Ѓ', 'а¤¦'],
     'it' => const ['S', 'T', 'E', 'L', 'L', 'A', 'O'],
-    'ja' => const ['ほ', 'し', 'つ', 'き', 'た', 'い'],
-    'ko' => const ['별', '달', '해', '빛'],
+    'ja' => const ['гЃ»', 'гЃ—', 'гЃ¤', 'гЃЌ', 'гЃџ', 'гЃ„'],
+    'ko' => const ['лі„', 'л‹¬', 'н•ґ', 'л№›'],
     'pt' => const ['E', 'S', 'T', 'R', 'E', 'L', 'A'],
-    'ar' => const ['ن', 'ج', 'م', 'ق', 'ر', 'ش'],
-    'zh' => const ['星', '星', '月', '亮', '太', '阳'],
+    'ar' => const ['Щ†', 'Ш¬', 'Щ…', 'Щ‚', 'Ш±', 'Шґ'],
+    'zh' => const ['жџ', 'жџ', 'жњ€', 'дє®', 'е¤Є', 'йі'],
     _ => const ['S', 'M', 'T', 'A', 'R', 'O', 'N'],
   };
 }
@@ -5869,50 +6592,50 @@ List<String> _wordTokensFor(BuildContext context, String key) {
   final language = Localizations.localeOf(context).languageCode;
   if (key == 'word_moon') {
     return switch (language) {
-      'ru' => const ['Л', 'У', 'Н', 'А'],
+      'ru' => const ['Р›', 'РЈ', 'Рќ', 'Рђ'],
       'de' => const ['M', 'O', 'N', 'D'],
       'es' => const ['L', 'U', 'N', 'A'],
       'fr' => const ['L', 'U', 'N', 'E'],
-      'hi' => const ['चाँ', 'द'],
+      'hi' => const ['а¤ља¤ѕа¤Ѓ', 'а¤¦'],
       'it' => const ['L', 'U', 'N', 'A'],
-      'ja' => const ['つ', 'き'],
-      'ko' => const ['달'],
+      'ja' => const ['гЃ¤', 'гЃЌ'],
+      'ko' => const ['л‹¬'],
       'pt' => const ['L', 'U', 'A'],
-      'ar' => const ['ق', 'م', 'ر'],
-      'zh' => const ['月', '亮'],
+      'ar' => const ['Щ‚', 'Щ…', 'Ш±'],
+      'zh' => const ['жњ€', 'дє®'],
       _ => const ['M', 'O', 'O', 'N'],
     };
   }
 
   if (key == 'word_sun') {
     return switch (language) {
-      'ru' => const ['С', 'О', 'Л', 'Н', 'Ц', 'Е'],
+      'ru' => const ['РЎ', 'Рћ', 'Р›', 'Рќ', 'Р¦', 'Р•'],
       'de' => const ['S', 'O', 'N', 'N', 'E'],
       'es' => const ['S', 'O', 'L'],
       'fr' => const ['S', 'O', 'L', 'E', 'I', 'L'],
-      'hi' => const ['सू', 'रज'],
+      'hi' => const ['а¤ёаҐ‚', 'а¤°а¤њ'],
       'it' => const ['S', 'O', 'L', 'E'],
-      'ja' => const ['た', 'い', 'よ', 'う'],
-      'ko' => const ['해'],
+      'ja' => const ['гЃџ', 'гЃ„', 'г‚€', 'гЃ†'],
+      'ko' => const ['н•ґ'],
       'pt' => const ['S', 'O', 'L'],
-      'ar' => const ['ش', 'م', 'س'],
-      'zh' => const ['太', '阳'],
+      'ar' => const ['Шґ', 'Щ…', 'Ші'],
+      'zh' => const ['е¤Є', 'йі'],
       _ => const ['S', 'U', 'N'],
     };
   }
 
   return switch (language) {
-    'ru' => const ['З', 'В', 'Е', 'З', 'Д', 'А'],
+    'ru' => const ['Р—', 'Р’', 'Р•', 'Р—', 'Р”', 'Рђ'],
     'de' => const ['S', 'T', 'E', 'R', 'N'],
     'es' => const ['E', 'S', 'T', 'R', 'E', 'L', 'L', 'A'],
-    'fr' => const ['É', 'T', 'O', 'I', 'L', 'E'],
-    'hi' => const ['ता', 'रा'],
+    'fr' => const ['Г‰', 'T', 'O', 'I', 'L', 'E'],
+    'hi' => const ['а¤¤а¤ѕ', 'а¤°а¤ѕ'],
     'it' => const ['S', 'T', 'E', 'L', 'L', 'A'],
-    'ja' => const ['ほ', 'し'],
-    'ko' => const ['별'],
+    'ja' => const ['гЃ»', 'гЃ—'],
+    'ko' => const ['лі„'],
     'pt' => const ['E', 'S', 'T', 'R', 'E', 'L', 'A'],
-    'ar' => const ['ن', 'ج', 'م'],
-    'zh' => const ['星', '星'],
+    'ar' => const ['Щ†', 'Ш¬', 'Щ…'],
+    'zh' => const ['жџ', 'жџ'],
     _ => const ['S', 'T', 'A', 'R'],
   };
 }
@@ -5953,10 +6676,15 @@ bool _sameTokenList(List<String> left, List<String> right) {
 }
 
 class _MiniSudokuStage extends StatefulWidget {
-  const _MiniSudokuStage({required this.accent, required this.compact});
+  const _MiniSudokuStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_MiniSudokuStage> createState() => _MiniSudokuStageState();
@@ -5964,6 +6692,13 @@ class _MiniSudokuStage extends StatefulWidget {
 
 class _MiniSudokuStageState extends State<_MiniSudokuStage> {
   String? _selected;
+
+  void _select(String symbol) {
+    setState(() => _selected = symbol);
+    if (symbol == 'rocket') {
+      widget.onAnswerSelected('shape_rocket');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -6029,7 +6764,7 @@ class _MiniSudokuStageState extends State<_MiniSudokuStage> {
                           symbol: symbol,
                           selected: _selected == symbol,
                           accent: widget.accent,
-                          onTap: () => setState(() => _selected = symbol),
+                          onTap: () => _select(symbol),
                         ),
                       ),
                   ],
@@ -6135,10 +6870,10 @@ class _SudokuChoice extends StatelessWidget {
 
 String _sudokuGlyphFor(String? symbol) {
   return switch (symbol) {
-    'star' => '★',
-    'moon' => '◐',
-    'rocket' => '▲',
-    'planet' => '●',
+    'star' => 'в…',
+    'moon' => 'в—ђ',
+    'rocket' => 'в–І',
+    'planet' => 'в—Џ',
     _ => '?',
   };
 }
@@ -6154,10 +6889,15 @@ Color _sudokuColorFor(String? symbol, Color accent) {
 }
 
 class _LogicHousesStage extends StatefulWidget {
-  const _LogicHousesStage({required this.accent, required this.compact});
+  const _LogicHousesStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_LogicHousesStage> createState() => _LogicHousesStageState();
@@ -6165,6 +6905,13 @@ class _LogicHousesStage extends StatefulWidget {
 
 class _LogicHousesStageState extends State<_LogicHousesStage> {
   String? _selected;
+
+  void _select(String id) {
+    setState(() => _selected = id);
+    if (id == 'green') {
+      widget.onAnswerSelected('house_green');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -6194,19 +6941,19 @@ class _LogicHousesStageState extends State<_LogicHousesStage> {
                       id: 'blue',
                       color: AppPalette.sky,
                       selected: _selected == 'blue',
-                      onTap: () => setState(() => _selected = 'blue'),
+                      onTap: () => _select('blue'),
                     ),
                     _ClueHouse(
                       id: 'yellow',
                       color: AppPalette.mango,
                       selected: _selected == 'yellow',
-                      onTap: () => setState(() => _selected = 'yellow'),
+                      onTap: () => _select('yellow'),
                     ),
                     _ClueHouse(
                       id: 'green',
                       color: AppPalette.teal,
                       selected: _selected == 'green',
-                      onTap: () => setState(() => _selected = 'green'),
+                      onTap: () => _select('green'),
                       marked: _selected == 'green',
                     ),
                   ],
@@ -6216,9 +6963,9 @@ class _LogicHousesStageState extends State<_LogicHousesStage> {
               const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _ClueChip(label: '★ ≠', color: AppPalette.sky),
+                  _ClueChip(label: 'в… в‰ ', color: AppPalette.sky),
                   SizedBox(height: 7),
-                  _ClueChip(label: '★ >', color: AppPalette.mango),
+                  _ClueChip(label: 'в… >', color: AppPalette.mango),
                 ],
               ),
             ],
@@ -6287,7 +7034,7 @@ class _ClueHouse extends StatelessWidget {
                   ),
                   alignment: Alignment.center,
                   child: const Text(
-                    '★',
+                    'в…',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 13,
@@ -6371,10 +7118,15 @@ class _ClueChip extends StatelessWidget {
 }
 
 class _CodeLockStage extends StatefulWidget {
-  const _CodeLockStage({required this.accent, required this.compact});
+  const _CodeLockStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_CodeLockStage> createState() => _CodeLockStageState();
@@ -6390,6 +7142,9 @@ class _CodeLockStageState extends State<_CodeLockStage> {
       return;
     }
     setState(() => _digits.add(digit));
+    if (_digits.join() == '248') {
+      widget.onAnswerSelected('248');
+    }
   }
 
   void _backspace() {
@@ -7155,15 +7910,18 @@ class _MathStage extends StatelessWidget {
     required this.puzzle,
     required this.accent,
     required this.compact,
+    required this.onAnswerSelected,
   });
 
   final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   Widget build(BuildContext context) {
-    final customStage = _customMathStageFor(puzzle.id, accent, compact);
+    final customStage =
+        _customMathStageFor(puzzle.id, accent, compact, onAnswerSelected);
 
     if (customStage != null) {
       return _StageShell(
@@ -7192,23 +7950,102 @@ class _MathStage extends StatelessWidget {
   }
 }
 
-Widget? _customMathStageFor(String puzzleId, Color accent, bool compact) {
+Widget? _customMathStageFor(
+  String puzzleId,
+  Color accent,
+  bool compact,
+  ValueChanged<String> onAnswerSelected,
+) {
   return switch (puzzleId) {
-    'fruit-fizz' => _FruitFizzStage(accent: accent, compact: compact),
-    'moon-clock' => _MoonClockStage(accent: accent, compact: compact),
-    'notebook-sum' => _NotebookSumStage(accent: accent, compact: compact),
-    'cookie-share' => _CookieShareStage(accent: accent, compact: compact),
-    'math-crossword' => _MathCrosswordStage(accent: accent, compact: compact),
-    'market-change' => _MarketChangeStage(accent: accent, compact: compact),
+    'fruit-fizz' => _FruitFizzStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'moon-clock' => _MoonClockStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'notebook-sum' => _NotebookSumStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'cookie-share' => _CookieShareStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'math-crossword' => _MathCrosswordStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'market-change' => _MarketChangeStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'number-bridge' => _NumberBridgeGameStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'star-balance' => _StarBalanceGameStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'count-rockets' => _CountRocketsGameStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'number-neighbors' => _NumberNeighborsGameStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'planet-sum' => _PlanetSumGameStage(
+        accent: accent,
+        compact: compact,
+        onAnswerSelected: onAnswerSelected,
+      ),
     _ => null,
   };
 }
 
-class _FruitFizzStage extends StatelessWidget {
-  const _FruitFizzStage({required this.accent, required this.compact});
+class _FruitFizzStage extends StatefulWidget {
+  const _FruitFizzStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_FruitFizzStage> createState() => _FruitFizzStageState();
+}
+
+class _FruitFizzStageState extends State<_FruitFizzStage> {
+  int _added = 0;
+  bool _submitted = false;
+
+  void _addFruit() {
+    if (_added >= 3) {
+      return;
+    }
+
+    setState(() => _added += 1);
+    if (!_submitted && _added == 3) {
+      _submitted = true;
+      widget.onAnswerSelected('3');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -7217,20 +8054,157 @@ class _FruitFizzStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: SizedBox(
-          width: compact ? 286 : 328,
-          height: compact ? 92 : 110,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 98 : 116,
           child: Row(
             children: [
-              _RecipeCard(accent: accent),
+              _RecipeCard(accent: widget.accent),
               const SizedBox(width: 12),
               Expanded(
-                child: CustomPaint(
-                  painter: _BlenderPainter(accent),
-                  child: const SizedBox.expand(),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Positioned.fill(
+                      child: DragTarget<int>(
+                        onWillAcceptWithDetails: (_) => true,
+                        onAcceptWithDetails: (_) => _addFruit(),
+                        builder: (context, candidateData, rejectedData) {
+                          return AnimatedScale(
+                            duration: const Duration(milliseconds: 140),
+                            scale: candidateData.isNotEmpty ? 1.03 : 1,
+                            child: CustomPaint(
+                              painter: _BlenderPainter(
+                                widget.accent,
+                                addedMango: _added,
+                                active: candidateData.isNotEmpty,
+                              ),
+                              child: const SizedBox.expand(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: _FruitDropCounter(
+                        value: _added,
+                        target: 3,
+                        color: widget.accent,
+                      ),
+                    ),
+                    Positioned(
+                      right: 8,
+                      bottom: 5,
+                      child: _FruitFizzDraggable(onTap: _addFruit),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FruitFizzDraggable extends StatelessWidget {
+  const _FruitFizzDraggable({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    const visual = _FruitFizzToken(lifted: false);
+
+    return Draggable<int>(
+      data: 1,
+      feedback: const Material(
+        color: Colors.transparent,
+        child: _FruitFizzToken(lifted: true),
+      ),
+      childWhenDragging: const Opacity(opacity: 0.35, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
+        child: visual,
+      ),
+    );
+  }
+}
+
+class _FruitFizzToken extends StatelessWidget {
+  const _FruitFizzToken({required this.lifted});
+
+  final bool lifted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.scale(
+      scale: lifted ? 1.18 : 1,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: AppPalette.mango,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white, width: 2.4),
+          boxShadow: [
+            BoxShadow(
+              color: AppPalette.mango.withValues(alpha: lifted ? 0.30 : 0.16),
+              blurRadius: lifted ? 16 : 9,
+              offset: Offset(0, lifted ? 8 : 5),
+            ),
+          ],
+        ),
+        child: Align(
+          alignment: const Alignment(-0.35, -0.35),
+          child: Container(
+            width: 13,
+            height: 13,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.56),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FruitDropCounter extends StatelessWidget {
+  const _FruitDropCounter({
+    required this.value,
+    required this.target,
+    required this.color,
+  });
+
+  final int value;
+  final int target;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final complete = value >= target;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: complete ? AppPalette.mint : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: complete ? AppPalette.teal : color.withValues(alpha: 0.30),
+        ),
+      ),
+      child: Text(
+        '$value/$target',
+        style: TextStyle(
+          color: complete ? AppPalette.teal : color,
+          fontWeight: FontWeight.w900,
+          fontSize: 12,
         ),
       ),
     );
@@ -7365,9 +8339,15 @@ class _FruitDot extends StatelessWidget {
 }
 
 class _BlenderPainter extends CustomPainter {
-  const _BlenderPainter(this.accent);
+  const _BlenderPainter(
+    this.accent, {
+    this.addedMango = 0,
+    this.active = false,
+  });
 
   final Color accent;
+  final int addedMango;
+  final bool active;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -7376,9 +8356,9 @@ class _BlenderPainter extends CustomPainter {
       ..color = Colors.white.withValues(alpha: 0.80)
       ..style = PaintingStyle.fill;
     final glassStroke = Paint()
-      ..color = accent.withValues(alpha: 0.34)
+      ..color = (active ? AppPalette.mango : accent).withValues(alpha: 0.40)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.4;
+      ..strokeWidth = active ? 3.2 : 2.4;
 
     final jar = Path()
       ..moveTo(size.width * 0.26, size.height * 0.14)
@@ -7416,8 +8396,15 @@ class _BlenderPainter extends CustomPainter {
 
     _drawFruit(canvas, size, const Offset(0.40, 0.34), AppPalette.teal);
     _drawFruit(canvas, size, const Offset(0.56, 0.38), AppPalette.lavender);
-    _drawFruit(canvas, size, const Offset(0.49, 0.54), AppPalette.mango);
     _drawFruit(canvas, size, const Offset(0.62, 0.58), AppPalette.teal);
+    const mangoPositions = [
+      Offset(0.49, 0.54),
+      Offset(0.42, 0.61),
+      Offset(0.58, 0.68),
+    ];
+    for (var index = 0; index < addedMango.clamp(0, 3); index++) {
+      _drawFruit(canvas, size, mangoPositions[index], AppPalette.mango);
+    }
   }
 
   void _drawFruit(Canvas canvas, Size size, Offset position, Color color) {
@@ -7433,14 +8420,40 @@ class _BlenderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _BlenderPainter oldDelegate) =>
-      oldDelegate.accent != accent;
+      oldDelegate.accent != accent ||
+      oldDelegate.addedMango != addedMango ||
+      oldDelegate.active != active;
 }
 
-class _MoonClockStage extends StatelessWidget {
-  const _MoonClockStage({required this.accent, required this.compact});
+class _MoonClockStage extends StatefulWidget {
+  const _MoonClockStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_MoonClockStage> createState() => _MoonClockStageState();
+}
+
+class _MoonClockStageState extends State<_MoonClockStage> {
+  String? _selectedTime;
+  String? _wrongTime;
+
+  void _choose(String time) {
+    setState(() {
+      _selectedTime = time;
+      _wrongTime = time == '3:00' ? null : time;
+    });
+
+    if (time == '3:00') {
+      widget.onAnswerSelected(time);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -7449,8 +8462,8 @@ class _MoonClockStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 94 : 112,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 96 : 114,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -7462,39 +8475,52 @@ class _MoonClockStage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              SizedBox(
-                width: 86,
-                height: 86,
-                child: CustomPaint(painter: _ClockFacePainter(accent)),
+              DragTarget<String>(
+                onWillAcceptWithDetails: (_) => true,
+                onAcceptWithDetails: (details) => _choose(details.data),
+                builder: (context, candidateData, rejectedData) {
+                  return AnimatedScale(
+                    duration: const Duration(milliseconds: 140),
+                    scale: candidateData.isNotEmpty ? 1.05 : 1,
+                    child: SizedBox(
+                      width: 86,
+                      height: 86,
+                      child: CustomPaint(
+                        painter: _ClockFacePainter(
+                          widget.accent,
+                          time: _selectedTime,
+                          active: candidateData.isNotEmpty,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
               const Spacer(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _SpacePebble(
-                      color: AppPalette.lavender, size: compact ? 26 : 30),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: AppPalette.ink,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: const Text(
-                      '3:00',
-                      style: TextStyle(
-                        color: AppPalette.mint,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 20,
-                      ),
-                    ),
+                    color: AppPalette.lavender,
+                    size: widget.compact ? 22 : 26,
                   ),
+                  const SizedBox(height: 7),
+                  for (final time in const ['3:00', '6:00', '12:15']) ...[
+                    _TimeChoiceChip(
+                      time: time,
+                      selected: _selectedTime == time,
+                      wrong: _wrongTime == time,
+                      onTap: () => _choose(time),
+                    ),
+                    if (time != '12:15') const SizedBox(height: 5),
+                  ],
                 ],
               ),
               const Spacer(),
-              _SpacePebble(color: AppPalette.mango, size: compact ? 34 : 40),
+              _SpacePebble(
+                color: AppPalette.mango,
+                size: widget.compact ? 30 : 36,
+              ),
             ],
           ),
         ),
@@ -7504,9 +8530,15 @@ class _MoonClockStage extends StatelessWidget {
 }
 
 class _ClockFacePainter extends CustomPainter {
-  const _ClockFacePainter(this.accent);
+  const _ClockFacePainter(
+    this.accent, {
+    this.time,
+    this.active = false,
+  });
 
   final Color accent;
+  final String? time;
+  final bool active;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -7517,9 +8549,9 @@ class _ClockFacePainter extends CustomPainter {
       center,
       radius,
       Paint()
-        ..color = Colors.white
+        ..color = active ? AppPalette.mint : Colors.white
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 3,
+        ..strokeWidth = active ? 4 : 3,
     );
 
     for (var index = 1; index <= 12; index++) {
@@ -7546,6 +8578,30 @@ class _ClockFacePainter extends CustomPainter {
       );
     }
 
+    if (time == null) {
+      final question = TextPainter(
+        text: const TextSpan(
+          text: '?',
+          style: TextStyle(
+            color: AppPalette.coral,
+            fontSize: 28,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      question.paint(
+        canvas,
+        center - Offset(question.width / 2, question.height / 2),
+      );
+      return;
+    }
+
+    final (hourAngle, minuteAngle) = switch (time) {
+      '6:00' => (math.pi / 2, -math.pi / 2),
+      '12:15' => (-math.pi / 2, 0.0),
+      _ => (0.0, -math.pi / 2),
+    };
     final minutePaint = Paint()
       ..color = AppPalette.coral
       ..strokeWidth = 5
@@ -7554,14 +8610,88 @@ class _ClockFacePainter extends CustomPainter {
       ..color = accent
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
-    canvas.drawLine(center, center + Offset(0, -radius * 0.64), minutePaint);
-    canvas.drawLine(center, center + Offset(radius * 0.55, 0), hourPaint);
+    canvas.drawLine(
+      center,
+      center +
+          Offset(
+            math.cos(minuteAngle) * radius * 0.64,
+            math.sin(minuteAngle) * radius * 0.64,
+          ),
+      minutePaint,
+    );
+    canvas.drawLine(
+      center,
+      center +
+          Offset(
+            math.cos(hourAngle) * radius * 0.55,
+            math.sin(hourAngle) * radius * 0.55,
+          ),
+      hourPaint,
+    );
     canvas.drawCircle(center, radius * 0.11, Paint()..color = AppPalette.coral);
   }
 
   @override
   bool shouldRepaint(covariant _ClockFacePainter oldDelegate) =>
-      oldDelegate.accent != accent;
+      oldDelegate.accent != accent ||
+      oldDelegate.time != time ||
+      oldDelegate.active != active;
+}
+
+class _TimeChoiceChip extends StatelessWidget {
+  const _TimeChoiceChip({
+    required this.time,
+    required this.selected,
+    required this.wrong,
+    required this.onTap,
+  });
+
+  final String time;
+  final bool selected;
+  final bool wrong;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = wrong
+        ? AppPalette.coral
+        : selected
+            ? AppPalette.mint
+            : Colors.white;
+    final visual = AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: 74,
+      height: 27,
+      decoration: BoxDecoration(
+        color: selected && !wrong ? AppPalette.mint : AppPalette.ink,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: color, width: selected || wrong ? 2 : 1.2),
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        time,
+        style: TextStyle(
+          color: selected && !wrong ? AppPalette.teal : Colors.white,
+          fontWeight: FontWeight.w900,
+          fontSize: 14,
+        ),
+      ),
+    );
+
+    return Draggable<String>(
+      data: time,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.12, child: visual),
+      ),
+      childWhenDragging: Opacity(opacity: 0.35, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: visual,
+      ),
+    );
+  }
 }
 
 class _SpacePebble extends StatelessWidget {
@@ -7602,21 +8732,44 @@ class _SpacePebble extends StatelessWidget {
   }
 }
 
-class _NotebookSumStage extends StatelessWidget {
-  const _NotebookSumStage({required this.accent, required this.compact});
+class _NotebookSumStage extends StatefulWidget {
+  const _NotebookSumStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_NotebookSumStage> createState() => _NotebookSumStageState();
+}
+
+class _NotebookSumStageState extends State<_NotebookSumStage> {
+  String? _answer;
+  bool _submitted = false;
+
+  void _choose(String value) {
+    setState(() => _answer = value);
+    if (!_submitted && value == '35') {
+      _submitted = true;
+      widget.onAnswerSelected(value);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final solved = _answer == '35';
+
     return Directionality(
       textDirection: TextDirection.ltr,
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 94 : 112,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 98 : 116,
           padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -7629,39 +8782,70 @@ class _NotebookSumStage extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 126,
+                width: 136,
                 padding: const EdgeInsets.fromLTRB(18, 12, 16, 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(18),
                   boxShadow: [
                     BoxShadow(
-                      color: accent.withValues(alpha: 0.16),
+                      color: widget.accent.withValues(alpha: 0.16),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
                   ],
                 ),
-                child: const Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    _NotebookLine(text: '15'),
-                    _NotebookLine(text: '+ 20'),
-                    Divider(height: 10, thickness: 2, color: AppPalette.sky),
-                    _NotebookLine(text: '?', highlighted: true),
+                    const _NotebookLine(text: '15'),
+                    const _NotebookLine(text: '+ 20'),
+                    const Divider(
+                      height: 10,
+                      thickness: 2,
+                      color: AppPalette.sky,
+                    ),
+                    DragTarget<String>(
+                      onWillAcceptWithDetails: (_) => true,
+                      onAcceptWithDetails: (details) => _choose(details.data),
+                      builder: (context, candidateData, rejectedData) {
+                        return AnimatedScale(
+                          duration: const Duration(milliseconds: 150),
+                          scale: candidateData.isNotEmpty ? 1.08 : 1,
+                          child: _NotebookAnswerLine(
+                            text: _answer ?? '?',
+                            solved: solved,
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
               const Spacer(),
-              const Column(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _NumberTile(label: '25', color: AppPalette.sky),
-                  SizedBox(height: 7),
                   _NumberTile(
-                      label: '35', color: AppPalette.teal, selected: true),
-                  SizedBox(height: 7),
-                  _NumberTile(label: '45', color: AppPalette.lavender),
+                    label: '25',
+                    color: AppPalette.sky,
+                    selected: _answer == '25',
+                    onTap: () => _choose('25'),
+                  ),
+                  const SizedBox(height: 7),
+                  _NumberTile(
+                    label: '35',
+                    color: AppPalette.teal,
+                    selected: _answer == '35',
+                    onTap: () => _choose('35'),
+                  ),
+                  const SizedBox(height: 7),
+                  _NumberTile(
+                    label: '45',
+                    color: AppPalette.lavender,
+                    selected: _answer == '45',
+                    onTap: () => _choose('45'),
+                  ),
                 ],
               ),
             ],
@@ -7672,20 +8856,55 @@ class _NotebookSumStage extends StatelessWidget {
   }
 }
 
-class _NotebookLine extends StatelessWidget {
-  const _NotebookLine({required this.text, this.highlighted = false});
+class _NotebookAnswerLine extends StatelessWidget {
+  const _NotebookAnswerLine({required this.text, required this.solved});
 
   final String text;
-  final bool highlighted;
+  final bool solved;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      width: 58,
+      height: 26,
+      alignment: Alignment.centerRight,
+      padding: const EdgeInsets.only(right: 4),
+      decoration: BoxDecoration(
+        color: solved ? AppPalette.mint.withValues(alpha: 0.38) : Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: solved
+              ? AppPalette.teal
+              : AppPalette.coral.withValues(alpha: 0.34),
+        ),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: solved ? AppPalette.teal : AppPalette.coral,
+          fontWeight: FontWeight.w900,
+          fontSize: 18,
+          height: 1,
+        ),
+      ),
+    );
+  }
+}
+
+class _NotebookLine extends StatelessWidget {
+  const _NotebookLine({required this.text});
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
-        color: highlighted ? AppPalette.coral : AppPalette.ink,
+      style: const TextStyle(
+        color: AppPalette.ink,
         fontWeight: FontWeight.w900,
-        fontSize: highlighted ? 18 : 17,
+        fontSize: 17,
         height: 1.05,
       ),
     );
@@ -7696,16 +8915,18 @@ class _NumberTile extends StatelessWidget {
   const _NumberTile({
     required this.label,
     required this.color,
+    this.onTap,
     this.selected = false,
   });
 
   final String label;
   final Color color;
+  final VoidCallback? onTap;
   final bool selected;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final tile = Container(
       width: 60,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
       decoration: BoxDecoration(
@@ -7730,14 +8951,55 @@ class _NumberTile extends StatelessWidget {
         ),
       ),
     );
+
+    return Draggable<String>(
+      data: label,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.12, child: tile),
+      ),
+      childWhenDragging: Opacity(opacity: 0.32, child: tile),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: tile,
+      ),
+    );
   }
 }
 
-class _CookieShareStage extends StatelessWidget {
-  const _CookieShareStage({required this.accent, required this.compact});
+class _CookieShareStage extends StatefulWidget {
+  const _CookieShareStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_CookieShareStage> createState() => _CookieShareStageState();
+}
+
+class _CookieShareStageState extends State<_CookieShareStage> {
+  final List<int> _plates = [0, 0, 0];
+  bool _submitted = false;
+
+  int get _remaining => 6 - _plates.fold<int>(0, (sum, value) => sum + value);
+
+  void _addToPlate(int index) {
+    if (index < 0 || _remaining <= 0 || _plates[index] >= 2) {
+      return;
+    }
+
+    setState(() => _plates[index] += 1);
+    if (!_submitted && _plates.every((count) => count == 2)) {
+      _submitted = true;
+      widget.onAnswerSelected('2');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -7746,8 +9008,8 @@ class _CookieShareStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 94 : 112,
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 98 : 116,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -7759,19 +9021,21 @@ class _CookieShareStage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const SizedBox(
+              SizedBox(
                 width: 122,
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
                   alignment: WrapAlignment.center,
                   children: [
-                    _CookieDot(),
-                    _CookieDot(),
-                    _CookieDot(),
-                    _CookieDot(),
-                    _CookieDot(),
-                    _CookieDot(),
+                    for (var index = 0; index < _remaining; index++)
+                      _CookieDraggable(
+                        onTap: () => _addToPlate(
+                          _plates.indexWhere((count) => count < 2),
+                        ),
+                      ),
+                    for (var index = _remaining; index < 6; index++)
+                      const Opacity(opacity: 0.22, child: _CookieDot()),
                   ],
                 ),
               ),
@@ -7779,13 +9043,13 @@ class _CookieShareStage extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: accent,
+                  color: widget.accent,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: Colors.white, width: 2),
                 ),
                 alignment: Alignment.center,
                 child: const Text(
-                  '÷',
+                  '/',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -7794,19 +9058,48 @@ class _CookieShareStage extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const Column(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _CookiePlate(label: '2'),
-                  SizedBox(height: 6),
-                  _CookiePlate(label: '2'),
-                  SizedBox(height: 6),
-                  _CookiePlate(label: '2'),
+                  for (var index = 0; index < 3; index++) ...[
+                    _CookieDropPlate(
+                      count: _plates[index],
+                      target: 2,
+                      color: widget.accent,
+                      onAccept: () => _addToPlate(index),
+                    ),
+                    if (index != 2) const SizedBox(height: 6),
+                  ],
                 ],
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _CookieDraggable extends StatelessWidget {
+  const _CookieDraggable({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    const cookie = _CookieDot();
+
+    return Draggable<int>(
+      data: 1,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.16, child: cookie),
+      ),
+      childWhenDragging: const Opacity(opacity: 0.30, child: _CookieDot()),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(999),
+        onTap: onTap,
+        child: cookie,
       ),
     );
   }
@@ -7866,39 +9159,78 @@ class _CookieChip extends StatelessWidget {
   }
 }
 
-class _CookiePlate extends StatelessWidget {
-  const _CookiePlate({required this.label});
+class _CookieDropPlate extends StatelessWidget {
+  const _CookieDropPlate({
+    required this.count,
+    required this.target,
+    required this.color,
+    required this.onAccept,
+  });
 
-  final String label;
+  final int count;
+  final int target;
+  final Color color;
+  final VoidCallback onAccept;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 86,
-      height: 24,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppPalette.teal.withValues(alpha: 0.30)),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: AppPalette.teal,
-          fontWeight: FontWeight.w900,
-          fontSize: 15,
-        ),
-      ),
+    final complete = count == target;
+
+    return DragTarget<int>(
+      onWillAcceptWithDetails: (_) => !complete,
+      onAcceptWithDetails: (_) => onAccept(),
+      builder: (context, candidateData, rejectedData) {
+        final active = candidateData.isNotEmpty;
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          width: 90,
+          height: 26,
+          decoration: BoxDecoration(
+            color: complete ? AppPalette.mint : Colors.white,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: complete
+                  ? AppPalette.teal
+                  : active
+                      ? color
+                      : AppPalette.teal.withValues(alpha: 0.30),
+              width: complete || active ? 2 : 1.2,
+            ),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var index = 0; index < count; index++)
+                Transform.scale(scale: 0.46, child: const _CookieDot()),
+              if (count == 0)
+                Text(
+                  '$count/$target',
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 13,
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
 
 class _MathCrosswordStage extends StatefulWidget {
-  const _MathCrosswordStage({required this.accent, required this.compact});
+  const _MathCrosswordStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_MathCrosswordStage> createState() => _MathCrosswordStageState();
@@ -7944,10 +9276,11 @@ class _MathCrosswordStageState extends State<_MathCrosswordStage> {
                           const _CrosswordCell(label: '+'),
                           const _CrosswordCell(label: '5'),
                           const _CrosswordCell(label: '='),
-                          _CrosswordCell(
+                          _CrosswordDropCell(
                             label: _selected ?? '?',
                             color: solved ? AppPalette.teal : widget.accent,
-                            filled: true,
+                            solved: solved,
+                            onAccept: _placeNumber,
                           ),
                         ],
                       ),
@@ -7956,10 +9289,11 @@ class _MathCrosswordStageState extends State<_MathCrosswordStage> {
                       top: 40,
                       child: Column(
                         children: [
-                          _CrosswordCell(
+                          _CrosswordDropCell(
                             label: _selected ?? '?',
                             color: solved ? AppPalette.teal : widget.accent,
-                            filled: true,
+                            solved: solved,
+                            onAccept: _placeNumber,
                           ),
                           const _CrosswordCell(label: '-'),
                           const _CrosswordCell(label: '2'),
@@ -7982,7 +9316,7 @@ class _MathCrosswordStageState extends State<_MathCrosswordStage> {
                         label: value,
                         selected: _selected == value,
                         color: widget.accent,
-                        onTap: () => setState(() => _selected = value),
+                        onTap: () => _placeNumber(value),
                       ),
                     ),
                 ],
@@ -7993,18 +9327,17 @@ class _MathCrosswordStageState extends State<_MathCrosswordStage> {
       ),
     );
   }
+
+  void _placeNumber(String value) {
+    setState(() => _selected = value);
+    widget.onAnswerSelected(value);
+  }
 }
 
 class _CrosswordCell extends StatelessWidget {
-  const _CrosswordCell({
-    required this.label,
-    this.color = AppPalette.sky,
-    this.filled = false,
-  });
+  const _CrosswordCell({required this.label});
 
   final String label;
-  final Color color;
-  final bool filled;
 
   @override
   Widget build(BuildContext context) {
@@ -8013,12 +9346,12 @@ class _CrosswordCell extends StatelessWidget {
       height: 30,
       margin: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: filled ? color : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withValues(alpha: 0.34)),
+        border: Border.all(color: AppPalette.sky.withValues(alpha: 0.34)),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: filled ? 0.22 : 0.08),
+            color: AppPalette.sky.withValues(alpha: 0.08),
             blurRadius: 7,
             offset: const Offset(0, 4),
           ),
@@ -8027,12 +9360,71 @@ class _CrosswordCell extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         label,
-        style: TextStyle(
-          color: filled ? Colors.white : AppPalette.ink,
+        style: const TextStyle(
+          color: AppPalette.ink,
           fontSize: 15,
           fontWeight: FontWeight.w900,
         ),
       ),
+    );
+  }
+}
+
+class _CrosswordDropCell extends StatelessWidget {
+  const _CrosswordDropCell({
+    required this.label,
+    required this.color,
+    required this.solved,
+    required this.onAccept,
+  });
+
+  final String label;
+  final Color color;
+  final bool solved;
+  final ValueChanged<String> onAccept;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<String>(
+      onWillAcceptWithDetails: (_) => true,
+      onAcceptWithDetails: (details) => onAccept(details.data),
+      builder: (context, candidateData, rejectedData) {
+        final hovering = candidateData.isNotEmpty;
+        return AnimatedScale(
+          scale: hovering ? 1.10 : 1,
+          duration: const Duration(milliseconds: 140),
+          child: Container(
+            width: 34,
+            height: 34,
+            margin: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: solved
+                  ? AppPalette.mint
+                  : hovering
+                      ? color.withValues(alpha: 0.72)
+                      : color,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.white, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: hovering ? 0.34 : 0.22),
+                  blurRadius: hovering ? 14 : 8,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 17,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -8052,26 +9444,71 @@ class _NumberChoiceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BouncyTap(
+    final tile = BouncyTap(
       borderRadius: BorderRadius.circular(14),
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        width: 46,
-        height: 28,
-        decoration: BoxDecoration(
-          color: selected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: selected ? Colors.white : color),
+      child: _NumberDragVisual(
+        label: label,
+        selected: selected,
+        color: color,
+      ),
+    );
+
+    return Draggable<String>(
+      data: label,
+      feedback: Material(
+        color: Colors.transparent,
+        child: _NumberDragVisual(
+          label: label,
+          selected: true,
+          color: color,
+          lifted: true,
         ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : color,
-            fontWeight: FontWeight.w900,
-            fontSize: 15,
+      ),
+      childWhenDragging: Opacity(opacity: 0.32, child: tile),
+      child: tile,
+    );
+  }
+}
+
+class _NumberDragVisual extends StatelessWidget {
+  const _NumberDragVisual({
+    required this.label,
+    required this.selected,
+    required this.color,
+    this.lifted = false,
+  });
+
+  final String label;
+  final bool selected;
+  final Color color;
+  final bool lifted;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: lifted ? 58 : 46,
+      height: lifted ? 38 : 28,
+      decoration: BoxDecoration(
+        color: selected ? color : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: selected ? Colors.white : color),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: lifted ? 0.30 : 0.12),
+            blurRadius: lifted ? 16 : 8,
+            offset: Offset(0, lifted ? 8 : 4),
           ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: TextStyle(
+          color: selected ? Colors.white : color,
+          fontWeight: FontWeight.w900,
+          fontSize: lifted ? 18 : 15,
         ),
       ),
     );
@@ -8079,10 +9516,15 @@ class _NumberChoiceChip extends StatelessWidget {
 }
 
 class _MarketChangeStage extends StatefulWidget {
-  const _MarketChangeStage({required this.accent, required this.compact});
+  const _MarketChangeStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_MarketChangeStage> createState() => _MarketChangeStageState();
@@ -8090,10 +9532,28 @@ class _MarketChangeStage extends StatefulWidget {
 
 class _MarketChangeStageState extends State<_MarketChangeStage> {
   bool _bought = false;
+  bool _submitted = false;
+
+  void _buyRocket() {
+    if (_bought) {
+      return;
+    }
+
+    setState(() => _bought = true);
+    if (!_submitted) {
+      _submitted = true;
+      widget.onAnswerSelected('2');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final remaining = _bought ? 2 : 5;
+    final rocketCard = _ShopRocketCard(
+      bought: _bought,
+      accent: widget.accent,
+      onTap: _buyRocket,
+    );
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -8125,51 +9585,67 @@ class _MarketChangeStageState extends State<_MarketChangeStage> {
                 ),
               ),
               const SizedBox(width: 10),
-              _ShopRocketCard(
-                bought: _bought,
-                accent: widget.accent,
-                onTap: () => setState(() => _bought = !_bought),
+              Draggable<String>(
+                data: 'rocket',
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: Transform.scale(scale: 1.05, child: rocketCard),
+                ),
+                childWhenDragging: Opacity(opacity: 0.36, child: rocketCard),
+                child: rocketCard,
               ),
               const SizedBox(width: 10),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                width: widget.compact ? 62 : 72,
-                height: widget.compact ? 78 : 92,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    color: (_bought ? AppPalette.mint : widget.accent)
-                        .withValues(alpha: 0.34),
-                    width: _bought ? 2 : 1.2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (_bought ? AppPalette.mint : widget.accent)
-                          .withValues(alpha: 0.14),
-                      blurRadius: 12,
-                      offset: const Offset(0, 7),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.star_rounded,
-                      color: AppPalette.mango,
-                      size: widget.compact ? 24 : 30,
-                    ),
-                    Text(
-                      '$remaining',
-                      style: TextStyle(
-                        color: _bought ? AppPalette.mint : widget.accent,
-                        fontSize: widget.compact ? 22 : 28,
-                        fontWeight: FontWeight.w900,
+              DragTarget<String>(
+                onWillAcceptWithDetails: (details) => details.data == 'rocket',
+                onAcceptWithDetails: (_) => _buyRocket(),
+                builder: (context, candidateData, rejectedData) {
+                  final active = candidateData.isNotEmpty;
+
+                  return AnimatedScale(
+                    duration: const Duration(milliseconds: 140),
+                    scale: active ? 1.05 : 1,
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: widget.compact ? 62 : 72,
+                      height: widget.compact ? 78 : 92,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(
+                          color: (_bought ? AppPalette.mint : widget.accent)
+                              .withValues(alpha: active ? 0.62 : 0.34),
+                          width: _bought || active ? 2 : 1.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (_bought ? AppPalette.mint : widget.accent)
+                                .withValues(alpha: 0.14),
+                            blurRadius: 12,
+                            offset: const Offset(0, 7),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.star_rounded,
+                            color: AppPalette.mango,
+                            size: widget.compact ? 24 : 30,
+                          ),
+                          Text(
+                            '$remaining',
+                            style: TextStyle(
+                              color: _bought ? AppPalette.mint : widget.accent,
+                              fontSize: widget.compact ? 22 : 28,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ],
           ),
@@ -8300,6 +9776,1052 @@ class _ShopRocketCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _NumberBridgeGameStage extends StatefulWidget {
+  const _NumberBridgeGameStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_NumberBridgeGameStage> createState() => _NumberBridgeGameStageState();
+}
+
+class _NumberBridgeGameStageState extends State<_NumberBridgeGameStage> {
+  String? _placed;
+  bool _submitted = false;
+
+  void _place(String value) {
+    setState(() => _placed = value);
+    if (!_submitted && value == '5') {
+      _submitted = true;
+      widget.onAnswerSelected(value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 132,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFE7FBFF), Color(0xFFFFF1C8)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: _NumberRiverPainter(widget.accent),
+                      ),
+                    ),
+                    Positioned(
+                      left: 14,
+                      top: 8,
+                      child: _BridgeStone(label: '1', color: AppPalette.sky),
+                    ),
+                    Positioned(
+                      left: 70,
+                      top: 20,
+                      child: _BridgeStone(label: '2', color: AppPalette.teal),
+                    ),
+                    Positioned(
+                      left: 126,
+                      top: 7,
+                      child:
+                          _BridgeStone(label: '3', color: AppPalette.lavender),
+                    ),
+                    Positioned(
+                      right: 76,
+                      top: 20,
+                      child: _BridgeStone(label: '4', color: AppPalette.sky),
+                    ),
+                    Positioned(
+                      right: 14,
+                      top: 8,
+                      child: _NumberDropPad(
+                        value: _placed,
+                        placeholder: '?',
+                        color: AppPalette.mango,
+                        solved: _placed == '5',
+                        onAccept: _place,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 7),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _NumberTile(
+                    label: '4',
+                    color: AppPalette.sky,
+                    selected: _placed == '4',
+                    onTap: () => _place('4'),
+                  ),
+                  const SizedBox(width: 10),
+                  _NumberTile(
+                    label: '5',
+                    color: AppPalette.teal,
+                    selected: _placed == '5',
+                    onTap: () => _place('5'),
+                  ),
+                  const SizedBox(width: 10),
+                  _NumberTile(
+                    label: '6',
+                    color: AppPalette.lavender,
+                    selected: _placed == '6',
+                    onTap: () => _place('6'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NumberRiverPainter extends CustomPainter {
+  const _NumberRiverPainter(this.accent);
+
+  final Color accent;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final river = Path()
+      ..moveTo(0, size.height * 0.60)
+      ..cubicTo(
+        size.width * 0.25,
+        size.height * 0.36,
+        size.width * 0.54,
+        size.height * 0.86,
+        size.width,
+        size.height * 0.48,
+      )
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+
+    canvas.drawPath(
+      river,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            accent.withValues(alpha: 0.18),
+            AppPalette.sky.withValues(alpha: 0.36),
+          ],
+        ).createShader(Offset.zero & size),
+    );
+
+    final sparkle = Paint()
+      ..color = Colors.white.withValues(alpha: 0.62)
+      ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+    for (final point in const [
+      Offset(0.18, 0.72),
+      Offset(0.45, 0.55),
+      Offset(0.72, 0.74),
+    ]) {
+      final center = Offset(size.width * point.dx, size.height * point.dy);
+      canvas.drawLine(center.translate(-5, 0), center.translate(5, 0), sparkle);
+      canvas.drawLine(center.translate(0, -5), center.translate(0, 5), sparkle);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _NumberRiverPainter oldDelegate) =>
+      oldDelegate.accent != accent;
+}
+
+class _BridgeStone extends StatelessWidget {
+  const _BridgeStone({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return _StageToken(label: label, color: color, size: 42);
+  }
+}
+
+class _NumberDropPad extends StatelessWidget {
+  const _NumberDropPad({
+    required this.value,
+    required this.placeholder,
+    required this.color,
+    required this.solved,
+    required this.onAccept,
+  });
+
+  final String? value;
+  final String placeholder;
+  final Color color;
+  final bool solved;
+  final ValueChanged<String> onAccept;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<String>(
+      onWillAcceptWithDetails: (_) => true,
+      onAcceptWithDetails: (details) => onAccept(details.data),
+      builder: (context, candidateData, rejectedData) {
+        final active = candidateData.isNotEmpty;
+
+        return AnimatedScale(
+          duration: const Duration(milliseconds: 150),
+          scale: active ? 1.08 : 1,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: 50,
+            height: 42,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: solved ? AppPalette.mint : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: solved
+                    ? AppPalette.teal
+                    : color.withValues(alpha: active ? 0.80 : 0.42),
+                width: solved || active ? 2.4 : 1.6,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: active ? 0.24 : 0.12),
+                  blurRadius: active ? 18 : 10,
+                  offset: Offset(0, active ? 8 : 5),
+                ),
+              ],
+            ),
+            child: Text(
+              value ?? placeholder,
+              style: TextStyle(
+                color: solved ? AppPalette.teal : color,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _StarBalanceGameStage extends StatefulWidget {
+  const _StarBalanceGameStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_StarBalanceGameStage> createState() => _StarBalanceGameStageState();
+}
+
+class _StarBalanceGameStageState extends State<_StarBalanceGameStage> {
+  String? _weight;
+  bool _submitted = false;
+
+  void _place(String value) {
+    setState(() => _weight = value);
+    if (!_submitted && value == '4') {
+      _submitted = true;
+      widget.onAnswerSelected(value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final number = int.tryParse(_weight ?? '') ?? 0;
+    final tilt = _weight == null
+        ? -0.05
+        : number == 4
+            ? 0.0
+            : number < 4
+                ? -0.12
+                : 0.12;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 132,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFFFF3BF), Color(0xFFE9F8FF)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      bottom: 9,
+                      child: Container(
+                        width: 16,
+                        height: 68,
+                        decoration: BoxDecoration(
+                          color: widget.accent,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 4,
+                      child: Container(
+                        width: 76,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: widget.accent.withValues(alpha: 0.24),
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                      ),
+                    ),
+                    AnimatedRotation(
+                      duration: const Duration(milliseconds: 220),
+                      turns: tilt / (2 * math.pi),
+                      child: SizedBox(
+                        width: 194,
+                        height: 94,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 156,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: widget.accent,
+                                borderRadius: BorderRadius.circular(99),
+                              ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              bottom: 0,
+                              child: _ScalePan(
+                                color: AppPalette.mango,
+                                child: const _StarPile(count: 4),
+                              ),
+                            ),
+                            Positioned(
+                              right: 0,
+                              bottom: 0,
+                              child: _ScalePan(
+                                color: AppPalette.teal,
+                                child: _NumberDropPad(
+                                  value: _weight,
+                                  placeholder: '?',
+                                  color: AppPalette.teal,
+                                  solved: _weight == '4',
+                                  onAccept: _place,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (final value in const ['3', '4', '5']) ...[
+                    _NumberTile(
+                      label: value,
+                      color: value == '4' ? AppPalette.teal : AppPalette.sky,
+                      selected: _weight == value,
+                      onTap: () => _place(value),
+                    ),
+                    if (value != '5') const SizedBox(height: 7),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ScalePan extends StatelessWidget {
+  const _ScalePan({required this.color, required this.child});
+
+  final Color color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 74,
+      height: 54,
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.34)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.14),
+            blurRadius: 12,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      child: Center(child: child),
+    );
+  }
+}
+
+class _StarPile extends StatelessWidget {
+  const _StarPile({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 2,
+      runSpacing: 1,
+      alignment: WrapAlignment.center,
+      children: [
+        for (var index = 0; index < count; index++)
+          const Icon(
+            Icons.star_rounded,
+            color: AppPalette.mango,
+            size: 17,
+          ),
+      ],
+    );
+  }
+}
+
+class _CountRocketsGameStage extends StatefulWidget {
+  const _CountRocketsGameStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_CountRocketsGameStage> createState() => _CountRocketsGameStageState();
+}
+
+class _CountRocketsGameStageState extends State<_CountRocketsGameStage> {
+  final Set<int> _counted = {};
+  bool _submitted = false;
+
+  void _mark(int index) {
+    if (_counted.contains(index)) {
+      return;
+    }
+
+    setState(() => _counted.add(index));
+    if (!_submitted && _counted.length == 6) {
+      _submitted = true;
+      widget.onAnswerSelected('6');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 116 : 132,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF262A66), Color(0xFF39689E)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Wrap(
+                  spacing: 9,
+                  runSpacing: 8,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    for (var index = 0; index < 6; index++)
+                      _RocketCounterToken(
+                        counted: _counted.contains(index),
+                        color:
+                            index.isEven ? AppPalette.coral : AppPalette.mango,
+                        onTap: () => _mark(index),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: 68,
+                height: 84,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(
+                    color: (_counted.length == 6
+                            ? AppPalette.mint
+                            : AppPalette.mango)
+                        .withValues(alpha: 0.48),
+                    width: 2,
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.check_circle_rounded,
+                      color: _counted.length == 6
+                          ? AppPalette.teal
+                          : AppPalette.muted,
+                      size: 22,
+                    ),
+                    Text(
+                      '${_counted.length}',
+                      style: const TextStyle(
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 30,
+                        height: 1,
+                      ),
+                    ),
+                    const Text(
+                      '/ 6',
+                      style: TextStyle(
+                        color: AppPalette.muted,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RocketCounterToken extends StatelessWidget {
+  const _RocketCounterToken({
+    required this.counted,
+    required this.color,
+    required this.onTap,
+  });
+
+  final bool counted;
+  final Color color;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return BouncyTap(
+      borderRadius: BorderRadius.circular(20),
+      onTap: onTap,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 180),
+        opacity: counted ? 0.48 : 1,
+        child: AnimatedScale(
+          duration: const Duration(milliseconds: 180),
+          scale: counted ? 0.86 : 1,
+          child: SizedBox(
+            width: 40,
+            height: 48,
+            child: CustomPaint(
+              painter: _TinyRocketPainter(color: color, counted: counted),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TinyRocketPainter extends CustomPainter {
+  const _TinyRocketPainter({required this.color, required this.counted});
+
+  final Color color;
+  final bool counted;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final shadow = Paint()..color = Colors.black.withValues(alpha: 0.12);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(size.width * 0.50, size.height * 0.90),
+        width: size.width * 0.62,
+        height: size.height * 0.12,
+      ),
+      shadow,
+    );
+
+    final body = Path()
+      ..moveTo(size.width * 0.50, size.height * 0.04)
+      ..cubicTo(
+        size.width * 0.88,
+        size.height * 0.24,
+        size.width * 0.78,
+        size.height * 0.72,
+        size.width * 0.50,
+        size.height * 0.78,
+      )
+      ..cubicTo(
+        size.width * 0.22,
+        size.height * 0.72,
+        size.width * 0.12,
+        size.height * 0.24,
+        size.width * 0.50,
+        size.height * 0.04,
+      );
+    canvas.drawPath(body, Paint()..color = counted ? AppPalette.muted : color);
+
+    canvas.drawCircle(
+      Offset(size.width * 0.50, size.height * 0.34),
+      size.width * 0.15,
+      Paint()..color = Colors.white.withValues(alpha: 0.92),
+    );
+    canvas.drawCircle(
+      Offset(size.width * 0.50, size.height * 0.34),
+      size.width * 0.09,
+      Paint()..color = AppPalette.sky,
+    );
+
+    final leftFin = Path()
+      ..moveTo(size.width * 0.28, size.height * 0.60)
+      ..lineTo(size.width * 0.06, size.height * 0.82)
+      ..lineTo(size.width * 0.36, size.height * 0.75)
+      ..close();
+    final rightFin = Path()
+      ..moveTo(size.width * 0.72, size.height * 0.60)
+      ..lineTo(size.width * 0.94, size.height * 0.82)
+      ..lineTo(size.width * 0.64, size.height * 0.75)
+      ..close();
+    canvas
+      ..drawPath(leftFin, Paint()..color = AppPalette.lavender)
+      ..drawPath(rightFin, Paint()..color = AppPalette.lavender);
+
+    if (!counted) {
+      final flame = Path()
+        ..moveTo(size.width * 0.50, size.height * 0.82)
+        ..lineTo(size.width * 0.36, size.height)
+        ..lineTo(size.width * 0.64, size.height)
+        ..close();
+      canvas.drawPath(flame, Paint()..color = AppPalette.mango);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _TinyRocketPainter oldDelegate) =>
+      oldDelegate.color != color || oldDelegate.counted != counted;
+}
+
+class _NumberNeighborsGameStage extends StatefulWidget {
+  const _NumberNeighborsGameStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_NumberNeighborsGameStage> createState() =>
+      _NumberNeighborsGameStageState();
+}
+
+class _NumberNeighborsGameStageState extends State<_NumberNeighborsGameStage> {
+  String? _placed;
+  bool _submitted = false;
+
+  void _place(String value) {
+    setState(() => _placed = value);
+    if (!_submitted && value == '7') {
+      _submitted = true;
+      widget.onAnswerSelected(value);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 112 : 128,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFF0ECFF), Color(0xFFE3FAF5)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: widget.accent.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _StageToken(
+                          label: '6',
+                          color: AppPalette.sky,
+                          size: 50,
+                        ),
+                        _PathLink(color: widget.accent),
+                        _NumberDropPad(
+                          value: _placed,
+                          placeholder: '?',
+                          color: AppPalette.mango,
+                          solved: _placed == '7',
+                          onAccept: _place,
+                        ),
+                        _PathLink(color: widget.accent),
+                        _StageToken(
+                          label: '8',
+                          color: AppPalette.sky,
+                          size: 50,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (final value in const ['6', '7', '8']) ...[
+                    _NumberTile(
+                      label: value,
+                      color:
+                          value == '7' ? AppPalette.teal : AppPalette.lavender,
+                      selected: _placed == value,
+                      onTap: () => _place(value),
+                    ),
+                    if (value != '8') const SizedBox(width: 10),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlanetSumGameStage extends StatefulWidget {
+  const _PlanetSumGameStage({
+    required this.accent,
+    required this.compact,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_PlanetSumGameStage> createState() => _PlanetSumGameStageState();
+}
+
+class _PlanetSumGameStageState extends State<_PlanetSumGameStage> {
+  int _added = 0;
+  bool _submitted = false;
+
+  void _addPlanet() {
+    if (_added >= 2) {
+      return;
+    }
+
+    setState(() => _added += 1);
+    if (!_submitted && _added == 2) {
+      _submitted = true;
+      widget.onAnswerSelected('5');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 112 : 128,
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFFEAF4FF), Color(0xFFFFF2CC)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 102,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: const [
+                    _OrbitPlanet(
+                      color: AppPalette.coral,
+                      x: -28,
+                      y: -10,
+                      size: 32,
+                    ),
+                    _OrbitPlanet(
+                      color: AppPalette.mango,
+                      x: 16,
+                      y: -18,
+                      size: 28,
+                    ),
+                    _OrbitPlanet(
+                      color: AppPalette.sky,
+                      x: 5,
+                      y: 20,
+                      size: 34,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: widget.accent,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white, width: 2),
+                ),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: DragTarget<int>(
+                  onWillAcceptWithDetails: (_) => _added < 2,
+                  onAcceptWithDetails: (_) => _addPlanet(),
+                  builder: (context, candidateData, rejectedData) {
+                    final active = candidateData.isNotEmpty;
+
+                    return AnimatedScale(
+                      duration: const Duration(milliseconds: 150),
+                      scale: active ? 1.04 : 1,
+                      child: Container(
+                        height: 82,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.72),
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                            color:
+                                (_added == 2 ? AppPalette.mint : widget.accent)
+                                    .withValues(alpha: active ? 0.68 : 0.32),
+                            width: active || _added == 2 ? 2 : 1.2,
+                          ),
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            for (var index = 0; index < _added; index++)
+                              Positioned(
+                                left: 20.0 + index * 34,
+                                top: index.isEven ? 8 : 26,
+                                child: const _OrbitPlanet(
+                                  color: AppPalette.teal,
+                                  x: 0,
+                                  y: 0,
+                                  size: 30,
+                                ),
+                              ),
+                            Positioned(
+                              right: 8,
+                              child: Text(
+                                '${3 + _added}',
+                                style: TextStyle(
+                                  color: _added == 2
+                                      ? AppPalette.teal
+                                      : widget.accent,
+                                  fontSize: 34,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var index = 0; index < 2; index++) ...[
+                    _PlanetDraggable(
+                      hidden: index < _added,
+                      onTap: _addPlanet,
+                    ),
+                    if (index != 1) const SizedBox(height: 8),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OrbitPlanet extends StatelessWidget {
+  const _OrbitPlanet({
+    required this.color,
+    required this.x,
+    required this.y,
+    required this.size,
+  });
+
+  final Color color;
+  final double x;
+  final double y;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: Offset(x, y),
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white.withValues(alpha: 0.86), color],
+          ),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.24),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PlanetDraggable extends StatelessWidget {
+  const _PlanetDraggable({required this.hidden, required this.onTap});
+
+  final bool hidden;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    const planet = _OrbitPlanet(
+      color: AppPalette.teal,
+      x: 0,
+      y: 0,
+      size: 32,
+    );
+
+    if (hidden) {
+      return const Opacity(opacity: 0.22, child: planet);
+    }
+
+    return Draggable<int>(
+      data: 1,
+      feedback: Material(
+        color: Colors.transparent,
+        child: Transform.scale(scale: 1.12, child: planet),
+      ),
+      childWhenDragging: Opacity(opacity: 0.24, child: planet),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: planet,
       ),
     );
   }
@@ -9536,11 +12058,13 @@ class _PathStage extends StatelessWidget {
     required this.puzzle,
     required this.accent,
     required this.compact,
+    required this.onAnswerSelected,
   });
 
   final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -9556,7 +12080,11 @@ class _PathStage extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _PicturePuzzleStage(accent: accent, compact: compact),
+        child: RocketPuzzleGameView(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -9938,19 +12466,44 @@ class _PatternStrip extends StatelessWidget {
     required this.puzzle,
     required this.accent,
     required this.compact,
+    required this.onAnswerSelected,
   });
 
   final DailyChallenge puzzle;
   final Color accent;
   final bool compact;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   Widget build(BuildContext context) {
+    final correctAnswer = answerRuleForPuzzle(puzzle).correctAnswer;
+
+    if (puzzle.id == 'logic-train' || puzzle.id == 'shape-path') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: _PatternSequenceGameStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          variant: puzzle.id == 'shape-path'
+              ? _PatternGameVariant.path
+              : _PatternGameVariant.train,
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
     if (puzzle.id == 'bridge-order') {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _BridgeOrderStage(accent: accent, compact: compact),
+        child: _BridgeOrderStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -9958,7 +12511,12 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _TowerRuleStage(accent: accent, compact: compact),
+        child: _TowerRuleStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -9966,7 +12524,12 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _HomeCluesStage(accent: accent, compact: compact),
+        child: _HomeCluesStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -9974,7 +12537,12 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _OddStepStage(accent: accent, compact: compact),
+        child: _OddStepStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -9982,7 +12550,12 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _SecretCodeStage(accent: accent, compact: compact),
+        child: _SecretCodeStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -10006,7 +12579,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _MiniSudokuStage(accent: accent, compact: compact),
+        child: _MiniSudokuStage(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -10014,7 +12591,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _LogicHousesStage(accent: accent, compact: compact),
+        child: _LogicHousesStage(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -10022,7 +12603,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _CodeLockStage(accent: accent, compact: compact),
+        child: _CodeLockStage(
+          accent: accent,
+          compact: compact,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -10161,7 +12746,7 @@ List<Widget> _logicStageItemsFor(
   };
 }
 
-enum _PatternShape { circle, square }
+enum _PatternShape { circle, square, triangle }
 
 class _PatternItem extends StatelessWidget {
   const _PatternItem({
@@ -10232,6 +12817,426 @@ class _PatternQuestion extends StatelessWidget {
       ),
     );
   }
+}
+
+enum _PatternGameVariant { train, path }
+
+class _PatternSequenceGameStage extends StatefulWidget {
+  const _PatternSequenceGameStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.variant,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final String correctAnswer;
+  final _PatternGameVariant variant;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_PatternSequenceGameStage> createState() =>
+      _PatternSequenceGameStageState();
+}
+
+class _PatternSequenceGameStageState extends State<_PatternSequenceGameStage> {
+  _PatternShape? _placedShape;
+  _PatternShape? _wrongShape;
+
+  void _choose(_PatternShape shape) {
+    if (shape == _PatternShape.circle) {
+      setState(() {
+        _placedShape = shape;
+        _wrongShape = null;
+      });
+      widget.onAnswerSelected(widget.correctAnswer);
+      return;
+    }
+
+    setState(() => _wrongShape = shape);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = widget.compact ? 286.0 : 328.0;
+    final height = widget.compact ? 112.0 : 130.0;
+    final cellSize = widget.compact ? 38.0 : 44.0;
+
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          width: width,
+          height: height,
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: widget.variant == _PatternGameVariant.path
+                  ? const [Color(0xFFE5FFF7), Color(0xFFFFF1CC)]
+                  : const [Color(0xFFDFF6FF), Color(0xFFFFE8EE)],
+            ),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            children: [
+              Expanded(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: _PatternRailPainter(
+                          widget.accent,
+                          pathMode: widget.variant == _PatternGameVariant.path,
+                        ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _PatternGameCell(
+                          shape: _PatternShape.circle,
+                          color: AppPalette.teal,
+                          size: cellSize,
+                        ),
+                        _PatternGameConnector(color: widget.accent),
+                        _PatternGameCell(
+                          shape: _PatternShape.square,
+                          color: const Color(0xFF5F8BEF),
+                          size: cellSize,
+                        ),
+                        _PatternGameConnector(color: widget.accent),
+                        _PatternGameCell(
+                          shape: _PatternShape.circle,
+                          color: AppPalette.teal,
+                          size: cellSize,
+                        ),
+                        _PatternGameConnector(color: widget.accent),
+                        _PatternGameCell(
+                          shape: _PatternShape.square,
+                          color: const Color(0xFF5F8BEF),
+                          size: cellSize,
+                        ),
+                        _PatternGameConnector(color: widget.accent),
+                        DragTarget<_PatternShape>(
+                          onWillAcceptWithDetails: (_) => true,
+                          onAcceptWithDetails: (details) =>
+                              _choose(details.data),
+                          builder: (context, candidateData, rejectedData) {
+                            return _PatternGameCell(
+                              shape: _placedShape,
+                              color: AppPalette.teal,
+                              size: cellSize + 4,
+                              question: _placedShape == null,
+                              active: candidateData.isNotEmpty,
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _PatternShapeDraggable(
+                    shape: _PatternShape.triangle,
+                    color: AppPalette.mango,
+                    wrong: _wrongShape == _PatternShape.triangle,
+                    onTap: () => _choose(_PatternShape.triangle),
+                  ),
+                  const SizedBox(width: 10),
+                  _PatternShapeDraggable(
+                    shape: _PatternShape.circle,
+                    color: AppPalette.teal,
+                    selected: _placedShape == _PatternShape.circle,
+                    onTap: () => _choose(_PatternShape.circle),
+                  ),
+                  const SizedBox(width: 10),
+                  _PatternShapeDraggable(
+                    shape: _PatternShape.square,
+                    color: const Color(0xFF5F8BEF),
+                    wrong: _wrongShape == _PatternShape.square,
+                    onTap: () => _choose(_PatternShape.square),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PatternRailPainter extends CustomPainter {
+  const _PatternRailPainter(this.accent, {required this.pathMode});
+
+  final Color accent;
+  final bool pathMode;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = accent.withValues(alpha: 0.16)
+      ..strokeWidth = pathMode ? 8 : 6
+      ..strokeCap = StrokeCap.round;
+    final y = size.height * 0.45;
+
+    if (pathMode) {
+      final path = Path()
+        ..moveTo(size.width * 0.08, y)
+        ..cubicTo(size.width * 0.22, y - 16, size.width * 0.36, y + 16,
+            size.width * 0.50, y)
+        ..cubicTo(size.width * 0.64, y - 16, size.width * 0.78, y + 16,
+            size.width * 0.92, y);
+      canvas.drawPath(path, paint);
+      return;
+    }
+
+    canvas.drawLine(
+      Offset(size.width * 0.08, y + 20),
+      Offset(size.width * 0.92, y + 20),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _PatternRailPainter oldDelegate) =>
+      oldDelegate.accent != accent || oldDelegate.pathMode != pathMode;
+}
+
+class _PatternGameConnector extends StatelessWidget {
+  const _PatternGameConnector({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 16,
+      height: 5,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.24),
+        borderRadius: BorderRadius.circular(99),
+      ),
+    );
+  }
+}
+
+class _PatternGameCell extends StatelessWidget {
+  const _PatternGameCell({
+    required this.shape,
+    required this.color,
+    required this.size,
+    this.question = false,
+    this.active = false,
+  });
+
+  final _PatternShape? shape;
+  final Color color;
+  final double size;
+  final bool question;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedScale(
+      duration: const Duration(milliseconds: 150),
+      scale: active ? 1.08 : 1,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: question
+              ? const Color(0xFFFFE89A)
+              : active
+                  ? color.withValues(alpha: 0.18)
+                  : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: active ? color : Colors.white,
+            width: active ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: color.withValues(alpha: 0.12),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        alignment: Alignment.center,
+        child: question
+            ? const Text(
+                '?',
+                style: TextStyle(
+                  color: Color(0xFFFF9F2E),
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                ),
+              )
+            : _PatternShapeMini(
+                shape: shape ?? _PatternShape.circle,
+                color: color,
+                size: size * 0.62,
+              ),
+      ),
+    );
+  }
+}
+
+class _PatternShapeDraggable extends StatelessWidget {
+  const _PatternShapeDraggable({
+    required this.shape,
+    required this.color,
+    required this.onTap,
+    this.selected = false,
+    this.wrong = false,
+  });
+
+  final _PatternShape shape;
+  final Color color;
+  final VoidCallback onTap;
+  final bool selected;
+  final bool wrong;
+
+  @override
+  Widget build(BuildContext context) {
+    final visual = _PatternChoiceVisual(
+      shape: shape,
+      color: wrong ? AppPalette.coral : color,
+      selected: selected,
+      wrong: wrong,
+    );
+
+    return Draggable<_PatternShape>(
+      data: shape,
+      feedback: Material(
+        color: Colors.transparent,
+        child: _PatternChoiceVisual(
+          shape: shape,
+          color: color,
+          selected: true,
+          lifted: true,
+        ),
+      ),
+      childWhenDragging: Opacity(opacity: 0.36, child: visual),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(16),
+        onTap: onTap,
+        child: visual,
+      ),
+    );
+  }
+}
+
+class _PatternChoiceVisual extends StatelessWidget {
+  const _PatternChoiceVisual({
+    required this.shape,
+    required this.color,
+    required this.selected,
+    this.lifted = false,
+    this.wrong = false,
+  });
+
+  final _PatternShape shape;
+  final Color color;
+  final bool selected;
+  final bool lifted;
+  final bool wrong;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      width: lifted ? 48 : 42,
+      height: lifted ? 48 : 42,
+      decoration: BoxDecoration(
+        color: selected ? color : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: wrong ? AppPalette.coral : color.withValues(alpha: 0.48),
+          width: selected ? 2.4 : 1.4,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: lifted || selected ? 0.26 : 0.10),
+            blurRadius: lifted || selected ? 14 : 8,
+            offset: Offset(0, lifted ? 8 : 5),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: _PatternShapeMini(
+        shape: shape,
+        color: selected ? Colors.white : color,
+        size: 23,
+      ),
+    );
+  }
+}
+
+class _PatternShapeMini extends StatelessWidget {
+  const _PatternShapeMini({
+    required this.shape,
+    required this.color,
+    required this.size,
+  });
+
+  final _PatternShape shape;
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    if (shape == _PatternShape.triangle) {
+      return CustomPaint(
+        size: Size.square(size),
+        painter: _TriangleMiniPainter(color),
+      );
+    }
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: shape == _PatternShape.circle
+            ? BoxShape.circle
+            : BoxShape.rectangle,
+        borderRadius:
+            shape == _PatternShape.square ? BorderRadius.circular(6) : null,
+      ),
+    );
+  }
+}
+
+class _TriangleMiniPainter extends CustomPainter {
+  const _TriangleMiniPainter(this.color);
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = Path()
+      ..moveTo(size.width / 2, 0)
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
+  }
+
+  @override
+  bool shouldRepaint(covariant _TriangleMiniPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _QuestionBubble extends StatelessWidget {
@@ -10339,27 +13344,27 @@ List<_AnswerOptionData> _answerOptionsFor(
 }
 
 IconData _iconForAnswer(String label) {
-  if (label.contains('Картинка 1')) {
+  if (label.contains('РљР°СЂС‚РёРЅРєР° 1')) {
     return Icons.filter_1_rounded;
   }
 
-  if (label.contains('Картинка 2')) {
+  if (label.contains('РљР°СЂС‚РёРЅРєР° 2')) {
     return Icons.filter_2_rounded;
   }
 
-  if (label.contains('Картинка 3')) {
+  if (label.contains('РљР°СЂС‚РёРЅРєР° 3')) {
     return Icons.filter_3_rounded;
   }
 
-  if (label.contains('След 1')) {
+  if (label.contains('РЎР»РµРґ 1')) {
     return Icons.eco_rounded;
   }
 
-  if (label.contains('След 2')) {
+  if (label.contains('РЎР»РµРґ 2')) {
     return Icons.pets_rounded;
   }
 
-  if (label.contains('След 3')) {
+  if (label.contains('РЎР»РµРґ 3')) {
     return Icons.star_rounded;
   }
 
@@ -10367,19 +13372,19 @@ IconData _iconForAnswer(String label) {
     return Icons.looks_one_rounded;
   }
 
-  if (label.contains('Круг')) {
+  if (label.contains('РљСЂСѓРі')) {
     return Icons.circle_rounded;
   }
 
-  if (label.contains('Квадрат') || label.contains('Кубик')) {
+  if (label.contains('РљРІР°РґСЂР°С‚') || label.contains('РљСѓР±РёРє')) {
     return Icons.square_rounded;
   }
 
-  if (label.contains('Треугольник')) {
+  if (label.contains('РўСЂРµСѓРіРѕР»СЊРЅРёРє')) {
     return Icons.change_history_rounded;
   }
 
-  if (label.contains('Звезда')) {
+  if (label.contains('Р—РІРµР·РґР°')) {
     return Icons.star_rounded;
   }
 
@@ -10437,65 +13442,65 @@ IconData _iconForAnswer(String label) {
     return Icons.pets_rounded;
   }
 
-  if (label.contains('Костер')) {
+  if (label.contains('РљРѕСЃС‚РµСЂ')) {
     return Icons.local_fire_department_rounded;
   }
 
-  if (label.contains('Палатка')) {
+  if (label.contains('РџР°Р»Р°С‚РєР°')) {
     return Icons.festival_rounded;
   }
 
-  if (label.contains('Подушка')) {
+  if (label.contains('РџРѕРґСѓС€РєР°')) {
     return Icons.bed_rounded;
   }
 
-  if (label.contains('Сердце')) {
+  if (label.contains('РЎРµСЂРґС†Рµ')) {
     return Icons.favorite_rounded;
   }
 
-  if (label.contains('Облако')) {
+  if (label.contains('РћР±Р»Р°РєРѕ')) {
     return Icons.cloud_rounded;
   }
 
-  if (label.contains('Вверх') || label.contains('Сверху')) {
+  if (label.contains('Р’РІРµСЂС…') || label.contains('РЎРІРµСЂС…Сѓ')) {
     return Icons.arrow_upward_rounded;
   }
 
-  if (label.contains('Вниз') || label.contains('Снизу')) {
+  if (label.contains('Р’РЅРёР·') || label.contains('РЎРЅРёР·Сѓ')) {
     return Icons.arrow_downward_rounded;
   }
 
-  if (label.contains('Слева') || label.contains('Влево')) {
+  if (label.contains('РЎР»РµРІР°') || label.contains('Р’Р»РµРІРѕ')) {
     return Icons.arrow_back_rounded;
   }
 
-  if (label.contains('Справа') ||
-      label.contains('Вправо') ||
-      label.contains('Вперёд')) {
+  if (label.contains('РЎРїСЂР°РІР°') ||
+      label.contains('Р’РїСЂР°РІРѕ') ||
+      label.contains('Р’РїРµСЂС‘Рґ')) {
     return Icons.arrow_forward_rounded;
   }
 
-  if (label.contains('центр')) {
+  if (label.contains('С†РµРЅС‚СЂ')) {
     return Icons.center_focus_strong_rounded;
   }
 
-  if (label.contains('Тень')) {
+  if (label.contains('РўРµРЅСЊ')) {
     return Icons.contrast_rounded;
   }
 
-  if (label.contains('Клетка') || label.contains('Финиш')) {
+  if (label.contains('РљР»РµС‚РєР°') || label.contains('Р¤РёРЅРёС€')) {
     return Icons.grid_view_rounded;
   }
 
-  if (label.contains('Орбита')) {
+  if (label.contains('РћСЂР±РёС‚Р°')) {
     return Icons.public_rounded;
   }
 
-  if (label.contains('Детали')) {
+  if (label.contains('Р”РµС‚Р°Р»Рё')) {
     return Icons.extension_rounded;
   }
 
-  if (label.contains('наклейки')) {
+  if (label.contains('РЅР°РєР»РµР№РєРё')) {
     return Icons.auto_awesome_rounded;
   }
 

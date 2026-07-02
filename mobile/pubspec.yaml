@@ -1,4 +1,4 @@
-name: logicx
+name: logicloka
 description: Family-edtech mobile app for short daily logic challenges.
 publish_to: "none"
 version: 0.1.0+1
@@ -7,8 +7,11 @@ environment:
   sdk: ">=3.4.0 <4.0.0"
 
 dependencies:
+  flame: ^1.37.0
+  flame_audio: ^2.12.1
   flutter:
     sdk: flutter
+  flutter_animate: ^4.5.2
   flutter_local_notifications: ^22.0.1
   flutter_localizations:
     sdk: flutter

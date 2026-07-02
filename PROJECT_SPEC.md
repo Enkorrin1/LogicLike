@@ -1,8 +1,8 @@
-# LogicX Project Spec
+# LogicLoka Project Spec
 
 ## Product
 
-LogicX is a family-edtech mobile product for children aged 4-8.
+LogicLoka is a family-edtech mobile product for children aged 4-8.
 
 Product goal:
 
@@ -51,6 +51,45 @@ feature or content work.
 - Local persistence currently uses `SharedPreferences`.
 - App code lives in `mobile`.
 - UI, domain models, storage, and feature screens should stay separated under `mobile/lib/src`.
+
+## Puzzle Game Stack
+
+Puzzle screens must move away from static Flutter card mockups and toward
+small game scenes.
+
+Primary stack:
+
+- `flame` is the default engine for new interactive puzzle scenes.
+- `flame_audio` is the default sound layer for puzzle feedback, taps, success,
+  retry, reveals, and reward moments.
+- `flutter_animate` is allowed for surrounding Flutter UI transitions when a
+  full Flame scene is not needed.
+
+Approved asset/animation direction:
+
+- Use generated bitmap/WebP/PNG scene art for rich puzzles such as spot the
+  difference, story scenes, jigsaw puzzles, and character-led tasks.
+- Use Rive for future interactive character animation when `.riv` assets are
+  available.
+- Use Lottie for future reward/confetti/checkpoint animations when `.json`
+  animation assets are available.
+- Use Spine only for higher-production skeletal character animation where the
+  project accepts the asset and licensing workflow.
+- Use Forge2D through Flame only for physics-based puzzles such as balance,
+  bridge, rolling objects, levers, or weight tasks.
+
+Implementation rules:
+
+- New puzzle visuals should be built as reusable `GameWidget`/Flame scenes
+  under the challenge feature, not as rows of static icon buttons.
+- Flutter remains responsible for navigation, localization, answer controls,
+  parent screens, and app shell.
+- Flame scenes own game-like rendering, timed reveal, object movement,
+  particles, drag/tap interactions, and scene feedback.
+- Keep the locked soft 3D/cartoon art direction; do not replace characters or
+  illustrated scenes with flat generic SVG icons.
+- Every converted puzzle type should keep deterministic answer rules and remain
+  testable without requiring a running game loop for domain correctness.
 
 ## Platform Rules
 

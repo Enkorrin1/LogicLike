@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logicx/src/domain/family_profile.dart';
-import 'package:logicx/src/features/parent/parent_screen.dart';
-import 'package:logicx/src/l10n/generated/app_localizations.dart';
-import 'package:logicx/src/l10n/localized_content.dart';
-import 'package:logicx/src/theme/app_theme.dart';
+import 'package:logicloka/src/domain/family_profile.dart';
+import 'package:logicloka/src/features/parent/parent_screen.dart';
+import 'package:logicloka/src/l10n/generated/app_localizations.dart';
+import 'package:logicloka/src/l10n/localized_content.dart';
+import 'package:logicloka/src/theme/app_theme.dart';
 
 void main() {
   testWidgets('shows parent dashboard sections and reset confirmation',
@@ -87,6 +87,62 @@ void main() {
     expect(resetCalled, isFalse);
   });
 
+  testWidgets('shows subscription tariff ladder and billing placeholder',
+      (tester) async {
+    tester.view.physicalSize = const Size(800, 3000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final l10n = lookupAppLocalizations(const Locale('ru'));
+    final profile = FamilyProfile(
+      childName: 'Lev',
+      childAge: ChildAge.five,
+      createdAt: DateTime.now(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ru'),
+        home: ParentScreen(
+          profile: profile,
+          onResetProfile: () async {},
+          onLanguageChanged: (_) async {},
+          onReminderPreferenceChanged: (_) async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.parentSubscriptionPremiumTitle),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+
+    expect(find.text(l10n.parentSubscriptionFreeTitle), findsWidgets);
+    expect(find.text(l10n.parentSubscriptionPremiumTitle), findsOneWidget);
+    expect(find.text(l10n.parentSubscriptionPremiumPrice), findsOneWidget);
+    expect(find.text(l10n.parentSubscriptionAnnualTitle), findsOneWidget);
+    expect(find.text(l10n.parentSubscriptionAnnualPrice), findsOneWidget);
+    expect(find.text(l10n.parentSubscriptionFuturePriceNote), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.parentSubscriptionPremiumCta),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text(l10n.parentSubscriptionPremiumCta));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.parentSubscriptionPremiumCta));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.parentSubscriptionBillingSoonSnack), findsOneWidget);
+  });
+
   testWidgets('changes selected language from parent settings', (tester) async {
     tester.view.physicalSize = const Size(800, 3000);
     tester.view.devicePixelRatio = 1;
@@ -119,6 +175,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    await tester.scrollUntilVisible(
+      find.text(l10n.languageName(AppLanguage.en)),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text(l10n.languageName(AppLanguage.en)));
+    await tester.pumpAndSettle();
     await tester.tap(find.text(l10n.languageName(AppLanguage.en)));
     await tester.pumpAndSettle();
 

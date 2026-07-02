@@ -1,8 +1,8 @@
-# LogicX Game Roadmap
+# LogicLoka Game Roadmap
 
 ## Product Direction
 
-LogicX is a Duolingo-style learning app for children aged 4-8.
+LogicLoka is a Duolingo-style learning app for children aged 4-8.
 
 The child follows one main level map. The map is not split into child-facing
 categories like Logic, Math, Memory, or Attention. Each level contains mixed
@@ -182,3 +182,33 @@ Acceptance criteria:
 - Russian and English copy can be maintained safely.
 - Screens tolerate longer localized text.
 - iOS risks are documented when not validated on macOS.
+
+## Stage 8 - Game-Quality Puzzle Scenes
+
+Status: started.
+
+Goal:
+Replace static card-like puzzle previews with small interactive game scenes.
+
+Technology stack:
+- Flame for puzzle scenes and game loop.
+- Flame Audio for tactile puzzle sounds.
+- Flutter Animate for surrounding Flutter transitions.
+- Generated bitmap/WebP/PNG art for rich scene-based puzzles.
+- Rive/Lottie/Spine as asset-backed upgrades when production animation files
+  are available.
+- Forge2D for future physics puzzles.
+
+First conversion order:
+1. Secret cards: timed reveal, card flip, replay control, animated stage.
+2. Spot the difference: generated paired scenes with hit targets.
+3. Jigsaw puzzle: draggable pieces with snapping.
+4. Word search and words-from-word: interactive board, path tracing, feedback.
+5. Math crossword: grid entry, animated validation, reward state.
+6. Logic/ordering scenes: object movement instead of static icon rows.
+
+Acceptance criteria:
+- Converted puzzles feel like mini-games, not button rows.
+- Each scene has visible motion or interaction before the answer is chosen.
+- Puzzle answer rules stay deterministic and covered by existing rule tests.
+- The locked soft 3D/cartoon visual direction remains intact.

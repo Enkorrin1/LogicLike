@@ -121,7 +121,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'LogicUpX'**
+  /// **'LogicLoka'**
   String get appTitle;
 
   /// No description provided for @loadingMission.
@@ -565,7 +565,7 @@ abstract class AppLocalizations {
   /// No description provided for @parentSubscriptionBody.
   ///
   /// In en, this message translates to:
-  /// **'Payment status, family seats and plan management will appear here.'**
+  /// **'Launch tariff ladder: Free access, monthly Premium Family, and Annual at the early-stage price.'**
   String get parentSubscriptionBody;
 
   /// No description provided for @parentFamilySeatsLabel.
@@ -591,6 +591,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'not connected'**
   String get parentPaymentValue;
+
+  /// No description provided for @parentSubscriptionLaunchBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'early price'**
+  String get parentSubscriptionLaunchBadge;
+
+  /// No description provided for @parentSubscriptionCurrentFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get parentSubscriptionCurrentFree;
+
+  /// No description provided for @parentSubscriptionFreeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get parentSubscriptionFreeTitle;
+
+  /// No description provided for @parentSubscriptionFreePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$0'**
+  String get parentSubscriptionFreePrice;
+
+  /// No description provided for @parentSubscriptionFreeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A gentle start for trying the daily loop.'**
+  String get parentSubscriptionFreeBody;
+
+  /// No description provided for @parentSubscriptionFeatureDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily mission'**
+  String get parentSubscriptionFeatureDaily;
+
+  /// No description provided for @parentSubscriptionFeatureStarter.
+  ///
+  /// In en, this message translates to:
+  /// **'Starter levels'**
+  String get parentSubscriptionFeatureStarter;
+
+  /// No description provided for @parentSubscriptionFeatureLocalProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Local progress on this device'**
+  String get parentSubscriptionFeatureLocalProgress;
+
+  /// No description provided for @parentSubscriptionFreeCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Current access'**
+  String get parentSubscriptionFreeCta;
+
+  /// No description provided for @parentSubscriptionPremiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Family'**
+  String get parentSubscriptionPremiumTitle;
+
+  /// No description provided for @parentSubscriptionPremiumPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$5.99/mo'**
+  String get parentSubscriptionPremiumPrice;
+
+  /// No description provided for @parentSubscriptionPremiumBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'launch price'**
+  String get parentSubscriptionPremiumBadge;
+
+  /// No description provided for @parentSubscriptionPremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Full family access while the content library is still growing.'**
+  String get parentSubscriptionPremiumBody;
+
+  /// No description provided for @parentSubscriptionFeatureAllLevels.
+  ///
+  /// In en, this message translates to:
+  /// **'All current and new levels'**
+  String get parentSubscriptionFeatureAllLevels;
+
+  /// No description provided for @parentSubscriptionFeatureParentTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent recommendations'**
+  String get parentSubscriptionFeatureParentTips;
+
+  /// No description provided for @parentSubscriptionFeaturePurchaseRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepared for purchase restore'**
+  String get parentSubscriptionFeaturePurchaseRestore;
+
+  /// No description provided for @parentSubscriptionPremiumCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose monthly'**
+  String get parentSubscriptionPremiumCta;
+
+  /// No description provided for @parentSubscriptionAnnualTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get parentSubscriptionAnnualTitle;
+
+  /// No description provided for @parentSubscriptionAnnualPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'\$39.99/year'**
+  String get parentSubscriptionAnnualPrice;
+
+  /// No description provided for @parentSubscriptionAnnualBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'best value'**
+  String get parentSubscriptionAnnualBadge;
+
+  /// No description provided for @parentSubscriptionAnnualBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Family for a year at the early-stage annual price.'**
+  String get parentSubscriptionAnnualBody;
+
+  /// No description provided for @parentSubscriptionFeatureAnnualValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower than 12 monthly payments'**
+  String get parentSubscriptionFeatureAnnualValue;
+
+  /// No description provided for @parentSubscriptionFeatureYearAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'12 months of family access'**
+  String get parentSubscriptionFeatureYearAccess;
+
+  /// No description provided for @parentSubscriptionFeatureUpdatesIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'New levels included during the year'**
+  String get parentSubscriptionFeatureUpdatesIncluded;
+
+  /// No description provided for @parentSubscriptionAnnualCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose annual'**
+  String get parentSubscriptionAnnualCta;
+
+  /// No description provided for @parentSubscriptionFuturePriceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Later, when there are many high-quality levels: \$7.99/mo and \$49.99/year.'**
+  String get parentSubscriptionFuturePriceNote;
+
+  /// No description provided for @parentSubscriptionBillingSoonSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Billing is not connected yet. These plans are ready for StoreKit and Google Play Billing.'**
+  String get parentSubscriptionBillingSoonSnack;
 
   /// No description provided for @parentResetProfile.
   ///
@@ -1273,7 +1435,7 @@ abstract class AppLocalizations {
   /// No description provided for @parentReminderToggleOn.
   ///
   /// In en, this message translates to:
-  /// **'LogicUpX will invite the child back to one short mission.'**
+  /// **'LogicLoka will invite the child back to one short mission.'**
   String get parentReminderToggleOn;
 
   /// No description provided for @parentReminderToggleOff.

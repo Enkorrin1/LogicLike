@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => 'LogicUpX';
+  String get appTitle => 'LogicLoka';
 
   @override
   String get loadingMission => '미션 준비중..';
@@ -247,7 +247,8 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentSubscriptionSoon => '곧';
 
   @override
-  String get parentSubscriptionBody => '결제현황, 패밀리석, 요금제 관리가 여기에 표시됩니다.';
+  String get parentSubscriptionBody =>
+      '출시 요금제: Free 이용, 월간 Premium Family, 초기 가격의 Annual.';
 
   @override
   String get parentFamilySeatsLabel => '패밀리석';
@@ -260,6 +261,89 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get parentPaymentValue => '연결되지 않음';
+
+  @override
+  String get parentSubscriptionLaunchBadge => '초기 가격';
+
+  @override
+  String get parentSubscriptionCurrentFree => 'Free';
+
+  @override
+  String get parentSubscriptionFreeTitle => 'Free';
+
+  @override
+  String get parentSubscriptionFreePrice => '\$0';
+
+  @override
+  String get parentSubscriptionFreeBody => '일일 흐름을 가볍게 체험하는 시작.';
+
+  @override
+  String get parentSubscriptionFeatureDaily => '일일 미션';
+
+  @override
+  String get parentSubscriptionFeatureStarter => '시작 레벨';
+
+  @override
+  String get parentSubscriptionFeatureLocalProgress => '이 기기의 로컬 진행도';
+
+  @override
+  String get parentSubscriptionFreeCta => '현재 이용';
+
+  @override
+  String get parentSubscriptionPremiumTitle => 'Premium Family';
+
+  @override
+  String get parentSubscriptionPremiumPrice => '\$5.99/월';
+
+  @override
+  String get parentSubscriptionPremiumBadge => '출시 가격';
+
+  @override
+  String get parentSubscriptionPremiumBody => '콘텐츠 라이브러리가 성장하는 동안의 전체 가족 이용권.';
+
+  @override
+  String get parentSubscriptionFeatureAllLevels => '현재 및 신규 레벨 모두';
+
+  @override
+  String get parentSubscriptionFeatureParentTips => '부모 추천';
+
+  @override
+  String get parentSubscriptionFeaturePurchaseRestore => '구매 복원 준비됨';
+
+  @override
+  String get parentSubscriptionPremiumCta => '월간 선택';
+
+  @override
+  String get parentSubscriptionAnnualTitle => 'Annual';
+
+  @override
+  String get parentSubscriptionAnnualPrice => '\$39.99/년';
+
+  @override
+  String get parentSubscriptionAnnualBadge => '최고 가치';
+
+  @override
+  String get parentSubscriptionAnnualBody => '초기 연간 가격으로 Premium Family 1년 이용.';
+
+  @override
+  String get parentSubscriptionFeatureAnnualValue => '월간 12회 결제보다 저렴';
+
+  @override
+  String get parentSubscriptionFeatureYearAccess => '12개월 가족 이용';
+
+  @override
+  String get parentSubscriptionFeatureUpdatesIncluded => '연간 이용 기간 중 신규 레벨 포함';
+
+  @override
+  String get parentSubscriptionAnnualCta => '연간 선택';
+
+  @override
+  String get parentSubscriptionFuturePriceNote =>
+      '나중에 고품질 레벨이 많이 생기면: \$7.99/월 및 \$49.99/년.';
+
+  @override
+  String get parentSubscriptionBillingSoonSnack =>
+      '결제는 아직 연결되지 않았습니다. 이 요금제는 StoreKit 및 Google Play Billing용으로 준비되어 있습니다.';
 
   @override
   String get parentResetProfile => '프로필 재설정';
@@ -652,7 +736,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentReminderToggleLabel => '돌아오기 알림';
 
   @override
-  String get parentReminderToggleOn => 'LogicUpX이 짧은 미션으로 아이를 초대해요.';
+  String get parentReminderToggleOn => 'LogicLoka이 짧은 미션으로 아이를 초대해요.';
 
   @override
   String get parentReminderToggleOff => '알림이 꺼져 있어요. 앱은 조용히 있을게요.';

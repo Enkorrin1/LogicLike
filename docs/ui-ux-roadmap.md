@@ -1,4 +1,4 @@
-# UI/UX план LogicX
+# UI/UX план LogicLoka
 
 ## Цель
 

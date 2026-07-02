@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appTitle => 'LogicUpX';
+  String get appTitle => 'LogicLoka';
 
   @override
   String get loadingMission => 'Préparation de la mission...';
@@ -255,7 +255,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get parentSubscriptionBody =>
-      'Le statut de paiement, les sièges familiaux et la gestion du plan apparaîtront ici.';
+      'Grille de lancement : accès Free, Premium Family mensuel et Annual au prix de départ.';
 
   @override
   String get parentFamilySeatsLabel => 'Sièges familiaux';
@@ -268,6 +268,98 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get parentPaymentValue => 'non connecté';
+
+  @override
+  String get parentSubscriptionLaunchBadge => 'prix de départ';
+
+  @override
+  String get parentSubscriptionCurrentFree => 'Free';
+
+  @override
+  String get parentSubscriptionFreeTitle => 'Free';
+
+  @override
+  String get parentSubscriptionFreePrice => '\$0';
+
+  @override
+  String get parentSubscriptionFreeBody =>
+      'Un démarrage doux pour essayer la boucle quotidienne.';
+
+  @override
+  String get parentSubscriptionFeatureDaily => 'Mission quotidienne';
+
+  @override
+  String get parentSubscriptionFeatureStarter => 'Niveaux de départ';
+
+  @override
+  String get parentSubscriptionFeatureLocalProgress =>
+      'Progression locale sur cet appareil';
+
+  @override
+  String get parentSubscriptionFreeCta => 'Accès actuel';
+
+  @override
+  String get parentSubscriptionPremiumTitle => 'Premium Family';
+
+  @override
+  String get parentSubscriptionPremiumPrice => '\$5.99/mois';
+
+  @override
+  String get parentSubscriptionPremiumBadge => 'prix de lancement';
+
+  @override
+  String get parentSubscriptionPremiumBody =>
+      'Accès familial complet pendant que la bibliothèque de contenu grandit.';
+
+  @override
+  String get parentSubscriptionFeatureAllLevels =>
+      'Tous les niveaux actuels et nouveaux';
+
+  @override
+  String get parentSubscriptionFeatureParentTips =>
+      'Recommandations pour les parents';
+
+  @override
+  String get parentSubscriptionFeaturePurchaseRestore =>
+      'Préparé pour restaurer les achats';
+
+  @override
+  String get parentSubscriptionPremiumCta => 'Choisir le mois';
+
+  @override
+  String get parentSubscriptionAnnualTitle => 'Annual';
+
+  @override
+  String get parentSubscriptionAnnualPrice => '\$39.99/an';
+
+  @override
+  String get parentSubscriptionAnnualBadge => 'meilleure valeur';
+
+  @override
+  String get parentSubscriptionAnnualBody =>
+      'Premium Family pendant un an au prix annuel de départ.';
+
+  @override
+  String get parentSubscriptionFeatureAnnualValue =>
+      'Moins cher que 12 paiements mensuels';
+
+  @override
+  String get parentSubscriptionFeatureYearAccess => '12 mois d\'accès familial';
+
+  @override
+  String get parentSubscriptionFeatureUpdatesIncluded =>
+      'Nouveaux niveaux inclus pendant l\'année';
+
+  @override
+  String get parentSubscriptionAnnualCta => 'Choisir l\'année';
+
+  @override
+  String get parentSubscriptionFuturePriceNote =>
+      'Plus tard, quand il y aura beaucoup de niveaux de qualité : \$7.99/mois et \$49.99/an.';
+
+  @override
+  String get parentSubscriptionBillingSoonSnack =>
+      'La facturation n\'est pas encore connectée. Ces offres sont prêtes pour StoreKit et Google Play Billing.';
 
   @override
   String get parentResetProfile => 'Réinitialiser le profil';
@@ -673,7 +765,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'LogicUpX invitera l’enfant à une courte mission.';
+      'LogicLoka invitera l’enfant à une courte mission.';
 
   @override
   String get parentReminderToggleOff =>

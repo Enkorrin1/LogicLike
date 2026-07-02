@@ -1,6 +1,6 @@
-# LogicUpX Mobile
+# LogicLoka Mobile
 
-Flutter implementation of the LogicUpX family-edtech app.
+Flutter implementation of the LogicLoka family-edtech app.
 
 ## First product slice
 

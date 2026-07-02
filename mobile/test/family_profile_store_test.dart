@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:logicx/src/data/family_profile_store.dart';
-import 'package:logicx/src/domain/family_profile.dart';
+import 'package:logicloka/src/data/family_profile_store.dart';
+import 'package:logicloka/src/domain/family_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'LogicUpX';
+  String get appTitle => 'LogicLoka';
 
   @override
   String get loadingMission => '准备任务...';
@@ -247,7 +247,8 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentSubscriptionSoon => '很快';
 
   @override
-  String get parentSubscriptionBody => '付款状态、家庭席位和计划管理将显示在这里。';
+  String get parentSubscriptionBody =>
+      '上线价格梯度：Free 访问、月付 Premium Family，以及早期价格的 Annual。';
 
   @override
   String get parentFamilySeatsLabel => '家庭座位';
@@ -260,6 +261,89 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get parentPaymentValue => '未连接';
+
+  @override
+  String get parentSubscriptionLaunchBadge => '早期价格';
+
+  @override
+  String get parentSubscriptionCurrentFree => 'Free';
+
+  @override
+  String get parentSubscriptionFreeTitle => 'Free';
+
+  @override
+  String get parentSubscriptionFreePrice => '\$0';
+
+  @override
+  String get parentSubscriptionFreeBody => '轻量开始，试试每日循环。';
+
+  @override
+  String get parentSubscriptionFeatureDaily => '每日任务';
+
+  @override
+  String get parentSubscriptionFeatureStarter => '入门关卡';
+
+  @override
+  String get parentSubscriptionFeatureLocalProgress => '此设备上的本地进度';
+
+  @override
+  String get parentSubscriptionFreeCta => '当前访问';
+
+  @override
+  String get parentSubscriptionPremiumTitle => 'Premium Family';
+
+  @override
+  String get parentSubscriptionPremiumPrice => '\$5.99/月';
+
+  @override
+  String get parentSubscriptionPremiumBadge => '上线价格';
+
+  @override
+  String get parentSubscriptionPremiumBody => '内容库仍在增长时的完整家庭访问。';
+
+  @override
+  String get parentSubscriptionFeatureAllLevels => '所有当前和新关卡';
+
+  @override
+  String get parentSubscriptionFeatureParentTips => '家长建议';
+
+  @override
+  String get parentSubscriptionFeaturePurchaseRestore => '已为恢复购买做好准备';
+
+  @override
+  String get parentSubscriptionPremiumCta => '选择月付';
+
+  @override
+  String get parentSubscriptionAnnualTitle => 'Annual';
+
+  @override
+  String get parentSubscriptionAnnualPrice => '\$39.99/年';
+
+  @override
+  String get parentSubscriptionAnnualBadge => '最划算';
+
+  @override
+  String get parentSubscriptionAnnualBody => '以早期年费价格使用 Premium Family 一年。';
+
+  @override
+  String get parentSubscriptionFeatureAnnualValue => '低于 12 次月付';
+
+  @override
+  String get parentSubscriptionFeatureYearAccess => '12 个月家庭访问';
+
+  @override
+  String get parentSubscriptionFeatureUpdatesIncluded => '一年内包含新关卡';
+
+  @override
+  String get parentSubscriptionAnnualCta => '选择年付';
+
+  @override
+  String get parentSubscriptionFuturePriceNote =>
+      '之后，当高质量关卡足够多时：\$7.99/月和 \$49.99/年。';
+
+  @override
+  String get parentSubscriptionBillingSoonSnack =>
+      '计费尚未连接。这些方案已为 StoreKit 和 Google Play Billing 准备好。';
 
   @override
   String get parentResetProfile => '重置个人资料';
@@ -647,7 +731,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentReminderToggleLabel => '提醒回来';
 
   @override
-  String get parentReminderToggleOn => 'LogicUpX 会邀请孩子完成一个短任务。';
+  String get parentReminderToggleOn => 'LogicLoka 会邀请孩子完成一个短任务。';
 
   @override
   String get parentReminderToggleOff => '提醒已关闭。应用会保持安静。';

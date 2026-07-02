@@ -11,7 +11,7 @@ abstract interface class LocaleStore {
 class SharedPreferencesLocaleStore implements LocaleStore {
   SharedPreferencesLocaleStore(this._preferences);
 
-  static const _localeKey = 'logicx.locale.v1';
+  static const _localeKey = 'logicloka.locale.v1';
 
   final SharedPreferences _preferences;
 

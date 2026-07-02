@@ -15,7 +15,7 @@ abstract interface class FamilyProfileStore {
 class SharedPreferencesFamilyProfileStore implements FamilyProfileStore {
   SharedPreferencesFamilyProfileStore(this._preferences);
 
-  static const _profileKey = 'logicx.family_profile.v1';
+  static const _profileKey = 'logicloka.family_profile.v1';
 
   final SharedPreferences _preferences;
 

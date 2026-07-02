@@ -106,6 +106,8 @@ class ParentScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 16),
+            const _SubscriptionPlansCard(),
+            const SizedBox(height: 16),
             _FamilySettingsCard(
               profile: profile,
               onLanguageChanged: onLanguageChanged,
@@ -821,7 +823,7 @@ class _AccountSettingsCard extends StatelessWidget {
             icon: Icons.workspace_premium_rounded,
             color: AppPalette.surfaceBlue,
             label: l10n.parentSubscriptionTitle,
-            value: l10n.parentSubscriptionSoon,
+            value: l10n.parentSubscriptionCurrentFree,
           ),
           const SizedBox(height: 2),
           FilledButton.icon(
@@ -831,6 +833,295 @@ class _AccountSettingsCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SubscriptionPlansCard extends StatelessWidget {
+  const _SubscriptionPlansCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final plans = [
+      _SubscriptionPlan(
+        icon: Icons.explore_rounded,
+        color: AppPalette.mint,
+        title: l10n.parentSubscriptionFreeTitle,
+        price: l10n.parentSubscriptionFreePrice,
+        body: l10n.parentSubscriptionFreeBody,
+        ctaLabel: l10n.parentSubscriptionFreeCta,
+        current: true,
+        features: [
+          l10n.parentSubscriptionFeatureDaily,
+          l10n.parentSubscriptionFeatureStarter,
+          l10n.parentSubscriptionFeatureLocalProgress,
+        ],
+      ),
+      _SubscriptionPlan(
+        icon: Icons.workspace_premium_rounded,
+        color: AppPalette.teal,
+        title: l10n.parentSubscriptionPremiumTitle,
+        price: l10n.parentSubscriptionPremiumPrice,
+        badge: l10n.parentSubscriptionPremiumBadge,
+        body: l10n.parentSubscriptionPremiumBody,
+        ctaLabel: l10n.parentSubscriptionPremiumCta,
+        highlighted: true,
+        features: [
+          l10n.parentSubscriptionFeatureAllLevels,
+          l10n.parentSubscriptionFeatureParentTips,
+          l10n.parentSubscriptionFeaturePurchaseRestore,
+        ],
+      ),
+      _SubscriptionPlan(
+        icon: Icons.calendar_month_rounded,
+        color: AppPalette.lavender,
+        title: l10n.parentSubscriptionAnnualTitle,
+        price: l10n.parentSubscriptionAnnualPrice,
+        badge: l10n.parentSubscriptionAnnualBadge,
+        body: l10n.parentSubscriptionAnnualBody,
+        ctaLabel: l10n.parentSubscriptionAnnualCta,
+        features: [
+          l10n.parentSubscriptionFeatureAnnualValue,
+          l10n.parentSubscriptionFeatureYearAccess,
+          l10n.parentSubscriptionFeatureUpdatesIncluded,
+        ],
+      ),
+    ];
+
+    return PlayfulCard(
+      color: const Color(0xFFFFFAEF),
+      borderColor: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionTitle(
+            title: l10n.parentSubscriptionTitle,
+            trailing: InfoPill(
+              icon: Icons.local_offer_rounded,
+              label: l10n.parentSubscriptionLaunchBadge,
+              color: const Color(0xFFFFE7A8),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.parentSubscriptionBody,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 14),
+          for (final plan in plans) ...[
+            _SubscriptionPlanTile(plan: plan),
+            if (plan != plans.last) const SizedBox(height: 10),
+          ],
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppPalette.surfaceBlue.withValues(alpha: 0.58),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white, width: 1.4),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const IconBadge(
+                  icon: Icons.trending_up_rounded,
+                  color: Colors.white,
+                  iconColor: AppPalette.teal,
+                  size: 36,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.parentSubscriptionFuturePriceNote,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppPalette.ink,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionPlan {
+  const _SubscriptionPlan({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.price,
+    required this.body,
+    required this.features,
+    required this.ctaLabel,
+    this.badge,
+    this.highlighted = false,
+    this.current = false,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String price;
+  final String body;
+  final List<String> features;
+  final String ctaLabel;
+  final String? badge;
+  final bool highlighted;
+  final bool current;
+}
+
+class _SubscriptionPlanTile extends StatelessWidget {
+  const _SubscriptionPlanTile({required this.plan});
+
+  final _SubscriptionPlan plan;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final accent = plan.highlighted ? AppPalette.teal : plan.color;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: plan.highlighted
+            ? AppPalette.teal.withValues(alpha: 0.12)
+            : Colors.white.withValues(alpha: 0.78),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: plan.highlighted ? AppPalette.teal : Colors.white,
+          width: plan.highlighted ? 1.8 : 1.4,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconBadge(
+                icon: plan.icon,
+                color: Colors.white,
+                iconColor: accent,
+                size: 40,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            plan.title,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: AppPalette.ink,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        if (plan.badge != null) ...[
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: InfoPill(
+                              icon: Icons.bolt_rounded,
+                              label: plan.badge!,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      plan.price,
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            plan.body,
+            style: theme.textTheme.bodySmall,
+          ),
+          const SizedBox(height: 10),
+          for (final feature in plan.features) ...[
+            _SubscriptionFeatureRow(
+              color: accent,
+              text: feature,
+            ),
+            if (feature != plan.features.last) const SizedBox(height: 6),
+          ],
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: plan.current
+                ? OutlinedButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.check_circle_rounded),
+                    label: Text(plan.ctaLabel),
+                  )
+                : FilledButton.icon(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            context.l10n.parentSubscriptionBillingSoonSnack,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.lock_open_rounded),
+                    label: Text(plan.ctaLabel),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SubscriptionFeatureRow extends StatelessWidget {
+  const _SubscriptionFeatureRow({
+    required this.color,
+    required this.text,
+  });
+
+  final Color color;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.check_circle_rounded,
+          color: color,
+          size: 18,
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppPalette.ink,
+                ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -959,7 +1250,7 @@ class _FamilySettingsCard extends StatelessWidget {
             icon: Icons.workspace_premium_rounded,
             color: AppPalette.surfaceBlue,
             label: context.l10n.parentSubscriptionTitle,
-            value: context.l10n.parentSubscriptionSoon,
+            value: context.l10n.parentSubscriptionCurrentFree,
           ),
           const SizedBox(height: 8),
           SectionTitle(
