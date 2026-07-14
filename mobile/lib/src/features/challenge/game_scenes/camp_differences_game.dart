@@ -11,12 +11,14 @@ class CampDifferencesGameView extends StatelessWidget {
   const CampDifferencesGameView({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
     super.key,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -31,6 +33,7 @@ class CampDifferencesGameView extends StatelessWidget {
           child: GameWidget.controlled(
             gameFactory: () => CampDifferencesGame(
               accent: accent,
+              correctAnswer: correctAnswer,
               onAnswerSelected: onAnswerSelected,
             ),
           ),
@@ -48,16 +51,19 @@ class CampDifferencesGameView extends StatelessWidget {
 class CampDifferencesGame extends FlameGame with TapCallbacks {
   CampDifferencesGame({
     required this.accent,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   final Set<int> _found = {};
   double _time = 0;
   Rect _rightScene = Rect.zero;
   final Map<int, Rect> _hitRects = {};
+  bool _answerSent = false;
 
   @override
   Color backgroundColor() => Colors.transparent;
@@ -114,9 +120,10 @@ class CampDifferencesGame extends FlameGame with TapCallbacks {
     final point = event.canvasPosition.toOffset();
     for (final entry in _hitRects.entries) {
       if (entry.value.inflate(12).contains(point)) {
-        _found.add(entry.key);
-        if (_found.length >= 2) {
-          onAnswerSelected('2');
+        if (!_found.add(entry.key)) return;
+        if (_found.length >= 4 && !_answerSent) {
+          _answerSent = true;
+          onAnswerSelected(correctAnswer);
         }
       }
     }
@@ -168,11 +175,11 @@ class CampDifferencesGame extends FlameGame with TapCallbacks {
       Paint()..color = Colors.white.withValues(alpha: 0.42),
     );
 
-    for (var index = 0; index < 2; index++) {
+    for (var index = 0; index < 4; index++) {
       final found = _found.contains(index);
       final center = Offset(
         rect.center.dx,
-        rect.top + rect.height * (index == 0 ? 0.34 : 0.66),
+        rect.top + rect.height * (0.17 + index * 0.22),
       );
       final pulse = found ? 1.0 + math.sin(_time * 5 + index) * 0.035 : 1.0;
       final radius = rect.width * 0.36 * pulse;
@@ -324,6 +331,31 @@ class CampDifferencesGame extends FlameGame with TapCallbacks {
       variant == 0 ? AppPalette.mango : Colors.white,
     );
 
+    final moonCenter = Offset(localSize.width * 0.82, localSize.height * 0.26);
+    if (variant == 1) {
+      canvas.drawCircle(
+        moonCenter.translate(-localSize.width * 0.035, -2),
+        localSize.width * 0.105,
+        Paint()..color = const Color(0xFFBEEFFF),
+      );
+    }
+    final doorMark = Offset(localSize.width * 0.56, localSize.height * 0.68);
+    if (variant == 0) {
+      canvas.drawCircle(
+          doorMark, localSize.width * 0.025, Paint()..color = AppPalette.mango);
+    } else {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+              center: doorMark,
+              width: localSize.width * 0.05,
+              height: localSize.width * 0.05),
+          const Radius.circular(2),
+        ),
+        Paint()..color = AppPalette.mango,
+      );
+    }
+
     if (interactive) {
       final globalFlag = flagRect.shift(scene.topLeft).inflate(8);
       final globalStar = Rect.fromCircle(
@@ -332,8 +364,18 @@ class CampDifferencesGame extends FlameGame with TapCallbacks {
       );
       _hitRects[0] = globalFlag;
       _hitRects[1] = globalStar;
+      _hitRects[2] = Rect.fromCircle(
+        center: moonCenter + scene.topLeft,
+        radius: localSize.width * 0.13,
+      );
+      _hitRects[3] = Rect.fromCircle(
+        center: doorMark + scene.topLeft,
+        radius: localSize.width * 0.10,
+      );
       _drawFoundMarker(canvas, flagRect.center, _found.contains(0));
       _drawFoundMarker(canvas, starCenter, _found.contains(1));
+      _drawFoundMarker(canvas, moonCenter, _found.contains(2));
+      _drawFoundMarker(canvas, doorMark, _found.contains(3));
     }
 
     canvas.restore();

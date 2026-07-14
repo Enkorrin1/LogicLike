@@ -1,70 +1,179 @@
 import 'dart:math' as math;
 
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../theme/app_theme.dart';
 
-class SecretCardsGameView extends StatelessWidget {
+class SecretCardsGameView extends StatefulWidget {
   const SecretCardsGameView({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
+    this.previewDuration = const Duration(seconds: 3),
     super.key,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
+  final Duration previewDuration;
+
+  @override
+  State<SecretCardsGameView> createState() => _SecretCardsGameViewState();
+}
+
+class _SecretCardsGameViewState extends State<SecretCardsGameView> {
+  late SecretCardsGame _game;
+
+  @override
+  void initState() {
+    super.initState();
+    _createGame();
+  }
+
+  @override
+  void didUpdateWidget(SecretCardsGameView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.correctAnswer != widget.correctAnswer ||
+        oldWidget.accent != widget.accent ||
+        oldWidget.previewDuration != widget.previewDuration) {
+      _createGame();
+    }
+  }
+
+  void _createGame() {
+    _game = SecretCardsGame(
+      accent: widget.accent,
+      correctAnswer: widget.correctAnswer,
+      onAnswerSelected: widget.onAnswerSelected,
+      previewDuration: widget.previewDuration,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: SizedBox(
-          width: double.infinity,
-          height: compact ? 208 : 236,
-          child: GameWidget.controlled(
-            gameFactory: () => SecretCardsGame(
-              accent: accent,
-              onAnswerSelected: onAnswerSelected,
+    return Semantics(
+      label: '1 2 3 4 5 6',
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: SizedBox(
+            width: double.infinity,
+            height: widget.compact ? 208 : 236,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                GameWidget(game: _game),
+                _CardHitZones(game: _game),
+              ],
             ),
           ),
-        ),
-      ).animate().fadeIn(duration: 220.ms).scale(
-            begin: const Offset(0.985, 0.985),
-            end: const Offset(1, 1),
-            duration: 260.ms,
-            curve: Curves.easeOutCubic,
-          ),
+        ).animate().fadeIn(duration: 220.ms).scale(
+              begin: const Offset(0.985, 0.985),
+              end: const Offset(1, 1),
+              duration: 260.ms,
+              curve: Curves.easeOutCubic,
+            ),
+      ),
     );
   }
 }
 
-class SecretCardsGame extends FlameGame with TapCallbacks {
+class _CardHitZones extends StatelessWidget {
+  const _CardHitZones({required this.game});
+
+  final SecretCardsGame game;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => Stack(
+        children: List.generate(6, (index) {
+          final row = index ~/ 3;
+          final column = index % 3;
+          final width = constraints.maxWidth * 0.18;
+          final height = constraints.maxHeight * 0.28;
+          final centerX = constraints.maxWidth * (0.39 + column * 0.20);
+          final centerY = constraints.maxHeight * (0.39 + row * 0.34);
+          return Positioned(
+            left: centerX - width / 2,
+            top: centerY - height / 2,
+            width: width,
+            height: height,
+            child: Semantics(
+              button: true,
+              label: '${index + 1}',
+              child: GestureDetector(
+                key: ValueKey('secret-card-$index'),
+                behavior: HitTestBehavior.opaque,
+                onTap: () => game.selectCard(index),
+                child: const SizedBox.expand(),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+}
+
+class SecretCardsGame extends FlameGame {
   SecretCardsGame({
     required this.accent,
+    required this.correctAnswer,
     required this.onAnswerSelected,
-  });
+    required Duration previewDuration,
+  }) : _previewDuration = previewDuration.inMicroseconds / 1000000;
 
   final Color accent;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
+  final double _previewDuration;
 
+  static const _symbols = <_CardSymbol>[
+    _CardSymbol.rocket,
+    _CardSymbol.planet,
+    _CardSymbol.star,
+    _CardSymbol.planet,
+    _CardSymbol.star,
+    _CardSymbol.rocket,
+  ];
+
+  final Set<int> _matched = {};
+  final List<int> _open = [];
   double _time = 0;
   double _previewTime = 0;
+  double _mismatchTime = 0;
   bool _preview = true;
-  Rect _replayRect = Rect.zero;
-  String? _chosenAnswer;
-  final Map<String, Rect> _answerRects = {};
-
-  static const _previewDuration = 3.0;
+  bool _locked = false;
+  bool _completed = false;
 
   @override
   Color backgroundColor() => Colors.transparent;
+
+  void selectCard(int index) {
+    if (_preview || _locked || _completed || index < 0 || index >= 6) return;
+    if (_matched.contains(index) || _open.contains(index)) return;
+    _open.add(index);
+    if (_open.length < 2) return;
+
+    if (_symbols[_open[0]] == _symbols[_open[1]]) {
+      _matched.addAll(_open);
+      _open.clear();
+      if (_matched.length == 6 && !_completed) {
+        _completed = true;
+        onAnswerSelected(correctAnswer);
+      }
+    } else {
+      _locked = true;
+      _mismatchTime = 0;
+    }
+  }
 
   @override
   void update(double dt) {
@@ -72,8 +181,13 @@ class SecretCardsGame extends FlameGame with TapCallbacks {
     _time += dt;
     if (_preview) {
       _previewTime += dt;
-      if (_previewTime >= _previewDuration) {
-        _preview = false;
+      if (_previewTime >= _previewDuration) _preview = false;
+    }
+    if (_locked) {
+      _mismatchTime += dt;
+      if (_mismatchTime >= 0.65) {
+        _open.clear();
+        _locked = false;
       }
     }
   }
@@ -82,38 +196,10 @@ class SecretCardsGame extends FlameGame with TapCallbacks {
   void render(Canvas canvas) {
     super.render(canvas);
     final sceneSize = Size(size.x, size.y);
-    if (sceneSize.isEmpty) {
-      return;
-    }
-
-    _answerRects.clear();
+    if (sceneSize.isEmpty) return;
     _drawBackground(canvas, sceneSize);
-    _drawSparkles(canvas, sceneSize);
-    _drawMemoryTray(canvas, sceneSize);
-    _drawReplayButton(canvas, sceneSize);
-  }
-
-  @override
-  void onTapDown(TapDownEvent event) {
-    final point = event.canvasPosition.toOffset();
-    if (_replayRect.contains(point)) {
-      _preview = true;
-      _previewTime = 0;
-      _chosenAnswer = null;
-      return;
-    }
-
-    if (_preview) {
-      return;
-    }
-
-    for (final entry in _answerRects.entries) {
-      if (entry.value.contains(point)) {
-        _chosenAnswer = entry.key;
-        onAnswerSelected(entry.key);
-        return;
-      }
-    }
+    _drawHost(canvas, sceneSize);
+    _drawBoard(canvas, sceneSize);
   }
 
   void _drawBackground(Canvas canvas, Size sceneSize) {
@@ -127,205 +213,103 @@ class SecretCardsGame extends FlameGame with TapCallbacks {
           colors: [Color(0xFFF4ECFF), Color(0xFFE2F8FF)],
         ).createShader(rect),
     );
-
-    final glowPaint = Paint()
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18);
-    canvas.drawCircle(
-      Offset(sceneSize.width * 0.18, sceneSize.height * 0.20),
-      sceneSize.width * 0.20,
-      glowPaint..color = AppPalette.coral.withValues(alpha: 0.14),
-    );
-    canvas.drawCircle(
-      Offset(sceneSize.width * 0.74, sceneSize.height * 0.75),
-      sceneSize.width * 0.22,
-      glowPaint..color = AppPalette.teal.withValues(alpha: 0.14),
-    );
-
-    final wall = Path()
-      ..moveTo(0, sceneSize.height * 0.54)
-      ..quadraticBezierTo(sceneSize.width * 0.30, sceneSize.height * 0.47,
-          sceneSize.width * 0.58, sceneSize.height * 0.56)
-      ..quadraticBezierTo(sceneSize.width * 0.84, sceneSize.height * 0.64,
-          sceneSize.width, sceneSize.height * 0.50)
-      ..lineTo(sceneSize.width, sceneSize.height)
-      ..lineTo(0, sceneSize.height)
-      ..close();
-    canvas.drawPath(
-      wall,
-      Paint()..color = Colors.white.withValues(alpha: 0.34),
-    );
-
-    final window = Rect.fromLTWH(
-      sceneSize.width * 0.67,
-      sceneSize.height * 0.10,
-      sceneSize.width * 0.22,
-      sceneSize.height * 0.26,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        window.shift(const Offset(0, 4)),
-        const Radius.circular(18),
-      ),
-      Paint()..color = AppPalette.ink.withValues(alpha: 0.07),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(window, const Radius.circular(18)),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF17255E), Color(0xFF5E72D8)],
-        ).createShader(window),
-    );
-    canvas.drawLine(
-      Offset(window.center.dx, window.top + 7),
-      Offset(window.center.dx, window.bottom - 7),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.42)
-        ..strokeWidth = 1.4,
-    );
-    canvas.drawLine(
-      Offset(window.left + 8, window.center.dy),
-      Offset(window.right - 8, window.center.dy),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.34)
-        ..strokeWidth = 1.4,
-    );
-    canvas.drawCircle(
-      Offset(
-          window.left + window.width * 0.72, window.top + window.height * 0.26),
-      window.width * 0.10,
-      Paint()..color = AppPalette.mango.withValues(alpha: 0.90),
-    );
-    _drawTinyStar(
-      canvas,
-      Offset(
-          window.left + window.width * 0.30, window.top + window.height * 0.28),
-      Colors.white.withValues(alpha: 0.86),
-      size: 4,
-    );
-    _drawTinyStar(
-      canvas,
-      Offset(
-          window.left + window.width * 0.50, window.top + window.height * 0.66),
-      Colors.white.withValues(alpha: 0.72),
-      size: 3,
-    );
-  }
-
-  void _drawSparkles(Canvas canvas, Size sceneSize) {
-    final paint = Paint()..color = Colors.white.withValues(alpha: 0.74);
-    for (var index = 0; index < 9; index++) {
-      final seed = index * 1.73;
-      final x = sceneSize.width * (0.08 + ((index * 0.13) % 0.84));
-      final y = sceneSize.height *
-          (0.12 + ((index * 0.19 + math.sin(_time + seed) * 0.025) % 0.72));
-      final radius = 1.5 + math.sin(_time * 1.7 + seed) * 0.7;
-      canvas.drawCircle(Offset(x, y), radius.abs(), paint);
+    for (var index = 0; index < 10; index++) {
+      final point = Offset(
+        sceneSize.width * (0.06 + ((index * 0.13) % 0.88)),
+        sceneSize.height * (0.10 + ((index * 0.19) % 0.78)),
+      );
+      canvas.drawCircle(
+        point,
+        1.4 + math.sin(_time * 1.7 + index).abs(),
+        Paint()..color = Colors.white.withValues(alpha: 0.74),
+      );
     }
   }
 
-  void _drawMemoryTray(Canvas canvas, Size sceneSize) {
-    _drawMemoryHost(
-      canvas,
-      Offset(sceneSize.width * 0.16, sceneSize.height * 0.53),
-      sceneSize.height * 0.42,
+  void _drawHost(Canvas canvas, Size sceneSize) {
+    final center = Offset(sceneSize.width * 0.14, sceneSize.height * 0.54);
+    final scale = sceneSize.height * 0.34;
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center.translate(0, scale * 0.44),
+        width: scale * 0.72,
+        height: scale * 0.15,
+      ),
+      Paint()..color = AppPalette.ink.withValues(alpha: 0.10),
     );
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center.translate(0, scale * 0.10),
+        width: scale * 0.46,
+        height: scale * 0.58,
+      ),
+      Paint()..color = const Color(0xFF83D6E5),
+    );
+    canvas.drawCircle(center.translate(0, -scale * 0.12), scale * 0.23,
+        Paint()..color = const Color(0xFF83D6E5));
+    for (final direction in [-1.0, 1.0]) {
+      final eye = center.translate(direction * scale * 0.08, -scale * 0.17);
+      canvas.drawCircle(eye, scale * 0.028, Paint()..color = Colors.white);
+      canvas.drawCircle(eye, scale * 0.013, Paint()..color = AppPalette.ink);
+    }
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: center.translate(scale * 0.03, scale * 0.01),
+        width: scale * 0.16,
+        height: scale * 0.28,
+      ),
+      Paint()..color = const Color(0xFF5CBFD0),
+    );
+  }
 
-    final tableRect = Rect.fromLTWH(
-      sceneSize.width * 0.18,
-      sceneSize.height * 0.53,
+  void _drawBoard(Canvas canvas, Size sceneSize) {
+    final board = Rect.fromLTWH(
+      sceneSize.width * 0.25,
+      sceneSize.height * 0.12,
       sceneSize.width * 0.70,
-      sceneSize.height * 0.30,
+      sceneSize.height * 0.78,
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        tableRect.shift(Offset(0, sceneSize.height * 0.040)),
-        Radius.circular(sceneSize.height * 0.08),
-      ),
+          board.shift(const Offset(0, 6)), const Radius.circular(26)),
       Paint()..color = AppPalette.ink.withValues(alpha: 0.08),
     );
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        tableRect,
-        Radius.circular(sceneSize.height * 0.08),
-      ),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.92),
-            AppPalette.mint.withValues(alpha: 0.58),
-          ],
-        ).createShader(tableRect),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        tableRect.deflate(2),
-        Radius.circular(sceneSize.height * 0.07),
-      ),
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.54)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.3,
+      RRect.fromRectAndRadius(board, const Radius.circular(26)),
+      Paint()..color = Colors.white.withValues(alpha: 0.72),
     );
 
-    final progress =
-        _preview ? (_previewTime / _previewDuration).clamp(0, 1) : 1;
-    final progressRect = Rect.fromLTWH(
-      tableRect.left + tableRect.width * 0.12,
-      tableRect.bottom - tableRect.height * 0.11,
-      tableRect.width * 0.76 * (1 - progress),
-      sceneSize.height * 0.025,
-    );
-    if (_preview) {
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(progressRect, const Radius.circular(99)),
-        Paint()..color = AppPalette.teal.withValues(alpha: 0.72),
+    for (var index = 0; index < 6; index++) {
+      final center = Offset(
+        sceneSize.width * (0.39 + (index % 3) * 0.20),
+        sceneSize.height * (0.39 + (index ~/ 3) * 0.34),
+      );
+      _drawCard(
+        canvas,
+        center: center,
+        size: math.min(sceneSize.width * 0.16, sceneSize.height * 0.27),
+        symbol: _symbols[index],
+        shown: _preview || _open.contains(index) || _matched.contains(index),
+        matched: _matched.contains(index),
+        error: _locked && _open.contains(index),
       );
     }
 
-    final cardSize = math.min(sceneSize.height * 0.34, sceneSize.width * 0.18);
-    final centerY = sceneSize.height * 0.64;
-    final positions = [
-      Offset(sceneSize.width * 0.35, centerY),
-      Offset(sceneSize.width * 0.54, centerY),
-      Offset(sceneSize.width * 0.73, centerY),
-    ];
-
-    _drawCard(
-      canvas,
-      center: positions[0],
-      size: cardSize,
-      label: 'A',
-      answer: 'Ракета',
-      color: AppPalette.coral,
-      type: _CardSymbol.rocket,
-      hidden: false,
-      highlighted: false,
+    final track = Rect.fromLTWH(
+      board.left + board.width * 0.12,
+      board.bottom - 9,
+      board.width * 0.76,
+      5,
     );
-    _drawCard(
-      canvas,
-      center: positions[1],
-      size: cardSize,
-      label: 'B',
-      answer: 'Планета',
-      color: accent,
-      type: _CardSymbol.planet,
-      hidden: !_preview,
-      highlighted: true,
-    );
-    _drawCard(
-      canvas,
-      center: positions[2],
-      size: cardSize,
-      label: 'C',
-      answer: 'Звезда',
-      color: AppPalette.mango,
-      type: _CardSymbol.star,
-      hidden: false,
-      highlighted: false,
+    canvas.drawRRect(RRect.fromRectAndRadius(track, const Radius.circular(99)),
+        Paint()..color = AppPalette.muted.withValues(alpha: 0.18));
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+            track.left, track.top, track.width * (_matched.length / 6), 5),
+        const Radius.circular(99),
+      ),
+      Paint()..color = AppPalette.teal,
     );
   }
 
@@ -333,457 +317,119 @@ class SecretCardsGame extends FlameGame with TapCallbacks {
     Canvas canvas, {
     required Offset center,
     required double size,
-    required String label,
-    required String answer,
-    required Color color,
-    required _CardSymbol type,
-    required bool hidden,
-    required bool highlighted,
+    required _CardSymbol symbol,
+    required bool shown,
+    required bool matched,
+    required bool error,
   }) {
-    final wobble = math.sin(_time * 2.0 + center.dx * 0.02) * 1.8;
-    final scale = hidden
-        ? 0.92 + math.sin(_time * 4.0) * 0.015
-        : 1.0 + (highlighted && _preview ? math.sin(_time * 5.0) * 0.025 : 0);
+    final color = switch (symbol) {
+      _CardSymbol.rocket => AppPalette.coral,
+      _CardSymbol.planet => accent,
+      _CardSymbol.star => AppPalette.mango,
+    };
+    final wobble = matched ? math.sin(_time * 5 + center.dx) * 2 : 0.0;
     final rect = Rect.fromCenter(
       center: center.translate(0, wobble),
-      width: size * scale,
-      height: size * scale,
-    );
-    final radius = Radius.circular(size * 0.25);
-    final cardRRect = RRect.fromRectAndRadius(rect, radius);
-    _answerRects[answer] = rect.inflate(size * 0.18);
-    final chosen = _chosenAnswer == answer;
-
-    canvas.drawRRect(
-      cardRRect.shift(const Offset(0, 7)),
-      Paint()..color = color.withValues(alpha: hidden ? 0.09 : 0.18),
+      width: size,
+      height: size,
     );
     canvas.drawRRect(
-      cardRRect,
+      RRect.fromRectAndRadius(
+          rect.shift(const Offset(0, 5)), const Radius.circular(16)),
+      Paint()..color = color.withValues(alpha: 0.16),
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(16)),
       Paint()
         ..shader = LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: hidden
-              ? [
-                  AppPalette.ink.withValues(alpha: 0.24),
-                  AppPalette.ink.withValues(alpha: 0.13),
-                ]
-              : [Colors.white, color.withValues(alpha: 0.10)],
+          colors: shown
+              ? [Colors.white, color.withValues(alpha: 0.16)]
+              : [const Color(0xFF8190C9), const Color(0xFF5667AC)],
         ).createShader(rect),
     );
     canvas.drawRRect(
-      cardRRect,
+      RRect.fromRectAndRadius(rect, const Radius.circular(16)),
       Paint()
-        ..color = (chosen
-                ? AppPalette.mint
-                : highlighted
-                    ? color
-                    : Colors.white)
-            .withValues(alpha: 0.70)
+        ..color = error
+            ? AppPalette.coral
+            : matched
+                ? AppPalette.teal
+                : Colors.white
         ..style = PaintingStyle.stroke
-        ..strokeWidth = chosen
-            ? 3.0
-            : highlighted
-                ? 2.3
-                : 1.2,
+        ..strokeWidth = error || matched ? 3 : 1.3,
     );
-
-    _drawCardLabel(
-        canvas, label, rect.topLeft + Offset(size * 0.12, size * 0.12));
-
-    if (hidden) {
-      _drawLock(canvas, rect.center, size * 0.44);
-      _drawMemoryQuestion(canvas, rect.center, size);
-      return;
-    }
-
-    final iconRect = Rect.fromCenter(
-      center: rect.center.translate(0, size * 0.04),
-      width: size * 0.55,
-      height: size * 0.55,
-    );
-    _drawSymbolBadge(canvas, iconRect, color, type);
-  }
-
-  void _drawMemoryHost(Canvas canvas, Offset center, double size) {
-    final shadow = Paint()..color = AppPalette.ink.withValues(alpha: 0.10);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: center.translate(0, size * 0.48),
-        width: size * 0.78,
-        height: size * 0.18,
-      ),
-      shadow,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: center.translate(0, size * 0.10),
-        width: size * 0.46,
-        height: size * 0.56,
-      ),
-      Paint()..color = const Color(0xFF83D6E5),
-    );
-    canvas.drawCircle(
-      center.translate(-size * 0.16, -size * 0.12),
-      size * 0.14,
-      Paint()..color = const Color(0xFFA8EEF6),
-    );
-    canvas.drawCircle(
-      center.translate(size * 0.16, -size * 0.12),
-      size * 0.14,
-      Paint()..color = const Color(0xFFA8EEF6),
-    );
-    canvas.drawCircle(
-      center.translate(0, -size * 0.12),
-      size * 0.24,
-      Paint()..color = const Color(0xFF83D6E5),
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: center.translate(size * 0.04, size * 0.02),
-        width: size * 0.18,
-        height: size * 0.30,
-      ),
-      Paint()..color = const Color(0xFF5CBFD0),
-    );
-    canvas.drawCircle(
-      center.translate(-size * 0.08, -size * 0.17),
-      size * 0.030,
-      Paint()..color = Colors.white,
-    );
-    canvas.drawCircle(
-      center.translate(size * 0.08, -size * 0.17),
-      size * 0.030,
-      Paint()..color = Colors.white,
-    );
-    canvas.drawCircle(
-      center.translate(-size * 0.08, -size * 0.17),
-      size * 0.014,
-      Paint()..color = AppPalette.ink,
-    );
-    canvas.drawCircle(
-      center.translate(size * 0.08, -size * 0.17),
-      size * 0.014,
-      Paint()..color = AppPalette.ink,
-    );
-    canvas.drawArc(
-      Rect.fromCenter(
-        center: center.translate(0, -size * 0.06),
-        width: size * 0.16,
-        height: size * 0.10,
-      ),
-      0,
-      math.pi,
-      false,
-      Paint()
-        ..color = AppPalette.ink.withValues(alpha: 0.58)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = size * 0.012,
-    );
-    _drawMagnifier(canvas, center.translate(size * 0.24, size * 0.03), size);
-  }
-
-  void _drawMagnifier(Canvas canvas, Offset center, double size) {
-    final paint = Paint()
-      ..color = AppPalette.lavender
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size * 0.025
-      ..strokeCap = StrokeCap.round;
-    canvas.drawCircle(center, size * 0.070, paint);
-    canvas.drawLine(
-      center.translate(size * 0.055, size * 0.055),
-      center.translate(size * 0.14, size * 0.14),
-      paint,
-    );
-  }
-
-  void _drawMemoryQuestion(Canvas canvas, Offset center, double size) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: '?',
-        style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.86),
-          fontSize: size * 0.38,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    painter.paint(
-      canvas,
-      center - Offset(painter.width / 2, painter.height / 2),
-    );
-  }
-
-  void _drawCardLabel(Canvas canvas, String label, Offset offset) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: TextStyle(
-          color: AppPalette.ink.withValues(alpha: 0.46),
-          fontSize: 13,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    painter.paint(canvas, offset);
-  }
-
-  void _drawSymbolBadge(
-    Canvas canvas,
-    Rect rect,
-    Color color,
-    _CardSymbol type,
-  ) {
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, Radius.circular(rect.width * 0.28)),
-      Paint()..color = color.withValues(alpha: 0.15),
-    );
-
-    switch (type) {
-      case _CardSymbol.rocket:
-        _drawRocket(canvas, rect, color);
-      case _CardSymbol.planet:
-        _drawPlanet(canvas, rect, color);
-      case _CardSymbol.star:
-        _drawStar(canvas, rect.center, rect.width * 0.42, color);
-    }
-  }
-
-  void _drawRocket(Canvas canvas, Rect rect, Color color) {
-    final body = Paint()..color = color;
-    final center = rect.center;
-    final bodyPath = Path()
-      ..moveTo(center.dx, rect.top + rect.height * 0.08)
-      ..cubicTo(rect.right, rect.top + rect.height * 0.28, rect.right,
-          rect.bottom - rect.height * 0.18, center.dx, rect.bottom)
-      ..cubicTo(
-          rect.left,
-          rect.bottom - rect.height * 0.18,
-          rect.left,
-          rect.top + rect.height * 0.28,
-          center.dx,
-          rect.top + rect.height * 0.08)
-      ..close();
-    canvas.save();
-    canvas.rotate(0.58);
-    canvas.restore();
-    canvas.drawPath(bodyPath, body);
-    canvas.drawCircle(
-      Offset(center.dx + rect.width * 0.09, center.dy - rect.height * 0.12),
-      rect.width * 0.10,
-      Paint()..color = Colors.white.withValues(alpha: 0.85),
-    );
-    canvas.drawPath(
-      Path()
-        ..moveTo(rect.left + rect.width * 0.05, rect.bottom)
-        ..lineTo(
-            rect.left + rect.width * 0.32, rect.bottom - rect.height * 0.22)
-        ..lineTo(rect.left + rect.width * 0.38, rect.bottom)
-        ..close(),
-      Paint()..color = AppPalette.coral,
-    );
-    canvas.drawPath(
-      Path()
-        ..moveTo(rect.right - rect.width * 0.05, rect.bottom)
-        ..lineTo(
-            rect.right - rect.width * 0.32, rect.bottom - rect.height * 0.22)
-        ..lineTo(rect.right - rect.width * 0.38, rect.bottom)
-        ..close(),
-      Paint()..color = AppPalette.mango,
-    );
-  }
-
-  void _drawPlanet(Canvas canvas, Rect rect, Color color) {
-    final center = rect.center;
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: center,
-        width: rect.width * 0.95,
-        height: rect.height * 0.38,
-      ),
-      Paint()
-        ..color = color.withValues(alpha: 0.34)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4,
-    );
-    canvas.drawCircle(
-      center,
-      rect.width * 0.28,
-      Paint()
-        ..shader = RadialGradient(
-          colors: [Colors.white.withValues(alpha: 0.82), color],
-        ).createShader(
-            Rect.fromCircle(center: center, radius: rect.width * 0.3)),
-    );
-    canvas.drawCircle(
-      center.translate(rect.width * 0.10, -rect.height * 0.09),
-      rect.width * 0.06,
-      Paint()..color = Colors.white.withValues(alpha: 0.70),
-    );
-  }
-
-  void _drawStar(Canvas canvas, Offset center, double radius, Color color) {
-    final path = Path();
-    for (var i = 0; i < 10; i++) {
-      final r = i.isEven ? radius : radius * 0.46;
-      final angle = -math.pi / 2 + i * math.pi / 5;
-      final point = center + Offset(math.cos(angle) * r, math.sin(angle) * r);
-      if (i == 0) {
-        path.moveTo(point.dx, point.dy);
-      } else {
-        path.lineTo(point.dx, point.dy);
-      }
-    }
-    path.close();
-    canvas.drawPath(path, Paint()..color = color);
-    canvas.drawCircle(
-      center.translate(-radius * 0.14, -radius * 0.20),
-      radius * 0.13,
-      Paint()..color = Colors.white.withValues(alpha: 0.70),
-    );
-  }
-
-  void _drawTinyStar(
-    Canvas canvas,
-    Offset center,
-    Color color, {
-    double size = 5,
-  }) {
-    final path = Path();
-    for (var i = 0; i < 10; i++) {
-      final radius = i.isEven ? size : size * 0.45;
-      final angle = -math.pi / 2 + i * math.pi / 5;
-      final point =
-          center + Offset(math.cos(angle) * radius, math.sin(angle) * radius);
-      if (i == 0) {
-        path.moveTo(point.dx, point.dy);
-      } else {
-        path.lineTo(point.dx, point.dy);
-      }
-    }
-    path.close();
-    canvas.drawPath(path, Paint()..color = color);
-  }
-
-  void _drawLock(Canvas canvas, Offset center, double size) {
-    final paint = Paint()..color = AppPalette.muted.withValues(alpha: 0.92);
-    final body = Rect.fromCenter(
-      center: center.translate(0, size * 0.12),
-      width: size * 0.82,
-      height: size * 0.62,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(body, Radius.circular(size * 0.13)),
-      paint,
-    );
-    canvas.drawArc(
-      Rect.fromCenter(
-        center: center.translate(0, -size * 0.10),
-        width: size * 0.58,
-        height: size * 0.62,
-      ),
-      math.pi,
-      math.pi,
-      false,
-      Paint()
-        ..color = AppPalette.muted.withValues(alpha: 0.92)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = size * 0.12
-        ..strokeCap = StrokeCap.round,
-    );
-    canvas.drawCircle(
-      center.translate(0, size * 0.13),
-      size * 0.06,
-      Paint()..color = Colors.white.withValues(alpha: 0.56),
-    );
-  }
-
-  void _drawReplayButton(Canvas canvas, Size sceneSize) {
-    final width = sceneSize.height * 0.22;
-    final height = sceneSize.height * 0.22;
-    _replayRect = Rect.fromCenter(
-      center: Offset(sceneSize.width * 0.90, sceneSize.height * 0.19),
-      width: width,
-      height: height,
-    );
-
-    final isReplay = !_preview;
-    final color = isReplay ? Colors.white : AppPalette.mint;
-    final foreground = isReplay ? accent : Colors.white;
-    final pulse = isReplay ? 1 + math.sin(_time * 5) * 0.035 : 1.0;
-    final rect = Rect.fromCenter(
-      center: _replayRect.center,
-      width: _replayRect.width * pulse,
-      height: _replayRect.height * pulse,
-    );
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-          rect.shift(const Offset(0, 7)), Radius.circular(rect.width * 0.32)),
-      Paint()..color = accent.withValues(alpha: 0.12),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, Radius.circular(rect.width * 0.32)),
-      Paint()..color = color,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, Radius.circular(rect.width * 0.32)),
-      Paint()
-        ..color = accent.withValues(alpha: 0.28)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.4,
-    );
-
-    if (isReplay) {
-      _drawReplayArrow(canvas, rect, foreground);
+    if (shown) {
+      _drawSymbol(canvas, rect.deflate(size * 0.18), symbol, color);
     } else {
-      _drawEye(canvas, rect, foreground);
+      _drawBack(canvas, rect);
     }
   }
 
-  void _drawEye(Canvas canvas, Rect rect, Color color) {
-    final center = rect.center;
-    final eyeRect = Rect.fromCenter(
-      center: center,
-      width: rect.width * 0.48,
-      height: rect.height * 0.23,
-    );
-    canvas.drawOval(
-      eyeRect,
-      Paint()
-        ..color = color
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 4,
-    );
-    canvas.drawCircle(center, rect.width * 0.10, Paint()..color = color);
+  void _drawBack(Canvas canvas, Rect rect) {
+    final paint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.30)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    canvas.drawCircle(rect.center, rect.width * 0.23, paint);
+    canvas.drawCircle(rect.center, rect.width * 0.09, paint);
+    for (var index = 0; index < 6; index++) {
+      final angle = index * math.pi / 3;
+      canvas.drawLine(
+        rect.center +
+            Offset(math.cos(angle), math.sin(angle)) * rect.width * 0.12,
+        rect.center +
+            Offset(math.cos(angle), math.sin(angle)) * rect.width * 0.28,
+        paint,
+      );
+    }
   }
 
-  void _drawReplayArrow(Canvas canvas, Rect rect, Color color) {
-    final center = rect.center;
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-    canvas.drawArc(
-      Rect.fromCenter(
-        center: center,
-        width: rect.width * 0.46,
-        height: rect.width * 0.46,
-      ),
-      -math.pi * 0.15,
-      math.pi * 1.45,
-      false,
-      paint,
-    );
-    final head = Path()
-      ..moveTo(center.dx - rect.width * 0.13, center.dy - rect.width * 0.18)
-      ..lineTo(center.dx - rect.width * 0.25, center.dy - rect.width * 0.04)
-      ..lineTo(center.dx - rect.width * 0.06, center.dy - rect.width * 0.02);
-    canvas.drawPath(head, paint);
+  void _drawSymbol(Canvas canvas, Rect rect, _CardSymbol symbol, Color color) {
+    switch (symbol) {
+      case _CardSymbol.rocket:
+        final body = Path()
+          ..moveTo(rect.center.dx, rect.top)
+          ..quadraticBezierTo(
+              rect.right, rect.center.dy, rect.center.dx, rect.bottom)
+          ..quadraticBezierTo(
+              rect.left, rect.center.dy, rect.center.dx, rect.top)
+          ..close();
+        canvas.drawPath(body, Paint()..color = color);
+        canvas.drawCircle(
+            rect.center.translate(0, -rect.height * 0.12),
+            rect.width * 0.10,
+            Paint()..color = Colors.white.withValues(alpha: 0.84));
+      case _CardSymbol.planet:
+        canvas.drawOval(
+          Rect.fromCenter(
+              center: rect.center,
+              width: rect.width,
+              height: rect.height * 0.34),
+          Paint()
+            ..color = color
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 4,
+        );
+        canvas.drawCircle(
+            rect.center, rect.width * 0.27, Paint()..color = color);
+      case _CardSymbol.star:
+        final path = Path();
+        for (var index = 0; index < 10; index++) {
+          final radius = index.isEven ? rect.width * 0.46 : rect.width * 0.21;
+          final angle = -math.pi / 2 + index * math.pi / 5;
+          final point =
+              rect.center + Offset(math.cos(angle), math.sin(angle)) * radius;
+          if (index == 0) {
+            path.moveTo(point.dx, point.dy);
+          } else {
+            path.lineTo(point.dx, point.dy);
+          }
+        }
+        path.close();
+        canvas.drawPath(path, Paint()..color = color);
+    }
   }
 }
 

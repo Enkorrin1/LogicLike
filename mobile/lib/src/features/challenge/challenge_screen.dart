@@ -4,14 +4,52 @@ import 'package:flutter/material.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
 import '../../domain/puzzle_answer_rules.dart';
+import '../../domain/puzzle_interaction_catalog.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../l10n/localized_content.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/playful_ui.dart';
 import 'game_scenes/camp_differences_game.dart';
-import 'game_scenes/rocket_puzzle_game.dart';
+import 'game_scenes/animal_word_game.dart';
+import 'game_scenes/beacon_signal_game.dart';
+import 'game_scenes/arrow_maze_game.dart';
+import 'game_scenes/balloon_order_game.dart';
+import 'game_scenes/captain_command_game.dart';
+import 'game_scenes/camp_story_game.dart';
+import 'game_scenes/code_grid_game.dart';
+import 'game_scenes/deduction_games.dart';
+import 'game_scenes/deduction_board_games.dart';
+import 'game_scenes/clean_row_game.dart';
+import 'game_scenes/color_rhythm_game.dart';
+import 'game_scenes/final_orbit_game.dart';
+import 'game_scenes/fast_eyes_game.dart';
+import 'game_scenes/hidden_star_game.dart';
+import 'game_scenes/letter_field_game.dart';
+import 'game_scenes/logic_mechanics_games.dart';
+import 'game_scenes/memory_pairs_game.dart';
+import 'game_scenes/math_reasoning_games.dart';
+import 'game_scenes/math_workshop_games.dart';
+import 'game_scenes/mirror_path_game.dart';
+import 'game_scenes/rocket_route_game.dart';
+import 'game_scenes/route_memory_game.dart';
 import 'game_scenes/secret_cards_game.dart';
+import 'game_scenes/sequence_workshop_games.dart';
+import 'game_scenes/shadow_match_game.dart';
+import 'game_scenes/silhouette_build_game.dart';
+import 'game_scenes/shape_tangram_game.dart';
+import 'game_scenes/shape_turn_game.dart';
+import 'game_scenes/shape_tower_game.dart';
+import 'game_scenes/sound_order_game.dart';
+import 'game_scenes/space_proof_game.dart';
+import 'game_scenes/story_order_game.dart';
+import 'game_scenes/star_list_game.dart';
+import 'game_scenes/tiny_detail_game.dart';
+import 'game_scenes/two_differences_game.dart';
+import 'game_scenes/what_changed_game.dart';
+import 'game_scenes/word_grid_game.dart';
+import 'game_scenes/word_builder_game.dart';
+import 'game_scenes/why_chain_game.dart';
 import '../rewards/collection_screen.dart';
 
 class ChallengeScreen extends StatefulWidget {
@@ -2335,34 +2373,7 @@ class _PuzzleStage extends StatelessWidget {
 }
 
 bool _usesSceneAnswerPicker(String puzzleId) {
-  return const {
-    'hidden-cards',
-    'logic-train',
-    'shape-path',
-    'tower-rule',
-    'home-clues',
-    'odd-step',
-    'secret-code',
-    'code-lock',
-    'mini-sudoku',
-    'logic-houses',
-    'bridge-order',
-    'number-bridge',
-    'star-balance',
-    'count-rockets',
-    'number-neighbors',
-    'planet-sum',
-    'fruit-fizz',
-    'moon-clock',
-    'notebook-sum',
-    'cookie-share',
-    'word-builder',
-    'letter-field',
-    'math-crossword',
-    'market-change',
-    'camp-differences',
-    'picture-puzzle',
-  }.contains(puzzleId);
+  return isSceneDrivenPuzzle(puzzleId);
 }
 
 class _StageShell extends StatelessWidget {
@@ -2428,11 +2439,115 @@ class _MemoryStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (puzzle.id == 'star-list') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: StarListGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'route-memory') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: RouteMemoryGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'color-rhythm') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: ColorRhythmGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'what-changed') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: WhatChangedGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'captain-command') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: CaptainCommandGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'memory-pairs') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: MemoryPairsGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'sound-order') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: SoundOrderGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
     if (puzzle.id == 'camp-story') {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _CampStoryStage(accent: accent, compact: compact),
+        child: CampStoryGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -2440,7 +2555,13 @@ class _MemoryStage extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _StoryOrderStage(accent: accent, compact: compact),
+        child: StoryOrderGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -2451,6 +2572,7 @@ class _MemoryStage extends StatelessWidget {
         child: SecretCardsGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -2823,7 +2945,7 @@ _MemoryStageSpec _memoryStageSpecFor(String puzzleId, Color accent) {
             color: AppPalette.sky,
           ),
           _MemoryCardSpec(
-            label: 'в†’',
+            label: '->',
             icon: Icons.swap_horiz_rounded,
             color: AppPalette.lavender,
           ),
@@ -2990,23 +3112,103 @@ class _AttentionStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final correctAnswer = answerRuleForPuzzle(puzzle).correctAnswer;
     final customStage = switch (puzzle.id) {
-      'word-grid' => _WordGridStage(accent: accent, compact: compact),
-      'animal-word' => _AnimalWordStage(accent: accent, compact: compact),
-      'balloon-order' => _BalloonOrderStage(accent: accent, compact: compact),
-      'word-builder' => _WordBuilderStage(
+      'tiny-detail' => TinyDetailGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
-      'letter-field' => _LetterFieldStage(
+      'fast-eyes' => FastEyesGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'hidden-star' => HiddenStarGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'clean-row' => CleanRowGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'shadow-match' => ShadowMatchGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'balloon-order' => BalloonOrderGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'two-differences' => TwoDifferencesGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'beacon-signal' => BeaconSignalGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'odd-card' => OddCardInvestigationGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'word-grid' => WordGridGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'animal-word' => AnimalWordGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'word-builder' => LocaleWordBuilderGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      'letter-field' => LocaleLetterFieldGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       'camp-differences' => CampDifferencesGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: correctAnswer,
           onAnswerSelected: onAnswerSelected,
         ),
       _ => null,
@@ -3077,20 +3279,20 @@ List<Widget> _attentionStageItemsFor(
       ],
     'tiny-detail' => [
         _SearchChoiceCard(
-          label: 'в†‘',
+          label: '^',
           icon: Icons.auto_awesome_rounded,
           color: AppPalette.mango,
           highlighted: true,
           compact: compact,
         ),
         _SearchChoiceCard(
-          label: 'вЂў',
+          label: '*',
           icon: Icons.crop_free_rounded,
           color: accent,
           compact: compact,
         ),
         _SearchChoiceCard(
-          label: 'в†“',
+          label: 'v',
           icon: Icons.circle_rounded,
           color: AppPalette.sky,
           compact: compact,
@@ -3240,3892 +3442,17 @@ List<Widget> _attentionStageItemsFor(
   };
 }
 
-class _CampStoryStage extends StatelessWidget {
-  const _CampStoryStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return FittedBox(
-      fit: BoxFit.scaleDown,
-      child: SizedBox(
-        width: compact ? 286 : 328,
-        height: compact ? 92 : 112,
-        child: CustomPaint(
-          painter: _CampStoryPainter(accent),
-        ),
-      ),
-    );
-  }
-}
-
-class _CampStoryPainter extends CustomPainter {
-  const _CampStoryPainter(this.accent);
-
-  final Color accent;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final radius = Radius.circular(size.height * 0.22);
-    final sky = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          AppPalette.sky.withValues(alpha: 0.42),
-          AppPalette.mint.withValues(alpha: 0.50),
-        ],
-      ).createShader(rect);
-    canvas.drawRRect(RRect.fromRectAndRadius(rect, radius), sky);
-
-    final ground = Paint()..color = const Color(0xFFBFEBCF);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, size.height * 0.62, size.width, size.height * 0.38),
-        radius,
-      ),
-      ground,
-    );
-
-    final tent = Path()
-      ..moveTo(size.width * 0.12, size.height * 0.70)
-      ..lineTo(size.width * 0.30, size.height * 0.22)
-      ..lineTo(size.width * 0.48, size.height * 0.70)
-      ..close();
-    canvas.drawPath(tent, Paint()..color = AppPalette.lavender);
-
-    final tentDoor = Path()
-      ..moveTo(size.width * 0.30, size.height * 0.70)
-      ..lineTo(size.width * 0.39, size.height * 0.70)
-      ..lineTo(size.width * 0.30, size.height * 0.36)
-      ..close();
-    canvas.drawPath(
-        tentDoor, Paint()..color = Colors.white.withValues(alpha: 0.86));
-
-    final logPaint = Paint()
-      ..color = const Color(0xFF8D5A35)
-      ..strokeWidth = 6
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * 0.57, size.height * 0.76),
-      Offset(size.width * 0.76, size.height * 0.66),
-      logPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.58, size.height * 0.66),
-      Offset(size.width * 0.76, size.height * 0.76),
-      logPaint,
-    );
-
-    final flameOuter = Path()
-      ..moveTo(size.width * 0.67, size.height * 0.66)
-      ..cubicTo(size.width * 0.56, size.height * 0.55, size.width * 0.70,
-          size.height * 0.38, size.width * 0.65, size.height * 0.28)
-      ..cubicTo(size.width * 0.83, size.height * 0.45, size.width * 0.76,
-          size.height * 0.59, size.width * 0.67, size.height * 0.66)
-      ..close();
-    canvas.drawPath(flameOuter, Paint()..color = AppPalette.coral);
-
-    final flameInner = Path()
-      ..moveTo(size.width * 0.68, size.height * 0.63)
-      ..cubicTo(size.width * 0.61, size.height * 0.55, size.width * 0.70,
-          size.height * 0.47, size.width * 0.69, size.height * 0.38)
-      ..cubicTo(size.width * 0.79, size.height * 0.50, size.width * 0.74,
-          size.height * 0.58, size.width * 0.68, size.height * 0.63)
-      ..close();
-    canvas.drawPath(flameInner, Paint()..color = AppPalette.mango);
-
-    _drawCamper(
-      canvas,
-      Offset(size.width * 0.86, size.height * 0.57),
-      size.height * 0.18,
-      accent,
-    );
-    _drawCamper(
-      canvas,
-      Offset(size.width * 0.08, size.height * 0.58),
-      size.height * 0.15,
-      AppPalette.teal,
-    );
-  }
-
-  void _drawCamper(Canvas canvas, Offset center, double radius, Color color) {
-    final body = Paint()..color = color;
-    final face = Paint()..color = const Color(0xFFFFD8A8);
-    final eye = Paint()..color = AppPalette.ink;
-
-    canvas.drawCircle(center + Offset(0, radius * 1.2), radius * 1.05, body);
-    canvas.drawCircle(center, radius, face);
-    canvas.drawCircle(
-        center + Offset(-radius * 0.32, -radius * 0.08), radius * 0.10, eye);
-    canvas.drawCircle(
-        center + Offset(radius * 0.32, -radius * 0.08), radius * 0.10, eye);
-    canvas.drawArc(
-      Rect.fromCenter(
-        center: center + Offset(0, radius * 0.12),
-        width: radius * 0.74,
-        height: radius * 0.52,
-      ),
-      0.15,
-      math.pi - 0.30,
-      false,
-      Paint()
-        ..color = AppPalette.ink
-        ..strokeWidth = radius * 0.10
-        ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _CampStoryPainter oldDelegate) =>
-      oldDelegate.accent != accent;
-}
-
-class _WordGridStage extends StatelessWidget {
-  const _WordGridStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    const letters = [
-      ['M', 'H', 'X', 'B', 'S'],
-      ['A', 'R', 'M', 'E', 'T'],
-      ['R', 'J', 'C', 'I', 'A'],
-      ['C', 'S', 'T', 'A', 'R'],
-      ['H', 'K', 'T', 'V', 'T'],
-    ];
-    final cellSize = compact ? 28.0 : 32.0;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: compact ? 286 : 328,
-          padding: EdgeInsets.all(compact ? 10 : 12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF26255C), Color(0xFF58355F)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var row = 0; row < letters.length; row++)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (var col = 0; col < letters[row].length; col++)
-                          _LetterCell(
-                            letter: letters[row][col],
-                            size: cellSize,
-                            highlighted: row == 3 && col >= 1,
-                          ),
-                      ],
-                    ),
-                ],
-              ),
-              SizedBox(width: compact ? 12 : 18),
-              const Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _WordChip(label: 'ARM', muted: true),
-                    SizedBox(height: 7),
-                    _WordChip(label: 'STAR'),
-                    SizedBox(height: 7),
-                    _WordChip(label: 'MARCH', muted: true),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LetterCell extends StatelessWidget {
-  const _LetterCell({
-    required this.letter,
-    required this.size,
-    required this.highlighted,
-  });
-
-  final String letter;
-  final double size;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: highlighted
-            ? AppPalette.mint
-            : Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(9),
-        border: Border.all(
-          color:
-              highlighted ? Colors.white : Colors.white.withValues(alpha: 0.12),
-          width: highlighted ? 1.6 : 1,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        letter,
-        style: TextStyle(
-          color: highlighted ? AppPalette.ink : Colors.white,
-          fontWeight: FontWeight.w900,
-          fontSize: size * 0.52,
-        ),
-      ),
-    );
-  }
-}
-
-class _WordChip extends StatelessWidget {
-  const _WordChip({required this.label, this.muted = false});
-
-  final String label;
-  final bool muted;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: muted ? Colors.white.withValues(alpha: 0.12) : AppPalette.coral,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        maxLines: 1,
-        style: TextStyle(
-          color: muted ? Colors.white70 : Colors.white,
-          fontWeight: FontWeight.w900,
-          fontSize: 13,
-        ),
-      ),
-    );
-  }
-}
-
-class _AnimalWordStage extends StatelessWidget {
-  const _AnimalWordStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 92 : 108,
-          padding: EdgeInsets.all(compact ? 8 : 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE4F9D8), Color(0xFFBEEED4)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: compact ? 78 : 92,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      bottom: 4,
-                      child: Container(
-                        width: compact ? 70 : 82,
-                        height: compact ? 24 : 28,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF8B5E34),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                      ),
-                    ),
-                    _DogFace(color: accent, size: compact ? 58 : 68),
-                  ],
-                ),
-              ),
-              const Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _LetterTile(letter: 'D', color: AppPalette.sky),
-                    _LetterTile(letter: 'O', color: AppPalette.teal),
-                    _LetterTile(
-                        letter: 'G', color: AppPalette.mango, missing: true),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DogFace extends StatelessWidget {
-  const _DogFace({required this.color, required this.size});
-
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: size,
-      height: size,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Positioned(
-            left: size * 0.05,
-            top: size * 0.08,
-            child: _Ear(color: color, size: size * 0.34),
-          ),
-          Positioned(
-            right: size * 0.05,
-            top: size * 0.08,
-            child: Transform.scale(
-              scaleX: -1,
-              child: _Ear(color: color, size: size * 0.34),
-            ),
-          ),
-          Container(
-            width: size * 0.76,
-            height: size * 0.76,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 3),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.24),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: size * 0.33,
-            child: Container(
-              width: size * 0.42,
-              height: size * 0.30,
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFE0B7),
-                borderRadius: BorderRadius.circular(size * 0.18),
-              ),
-            ),
-          ),
-          Positioned(
-            top: size * 0.28,
-            left: size * 0.24,
-            child: _FaceDot(size: size * 0.07),
-          ),
-          Positioned(
-            top: size * 0.28,
-            right: size * 0.24,
-            child: _FaceDot(size: size * 0.07),
-          ),
-          Positioned(
-            top: size * 0.43,
-            child: Container(
-              width: size * 0.10,
-              height: size * 0.08,
-              decoration: const BoxDecoration(
-                color: AppPalette.ink,
-                shape: BoxShape.circle,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Ear extends StatelessWidget {
-  const _Ear({required this.color, required this.size});
-
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.rotate(
-      angle: -0.55,
-      child: Container(
-        width: size,
-        height: size * 1.28,
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.88),
-          borderRadius: BorderRadius.circular(size),
-        ),
-      ),
-    );
-  }
-}
-
-class _FaceDot extends StatelessWidget {
-  const _FaceDot({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: const BoxDecoration(
-        color: AppPalette.ink,
-        shape: BoxShape.circle,
-      ),
-    );
-  }
-}
-
-class _LetterTile extends StatelessWidget {
-  const _LetterTile({
-    required this.letter,
-    required this.color,
-    this.missing = false,
-  });
-
-  final String letter;
-  final Color color;
-  final bool missing;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 52,
-      decoration: BoxDecoration(
-        color: missing ? const Color(0xFFFFEDAD) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.35), width: 1.4),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.14),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        missing ? '?' : letter,
-        style: TextStyle(
-          color: missing ? const Color(0xFFFFA12B) : color,
-          fontSize: 25,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _BalloonOrderStage extends StatelessWidget {
-  const _BalloonOrderStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 98 : 116,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFEAF8FF), Color(0xFFFFF2D0)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const _Balloon(number: '3', color: AppPalette.coral, height: 78),
-              _Balloon(
-                number: '1',
-                color: accent,
-                height: 60,
-                highlighted: true,
-              ),
-              const _Balloon(
-                  number: '2', color: AppPalette.lavender, height: 70),
-              Container(
-                width: 58,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.80),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: accent.withValues(alpha: 0.24)),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  '1 2 3',
-                  style: TextStyle(
-                    color: AppPalette.ink,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Balloon extends StatelessWidget {
-  const _Balloon({
-    required this.number,
-    required this.color,
-    required this.height,
-    this.highlighted = false,
-  });
-
-  final String number;
-  final Color color;
-  final double height;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    final width = height * 0.62;
-
-    return SizedBox(
-      width: width + 10,
-      height: height + 16,
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Positioned(
-            top: 0,
-            child: Container(
-              width: width,
-              height: height * 0.72,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: highlighted
-                      ? Colors.white
-                      : color.withValues(alpha: 0.20),
-                  width: highlighted ? 3 : 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withValues(alpha: highlighted ? 0.28 : 0.16),
-                    blurRadius: highlighted ? 16 : 10,
-                    offset: const Offset(0, 7),
-                  ),
-                ],
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                number,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: height * 0.62,
-            child: Container(
-              width: 10,
-              height: 8,
-              decoration: BoxDecoration(
-                color: color,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-          ),
-          Positioned(
-            top: height * 0.72,
-            child: Container(
-              width: 2,
-              height: height * 0.28,
-              color: AppPalette.muted.withValues(alpha: 0.52),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BridgeOrderStage extends StatefulWidget {
-  const _BridgeOrderStage({
-    required this.accent,
-    required this.compact,
-    required this.correctAnswer,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final String correctAnswer;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_BridgeOrderStage> createState() => _BridgeOrderStageState();
-}
-
-class _BridgeOrderStageState extends State<_BridgeOrderStage> {
-  bool _placed = false;
-  String? _wrongChoice;
-
-  void _choose(String label) {
-    if (label == 'B') {
-      setState(() {
-        _placed = true;
-        _wrongChoice = null;
-      });
-      widget.onAnswerSelected(widget.correctAnswer);
-      return;
-    }
-
-    setState(() => _wrongChoice = label);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = widget.compact ? 286.0 : 328.0;
-    final height = widget.compact ? 112.0 : 128.0;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: SizedBox(
-          width: width,
-          height: height,
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              CustomPaint(
-                size: Size(width, height),
-                painter: _BridgeOrderPainter(widget.accent),
-              ),
-              Positioned(
-                left: width * 0.49 - 39,
-                top: height * 0.54 - 17,
-                child: DragTarget<String>(
-                  onWillAcceptWithDetails: (_) => true,
-                  onAcceptWithDetails: (details) => _choose(details.data),
-                  builder: (context, candidateData, rejectedData) {
-                    final hovering = candidateData.isNotEmpty;
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 160),
-                      width: 78,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: _placed
-                            ? AppPalette.mint
-                            : hovering
-                                ? widget.accent.withValues(alpha: 0.16)
-                                : Colors.transparent,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: _placed
-                              ? AppPalette.teal
-                              : widget.accent.withValues(alpha: 0.48),
-                          width: _placed ? 2.5 : 1.5,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: _placed
-                          ? _BridgePlankVisual(
-                              label: 'B',
-                              width: 74,
-                              color: widget.accent,
-                              selected: true,
-                            )
-                          : null,
-                    );
-                  },
-                ),
-              ),
-              Positioned(
-                left: 20,
-                right: 20,
-                bottom: 5,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _BridgePlankDraggable(
-                      label: 'A',
-                      plankWidth: 52,
-                      color: AppPalette.mango,
-                      wrong: _wrongChoice == 'A',
-                      onTap: () => _choose('A'),
-                    ),
-                    _BridgePlankDraggable(
-                      label: 'B',
-                      plankWidth: 74,
-                      color: widget.accent,
-                      selected: _placed,
-                      onTap: () => _choose('B'),
-                    ),
-                    _BridgePlankDraggable(
-                      label: 'C',
-                      plankWidth: 96,
-                      color: AppPalette.lavender,
-                      wrong: _wrongChoice == 'C',
-                      onTap: () => _choose('C'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BridgePlankDraggable extends StatelessWidget {
-  const _BridgePlankDraggable({
-    required this.label,
-    required this.plankWidth,
-    required this.color,
-    required this.onTap,
-    this.selected = false,
-    this.wrong = false,
-  });
-
-  final String label;
-  final double plankWidth;
-  final Color color;
-  final VoidCallback onTap;
-  final bool selected;
-  final bool wrong;
-
-  @override
-  Widget build(BuildContext context) {
-    final visual = _BridgePlankVisual(
-      label: label,
-      width: plankWidth,
-      color: wrong ? AppPalette.coral : color,
-      selected: selected,
-      wrong: wrong,
-    );
-
-    return Draggable<String>(
-      data: label,
-      feedback: Material(
-        color: Colors.transparent,
-        child: _BridgePlankVisual(
-          label: label,
-          width: plankWidth,
-          color: color,
-          selected: true,
-          lifted: true,
-        ),
-      ),
-      childWhenDragging: Opacity(opacity: 0.32, child: visual),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: visual,
-      ),
-    );
-  }
-}
-
-class _BridgePlankVisual extends StatelessWidget {
-  const _BridgePlankVisual({
-    required this.label,
-    required this.width,
-    required this.color,
-    required this.selected,
-    this.lifted = false,
-    this.wrong = false,
-  });
-
-  final String label;
-  final double width;
-  final Color color;
-  final bool selected;
-  final bool lifted;
-  final bool wrong;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedScale(
-      duration: const Duration(milliseconds: 150),
-      scale: lifted || selected ? 1.06 : 1,
-      child: Container(
-        width: width,
-        height: 34,
-        decoration: BoxDecoration(
-          color: selected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
-            color: wrong ? AppPalette.coral : color.withValues(alpha: 0.48),
-            width: selected ? 2.4 : 1.6,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: lifted || selected ? 0.26 : 0.12),
-              blurRadius: lifted || selected ? 14 : 8,
-              offset: Offset(0, lifted ? 9 : 5),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          label,
-          style: TextStyle(
-            color: selected ? Colors.white : color,
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BridgeOrderPainter extends CustomPainter {
-  const _BridgeOrderPainter(this.accent);
-
-  final Color accent;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final radius = Radius.circular(size.height * 0.18);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, radius),
-      Paint()
-        ..shader = const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFE3FAF2), Color(0xFFBEEBFF)],
-        ).createShader(rect),
-    );
-
-    final river = Path()
-      ..moveTo(0, size.height * 0.62)
-      ..cubicTo(size.width * 0.22, size.height * 0.50, size.width * 0.36,
-          size.height * 0.76, size.width * 0.56, size.height * 0.60)
-      ..cubicTo(size.width * 0.72, size.height * 0.47, size.width * 0.86,
-          size.height * 0.70, size.width, size.height * 0.54)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas.drawPath(
-      river,
-      Paint()..color = const Color(0xFF76C8E8).withValues(alpha: 0.36),
-    );
-
-    final baseY = size.height * 0.54;
-    _drawPlank(canvas, Offset(size.width * 0.07, baseY), 46, AppPalette.teal);
-    _drawPlank(canvas, Offset(size.width * 0.26, baseY), 60, AppPalette.sky);
-    _drawGap(canvas, Offset(size.width * 0.49, baseY), 74);
-
-    final choiceY = size.height * 0.80;
-    _drawChoice(canvas, Offset(size.width * 0.20, choiceY), 'A', 52,
-        AppPalette.mango, false);
-    _drawChoice(
-        canvas, Offset(size.width * 0.50, choiceY), 'B', 74, accent, true);
-    _drawChoice(canvas, Offset(size.width * 0.80, choiceY), 'C', 96,
-        AppPalette.lavender, false);
-
-    final arrowPaint = Paint()
-      ..color = AppPalette.ink.withValues(alpha: 0.20)
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * 0.18, size.height * 0.22),
-      Offset(size.width * 0.44, size.height * 0.22),
-      arrowPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.44, size.height * 0.22),
-      Offset(size.width * 0.40, size.height * 0.18),
-      arrowPaint,
-    );
-    canvas.drawLine(
-      Offset(size.width * 0.44, size.height * 0.22),
-      Offset(size.width * 0.40, size.height * 0.26),
-      arrowPaint,
-    );
-  }
-
-  void _drawPlank(Canvas canvas, Offset center, double width, Color color) {
-    final rect = Rect.fromCenter(center: center, width: width, height: 18);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect.translate(0, 5), const Radius.circular(8)),
-      Paint()..color = AppPalette.ink.withValues(alpha: 0.08),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, const Radius.circular(8)),
-      Paint()..color = color,
-    );
-  }
-
-  void _drawGap(Canvas canvas, Offset center, double width) {
-    final rect = Rect.fromCenter(center: center, width: width, height: 23);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, const Radius.circular(10)),
-      Paint()..color = Colors.white.withValues(alpha: 0.68),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(rect, const Radius.circular(10)),
-      Paint()
-        ..color = accent.withValues(alpha: 0.46)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2,
-    );
-    _drawText(canvas, '?', center, accent, 18);
-  }
-
-  void _drawChoice(
-    Canvas canvas,
-    Offset center,
-    String label,
-    double width,
-    Color color,
-    bool highlighted,
-  ) {
-    _drawPlank(canvas, center, width, highlighted ? color : Colors.white);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(center: center, width: width, height: 18),
-        const Radius.circular(8),
-      ),
-      Paint()
-        ..color = color.withValues(alpha: highlighted ? 0.0 : 0.38)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = highlighted ? 0 : 1.5,
-    );
-    _drawText(
-      canvas,
-      label,
-      center.translate(0, 25),
-      highlighted ? color : AppPalette.muted,
-      12,
-    );
-  }
-
-  void _drawText(
-    Canvas canvas,
-    String text,
-    Offset center,
-    Color color,
-    double fontSize,
-  ) {
-    final painter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          color: color,
-          fontSize: fontSize,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    painter.paint(
-        canvas, center - Offset(painter.width / 2, painter.height / 2));
-  }
-
-  @override
-  bool shouldRepaint(covariant _BridgeOrderPainter oldDelegate) =>
-      oldDelegate.accent != accent;
-}
-
-class _TowerRuleStage extends StatefulWidget {
-  const _TowerRuleStage({
-    required this.accent,
-    required this.compact,
-    required this.correctAnswer,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final String correctAnswer;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_TowerRuleStage> createState() => _TowerRuleStageState();
-}
-
-class _TowerRuleStageState extends State<_TowerRuleStage> {
-  String? _placed;
-  String? _wrong;
-
-  void _choose(String id) {
-    if (id == 'same') {
-      setState(() {
-        _placed = id;
-        _wrong = null;
-      });
-      widget.onAnswerSelected(widget.correctAnswer);
-      return;
-    }
-
-    setState(() => _wrong = id);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFECEF), Color(0xFFEAF8FF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              const _TowerCard(
-                label: '=',
-                color: AppPalette.sky,
-                highlighted: true,
-                blocks: [2, 1],
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Icon(
-                  Icons.arrow_forward_rounded,
-                  color: widget.accent,
-                  size: 23,
-                ),
-              ),
-              DragTarget<String>(
-                onWillAcceptWithDetails: (_) => true,
-                onAcceptWithDetails: (details) => _choose(details.data),
-                builder: (context, candidateData, rejectedData) {
-                  return _TowerDropPedestal(
-                    color: widget.accent,
-                    placed: _placed == 'same',
-                    active: candidateData.isNotEmpty,
-                  );
-                },
-              ),
-              const SizedBox(width: 9),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _TowerDragChoice(
-                      id: 'same',
-                      color: AppPalette.teal,
-                      blocks: const [2, 1],
-                      selected: _placed == 'same',
-                      onTap: () => _choose('same'),
-                    ),
-                    _TowerDragChoice(
-                      id: 'higher',
-                      color: AppPalette.mango,
-                      blocks: const [2, 2, 1],
-                      wrong: _wrong == 'higher',
-                      onTap: () => _choose('higher'),
-                    ),
-                    _TowerDragChoice(
-                      id: 'lower',
-                      color: AppPalette.lavender,
-                      blocks: const [1, 1],
-                      wrong: _wrong == 'lower',
-                      onTap: () => _choose('lower'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _TowerDropPedestal extends StatelessWidget {
-  const _TowerDropPedestal({
-    required this.color,
-    required this.placed,
-    required this.active,
-  });
-
-  final Color color;
-  final bool placed;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: 58,
-      height: 86,
-      decoration: BoxDecoration(
-        color: placed
-            ? AppPalette.mint
-            : active
-                ? color.withValues(alpha: 0.14)
-                : Colors.white.withValues(alpha: 0.68),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: placed ? AppPalette.teal : color.withValues(alpha: 0.36),
-          width: placed || active ? 2.4 : 1.3,
-        ),
-      ),
-      child: placed
-          ? const _TowerBlocks(blocks: [2, 1], color: AppPalette.teal)
-          : Icon(Icons.add_rounded, color: color, size: 25),
-    );
-  }
-}
-
-class _TowerDragChoice extends StatelessWidget {
-  const _TowerDragChoice({
-    required this.id,
-    required this.color,
-    required this.blocks,
-    required this.onTap,
-    this.selected = false,
-    this.wrong = false,
-  });
-
-  final String id;
-  final Color color;
-  final List<int> blocks;
-  final VoidCallback onTap;
-  final bool selected;
-  final bool wrong;
-
-  @override
-  Widget build(BuildContext context) {
-    final visual = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: 43,
-      height: 68,
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: selected ? color.withValues(alpha: 0.18) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: wrong ? AppPalette.coral : color.withValues(alpha: 0.36),
-          width: selected || wrong ? 2 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: selected ? 0.18 : 0.08),
-            blurRadius: selected ? 12 : 7,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child:
-          _TowerBlocks(blocks: blocks, color: wrong ? AppPalette.coral : color),
-    );
-
-    return Draggable<String>(
-      data: id,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Transform.scale(
-          scale: 1.14,
-          child: visual,
-        ),
-      ),
-      childWhenDragging: Opacity(opacity: 0.36, child: visual),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: visual,
-      ),
-    );
-  }
-}
-
-class _TowerCard extends StatelessWidget {
-  const _TowerCard({
-    required this.label,
-    required this.color,
-    required this.blocks,
-    this.highlighted = false,
-  });
-
-  final String label;
-  final Color color;
-  final List<int> blocks;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      width: 58,
-      height: 86,
-      padding: const EdgeInsets.fromLTRB(6, 6, 6, 5),
-      decoration: BoxDecoration(
-        color:
-            highlighted ? Colors.white : Colors.white.withValues(alpha: 0.72),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: highlighted ? 0.52 : 0.22),
-          width: highlighted ? 2 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: highlighted ? 0.20 : 0.08),
-            blurRadius: highlighted ? 14 : 8,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: _TowerBlocks(blocks: blocks, color: color),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Container(
-            width: 23,
-            height: 20,
-            decoration: BoxDecoration(
-              color: highlighted ? color : color.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(11),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: highlighted ? Colors.white : color,
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TowerBlocks extends StatelessWidget {
-  const _TowerBlocks({required this.blocks, required this.color});
-
-  final List<int> blocks;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        for (var row = blocks.length - 1; row >= 0; row--)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (var index = 0; index < blocks[row]; index++)
-                Container(
-                  width: 13,
-                  height: 13,
-                  margin: const EdgeInsets.all(1.1),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.white.withValues(alpha: 0.90), color],
-                    ),
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(color: Colors.white, width: 1.4),
-                  ),
-                ),
-            ],
-          ),
-      ],
-    );
-  }
-}
-
-class _HomeCluesStage extends StatefulWidget {
-  const _HomeCluesStage({
-    required this.accent,
-    required this.compact,
-    required this.correctAnswer,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final String correctAnswer;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_HomeCluesStage> createState() => _HomeCluesStageState();
-}
-
-class _HomeCluesStageState extends State<_HomeCluesStage> {
-  String? _placedHouse;
-  String? _wrongHouse;
-
-  void _choose(String house) {
-    if (house == 'green') {
-      setState(() {
-        _placedHouse = house;
-        _wrongHouse = null;
-      });
-      widget.onAnswerSelected(widget.correctAnswer);
-      return;
-    }
-
-    setState(() => _wrongHouse = house);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE8FFF7), Color(0xFFFFF5D7)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 76,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _ClueSignal(
-                      icon: Icons.star_rounded,
-                      secondIcon: Icons.block_rounded,
-                      color: AppPalette.sky,
-                    ),
-                    SizedBox(height: 7),
-                    Draggable<String>(
-                      data: 'star',
-                      feedback: Material(
-                        color: Colors.transparent,
-                        child: _HomeStarToken(lifted: true),
-                      ),
-                      childWhenDragging: Opacity(
-                        opacity: 0.35,
-                        child: _HomeStarToken(),
-                      ),
-                      child: _HomeStarToken(),
-                    ),
-                    SizedBox(height: 7),
-                    _ClueSignal(
-                      icon: Icons.home_rounded,
-                      secondIcon: Icons.arrow_forward_rounded,
-                      color: AppPalette.mango,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _HomeDropHouse(
-                      id: 'blue',
-                      label: 'A',
-                      color: AppPalette.sky,
-                      badge: Icons.close_rounded,
-                      wrong: _wrongHouse == 'blue',
-                      selected: _placedHouse == 'blue',
-                      onChoose: _choose,
-                    ),
-                    _HomeDropHouse(
-                      id: 'yellow',
-                      label: 'B',
-                      color: AppPalette.mango,
-                      badge: Icons.arrow_forward_rounded,
-                      wrong: _wrongHouse == 'yellow',
-                      selected: _placedHouse == 'yellow',
-                      onChoose: _choose,
-                    ),
-                    _HomeDropHouse(
-                      id: 'green',
-                      label: 'C',
-                      color: AppPalette.teal,
-                      badge: Icons.star_rounded,
-                      selected: _placedHouse == 'green',
-                      onChoose: _choose,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _HomeStarToken extends StatelessWidget {
-  const _HomeStarToken({this.lifted = false});
-
-  final bool lifted;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.scale(
-      scale: lifted ? 1.12 : 1,
-      child: Container(
-        width: 48,
-        height: 34,
-        decoration: BoxDecoration(
-          color: AppPalette.mango,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.white, width: 2),
-          boxShadow: [
-            BoxShadow(
-              color: AppPalette.mango.withValues(alpha: lifted ? 0.30 : 0.16),
-              blurRadius: lifted ? 16 : 9,
-              offset: Offset(0, lifted ? 8 : 5),
-            ),
-          ],
-        ),
-        child: const Icon(Icons.star_rounded, color: Colors.white, size: 21),
-      ),
-    );
-  }
-}
-
-class _HomeDropHouse extends StatelessWidget {
-  const _HomeDropHouse({
-    required this.id,
-    required this.label,
-    required this.color,
-    required this.badge,
-    required this.selected,
-    required this.onChoose,
-    this.wrong = false,
-  });
-
-  final String id;
-  final String label;
-  final Color color;
-  final IconData badge;
-  final bool selected;
-  final bool wrong;
-  final ValueChanged<String> onChoose;
-
-  @override
-  Widget build(BuildContext context) {
-    return DragTarget<String>(
-      onWillAcceptWithDetails: (_) => true,
-      onAcceptWithDetails: (_) => onChoose(id),
-      builder: (context, candidateData, rejectedData) {
-        final active = candidateData.isNotEmpty;
-        return AnimatedScale(
-          duration: const Duration(milliseconds: 150),
-          scale: active ? 1.05 : 1,
-          child: BouncyTap(
-            borderRadius: BorderRadius.circular(20),
-            onTap: () => onChoose(id),
-            child: _HomeClueHouse(
-              label: label,
-              color: wrong ? AppPalette.coral : color,
-              badge: selected ? Icons.star_rounded : badge,
-              highlighted: selected || active,
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _ClueSignal extends StatelessWidget {
-  const _ClueSignal({
-    required this.icon,
-    required this.secondIcon,
-    required this.color,
-  });
-
-  final IconData icon;
-  final IconData secondIcon;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 68,
-      height: 38,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withValues(alpha: 0.28)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 17),
-          const SizedBox(width: 4),
-          Icon(secondIcon, color: AppPalette.coral, size: 17),
-        ],
-      ),
-    );
-  }
-}
-
-class _HomeClueHouse extends StatelessWidget {
-  const _HomeClueHouse({
-    required this.label,
-    required this.color,
-    required this.badge,
-    this.highlighted = false,
-  });
-
-  final String label;
-  final Color color;
-  final IconData badge;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      width: 58,
-      height: 92,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: highlighted ? 0.96 : 0.74),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: highlighted ? 0.56 : 0.22),
-          width: highlighted ? 2.2 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: highlighted ? 0.22 : 0.08),
-            blurRadius: highlighted ? 14 : 8,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Positioned(
-            top: 10,
-            child: CustomPaint(
-              size: const Size(46, 58),
-              painter: _HousePainter(color, highlighted),
-            ),
-          ),
-          Positioned(
-            top: 7,
-            right: 5,
-            child: Container(
-              width: 24,
-              height: 24,
-              decoration: BoxDecoration(
-                color: highlighted ? color : Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(color: color.withValues(alpha: 0.32)),
-              ),
-              child: Icon(
-                badge,
-                color: highlighted ? Colors.white : color,
-                size: 15,
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 6,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: highlighted ? color : AppPalette.muted,
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _OddStepStage extends StatefulWidget {
-  const _OddStepStage({
-    required this.accent,
-    required this.compact,
-    required this.correctAnswer,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final String correctAnswer;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_OddStepStage> createState() => _OddStepStageState();
-}
-
-class _OddStepStageState extends State<_OddStepStage> {
-  String? _removed;
-  String? _wrong;
-
-  void _remove(String id) {
-    if (id == 'middle') {
-      setState(() {
-        _removed = id;
-        _wrong = null;
-      });
-      widget.onAnswerSelected(widget.correctAnswer);
-      return;
-    }
-
-    setState(() => _wrong = id);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFECEF), Color(0xFFEAF8FF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              _ActionStepDraggable(
-                id: 'first',
-                label: '1',
-                icon: Icons.inventory_2_rounded,
-                color: _wrong == 'first' ? AppPalette.coral : AppPalette.sky,
-                onRemove: _remove,
-              ),
-              _BrokenLink(color: widget.accent, broken: false),
-              if (_removed == 'middle')
-                _RemovedStepPlaceholder(color: widget.accent)
-              else
-                _ActionStepDraggable(
-                  id: 'middle',
-                  label: '2',
-                  icon: Icons.bedtime_rounded,
-                  color: AppPalette.coral,
-                  highlighted: true,
-                  onRemove: _remove,
-                ),
-              const _BrokenLink(color: AppPalette.coral, broken: true),
-              _ActionStepDraggable(
-                id: 'last',
-                label: '3',
-                icon: Icons.rocket_launch_rounded,
-                color: _wrong == 'last' ? AppPalette.coral : AppPalette.teal,
-                onRemove: _remove,
-              ),
-              const SizedBox(width: 8),
-              DragTarget<String>(
-                onWillAcceptWithDetails: (_) => true,
-                onAcceptWithDetails: (details) => _remove(details.data),
-                builder: (context, candidateData, rejectedData) {
-                  return _RepairDropZone(
-                    color: widget.accent,
-                    active: candidateData.isNotEmpty,
-                    solved: _removed == 'middle',
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ActionStepDraggable extends StatelessWidget {
-  const _ActionStepDraggable({
-    required this.id,
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.onRemove,
-    this.highlighted = false,
-  });
-
-  final String id;
-  final String label;
-  final IconData icon;
-  final Color color;
-  final ValueChanged<String> onRemove;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    final visual = _ActionStepCard(
-      label: label,
-      icon: icon,
-      color: color,
-      highlighted: highlighted,
-    );
-
-    return Draggable<String>(
-      data: id,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Transform.scale(scale: 1.08, child: visual),
-      ),
-      childWhenDragging: Opacity(opacity: 0.32, child: visual),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(20),
-        onTap: () => onRemove(id),
-        child: visual,
-      ),
-    );
-  }
-}
-
-class _RemovedStepPlaceholder extends StatelessWidget {
-  const _RemovedStepPlaceholder({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 58,
-      height: 86,
-      decoration: BoxDecoration(
-        color: AppPalette.mint,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppPalette.teal, width: 2.2),
-      ),
-      child: const Icon(Icons.check_rounded, color: AppPalette.teal, size: 30),
-    );
-  }
-}
-
-class _RepairDropZone extends StatelessWidget {
-  const _RepairDropZone({
-    required this.color,
-    required this.active,
-    required this.solved,
-  });
-
-  final Color color;
-  final bool active;
-  final bool solved;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: 46,
-      height: 86,
-      decoration: BoxDecoration(
-        color: solved
-            ? AppPalette.mint
-            : active
-                ? color.withValues(alpha: 0.18)
-                : Colors.white.withValues(alpha: 0.74),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: solved ? AppPalette.teal : color.withValues(alpha: 0.38),
-          width: active || solved ? 2.2 : 1.2,
-        ),
-      ),
-      child: Icon(
-        solved ? Icons.check_rounded : Icons.construction_rounded,
-        color: solved ? AppPalette.teal : color,
-      ),
-    );
-  }
-}
-
-class _ActionStepCard extends StatelessWidget {
-  const _ActionStepCard({
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.highlighted = false,
-  });
-
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      width: 58,
-      height: 86,
-      decoration: BoxDecoration(
-        color: highlighted ? color : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white, width: highlighted ? 3 : 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: highlighted ? 0.24 : 0.10),
-            blurRadius: highlighted ? 16 : 9,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: highlighted ? Colors.white : color,
-            size: 28,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: highlighted ? Colors.white : color,
-              fontSize: 15,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BrokenLink extends StatelessWidget {
-  const _BrokenLink({required this.color, required this.broken});
-
-  final Color color;
-  final bool broken;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            height: 6,
-            margin: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: broken ? 0.12 : 0.22),
-              borderRadius: BorderRadius.circular(999),
-            ),
-          ),
-          Icon(
-            broken ? Icons.close_rounded : Icons.arrow_forward_rounded,
-            color: broken ? AppPalette.coral : color,
-            size: 22,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SecretCodeStage extends StatefulWidget {
-  const _SecretCodeStage({
-    required this.accent,
-    required this.compact,
-    required this.correctAnswer,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final String correctAnswer;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_SecretCodeStage> createState() => _SecretCodeStageState();
-}
-
-class _SecretCodeStageState extends State<_SecretCodeStage> {
-  IconData? _placedIcon;
-  String? _wrongSymbol;
-
-  void _place(String symbol) {
-    if (symbol == 'key') {
-      setState(() {
-        _placedIcon = Icons.vpn_key_rounded;
-        _wrongSymbol = null;
-      });
-      widget.onAnswerSelected(widget.correctAnswer);
-      return;
-    }
-
-    setState(() => _wrongSymbol = symbol);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final solved = _placedIcon != null;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFEEF2), Color(0xFFE8F8FF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  height: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.78),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: widget.accent.withValues(alpha: 0.20),
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const _CodeSymbolSlot(
-                            icon: Icons.star_rounded,
-                            color: AppPalette.mango,
-                          ),
-                          const _CodeSymbolSlot(
-                            icon: Icons.vpn_key_rounded,
-                            color: AppPalette.teal,
-                          ),
-                          const _CodeSymbolSlot(
-                            icon: Icons.star_rounded,
-                            color: AppPalette.mango,
-                          ),
-                          DragTarget<String>(
-                            onWillAcceptWithDetails: (_) => true,
-                            onAcceptWithDetails: (details) =>
-                                _place(details.data),
-                            builder: (context, candidateData, rejectedData) {
-                              return _CodeSymbolSlot(
-                                icon: _placedIcon ?? Icons.vpn_key_rounded,
-                                color: AppPalette.teal,
-                                question: !solved,
-                                active: candidateData.isNotEmpty,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            solved
-                                ? Icons.lock_open_rounded
-                                : Icons.repeat_rounded,
-                            color: solved ? AppPalette.teal : widget.accent,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 8),
-                          _CodePairBadge(color: widget.accent),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: widget.compact ? 60 : 70,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _CodeSymbolChoice(
-                      symbol: 'star',
-                      icon: Icons.star_rounded,
-                      color: AppPalette.mango,
-                      wrong: _wrongSymbol == 'star',
-                      onTap: () => _place('star'),
-                    ),
-                    const SizedBox(height: 7),
-                    _CodeSymbolChoice(
-                      symbol: 'key',
-                      icon: Icons.vpn_key_rounded,
-                      color: AppPalette.teal,
-                      selected: solved,
-                      onTap: () => _place('key'),
-                    ),
-                    const SizedBox(height: 7),
-                    _CodeSymbolChoice(
-                      symbol: 'bolt',
-                      icon: Icons.bolt_rounded,
-                      color: AppPalette.lavender,
-                      wrong: _wrongSymbol == 'bolt',
-                      onTap: () => _place('bolt'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _CodeSymbolSlot extends StatelessWidget {
-  const _CodeSymbolSlot({
-    required this.icon,
-    required this.color,
-    this.question = false,
-    this.active = false,
-  });
-
-  final IconData icon;
-  final Color color;
-  final bool question;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedScale(
-      duration: const Duration(milliseconds: 150),
-      scale: active ? 1.08 : 1,
-      child: Container(
-        width: 42,
-        height: 42,
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        decoration: BoxDecoration(
-          color: question ? color : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: active ? Colors.white : color.withValues(alpha: 0.36),
-            width: active ? 2.2 : 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: question || active ? 0.24 : 0.10),
-              blurRadius: active ? 14 : 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Icon(
-          question ? Icons.question_mark_rounded : icon,
-          color: question ? Colors.white : color,
-          size: 24,
-        ),
-      ),
-    );
-  }
-}
-
-class _CodeSymbolChoice extends StatelessWidget {
-  const _CodeSymbolChoice({
-    required this.symbol,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-    this.selected = false,
-    this.wrong = false,
-  });
-
-  final String symbol;
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  final bool selected;
-  final bool wrong;
-
-  @override
-  Widget build(BuildContext context) {
-    final visual = AnimatedContainer(
-      duration: const Duration(milliseconds: 150),
-      width: 46,
-      height: 30,
-      decoration: BoxDecoration(
-        color: selected ? color : Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: wrong ? AppPalette.coral : color.withValues(alpha: 0.42),
-          width: selected || wrong ? 2 : 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: selected ? 0.22 : 0.08),
-            blurRadius: selected ? 12 : 7,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Icon(
-        icon,
-        color: selected ? Colors.white : color,
-        size: 19,
-      ),
-    );
-
-    return Draggable<String>(
-      data: symbol,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Transform.scale(scale: 1.14, child: visual),
-      ),
-      childWhenDragging: Opacity(opacity: 0.35, child: visual),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(15),
-        onTap: onTap,
-        child: visual,
-      ),
-    );
-  }
-}
-
-class _CodePairBadge extends StatelessWidget {
-  const _CodePairBadge({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 28,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.star_rounded, color: AppPalette.mango, size: 16),
-          SizedBox(width: 3),
-          Icon(Icons.add_rounded, color: AppPalette.muted, size: 13),
-          SizedBox(width: 3),
-          Icon(Icons.vpn_key_rounded, color: AppPalette.teal, size: 16),
-        ],
-      ),
-    );
-  }
-}
-
-class _WhyChainStage extends StatelessWidget {
-  const _WhyChainStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFF1D5), Color(0xFFE3F9FF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              const _CauseSceneCard(
-                scene: _CauseScene.rain,
-                color: AppPalette.sky,
-                highlighted: true,
-              ),
-              _StoryArrow(color: accent),
-              const _CauseSceneCard(
-                scene: _CauseScene.sprout,
-                color: AppPalette.teal,
-              ),
-              _StoryArrow(color: accent),
-              const _CauseSceneCard(
-                scene: _CauseScene.flower,
-                color: AppPalette.coral,
-              ),
-              const SizedBox(width: 8),
-              _CauseResultBadge(color: accent),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-enum _CauseScene { rain, sprout, flower }
-
-class _CauseSceneCard extends StatelessWidget {
-  const _CauseSceneCard({
-    required this.scene,
-    required this.color,
-    this.highlighted = false,
-  });
-
-  final _CauseScene scene;
-  final Color color;
-  final bool highlighted;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 58,
-      height: 88,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: highlighted ? 0.98 : 0.76),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: highlighted ? 0.58 : 0.20),
-          width: highlighted ? 2.4 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: highlighted ? 0.22 : 0.08),
-            blurRadius: highlighted ? 15 : 8,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: CustomPaint(
-        painter: _CauseScenePainter(scene, color, highlighted),
-      ),
-    );
-  }
-}
-
-class _StoryArrow extends StatelessWidget {
-  const _StoryArrow({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: CustomPaint(
-        painter: _StoryArrowPainter(color),
-        size: const Size(double.infinity, 28),
-      ),
-    );
-  }
-}
-
-class _CauseResultBadge extends StatelessWidget {
-  const _CauseResultBadge({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 38,
-      height: 88,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.22),
-            blurRadius: 14,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: CustomPaint(painter: _CauseResultPainter()),
-    );
-  }
-}
-
-class _StoryArrowPainter extends CustomPainter {
-  const _StoryArrowPainter(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final centerY = size.height / 2;
-    final paint = Paint()
-      ..color = color.withValues(alpha: 0.34)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawLine(
-      Offset(4, centerY),
-      Offset(size.width - 9, centerY),
-      paint,
-    );
-    final head = Path()
-      ..moveTo(size.width - 4, centerY)
-      ..lineTo(size.width - 13, centerY - 7)
-      ..lineTo(size.width - 13, centerY + 7)
-      ..close();
-    canvas.drawPath(head, Paint()..color = color.withValues(alpha: 0.54));
-  }
-
-  @override
-  bool shouldRepaint(covariant _StoryArrowPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
-class _CauseScenePainter extends CustomPainter {
-  const _CauseScenePainter(this.scene, this.color, this.highlighted);
-
-  final _CauseScene scene;
-  final Color color;
-  final bool highlighted;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final bg = Rect.fromLTWH(7, 7, size.width - 14, size.height - 14);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(bg, const Radius.circular(17)),
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: highlighted ? 0.22 : 0.12),
-            Colors.white.withValues(alpha: 0.88),
-          ],
-        ).createShader(bg),
-    );
-
-    _drawGround(canvas, size);
-    switch (scene) {
-      case _CauseScene.rain:
-        _drawRain(canvas, size);
-      case _CauseScene.sprout:
-        _drawSprout(canvas, size);
-      case _CauseScene.flower:
-        _drawFlower(canvas, size);
-    }
-  }
-
-  void _drawGround(Canvas canvas, Size size) {
-    final ground = Paint()..color = const Color(0xFF88D6A4);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.50, size.height * 0.72),
-        width: size.width * 0.62,
-        height: size.height * 0.20,
-      ),
-      ground,
-    );
-  }
-
-  void _drawRain(Canvas canvas, Size size) {
-    final cloud = Paint()..color = Colors.white;
-    final shadow = Paint()..color = color.withValues(alpha: 0.15);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.47, size.height * 0.25),
-        width: size.width * 0.54,
-        height: size.height * 0.20,
-      ),
-      shadow,
-    );
-    canvas.drawCircle(Offset(size.width * 0.34, size.height * 0.25), 9, cloud);
-    canvas.drawCircle(Offset(size.width * 0.48, size.height * 0.20), 12, cloud);
-    canvas.drawCircle(Offset(size.width * 0.62, size.height * 0.27), 9, cloud);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(size.width * 0.28, size.height * 0.25, size.width * 0.42,
-            size.height * 0.13),
-        const Radius.circular(9),
-      ),
-      cloud,
-    );
-
-    final rain = Paint()
-      ..color = color
-      ..strokeWidth = 3
-      ..strokeCap = StrokeCap.round;
-    for (final x in [0.35, 0.50, 0.65]) {
-      canvas.drawLine(
-        Offset(size.width * x, size.height * 0.43),
-        Offset(size.width * (x - 0.04), size.height * 0.55),
-        rain,
-      );
-    }
-    final seed = Paint()..color = const Color(0xFF9B6747);
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.52, size.height * 0.70),
-        width: 12,
-        height: 17,
-      ),
-      seed,
-    );
-  }
-
-  void _drawSprout(Canvas canvas, Size size) {
-    final stem = Paint()
-      ..color = const Color(0xFF26A673)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * 0.50, size.height * 0.72),
-      Offset(size.width * 0.50, size.height * 0.38),
-      stem,
-    );
-    final leafPaint = Paint()..color = AppPalette.mint;
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.38, size.height * 0.48),
-        width: 24,
-        height: 14,
-      ),
-      leafPaint,
-    );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.62, size.height * 0.43),
-        width: 24,
-        height: 14,
-      ),
-      leafPaint,
-    );
-    canvas.drawCircle(
-      Offset(size.width * 0.71, size.height * 0.22),
-      8,
-      Paint()..color = AppPalette.mango,
-    );
-  }
-
-  void _drawFlower(Canvas canvas, Size size) {
-    final stem = Paint()
-      ..color = const Color(0xFF26A673)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * 0.50, size.height * 0.72),
-      Offset(size.width * 0.50, size.height * 0.44),
-      stem,
-    );
-
-    final petalPaint = Paint()..color = AppPalette.coral;
-    final center = Offset(size.width * 0.50, size.height * 0.36);
-    for (var index = 0; index < 6; index++) {
-      final angle = math.pi * 2 * index / 6;
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: center + Offset(math.cos(angle) * 10, math.sin(angle) * 10),
-          width: 15,
-          height: 20,
-        ),
-        petalPaint,
-      );
-    }
-    canvas.drawCircle(center, 8, Paint()..color = AppPalette.mango);
-    final leafPaint = Paint()..color = AppPalette.mint;
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.37, size.height * 0.58),
-        width: 22,
-        height: 13,
-      ),
-      leafPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _CauseScenePainter oldDelegate) =>
-      oldDelegate.scene != scene ||
-      oldDelegate.color != color ||
-      oldDelegate.highlighted != highlighted;
-}
-
-class _CauseResultPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final sparkle = Paint()..color = Colors.white.withValues(alpha: 0.95);
-    final center = Offset(size.width / 2, size.height * 0.42);
-    canvas.drawCircle(center, 12, sparkle);
-    final check = Paint()
-      ..color = AppPalette.teal
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-    final path = Path()
-      ..moveTo(center.dx - 7, center.dy)
-      ..lineTo(center.dx - 2, center.dy + 6)
-      ..lineTo(center.dx + 9, center.dy - 8);
-    canvas.drawPath(path, check);
-
-    final dotPaint = Paint()..color = Colors.white.withValues(alpha: 0.50);
-    canvas.drawCircle(
-        Offset(size.width * 0.34, size.height * 0.70), 2.5, dotPaint);
-    canvas.drawCircle(
-        Offset(size.width * 0.64, size.height * 0.76), 2, dotPaint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _CauseResultPainter oldDelegate) => false;
-}
-
-class _SpaceProofStage extends StatelessWidget {
-  const _SpaceProofStage({required this.accent, required this.compact});
-
-  final Color accent;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: compact ? 286 : 328,
-          height: compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF202C64), Color(0xFF5D4C92)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomPaint(
-                  painter: _SpaceProofBoardPainter(accent),
-                  child: const SizedBox.expand(),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const _ProofEliminationChip(
-                    shape: _ProofShape.triangle,
-                    color: AppPalette.mango,
-                  ),
-                  const SizedBox(height: 8),
-                  const _ProofEliminationChip(
-                    shape: _ProofShape.square,
-                    color: AppPalette.sky,
-                  ),
-                  const SizedBox(height: 8),
-                  _ProofAnswerChip(color: accent),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-enum _ProofShape { triangle, circle, square }
-
-class _ProofEliminationChip extends StatelessWidget {
-  const _ProofEliminationChip({required this.shape, required this.color});
-
-  final _ProofShape shape;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 46,
-      height: 32,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.90),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: CustomPaint(
-        painter: _ProofShapePainter(
-          shape: shape,
-          color: color,
-          crossed: true,
-        ),
-      ),
-    );
-  }
-}
-
-class _ProofAnswerChip extends StatelessWidget {
-  const _ProofAnswerChip({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 46,
-      height: 44,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.34),
-            blurRadius: 14,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: CustomPaint(
-        painter: _ProofShapePainter(
-          shape: _ProofShape.circle,
-          color: color,
-          glowing: true,
-        ),
-      ),
-    );
-  }
-}
-
-class _SpaceProofBoardPainter extends CustomPainter {
-  const _SpaceProofBoardPainter(this.accent);
-
-  final Color accent;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final starPaint = Paint()..color = Colors.white.withValues(alpha: 0.70);
-    for (final offset in const [
-      Offset(0.10, 0.18),
-      Offset(0.26, 0.74),
-      Offset(0.40, 0.28),
-      Offset(0.70, 0.18),
-      Offset(0.84, 0.70),
-    ]) {
-      canvas.drawCircle(
-        Offset(size.width * offset.dx, size.height * offset.dy),
-        2.1,
-        starPaint,
-      );
-    }
-
-    final orbit = Paint()
-      ..color = Colors.white.withValues(alpha: 0.22)
-      ..strokeWidth = 2.2
-      ..style = PaintingStyle.stroke;
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(size.width * 0.50, size.height * 0.54),
-        width: size.width * 0.82,
-        height: size.height * 0.54,
-      ),
-      orbit,
-    );
-
-    _drawPlanet(canvas, size, Offset(size.width * 0.26, size.height * 0.52),
-        AppPalette.mango, _ProofShape.triangle, false);
-    _drawPlanet(canvas, size, Offset(size.width * 0.50, size.height * 0.38),
-        AppPalette.sky, _ProofShape.square, false);
-    _drawPlanet(canvas, size, Offset(size.width * 0.72, size.height * 0.57),
-        accent, _ProofShape.circle, true);
-
-    final beam = Paint()
-      ..color = AppPalette.mint.withValues(alpha: 0.34)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      Offset(size.width * 0.60, size.height * 0.76),
-      Offset(size.width * 0.78, size.height * 0.62),
-      beam,
-    );
-    canvas.drawCircle(
-      Offset(size.width * 0.58, size.height * 0.78),
-      7,
-      Paint()..color = AppPalette.mint,
-    );
-  }
-
-  void _drawPlanet(
-    Canvas canvas,
-    Size size,
-    Offset center,
-    Color color,
-    _ProofShape shape,
-    bool selected,
-  ) {
-    canvas.drawCircle(
-      center.translate(0, 6),
-      selected ? 23 : 18,
-      Paint()..color = Colors.black.withValues(alpha: 0.12),
-    );
-    canvas.drawCircle(
-      center,
-      selected ? 22 : 18,
-      Paint()
-        ..shader = RadialGradient(
-          colors: [Colors.white.withValues(alpha: 0.88), color],
-        ).createShader(Rect.fromCircle(center: center, radius: 24)),
-    );
-    final glyphSize = selected ? 26.0 : 22.0;
-    _paintProofShape(
-      canvas,
-      Rect.fromCenter(center: center, width: glyphSize, height: glyphSize),
-      shape,
-      selected ? Colors.white : color.withValues(alpha: 0.88),
-      fill: selected,
-      strokeWidth: 3,
-    );
-    if (!selected) {
-      final cross = Paint()
-        ..color = AppPalette.coral
-        ..strokeWidth = 3
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(
-        center.translate(-14, -14),
-        center.translate(14, 14),
-        cross,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _SpaceProofBoardPainter oldDelegate) =>
-      oldDelegate.accent != accent;
-}
-
-class _ProofShapePainter extends CustomPainter {
-  const _ProofShapePainter({
-    required this.shape,
-    required this.color,
-    this.crossed = false,
-    this.glowing = false,
-  });
-
-  final _ProofShape shape;
-  final Color color;
-  final bool crossed;
-  final bool glowing;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Rect.fromCenter(
-      center: Offset(size.width / 2, size.height / 2),
-      width: size.width * 0.46,
-      height: size.height * 0.46,
-    );
-    if (glowing) {
-      canvas.drawCircle(
-        rect.center,
-        size.shortestSide * 0.36,
-        Paint()..color = color.withValues(alpha: 0.14),
-      );
-    }
-    _paintProofShape(canvas, rect, shape, color, fill: glowing);
-    if (crossed) {
-      final cross = Paint()
-        ..color = AppPalette.coral
-        ..strokeWidth = 3
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(
-        Offset(size.width * 0.28, size.height * 0.72),
-        Offset(size.width * 0.72, size.height * 0.28),
-        cross,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _ProofShapePainter oldDelegate) =>
-      oldDelegate.shape != shape ||
-      oldDelegate.color != color ||
-      oldDelegate.crossed != crossed ||
-      oldDelegate.glowing != glowing;
-}
-
-void _paintProofShape(
-  Canvas canvas,
-  Rect rect,
-  _ProofShape shape,
-  Color color, {
-  bool fill = false,
-  double strokeWidth = 2.4,
-}) {
-  final paint = Paint()
-    ..color = color
-    ..strokeWidth = strokeWidth
-    ..strokeCap = StrokeCap.round
-    ..strokeJoin = StrokeJoin.round
-    ..style = fill ? PaintingStyle.fill : PaintingStyle.stroke;
-
-  switch (shape) {
-    case _ProofShape.triangle:
-      final path = Path()
-        ..moveTo(rect.center.dx, rect.top)
-        ..lineTo(rect.right, rect.bottom)
-        ..lineTo(rect.left, rect.bottom)
-        ..close();
-      canvas.drawPath(path, paint);
-    case _ProofShape.circle:
-      canvas.drawCircle(rect.center, rect.shortestSide / 2, paint);
-    case _ProofShape.square:
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, Radius.circular(rect.width * 0.18)),
-        paint,
-      );
-  }
-}
-
-class _WordBuilderStage extends StatefulWidget {
-  const _WordBuilderStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_WordBuilderStage> createState() => _WordBuilderStageState();
-}
-
-class _WordBuilderStageState extends State<_WordBuilderStage> {
-  final List<int> _picked = [];
-  bool _submitted = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final target = _wordTokensFor(context, 'word_star');
-    final letters = _wordBuilderLettersFor(context);
-    final pickedLetters = [for (final index in _picked) letters[index]];
-    final solved = _sameTokenList(pickedLetters, target);
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 98 : 116,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFF2C6), Color(0xFFE6F8F5)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 7,
-                  runSpacing: 7,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    for (var index = 0; index < letters.length; index++)
-                      _InteractiveLetterTile(
-                        label: letters[index],
-                        selected: _picked.contains(index),
-                        color: widget.accent,
-                        onTap: () {
-                          setState(() {
-                            if (_picked.contains(index)) {
-                              _picked.remove(index);
-                              _submitted = false;
-                            } else {
-                              if (_picked.length >= target.length) {
-                                _picked.removeAt(0);
-                              }
-                              _picked.add(index);
-                            }
-                          });
-
-                          final candidate = [
-                            for (final pickedIndex in _picked)
-                              letters[pickedIndex],
-                          ];
-                          if (!_submitted &&
-                              _sameTokenList(candidate, target)) {
-                            _submitted = true;
-                            widget.onAnswerSelected('word_star');
-                          }
-                        },
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                width: 96,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: solved ? AppPalette.mint : Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: solved
-                        ? AppPalette.teal
-                        : widget.accent.withValues(alpha: 0.24),
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.accent.withValues(alpha: 0.12),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Wrap(
-                      spacing: 3,
-                      runSpacing: 3,
-                      alignment: WrapAlignment.center,
-                      children: [
-                        for (var index = 0; index < target.length; index++)
-                          _WordBuildSlot(
-                            label: index < pickedLetters.length
-                                ? pickedLetters[index]
-                                : '',
-                            solved: solved,
-                            color: widget.accent,
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 7),
-                    BouncyTap(
-                      borderRadius: BorderRadius.circular(12),
-                      onTap: () => setState(() {
-                        _picked.clear();
-                        _submitted = false;
-                      }),
-                      child: Icon(
-                        Icons.refresh_rounded,
-                        color: widget.accent,
-                        size: 22,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LetterFieldStage extends StatefulWidget {
-  const _LetterFieldStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_LetterFieldStage> createState() => _LetterFieldStageState();
-}
-
-class _LetterFieldStageState extends State<_LetterFieldStage> {
-  final Set<int> _selected = {};
-  bool _submitted = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final target = _wordTokensFor(context, 'word_moon');
-    final grid = _letterFieldGridFor(context);
-    final targetIndexes = _letterFieldTargetIndexes(target.length);
-    final solved = targetIndexes.every(_selected.contains) &&
-        _selected.length == target.length;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 106 : 124,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF26316A), Color(0xFF5B3E82)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: grid.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 5,
-                    mainAxisSpacing: 5,
-                    crossAxisSpacing: 5,
-                  ),
-                  itemBuilder: (context, index) {
-                    final selected = _selected.contains(index);
-                    final isTarget = targetIndexes.contains(index);
-                    return _FieldLetterCell(
-                      label: grid[index],
-                      selected: selected,
-                      hinted: isTarget && solved,
-                      color: widget.accent,
-                      onTap: () => setState(() {
-                        if (selected) {
-                          _selected.remove(index);
-                          _submitted = false;
-                        } else {
-                          _selected.add(index);
-                        }
-                        final solvedNow =
-                            targetIndexes.every(_selected.contains) &&
-                                _selected.length == target.length;
-                        if (!_submitted && solvedNow) {
-                          _submitted = true;
-                          widget.onAnswerSelected('word_moon');
-                        }
-                      }),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              Container(
-                width: 82,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.13),
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: Colors.white24),
-                ),
-                alignment: Alignment.center,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    context.l10n.answerLabel('word_moon'),
-                    maxLines: 1,
-                    style: TextStyle(
-                      color: solved ? AppPalette.mint : Colors.white,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _InteractiveLetterTile extends StatelessWidget {
-  const _InteractiveLetterTile({
-    required this.label,
-    required this.selected,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 38,
-        height: 38,
-        decoration: BoxDecoration(
-          color: selected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: selected ? Colors.white : color.withValues(alpha: 0.28),
-            width: selected ? 2 : 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: selected ? 0.24 : 0.10),
-              blurRadius: 9,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected ? Colors.white : color,
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _WordBuildSlot extends StatelessWidget {
-  const _WordBuildSlot({
-    required this.label,
-    required this.solved,
-    required this.color,
-  });
-
-  final String label;
-  final bool solved;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: 24,
-      height: 28,
-      decoration: BoxDecoration(
-        color: solved
-            ? AppPalette.mint
-            : label.isEmpty
-                ? color.withValues(alpha: 0.10)
-                : Colors.white,
-        borderRadius: BorderRadius.circular(9),
-        border: Border.all(
-          color: solved
-              ? AppPalette.teal
-              : label.isEmpty
-                  ? color.withValues(alpha: 0.26)
-                  : color.withValues(alpha: 0.48),
-          width: solved ? 2 : 1.2,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label.isEmpty ? 'вЂў' : label,
-        maxLines: 1,
-        overflow: TextOverflow.clip,
-        style: TextStyle(
-          color: solved
-              ? AppPalette.teal
-              : label.isEmpty
-                  ? color.withValues(alpha: 0.38)
-                  : AppPalette.ink,
-          fontSize: label.length > 1 ? 10 : 14,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _FieldLetterCell extends StatelessWidget {
-  const _FieldLetterCell({
-    required this.label,
-    required this.selected,
-    required this.hinted,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final bool hinted;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        decoration: BoxDecoration(
-          color:
-              selected || hinted ? color : Colors.white.withValues(alpha: 0.10),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selected || hinted ? Colors.white : Colors.white24,
-            width: selected || hinted ? 2 : 1,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: selected || hinted ? Colors.white : Colors.white70,
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-List<String> _wordBuilderLettersFor(BuildContext context) {
-  final language = Localizations.localeOf(context).languageCode;
-  return switch (language) {
-    'ru' => const ['Р—', 'Р›', 'Р’', 'Р•', 'Р—', 'Р”', 'Рђ', 'Рћ'],
-    'de' => const ['S', 'M', 'T', 'E', 'R', 'N', 'O'],
-    'es' => const ['E', 'S', 'T', 'R', 'E', 'L', 'L', 'A'],
-    'fr' => const ['Г‰', 'T', 'O', 'I', 'L', 'E', 'U'],
-    'hi' => const ['а¤¤а¤ѕ', 'а¤°а¤ѕ', 'а¤ёаҐ‚', 'а¤°а¤њ', 'а¤ља¤ѕа¤Ѓ', 'а¤¦'],
-    'it' => const ['S', 'T', 'E', 'L', 'L', 'A', 'O'],
-    'ja' => const ['гЃ»', 'гЃ—', 'гЃ¤', 'гЃЌ', 'гЃџ', 'гЃ„'],
-    'ko' => const ['лі„', 'л‹¬', 'н•ґ', 'л№›'],
-    'pt' => const ['E', 'S', 'T', 'R', 'E', 'L', 'A'],
-    'ar' => const ['Щ†', 'Ш¬', 'Щ…', 'Щ‚', 'Ш±', 'Шґ'],
-    'zh' => const ['жџ', 'жџ', 'жњ€', 'дє®', 'е¤Є', 'йі'],
-    _ => const ['S', 'M', 'T', 'A', 'R', 'O', 'N'],
-  };
-}
-
-List<String> _wordTokensFor(BuildContext context, String key) {
-  final language = Localizations.localeOf(context).languageCode;
-  if (key == 'word_moon') {
-    return switch (language) {
-      'ru' => const ['Р›', 'РЈ', 'Рќ', 'Рђ'],
-      'de' => const ['M', 'O', 'N', 'D'],
-      'es' => const ['L', 'U', 'N', 'A'],
-      'fr' => const ['L', 'U', 'N', 'E'],
-      'hi' => const ['а¤ља¤ѕа¤Ѓ', 'а¤¦'],
-      'it' => const ['L', 'U', 'N', 'A'],
-      'ja' => const ['гЃ¤', 'гЃЌ'],
-      'ko' => const ['л‹¬'],
-      'pt' => const ['L', 'U', 'A'],
-      'ar' => const ['Щ‚', 'Щ…', 'Ш±'],
-      'zh' => const ['жњ€', 'дє®'],
-      _ => const ['M', 'O', 'O', 'N'],
-    };
-  }
-
-  if (key == 'word_sun') {
-    return switch (language) {
-      'ru' => const ['РЎ', 'Рћ', 'Р›', 'Рќ', 'Р¦', 'Р•'],
-      'de' => const ['S', 'O', 'N', 'N', 'E'],
-      'es' => const ['S', 'O', 'L'],
-      'fr' => const ['S', 'O', 'L', 'E', 'I', 'L'],
-      'hi' => const ['а¤ёаҐ‚', 'а¤°а¤њ'],
-      'it' => const ['S', 'O', 'L', 'E'],
-      'ja' => const ['гЃџ', 'гЃ„', 'г‚€', 'гЃ†'],
-      'ko' => const ['н•ґ'],
-      'pt' => const ['S', 'O', 'L'],
-      'ar' => const ['Шґ', 'Щ…', 'Ші'],
-      'zh' => const ['е¤Є', 'йі'],
-      _ => const ['S', 'U', 'N'],
-    };
-  }
-
-  return switch (language) {
-    'ru' => const ['Р—', 'Р’', 'Р•', 'Р—', 'Р”', 'Рђ'],
-    'de' => const ['S', 'T', 'E', 'R', 'N'],
-    'es' => const ['E', 'S', 'T', 'R', 'E', 'L', 'L', 'A'],
-    'fr' => const ['Г‰', 'T', 'O', 'I', 'L', 'E'],
-    'hi' => const ['а¤¤а¤ѕ', 'а¤°а¤ѕ'],
-    'it' => const ['S', 'T', 'E', 'L', 'L', 'A'],
-    'ja' => const ['гЃ»', 'гЃ—'],
-    'ko' => const ['лі„'],
-    'pt' => const ['E', 'S', 'T', 'R', 'E', 'L', 'A'],
-    'ar' => const ['Щ†', 'Ш¬', 'Щ…'],
-    'zh' => const ['жџ', 'жџ'],
-    _ => const ['S', 'T', 'A', 'R'],
-  };
-}
-
-List<String> _letterFieldGridFor(BuildContext context) {
-  final target = _wordTokensFor(context, 'word_moon');
-  final filler = [
-    ..._wordTokensFor(context, 'word_star'),
-    ..._wordTokensFor(context, 'word_sun'),
-    ..._wordBuilderLettersFor(context),
-  ];
-  final cells =
-      List<String>.generate(20, (index) => filler[index % filler.length]);
-  final start = _letterFieldTargetIndexes(target.length).first;
-  for (var i = 0; i < target.length; i++) {
-    cells[start + i] = target[i];
-  }
-  return cells;
-}
-
-List<int> _letterFieldTargetIndexes(int length) {
-  const start = 6;
-  return [for (var i = 0; i < length.clamp(1, 5); i++) start + i];
-}
-
-bool _sameTokenList(List<String> left, List<String> right) {
-  if (left.length != right.length) {
-    return false;
-  }
-
-  for (var index = 0; index < left.length; index++) {
-    if (left[index] != right[index]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-class _MiniSudokuStage extends StatefulWidget {
-  const _MiniSudokuStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_MiniSudokuStage> createState() => _MiniSudokuStageState();
-}
-
-class _MiniSudokuStageState extends State<_MiniSudokuStage> {
-  String? _selected;
-
-  void _select(String symbol) {
-    setState(() => _selected = symbol);
-    if (symbol == 'rocket') {
-      widget.onAnswerSelected('shape_rocket');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const rows = [
-      ['star', 'moon', 'rocket', 'planet'],
-      ['planet', 'rocket', 'star', 'moon'],
-      ['moon', 'star', null, 'planet'],
-      ['rocket', 'planet', 'moon', 'star'],
-    ];
-    final solved = _selected == 'rocket';
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 132,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE9F9FF), Color(0xFFFFF4CF)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 128,
-                child: GridView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 16,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 4,
-                    crossAxisSpacing: 4,
-                  ),
-                  itemBuilder: (context, index) {
-                    final row = index ~/ 4;
-                    final col = index % 4;
-                    final symbol = rows[row][col] ?? _selected;
-                    return _SudokuSymbolTile(
-                      symbol: symbol,
-                      accent: widget.accent,
-                      missing: rows[row][col] == null,
-                      solved: solved && rows[row][col] == null,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (final symbol in const ['star', 'moon', 'rocket'])
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: _SudokuChoice(
-                          symbol: symbol,
-                          selected: _selected == symbol,
-                          accent: widget.accent,
-                          onTap: () => _select(symbol),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SudokuSymbolTile extends StatelessWidget {
-  const _SudokuSymbolTile({
-    required this.symbol,
-    required this.accent,
-    required this.missing,
-    required this.solved,
-  });
-
-  final String? symbol;
-  final Color accent;
-  final bool missing;
-  final bool solved;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = _sudokuColorFor(symbol, accent);
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      decoration: BoxDecoration(
-        color: solved ? AppPalette.mint : Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: missing ? accent : color.withValues(alpha: 0.28),
-          width: missing ? 2 : 1,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Text(
-          _sudokuGlyphFor(symbol),
-          style: TextStyle(
-            color: symbol == null ? accent : color,
-            fontSize: 20,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SudokuChoice extends StatelessWidget {
-  const _SudokuChoice({
-    required this.symbol,
-    required this.selected,
-    required this.accent,
-    required this.onTap,
-  });
-
-  final String symbol;
-  final bool selected;
-  final Color accent;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(16),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        height: 30,
-        decoration: BoxDecoration(
-          color: selected ? accent : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: selected ? Colors.white : accent),
-          boxShadow: [
-            BoxShadow(
-              color: accent.withValues(alpha: selected ? 0.22 : 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: Text(
-          _sudokuGlyphFor(symbol),
-          style: TextStyle(
-            color: selected ? Colors.white : _sudokuColorFor(symbol, accent),
-            fontSize: 18,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-String _sudokuGlyphFor(String? symbol) {
-  return switch (symbol) {
-    'star' => 'в…',
-    'moon' => 'в—ђ',
-    'rocket' => 'в–І',
-    'planet' => 'в—Џ',
-    _ => '?',
-  };
-}
-
-Color _sudokuColorFor(String? symbol, Color accent) {
-  return switch (symbol) {
-    'star' => AppPalette.mango,
-    'moon' => AppPalette.lavender,
-    'rocket' => accent,
-    'planet' => AppPalette.teal,
-    _ => accent,
-  };
-}
-
-class _LogicHousesStage extends StatefulWidget {
-  const _LogicHousesStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_LogicHousesStage> createState() => _LogicHousesStageState();
-}
-
-class _LogicHousesStageState extends State<_LogicHousesStage> {
-  String? _selected;
-
-  void _select(String id) {
-    setState(() => _selected = id);
-    if (id == 'green') {
-      widget.onAnswerSelected('house_green');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 108 : 124,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE7FAF1), Color(0xFFE9ECFF)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _ClueHouse(
-                      id: 'blue',
-                      color: AppPalette.sky,
-                      selected: _selected == 'blue',
-                      onTap: () => _select('blue'),
-                    ),
-                    _ClueHouse(
-                      id: 'yellow',
-                      color: AppPalette.mango,
-                      selected: _selected == 'yellow',
-                      onTap: () => _select('yellow'),
-                    ),
-                    _ClueHouse(
-                      id: 'green',
-                      color: AppPalette.teal,
-                      selected: _selected == 'green',
-                      onTap: () => _select('green'),
-                      marked: _selected == 'green',
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _ClueChip(label: 'в… в‰ ', color: AppPalette.sky),
-                  SizedBox(height: 7),
-                  _ClueChip(label: 'в… >', color: AppPalette.mango),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ClueHouse extends StatelessWidget {
-  const _ClueHouse({
-    required this.id,
-    required this.color,
-    required this.selected,
-    required this.onTap,
-    this.marked = false,
-  });
-
-  final String id;
-  final Color color;
-  final bool selected;
-  final bool marked;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(16),
-      onTap: onTap,
-      child: SizedBox(
-        width: 54,
-        height: 82,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            CustomPaint(
-              size: const Size(54, 74),
-              painter: _HousePainter(color, selected),
-            ),
-            Positioned(
-              bottom: 15,
-              child: Text(
-                id == 'blue'
-                    ? 'A'
-                    : id == 'yellow'
-                        ? 'B'
-                        : 'C',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            if (marked)
-              Positioned(
-                top: 3,
-                right: 3,
-                child: Container(
-                  width: 22,
-                  height: 22,
-                  decoration: const BoxDecoration(
-                    color: AppPalette.mango,
-                    shape: BoxShape.circle,
-                  ),
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'в…',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HousePainter extends CustomPainter {
-  const _HousePainter(this.color, this.selected);
-
-  final Color color;
-  final bool selected;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final body = Rect.fromLTWH(9, 30, size.width - 18, size.height - 34);
-    final roof = Path()
-      ..moveTo(size.width / 2, 7)
-      ..lineTo(size.width - 4, 33)
-      ..lineTo(4, 33)
-      ..close();
-
-    canvas.drawPath(
-      roof.shift(const Offset(0, 3)),
-      Paint()..color = AppPalette.ink.withValues(alpha: 0.08),
-    );
-    canvas.drawPath(roof, Paint()..color = color);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(body, const Radius.circular(11)),
-      Paint()..color = selected ? color : color.withValues(alpha: 0.76),
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(body, const Radius.circular(11)),
-      Paint()
-        ..color = Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = selected ? 3 : 1.5,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _HousePainter oldDelegate) =>
-      oldDelegate.color != color || oldDelegate.selected != selected;
-}
-
-class _ClueChip extends StatelessWidget {
-  const _ClueChip({required this.label, required this.color});
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 62,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.34)),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.w900,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-}
-
 class _CodeLockStage extends StatefulWidget {
   const _CodeLockStage({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -7143,7 +3470,7 @@ class _CodeLockStageState extends State<_CodeLockStage> {
     }
     setState(() => _digits.add(digit));
     if (_digits.join() == '248') {
-      widget.onAnswerSelected('248');
+      widget.onAnswerSelected(widget.correctAnswer);
     }
   }
 
@@ -7920,8 +4247,14 @@ class _MathStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final customStage =
-        _customMathStageFor(puzzle.id, accent, compact, onAnswerSelected);
+    final customStage = _customMathStageFor(
+      puzzle.id,
+      accent,
+      compact,
+      answerRuleForPuzzle(puzzle).correctAnswer,
+      context.l10n.puzzleTitle(puzzle),
+      onAnswerSelected,
+    );
 
     if (customStage != null) {
       return _StageShell(
@@ -7954,62 +4287,100 @@ Widget? _customMathStageFor(
   String puzzleId,
   Color accent,
   bool compact,
+  String correctAnswer,
+  String semanticLabel,
   ValueChanged<String> onAnswerSelected,
 ) {
   return switch (puzzleId) {
     'fruit-fizz' => _FruitFizzStage(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
         onAnswerSelected: onAnswerSelected,
       ),
-    'moon-clock' => _MoonClockStage(
+    'moon-clock' => MoonClockGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
-    'notebook-sum' => _NotebookSumStage(
+    'notebook-sum' => NotebookSumWorkshopGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
     'cookie-share' => _CookieShareStage(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
         onAnswerSelected: onAnswerSelected,
       ),
-    'math-crossword' => _MathCrosswordStage(
+    'math-crossword' => MathCrosswordWorkshopGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
-    'market-change' => _MarketChangeStage(
+    'market-change' => MarketChangeWorkshopGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
-    'number-bridge' => _NumberBridgeGameStage(
+    'number-bridge' => NumberBridgeReasoningGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
-    'star-balance' => _StarBalanceGameStage(
+    'star-balance' => StarBalanceReasoningGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
     'count-rockets' => _CountRocketsGameStage(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
         onAnswerSelected: onAnswerSelected,
       ),
-    'number-neighbors' => _NumberNeighborsGameStage(
+    'number-neighbors' => NumberNeighborsReasoningGameView(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        semanticLabel: semanticLabel,
         onAnswerSelected: onAnswerSelected,
       ),
     'planet-sum' => _PlanetSumGameStage(
         accent: accent,
         compact: compact,
+        correctAnswer: correctAnswer,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'cube-groups' => _CubeGroupsGameStage(
+        accent: accent,
+        compact: compact,
+        correctAnswer: correctAnswer,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'more-less' => _MoreLessGameStage(
+        accent: accent,
+        compact: compact,
+        correctAnswer: correctAnswer,
+        onAnswerSelected: onAnswerSelected,
+      ),
+    'sticker-shop' => _StickerShopGameStage(
+        accent: accent,
+        compact: compact,
+        correctAnswer: correctAnswer,
         onAnswerSelected: onAnswerSelected,
       ),
     _ => null,
@@ -8020,11 +4391,13 @@ class _FruitFizzStage extends StatefulWidget {
   const _FruitFizzStage({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -8043,7 +4416,7 @@ class _FruitFizzStageState extends State<_FruitFizzStage> {
     setState(() => _added += 1);
     if (!_submitted && _added == 3) {
       _submitted = true;
-      widget.onAnswerSelected('3');
+      widget.onAnswerSelected(widget.correctAnswer);
     }
   }
 
@@ -8425,558 +4798,17 @@ class _BlenderPainter extends CustomPainter {
       oldDelegate.active != active;
 }
 
-class _MoonClockStage extends StatefulWidget {
-  const _MoonClockStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_MoonClockStage> createState() => _MoonClockStageState();
-}
-
-class _MoonClockStageState extends State<_MoonClockStage> {
-  String? _selectedTime;
-  String? _wrongTime;
-
-  void _choose(String time) {
-    setState(() {
-      _selectedTime = time;
-      _wrongTime = time == '3:00' ? null : time;
-    });
-
-    if (time == '3:00') {
-      widget.onAnswerSelected(time);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 96 : 114,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF20225B), Color(0xFF0F6FA8)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              DragTarget<String>(
-                onWillAcceptWithDetails: (_) => true,
-                onAcceptWithDetails: (details) => _choose(details.data),
-                builder: (context, candidateData, rejectedData) {
-                  return AnimatedScale(
-                    duration: const Duration(milliseconds: 140),
-                    scale: candidateData.isNotEmpty ? 1.05 : 1,
-                    child: SizedBox(
-                      width: 86,
-                      height: 86,
-                      child: CustomPaint(
-                        painter: _ClockFacePainter(
-                          widget.accent,
-                          time: _selectedTime,
-                          active: candidateData.isNotEmpty,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const Spacer(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _SpacePebble(
-                    color: AppPalette.lavender,
-                    size: widget.compact ? 22 : 26,
-                  ),
-                  const SizedBox(height: 7),
-                  for (final time in const ['3:00', '6:00', '12:15']) ...[
-                    _TimeChoiceChip(
-                      time: time,
-                      selected: _selectedTime == time,
-                      wrong: _wrongTime == time,
-                      onTap: () => _choose(time),
-                    ),
-                    if (time != '12:15') const SizedBox(height: 5),
-                  ],
-                ],
-              ),
-              const Spacer(),
-              _SpacePebble(
-                color: AppPalette.mango,
-                size: widget.compact ? 30 : 36,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ClockFacePainter extends CustomPainter {
-  const _ClockFacePainter(
-    this.accent, {
-    this.time,
-    this.active = false,
-  });
-
-  final Color accent;
-  final String? time;
-  final bool active;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.shortestSide * 0.46;
-    canvas.drawCircle(center, radius, Paint()..color = const Color(0xFFFFD86B));
-    canvas.drawCircle(
-      center,
-      radius,
-      Paint()
-        ..color = active ? AppPalette.mint : Colors.white
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = active ? 4 : 3,
-    );
-
-    for (var index = 1; index <= 12; index++) {
-      final angle = (index - 3) * math.pi / 6;
-      final labelOffset = Offset(
-        math.cos(angle) * radius * 0.72,
-        math.sin(angle) * radius * 0.72,
-      );
-      final painter = TextPainter(
-        text: TextSpan(
-          text: '$index',
-          style: const TextStyle(
-            color: AppPalette.ink,
-            fontSize: 10,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr,
-      )..layout();
-      painter.paint(
-        canvas,
-        center + labelOffset - Offset(painter.width / 2, painter.height / 2),
-      );
-    }
-
-    if (time == null) {
-      final question = TextPainter(
-        text: const TextSpan(
-          text: '?',
-          style: TextStyle(
-            color: AppPalette.coral,
-            fontSize: 28,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      question.paint(
-        canvas,
-        center - Offset(question.width / 2, question.height / 2),
-      );
-      return;
-    }
-
-    final (hourAngle, minuteAngle) = switch (time) {
-      '6:00' => (math.pi / 2, -math.pi / 2),
-      '12:15' => (-math.pi / 2, 0.0),
-      _ => (0.0, -math.pi / 2),
-    };
-    final minutePaint = Paint()
-      ..color = AppPalette.coral
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round;
-    final hourPaint = Paint()
-      ..color = accent
-      ..strokeWidth = 5
-      ..strokeCap = StrokeCap.round;
-    canvas.drawLine(
-      center,
-      center +
-          Offset(
-            math.cos(minuteAngle) * radius * 0.64,
-            math.sin(minuteAngle) * radius * 0.64,
-          ),
-      minutePaint,
-    );
-    canvas.drawLine(
-      center,
-      center +
-          Offset(
-            math.cos(hourAngle) * radius * 0.55,
-            math.sin(hourAngle) * radius * 0.55,
-          ),
-      hourPaint,
-    );
-    canvas.drawCircle(center, radius * 0.11, Paint()..color = AppPalette.coral);
-  }
-
-  @override
-  bool shouldRepaint(covariant _ClockFacePainter oldDelegate) =>
-      oldDelegate.accent != accent ||
-      oldDelegate.time != time ||
-      oldDelegate.active != active;
-}
-
-class _TimeChoiceChip extends StatelessWidget {
-  const _TimeChoiceChip({
-    required this.time,
-    required this.selected,
-    required this.wrong,
-    required this.onTap,
-  });
-
-  final String time;
-  final bool selected;
-  final bool wrong;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = wrong
-        ? AppPalette.coral
-        : selected
-            ? AppPalette.mint
-            : Colors.white;
-    final visual = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: 74,
-      height: 27,
-      decoration: BoxDecoration(
-        color: selected && !wrong ? AppPalette.mint : AppPalette.ink,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color, width: selected || wrong ? 2 : 1.2),
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        time,
-        style: TextStyle(
-          color: selected && !wrong ? AppPalette.teal : Colors.white,
-          fontWeight: FontWeight.w900,
-          fontSize: 14,
-        ),
-      ),
-    );
-
-    return Draggable<String>(
-      data: time,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Transform.scale(scale: 1.12, child: visual),
-      ),
-      childWhenDragging: Opacity(opacity: 0.35, child: visual),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: visual,
-      ),
-    );
-  }
-}
-
-class _SpacePebble extends StatelessWidget {
-  const _SpacePebble({required this.color, required this.size});
-
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.28),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Align(
-        alignment: Alignment.topLeft,
-        child: Container(
-          width: size * 0.32,
-          height: size * 0.32,
-          margin: EdgeInsets.all(size * 0.18),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.34),
-            shape: BoxShape.circle,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NotebookSumStage extends StatefulWidget {
-  const _NotebookSumStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_NotebookSumStage> createState() => _NotebookSumStageState();
-}
-
-class _NotebookSumStageState extends State<_NotebookSumStage> {
-  String? _answer;
-  bool _submitted = false;
-
-  void _choose(String value) {
-    setState(() => _answer = value);
-    if (!_submitted && value == '35') {
-      _submitted = true;
-      widget.onAnswerSelected(value);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final solved = _answer == '35';
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 98 : 116,
-          padding: const EdgeInsets.fromLTRB(18, 10, 18, 12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFD9AA), Color(0xFFE8D7FF)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 136,
-                padding: const EdgeInsets.fromLTRB(18, 12, 16, 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.accent.withValues(alpha: 0.16),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const _NotebookLine(text: '15'),
-                    const _NotebookLine(text: '+ 20'),
-                    const Divider(
-                      height: 10,
-                      thickness: 2,
-                      color: AppPalette.sky,
-                    ),
-                    DragTarget<String>(
-                      onWillAcceptWithDetails: (_) => true,
-                      onAcceptWithDetails: (details) => _choose(details.data),
-                      builder: (context, candidateData, rejectedData) {
-                        return AnimatedScale(
-                          duration: const Duration(milliseconds: 150),
-                          scale: candidateData.isNotEmpty ? 1.08 : 1,
-                          child: _NotebookAnswerLine(
-                            text: _answer ?? '?',
-                            solved: solved,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const Spacer(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _NumberTile(
-                    label: '25',
-                    color: AppPalette.sky,
-                    selected: _answer == '25',
-                    onTap: () => _choose('25'),
-                  ),
-                  const SizedBox(height: 7),
-                  _NumberTile(
-                    label: '35',
-                    color: AppPalette.teal,
-                    selected: _answer == '35',
-                    onTap: () => _choose('35'),
-                  ),
-                  const SizedBox(height: 7),
-                  _NumberTile(
-                    label: '45',
-                    color: AppPalette.lavender,
-                    selected: _answer == '45',
-                    onTap: () => _choose('45'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NotebookAnswerLine extends StatelessWidget {
-  const _NotebookAnswerLine({required this.text, required this.solved});
-
-  final String text;
-  final bool solved;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      width: 58,
-      height: 26,
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.only(right: 4),
-      decoration: BoxDecoration(
-        color: solved ? AppPalette.mint.withValues(alpha: 0.38) : Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: solved
-              ? AppPalette.teal
-              : AppPalette.coral.withValues(alpha: 0.34),
-        ),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: solved ? AppPalette.teal : AppPalette.coral,
-          fontWeight: FontWeight.w900,
-          fontSize: 18,
-          height: 1,
-        ),
-      ),
-    );
-  }
-}
-
-class _NotebookLine extends StatelessWidget {
-  const _NotebookLine({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: AppPalette.ink,
-        fontWeight: FontWeight.w900,
-        fontSize: 17,
-        height: 1.05,
-      ),
-    );
-  }
-}
-
-class _NumberTile extends StatelessWidget {
-  const _NumberTile({
-    required this.label,
-    required this.color,
-    this.onTap,
-    this.selected = false,
-  });
-
-  final String label;
-  final Color color;
-  final VoidCallback? onTap;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final tile = Container(
-      width: 60,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(
-        color: selected ? color : Colors.white.withValues(alpha: 0.82),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: selected ? Colors.white : color, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: selected ? 0.24 : 0.12),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: TextStyle(
-          color: selected ? Colors.white : color,
-          fontWeight: FontWeight.w900,
-          fontSize: 15,
-        ),
-      ),
-    );
-
-    return Draggable<String>(
-      data: label,
-      feedback: Material(
-        color: Colors.transparent,
-        child: Transform.scale(scale: 1.12, child: tile),
-      ),
-      childWhenDragging: Opacity(opacity: 0.32, child: tile),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(14),
-        onTap: onTap,
-        child: tile,
-      ),
-    );
-  }
-}
-
 class _CookieShareStage extends StatefulWidget {
   const _CookieShareStage({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -8997,7 +4829,7 @@ class _CookieShareStageState extends State<_CookieShareStage> {
     setState(() => _plates[index] += 1);
     if (!_submitted && _plates.every((count) => count == 2)) {
       _submitted = true;
-      widget.onAnswerSelected('2');
+      widget.onAnswerSelected(widget.correctAnswer);
     }
   }
 
@@ -9221,1032 +5053,17 @@ class _CookieDropPlate extends StatelessWidget {
   }
 }
 
-class _MathCrosswordStage extends StatefulWidget {
-  const _MathCrosswordStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_MathCrosswordStage> createState() => _MathCrosswordStageState();
-}
-
-class _MathCrosswordStageState extends State<_MathCrosswordStage> {
-  String? _selected;
-
-  @override
-  Widget build(BuildContext context) {
-    final solved = _selected == '8';
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 98 : 116,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE8F5FF), Color(0xFFFFF1C6)],
-            ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: 8,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const _CrosswordCell(label: '3'),
-                          const _CrosswordCell(label: '+'),
-                          const _CrosswordCell(label: '5'),
-                          const _CrosswordCell(label: '='),
-                          _CrosswordDropCell(
-                            label: _selected ?? '?',
-                            color: solved ? AppPalette.teal : widget.accent,
-                            solved: solved,
-                            onAccept: _placeNumber,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      top: 40,
-                      child: Column(
-                        children: [
-                          _CrosswordDropCell(
-                            label: _selected ?? '?',
-                            color: solved ? AppPalette.teal : widget.accent,
-                            solved: solved,
-                            onAccept: _placeNumber,
-                          ),
-                          const _CrosswordCell(label: '-'),
-                          const _CrosswordCell(label: '2'),
-                          const _CrosswordCell(label: '='),
-                          const _CrosswordCell(label: '6'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (final value in const ['7', '8', '9'])
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      child: _NumberChoiceChip(
-                        label: value,
-                        selected: _selected == value,
-                        color: widget.accent,
-                        onTap: () => _placeNumber(value),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _placeNumber(String value) {
-    setState(() => _selected = value);
-    widget.onAnswerSelected(value);
-  }
-}
-
-class _CrosswordCell extends StatelessWidget {
-  const _CrosswordCell({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 30,
-      height: 30,
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppPalette.sky.withValues(alpha: 0.34)),
-        boxShadow: [
-          BoxShadow(
-            color: AppPalette.sky.withValues(alpha: 0.08),
-            blurRadius: 7,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: AppPalette.ink,
-          fontSize: 15,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-}
-
-class _CrosswordDropCell extends StatelessWidget {
-  const _CrosswordDropCell({
-    required this.label,
-    required this.color,
-    required this.solved,
-    required this.onAccept,
-  });
-
-  final String label;
-  final Color color;
-  final bool solved;
-  final ValueChanged<String> onAccept;
-
-  @override
-  Widget build(BuildContext context) {
-    return DragTarget<String>(
-      onWillAcceptWithDetails: (_) => true,
-      onAcceptWithDetails: (details) => onAccept(details.data),
-      builder: (context, candidateData, rejectedData) {
-        final hovering = candidateData.isNotEmpty;
-        return AnimatedScale(
-          scale: hovering ? 1.10 : 1,
-          duration: const Duration(milliseconds: 140),
-          child: Container(
-            width: 34,
-            height: 34,
-            margin: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: solved
-                  ? AppPalette.mint
-                  : hovering
-                      ? color.withValues(alpha: 0.72)
-                      : color,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.white, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: hovering ? 0.34 : 0.22),
-                  blurRadius: hovering ? 14 : 8,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 17,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _NumberChoiceChip extends StatelessWidget {
-  const _NumberChoiceChip({
-    required this.label,
-    required this.selected,
-    required this.color,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final tile = BouncyTap(
-      borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
-      child: _NumberDragVisual(
-        label: label,
-        selected: selected,
-        color: color,
-      ),
-    );
-
-    return Draggable<String>(
-      data: label,
-      feedback: Material(
-        color: Colors.transparent,
-        child: _NumberDragVisual(
-          label: label,
-          selected: true,
-          color: color,
-          lifted: true,
-        ),
-      ),
-      childWhenDragging: Opacity(opacity: 0.32, child: tile),
-      child: tile,
-    );
-  }
-}
-
-class _NumberDragVisual extends StatelessWidget {
-  const _NumberDragVisual({
-    required this.label,
-    required this.selected,
-    required this.color,
-    this.lifted = false,
-  });
-
-  final String label;
-  final bool selected;
-  final Color color;
-  final bool lifted;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: lifted ? 58 : 46,
-      height: lifted ? 38 : 28,
-      decoration: BoxDecoration(
-        color: selected ? color : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: selected ? Colors.white : color),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: lifted ? 0.30 : 0.12),
-            blurRadius: lifted ? 16 : 8,
-            offset: Offset(0, lifted ? 8 : 4),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        label,
-        style: TextStyle(
-          color: selected ? Colors.white : color,
-          fontWeight: FontWeight.w900,
-          fontSize: lifted ? 18 : 15,
-        ),
-      ),
-    );
-  }
-}
-
-class _MarketChangeStage extends StatefulWidget {
-  const _MarketChangeStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_MarketChangeStage> createState() => _MarketChangeStageState();
-}
-
-class _MarketChangeStageState extends State<_MarketChangeStage> {
-  bool _bought = false;
-  bool _submitted = false;
-
-  void _buyRocket() {
-    if (_bought) {
-      return;
-    }
-
-    setState(() => _bought = true);
-    if (!_submitted) {
-      _submitted = true;
-      widget.onAnswerSelected('2');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final remaining = _bought ? 2 : 5;
-    final rocketCard = _ShopRocketCard(
-      bought: _bought,
-      accent: widget.accent,
-      onTap: _buyRocket,
-    );
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 110 : 128,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFF6D8), Color(0xFFEAF7FF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    for (var index = 0; index < 5; index++)
-                      _MarketStarCoin(spent: _bought && index < 3),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              Draggable<String>(
-                data: 'rocket',
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: Transform.scale(scale: 1.05, child: rocketCard),
-                ),
-                childWhenDragging: Opacity(opacity: 0.36, child: rocketCard),
-                child: rocketCard,
-              ),
-              const SizedBox(width: 10),
-              DragTarget<String>(
-                onWillAcceptWithDetails: (details) => details.data == 'rocket',
-                onAcceptWithDetails: (_) => _buyRocket(),
-                builder: (context, candidateData, rejectedData) {
-                  final active = candidateData.isNotEmpty;
-
-                  return AnimatedScale(
-                    duration: const Duration(milliseconds: 140),
-                    scale: active ? 1.05 : 1,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      width: widget.compact ? 62 : 72,
-                      height: widget.compact ? 78 : 92,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(
-                          color: (_bought ? AppPalette.mint : widget.accent)
-                              .withValues(alpha: active ? 0.62 : 0.34),
-                          width: _bought || active ? 2 : 1.2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: (_bought ? AppPalette.mint : widget.accent)
-                                .withValues(alpha: 0.14),
-                            blurRadius: 12,
-                            offset: const Offset(0, 7),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: AppPalette.mango,
-                            size: widget.compact ? 24 : 30,
-                          ),
-                          Text(
-                            '$remaining',
-                            style: TextStyle(
-                              color: _bought ? AppPalette.mint : widget.accent,
-                              fontSize: widget.compact ? 22 : 28,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MarketStarCoin extends StatelessWidget {
-  const _MarketStarCoin({required this.spent});
-
-  final bool spent;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 180),
-      opacity: spent ? 0.28 : 1,
-      child: AnimatedScale(
-        duration: const Duration(milliseconds: 180),
-        scale: spent ? 0.82 : 1,
-        child: Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFF2A6), Color(0xFFFFC84D)],
-            ),
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: [
-              BoxShadow(
-                color: AppPalette.mango.withValues(alpha: 0.24),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: const Icon(
-            Icons.star_rounded,
-            color: Colors.white,
-            size: 19,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ShopRocketCard extends StatelessWidget {
-  const _ShopRocketCard({
-    required this.bought,
-    required this.accent,
-    required this.onTap,
-  });
-
-  final bool bought;
-  final Color accent;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(24),
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        width: 82,
-        height: 92,
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color:
-              bought ? AppPalette.mint.withValues(alpha: 0.16) : Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: (bought ? AppPalette.mint : accent).withValues(alpha: 0.36),
-            width: bought ? 2.2 : 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: accent.withValues(alpha: 0.14),
-              blurRadius: 12,
-              offset: const Offset(0, 7),
-            ),
-          ],
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Positioned(
-              top: 5,
-              child: Icon(
-                Icons.rocket_launch_rounded,
-                color: bought ? AppPalette.mint : AppPalette.coral,
-                size: 38,
-              ),
-            ),
-            Positioned(
-              bottom: 2,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppPalette.mango.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Row(
-                  children: [
-                    Text(
-                      '3',
-                      style: TextStyle(
-                        color: AppPalette.ink,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    SizedBox(width: 2),
-                    Icon(
-                      Icons.star_rounded,
-                      color: AppPalette.mango,
-                      size: 15,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NumberBridgeGameStage extends StatefulWidget {
-  const _NumberBridgeGameStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_NumberBridgeGameStage> createState() => _NumberBridgeGameStageState();
-}
-
-class _NumberBridgeGameStageState extends State<_NumberBridgeGameStage> {
-  String? _placed;
-  bool _submitted = false;
-
-  void _place(String value) {
-    setState(() => _placed = value);
-    if (!_submitted && value == '5') {
-      _submitted = true;
-      widget.onAnswerSelected(value);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 132,
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE7FBFF), Color(0xFFFFF1C8)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(
-                        painter: _NumberRiverPainter(widget.accent),
-                      ),
-                    ),
-                    Positioned(
-                      left: 14,
-                      top: 8,
-                      child: _BridgeStone(label: '1', color: AppPalette.sky),
-                    ),
-                    Positioned(
-                      left: 70,
-                      top: 20,
-                      child: _BridgeStone(label: '2', color: AppPalette.teal),
-                    ),
-                    Positioned(
-                      left: 126,
-                      top: 7,
-                      child:
-                          _BridgeStone(label: '3', color: AppPalette.lavender),
-                    ),
-                    Positioned(
-                      right: 76,
-                      top: 20,
-                      child: _BridgeStone(label: '4', color: AppPalette.sky),
-                    ),
-                    Positioned(
-                      right: 14,
-                      top: 8,
-                      child: _NumberDropPad(
-                        value: _placed,
-                        placeholder: '?',
-                        color: AppPalette.mango,
-                        solved: _placed == '5',
-                        onAccept: _place,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 7),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _NumberTile(
-                    label: '4',
-                    color: AppPalette.sky,
-                    selected: _placed == '4',
-                    onTap: () => _place('4'),
-                  ),
-                  const SizedBox(width: 10),
-                  _NumberTile(
-                    label: '5',
-                    color: AppPalette.teal,
-                    selected: _placed == '5',
-                    onTap: () => _place('5'),
-                  ),
-                  const SizedBox(width: 10),
-                  _NumberTile(
-                    label: '6',
-                    color: AppPalette.lavender,
-                    selected: _placed == '6',
-                    onTap: () => _place('6'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NumberRiverPainter extends CustomPainter {
-  const _NumberRiverPainter(this.accent);
-
-  final Color accent;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final river = Path()
-      ..moveTo(0, size.height * 0.60)
-      ..cubicTo(
-        size.width * 0.25,
-        size.height * 0.36,
-        size.width * 0.54,
-        size.height * 0.86,
-        size.width,
-        size.height * 0.48,
-      )
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-
-    canvas.drawPath(
-      river,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            accent.withValues(alpha: 0.18),
-            AppPalette.sky.withValues(alpha: 0.36),
-          ],
-        ).createShader(Offset.zero & size),
-    );
-
-    final sparkle = Paint()
-      ..color = Colors.white.withValues(alpha: 0.62)
-      ..strokeWidth = 2
-      ..strokeCap = StrokeCap.round;
-    for (final point in const [
-      Offset(0.18, 0.72),
-      Offset(0.45, 0.55),
-      Offset(0.72, 0.74),
-    ]) {
-      final center = Offset(size.width * point.dx, size.height * point.dy);
-      canvas.drawLine(center.translate(-5, 0), center.translate(5, 0), sparkle);
-      canvas.drawLine(center.translate(0, -5), center.translate(0, 5), sparkle);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _NumberRiverPainter oldDelegate) =>
-      oldDelegate.accent != accent;
-}
-
-class _BridgeStone extends StatelessWidget {
-  const _BridgeStone({required this.label, required this.color});
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return _StageToken(label: label, color: color, size: 42);
-  }
-}
-
-class _NumberDropPad extends StatelessWidget {
-  const _NumberDropPad({
-    required this.value,
-    required this.placeholder,
-    required this.color,
-    required this.solved,
-    required this.onAccept,
-  });
-
-  final String? value;
-  final String placeholder;
-  final Color color;
-  final bool solved;
-  final ValueChanged<String> onAccept;
-
-  @override
-  Widget build(BuildContext context) {
-    return DragTarget<String>(
-      onWillAcceptWithDetails: (_) => true,
-      onAcceptWithDetails: (details) => onAccept(details.data),
-      builder: (context, candidateData, rejectedData) {
-        final active = candidateData.isNotEmpty;
-
-        return AnimatedScale(
-          duration: const Duration(milliseconds: 150),
-          scale: active ? 1.08 : 1,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: 50,
-            height: 42,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: solved ? AppPalette.mint : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: solved
-                    ? AppPalette.teal
-                    : color.withValues(alpha: active ? 0.80 : 0.42),
-                width: solved || active ? 2.4 : 1.6,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withValues(alpha: active ? 0.24 : 0.12),
-                  blurRadius: active ? 18 : 10,
-                  offset: Offset(0, active ? 8 : 5),
-                ),
-              ],
-            ),
-            child: Text(
-              value ?? placeholder,
-              style: TextStyle(
-                color: solved ? AppPalette.teal : color,
-                fontSize: 20,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _StarBalanceGameStage extends StatefulWidget {
-  const _StarBalanceGameStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_StarBalanceGameStage> createState() => _StarBalanceGameStageState();
-}
-
-class _StarBalanceGameStageState extends State<_StarBalanceGameStage> {
-  String? _weight;
-  bool _submitted = false;
-
-  void _place(String value) {
-    setState(() => _weight = value);
-    if (!_submitted && value == '4') {
-      _submitted = true;
-      widget.onAnswerSelected(value);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final number = int.tryParse(_weight ?? '') ?? 0;
-    final tilt = _weight == null
-        ? -0.05
-        : number == 4
-            ? 0.0
-            : number < 4
-                ? -0.12
-                : 0.12;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 132,
-          padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFFFF3BF), Color(0xFFE9F8FF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      bottom: 9,
-                      child: Container(
-                        width: 16,
-                        height: 68,
-                        decoration: BoxDecoration(
-                          color: widget.accent,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      child: Container(
-                        width: 76,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: widget.accent.withValues(alpha: 0.24),
-                          borderRadius: BorderRadius.circular(99),
-                        ),
-                      ),
-                    ),
-                    AnimatedRotation(
-                      duration: const Duration(milliseconds: 220),
-                      turns: tilt / (2 * math.pi),
-                      child: SizedBox(
-                        width: 194,
-                        height: 94,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(
-                              width: 156,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: widget.accent,
-                                borderRadius: BorderRadius.circular(99),
-                              ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              bottom: 0,
-                              child: _ScalePan(
-                                color: AppPalette.mango,
-                                child: const _StarPile(count: 4),
-                              ),
-                            ),
-                            Positioned(
-                              right: 0,
-                              bottom: 0,
-                              child: _ScalePan(
-                                color: AppPalette.teal,
-                                child: _NumberDropPad(
-                                  value: _weight,
-                                  placeholder: '?',
-                                  color: AppPalette.teal,
-                                  solved: _weight == '4',
-                                  onAccept: _place,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (final value in const ['3', '4', '5']) ...[
-                    _NumberTile(
-                      label: value,
-                      color: value == '4' ? AppPalette.teal : AppPalette.sky,
-                      selected: _weight == value,
-                      onTap: () => _place(value),
-                    ),
-                    if (value != '5') const SizedBox(height: 7),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ScalePan extends StatelessWidget {
-  const _ScalePan({required this.color, required this.child});
-
-  final Color color;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 74,
-      height: 54,
-      padding: const EdgeInsets.all(6),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.34)),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.14),
-            blurRadius: 12,
-            offset: const Offset(0, 7),
-          ),
-        ],
-      ),
-      child: Center(child: child),
-    );
-  }
-}
-
-class _StarPile extends StatelessWidget {
-  const _StarPile({required this.count});
-
-  final int count;
-
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 2,
-      runSpacing: 1,
-      alignment: WrapAlignment.center,
-      children: [
-        for (var index = 0; index < count; index++)
-          const Icon(
-            Icons.star_rounded,
-            color: AppPalette.mango,
-            size: 17,
-          ),
-      ],
-    );
-  }
-}
-
 class _CountRocketsGameStage extends StatefulWidget {
   const _CountRocketsGameStage({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -10265,7 +5082,7 @@ class _CountRocketsGameStageState extends State<_CountRocketsGameStage> {
     setState(() => _counted.add(index));
     if (!_submitted && _counted.length == 6) {
       _submitted = true;
-      widget.onAnswerSelected('6');
+      widget.onAnswerSelected(widget.correctAnswer);
     }
   }
 
@@ -10472,125 +5289,17 @@ class _TinyRocketPainter extends CustomPainter {
       oldDelegate.color != color || oldDelegate.counted != counted;
 }
 
-class _NumberNeighborsGameStage extends StatefulWidget {
-  const _NumberNeighborsGameStage({
-    required this.accent,
-    required this.compact,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_NumberNeighborsGameStage> createState() =>
-      _NumberNeighborsGameStageState();
-}
-
-class _NumberNeighborsGameStageState extends State<_NumberNeighborsGameStage> {
-  String? _placed;
-  bool _submitted = false;
-
-  void _place(String value) {
-    setState(() => _placed = value);
-    if (!_submitted && value == '7') {
-      _submitted = true;
-      widget.onAnswerSelected(value);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 112 : 128,
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFF0ECFF), Color(0xFFE3FAF5)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Container(
-                      height: 18,
-                      decoration: BoxDecoration(
-                        color: widget.accent.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _StageToken(
-                          label: '6',
-                          color: AppPalette.sky,
-                          size: 50,
-                        ),
-                        _PathLink(color: widget.accent),
-                        _NumberDropPad(
-                          value: _placed,
-                          placeholder: '?',
-                          color: AppPalette.mango,
-                          solved: _placed == '7',
-                          onAccept: _place,
-                        ),
-                        _PathLink(color: widget.accent),
-                        _StageToken(
-                          label: '8',
-                          color: AppPalette.sky,
-                          size: 50,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (final value in const ['6', '7', '8']) ...[
-                    _NumberTile(
-                      label: value,
-                      color:
-                          value == '7' ? AppPalette.teal : AppPalette.lavender,
-                      selected: _placed == value,
-                      onTap: () => _place(value),
-                    ),
-                    if (value != '8') const SizedBox(width: 10),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _PlanetSumGameStage extends StatefulWidget {
   const _PlanetSumGameStage({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -10609,7 +5318,7 @@ class _PlanetSumGameStageState extends State<_PlanetSumGameStage> {
     setState(() => _added += 1);
     if (!_submitted && _added == 2) {
       _submitted = true;
-      widget.onAnswerSelected('5');
+      widget.onAnswerSelected(widget.correctAnswer);
     }
   }
 
@@ -10827,6 +5536,501 @@ class _PlanetDraggable extends StatelessWidget {
   }
 }
 
+class _CubeGroupsGameStage extends StatefulWidget {
+  const _CubeGroupsGameStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
+
+  final Color accent;
+  final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_CubeGroupsGameStage> createState() => _CubeGroupsGameStageState();
+}
+
+class _CubeGroupsGameStageState extends State<_CubeGroupsGameStage> {
+  final List<int> _left = [];
+  final List<int> _right = [];
+  bool _submitted = false;
+
+  void _place(int cube, bool left) {
+    if (_left.contains(cube) || _right.contains(cube)) return;
+    setState(() => (left ? _left : _right).add(cube));
+    if (!_submitted && _left.length == 2 && _right.length == 2) {
+      _submitted = true;
+      widget.onAnswerSelected(widget.correctAnswer);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubeSize = widget.compact ? 34.0 : 40.0;
+    return SizedBox(
+      height: widget.compact ? 132 : 150,
+      child: Column(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                    child: _CubeBasket(color: AppPalette.sky, cubes: _left)),
+                const SizedBox(width: 10),
+                Expanded(
+                    child:
+                        _CubeBasket(color: AppPalette.lavender, cubes: _right)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 9),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(4, (index) {
+              final placed = _left.contains(index) || _right.contains(index);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Opacity(
+                  opacity: placed ? 0.15 : 1,
+                  child: Draggable<int>(
+                    data: index,
+                    maxSimultaneousDrags: placed ? 0 : 1,
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: _ToyCube(
+                          size: cubeSize + 4,
+                          color: index.isEven
+                              ? AppPalette.sky
+                              : AppPalette.lavender),
+                    ),
+                    childWhenDragging:
+                        SizedBox(width: cubeSize, height: cubeSize),
+                    child: _ToyCube(
+                        size: cubeSize,
+                        color: index.isEven
+                            ? AppPalette.sky
+                            : AppPalette.lavender),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CubeBasket extends StatelessWidget {
+  const _CubeBasket({required this.color, required this.cubes});
+
+  final Color color;
+  final List<int> cubes;
+
+  @override
+  Widget build(BuildContext context) {
+    return DragTarget<int>(
+      onWillAcceptWithDetails: (_) => cubes.length < 2,
+      onAcceptWithDetails: (details) {
+        final state =
+            context.findAncestorStateOfType<_CubeGroupsGameStageState>();
+        state?._place(details.data, color == AppPalette.sky);
+      },
+      builder: (context, candidates, rejected) => AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        decoration: BoxDecoration(
+          color: candidates.isNotEmpty
+              ? color.withValues(alpha: 0.22)
+              : Colors.white.withValues(alpha: 0.78),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+              color: color.withValues(alpha: 0.55),
+              width: candidates.isNotEmpty ? 3 : 2),
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+                bottom: 8,
+                left: 12,
+                right: 12,
+                child: Container(
+                    height: 7,
+                    decoration: BoxDecoration(
+                        color: color.withValues(alpha: 0.22),
+                        borderRadius: BorderRadius.circular(8)))),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: cubes
+                  .map((id) => Padding(
+                        padding: const EdgeInsets.all(3),
+                        child: _ToyCube(
+                            size: 34,
+                            color: id.isEven
+                                ? AppPalette.sky
+                                : AppPalette.lavender),
+                      ))
+                  .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ToyCube extends StatelessWidget {
+  const _ToyCube({required this.size, required this.color});
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, color.withValues(alpha: 0.9)]),
+          borderRadius: BorderRadius.circular(size * 0.25),
+          border: Border.all(color: Colors.white, width: 2),
+          boxShadow: [
+            BoxShadow(
+                color: color.withValues(alpha: 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4))
+          ],
+        ),
+        child: Align(
+          alignment: const Alignment(-0.35, -0.35),
+          child: Container(
+              width: size * 0.2,
+              height: size * 0.2,
+              decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  shape: BoxShape.circle)),
+        ),
+      );
+}
+
+class _MoreLessGameStage extends StatefulWidget {
+  const _MoreLessGameStage(
+      {required this.accent,
+      required this.compact,
+      required this.correctAnswer,
+      required this.onAnswerSelected});
+  final Color accent;
+  final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_MoreLessGameStage> createState() => _MoreLessGameStageState();
+}
+
+class _MoreLessGameStageState extends State<_MoreLessGameStage> {
+  final Set<int> _paired = {};
+  bool _submitted = false;
+
+  void _pair(int item, int target) {
+    if (item != target || _paired.contains(item)) return;
+    setState(() => _paired.add(item));
+  }
+
+  void _finish() {
+    if (_paired.length != 3 || _submitted) return;
+    _submitted = true;
+    widget.onAnswerSelected(widget.correctAnswer);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: widget.compact ? 132 : 150,
+      child: Row(
+        children: [
+          Expanded(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 7,
+              runSpacing: 8,
+              children: List.generate(4, (index) {
+                final paired = _paired.contains(index);
+                final extra = index == 3;
+                final ready = extra && _paired.length == 3;
+                final token = _PairingToken(
+                  color: AppPalette.teal,
+                  paired: paired,
+                  ready: ready,
+                );
+                if (extra) {
+                  return BouncyTap(
+                    borderRadius: BorderRadius.circular(22),
+                    onTap: ready ? _finish : null,
+                    child: token,
+                  );
+                }
+                return Opacity(
+                  opacity: paired ? 0.2 : 1,
+                  child: Draggable<int>(
+                    data: index,
+                    maxSimultaneousDrags: paired ? 0 : 1,
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: Transform.scale(scale: 1.12, child: token),
+                    ),
+                    childWhenDragging: const SizedBox(width: 44, height: 44),
+                    child: token,
+                  ),
+                );
+              }),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Icon(Icons.arrow_forward_rounded,
+                color: widget.accent, size: 30),
+          ),
+          Expanded(
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 7,
+              runSpacing: 8,
+              children: List.generate(3, (index) {
+                return DragTarget<int>(
+                  onWillAcceptWithDetails: (details) =>
+                      details.data == index && !_paired.contains(index),
+                  onAcceptWithDetails: (details) => _pair(details.data, index),
+                  builder: (context, candidates, rejected) => _PairingTarget(
+                    color: AppPalette.lavender,
+                    filled: _paired.contains(index),
+                    active: candidates.isNotEmpty,
+                  ),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PairingToken extends StatelessWidget {
+  const _PairingToken({
+    required this.color,
+    required this.paired,
+    required this.ready,
+  });
+
+  final Color color;
+  final bool paired;
+  final bool ready;
+
+  @override
+  Widget build(BuildContext context) => AnimatedScale(
+        duration: const Duration(milliseconds: 200),
+        scale: ready ? 1.14 : 1,
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.white, color.withValues(alpha: 0.55)]),
+            shape: BoxShape.circle,
+            border: Border.all(
+                color: ready ? AppPalette.mango : color.withValues(alpha: 0.45),
+                width: ready ? 3 : 1.5),
+            boxShadow: [
+              BoxShadow(
+                  color: color.withValues(alpha: 0.2),
+                  blurRadius: ready ? 14 : 7,
+                  offset: const Offset(0, 4))
+            ],
+          ),
+          child: Icon(paired ? Icons.check_rounded : Icons.star_rounded,
+              color: paired ? AppPalette.teal : color, size: 23),
+        ),
+      );
+}
+
+class _PairingTarget extends StatelessWidget {
+  const _PairingTarget({
+    required this.color,
+    required this.filled,
+    required this.active,
+  });
+
+  final Color color;
+  final bool filled;
+  final bool active;
+
+  @override
+  Widget build(BuildContext context) => AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: filled
+              ? color.withValues(alpha: 0.65)
+              : Colors.white.withValues(alpha: active ? 0.95 : 0.55),
+          shape: BoxShape.circle,
+          border: Border.all(
+              color: active ? AppPalette.teal : color.withValues(alpha: 0.5),
+              width: active ? 3 : 2),
+        ),
+        child: Icon(filled ? Icons.check_rounded : Icons.star_border_rounded,
+            color: filled ? Colors.white : color.withValues(alpha: 0.7),
+            size: 23),
+      );
+}
+
+class _StickerShopGameStage extends StatefulWidget {
+  const _StickerShopGameStage(
+      {required this.accent,
+      required this.compact,
+      required this.correctAnswer,
+      required this.onAnswerSelected});
+  final Color accent;
+  final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_StickerShopGameStage> createState() => _StickerShopGameStageState();
+}
+
+class _StickerShopGameStageState extends State<_StickerShopGameStage> {
+  int _bought = 0;
+  bool _submitted = false;
+
+  void _buy() {
+    if (_bought >= 3) return;
+    setState(() => _bought++);
+    if (_bought == 3 && !_submitted) {
+      _submitted = true;
+      widget.onAnswerSelected(widget.correctAnswer);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: widget.compact ? 132 : 150,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+                6,
+                (index) => AnimatedOpacity(
+                      duration: const Duration(milliseconds: 220),
+                      opacity: index < _bought * 2 ? 0.18 : 1,
+                      child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 2),
+                          child: Icon(Icons.star_rounded,
+                              color: AppPalette.mango, size: 22)),
+                    )),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: BouncyTap(
+                    borderRadius: BorderRadius.circular(22),
+                    onTap: _buy,
+                    child: Draggable<int>(
+                      data: 1,
+                      maxSimultaneousDrags: _bought < 3 ? 1 : 0,
+                      feedback: const Material(
+                          color: Colors.transparent,
+                          child: _StickerPack(size: 62)),
+                      childWhenDragging: const Opacity(
+                          opacity: 0.3, child: _StickerPack(size: 58)),
+                      child: const _StickerPack(size: 58),
+                    ),
+                  ),
+                ),
+                Icon(Icons.arrow_forward_rounded,
+                    color: widget.accent, size: 30),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: DragTarget<int>(
+                    onAcceptWithDetails: (_) => _buy(),
+                    builder: (context, candidates, rejected) =>
+                        AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      decoration: BoxDecoration(
+                          color: candidates.isNotEmpty
+                              ? AppPalette.teal.withValues(alpha: 0.2)
+                              : Colors.white.withValues(alpha: 0.8),
+                          borderRadius: BorderRadius.circular(22),
+                          border: Border.all(
+                              color: AppPalette.teal.withValues(alpha: 0.45),
+                              width: candidates.isNotEmpty ? 3 : 2)),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          const Icon(Icons.shopping_basket_rounded,
+                              color: AppPalette.teal, size: 52),
+                          Positioned(
+                              top: 6,
+                              right: 8,
+                              child: Container(
+                                  width: 26,
+                                  height: 26,
+                                  alignment: Alignment.center,
+                                  decoration: const BoxDecoration(
+                                      color: AppPalette.coral,
+                                      shape: BoxShape.circle),
+                                  child: Text('$_bought',
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w900)))),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StickerPack extends StatelessWidget {
+  const _StickerPack({required this.size});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+              colors: [Color(0xFFFFE7A2), Color(0xFFFFA9C2)]),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: Colors.white, width: 3),
+          boxShadow: [
+            BoxShadow(
+                color: AppPalette.coral.withValues(alpha: 0.25),
+                blurRadius: 10,
+                offset: const Offset(0, 5))
+          ],
+        ),
+        child: const Icon(Icons.auto_awesome_rounded,
+            color: Colors.white, size: 30),
+      );
+}
+
 List<Widget> _mathStageItemsFor(
   String puzzleId,
   Color accent,
@@ -11031,14 +6235,71 @@ class _MathSign extends StatelessWidget {
   }
 }
 
-class _ConstellationRouteStage extends StatelessWidget {
+class _ConstellationRouteStage extends StatefulWidget {
   const _ConstellationRouteStage({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
+
+  @override
+  State<_ConstellationRouteStage> createState() =>
+      _ConstellationRouteStageState();
+}
+
+class _ConstellationRouteStageState extends State<_ConstellationRouteStage> {
+  int _progress = -1;
+  bool _dragging = false;
+  bool _submitted = false;
+
+  List<Offset> _stars(Size size) => [
+        Offset(size.width * 0.12, size.height * 0.68),
+        Offset(size.width * 0.30, size.height * 0.42),
+        Offset(size.width * 0.48, size.height * 0.56),
+        Offset(size.width * 0.66, size.height * 0.30),
+        Offset(size.width * 0.84, size.height * 0.52),
+      ];
+
+  void _start(DragStartDetails details, Size size) {
+    if (_submitted) return;
+    if ((details.localPosition - _stars(size).first).distance <= 28) {
+      setState(() {
+        _dragging = true;
+        _progress = 0;
+      });
+    }
+  }
+
+  void _trace(DragUpdateDetails details, Size size) {
+    if (!_dragging || _submitted) return;
+    final stars = _stars(size);
+    final next = _progress + 1;
+    if (next < stars.length &&
+        (details.localPosition - stars[next]).distance <= 27) {
+      setState(() => _progress = next);
+      if (next == stars.length - 1) {
+        _dragging = false;
+        _submitted = true;
+        Future<void>.delayed(const Duration(milliseconds: 520), () {
+          if (mounted) widget.onAnswerSelected(widget.correctAnswer);
+        });
+      }
+    }
+  }
+
+  void _end(DragEndDetails details) {
+    if (_submitted) return;
+    setState(() {
+      _dragging = false;
+      _progress = -1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11047,10 +6308,25 @@ class _ConstellationRouteStage extends StatelessWidget {
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: SizedBox(
-          width: compact ? 286 : 328,
-          height: compact ? 94 : 112,
-          child: CustomPaint(
-            painter: _ConstellationPainter(accent),
+          width: widget.compact ? 286 : 328,
+          height: widget.compact ? 94 : 112,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final size = constraints.biggest;
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onPanStart: (details) => _start(details, size),
+                onPanUpdate: (details) => _trace(details, size),
+                onPanEnd: _end,
+                child: CustomPaint(
+                  painter: _ConstellationPainter(
+                    widget.accent,
+                    progress: _progress,
+                    solved: _submitted,
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -11059,9 +6335,15 @@ class _ConstellationRouteStage extends StatelessWidget {
 }
 
 class _ConstellationPainter extends CustomPainter {
-  const _ConstellationPainter(this.accent);
+  const _ConstellationPainter(
+    this.accent, {
+    required this.progress,
+    required this.solved,
+  });
 
   final Color accent;
+  final int progress;
+  final bool solved;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -11083,13 +6365,20 @@ class _ConstellationPainter extends CustomPainter {
       Offset(size.width * 0.66, size.height * 0.30),
       Offset(size.width * 0.84, size.height * 0.52),
     ];
+    final guidePaint = Paint()
+      ..color = Colors.white.withValues(alpha: 0.18)
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
     final pathPaint = Paint()
-      ..color = AppPalette.mint
+      ..color = solved ? AppPalette.mango : AppPalette.mint
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round;
 
     for (var index = 0; index < stars.length - 1; index++) {
-      canvas.drawLine(stars[index], stars[index + 1], pathPaint);
+      canvas.drawLine(stars[index], stars[index + 1], guidePaint);
+      if (index < progress) {
+        canvas.drawLine(stars[index], stars[index + 1], pathPaint);
+      }
     }
 
     for (var index = 0; index < stars.length; index++) {
@@ -11098,8 +6387,10 @@ class _ConstellationPainter extends CustomPainter {
         canvas,
         stars[index],
         isFinish ? size.height * 0.11 : size.height * 0.075,
-        isFinish ? accent : Colors.white,
-        glow: isFinish,
+        index <= progress
+            ? (isFinish ? AppPalette.mango : AppPalette.mint)
+            : Colors.white,
+        glow: index <= progress,
       );
     }
 
@@ -11189,7 +6480,9 @@ class _ConstellationPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _ConstellationPainter oldDelegate) =>
-      oldDelegate.accent != accent;
+      oldDelegate.accent != accent ||
+      oldDelegate.progress != progress ||
+      oldDelegate.solved != solved;
 }
 
 class _PicturePuzzleStage extends StatefulWidget {
@@ -11502,10 +6795,17 @@ class _RocketPuzzlePiecePainter extends CustomPainter {
 }
 
 class _RouteMazeStage extends StatefulWidget {
-  const _RouteMazeStage({required this.accent, required this.compact});
+  const _RouteMazeStage({
+    required this.accent,
+    required this.compact,
+    required this.correctAnswer,
+    required this.onAnswerSelected,
+  });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
+  final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_RouteMazeStage> createState() => _RouteMazeStageState();
@@ -11517,6 +6817,7 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
 
   int _row = 2;
   int _col = 0;
+  bool _submitted = false;
 
   bool get _solved => _cellCode(_row, _col) == _starCell;
 
@@ -11532,6 +6833,13 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
       _row = nextRow;
       _col = nextCol;
     });
+
+    if (nextCell == _starCell && !_submitted) {
+      _submitted = true;
+      Future<void>.delayed(const Duration(milliseconds: 420), () {
+        if (mounted) widget.onAnswerSelected(widget.correctAnswer);
+      });
+    }
   }
 
   static int _cellCode(int row, int col) => row * 4 + col;
@@ -12068,11 +7376,128 @@ class _PathStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (puzzle.id == 'silhouette-build') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: SilhouetteBuildGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'shape-tower') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: ShapeTowerGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'mirror-path') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: MirrorPathGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'rocket-route') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: RocketRouteGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'arrow-maze') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: ArrowMazeGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'shape-turn') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: ShapeTurnGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'final-orbit') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: FinalOrbitGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
+    if (puzzle.id == 'code-grid') {
+      return _StageShell(
+        accent: accent,
+        compact: compact,
+        child: CodeGridGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
+      );
+    }
+
     if (puzzle.id == 'constellation-route') {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _ConstellationRouteStage(accent: accent, compact: compact),
+        child: _ConstellationRouteStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -12080,9 +7505,11 @@ class _PathStage extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: RocketPuzzleGameView(
+        child: RocketAssemblyWorkshopGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12092,7 +7519,13 @@ class _PathStage extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _ShapeTangramStage(accent: accent, compact: compact),
+        child: ShapeTangramGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -12100,7 +7533,12 @@ class _PathStage extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _RouteMazeStage(accent: accent, compact: compact),
+        child: _RouteMazeStage(
+          accent: accent,
+          compact: compact,
+          correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -12482,13 +7920,14 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _PatternSequenceGameStage(
+        child: PatternTrainWorkshopGameView(
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           variant: puzzle.id == 'shape-path'
-              ? _PatternGameVariant.path
-              : _PatternGameVariant.train,
+              ? PatternWorkshopVariant.path
+              : PatternWorkshopVariant.train,
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12498,10 +7937,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _BridgeOrderStage(
+        child: BridgeOrderGameView(
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12511,10 +7951,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _TowerRuleStage(
+        child: TowerRuleGameView(
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12524,10 +7965,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _HomeCluesStage(
+        child: HomeCluesGameView(
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12537,10 +7979,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _OddStepStage(
+        child: OddStepGameView(
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12550,10 +7993,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _SecretCodeStage(
+        child: SecretCodeGameView(
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12563,7 +8007,13 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _WhyChainStage(accent: accent, compact: compact),
+        child: WhyChainGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -12571,7 +8021,13 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _SpaceProofStage(accent: accent, compact: compact),
+        child: SpaceProofGameView(
+          accent: accent,
+          compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
+          onAnswerSelected: onAnswerSelected,
+        ),
       );
     }
 
@@ -12579,9 +8035,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _MiniSudokuStage(
+        child: MiniSudokuBoardGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12591,9 +8049,11 @@ class _PatternStrip extends StatelessWidget {
       return _StageShell(
         accent: accent,
         compact: compact,
-        child: _LogicHousesStage(
+        child: LogicHousesDeductionGameView(
           accent: accent,
           compact: compact,
+          correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12606,6 +8066,7 @@ class _PatternStrip extends StatelessWidget {
         child: _CodeLockStage(
           accent: accent,
           compact: compact,
+          correctAnswer: correctAnswer,
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -12746,7 +8207,7 @@ List<Widget> _logicStageItemsFor(
   };
 }
 
-enum _PatternShape { circle, square, triangle }
+enum _PatternShape { circle, square }
 
 class _PatternItem extends StatelessWidget {
   const _PatternItem({
@@ -12819,426 +8280,6 @@ class _PatternQuestion extends StatelessWidget {
   }
 }
 
-enum _PatternGameVariant { train, path }
-
-class _PatternSequenceGameStage extends StatefulWidget {
-  const _PatternSequenceGameStage({
-    required this.accent,
-    required this.compact,
-    required this.correctAnswer,
-    required this.variant,
-    required this.onAnswerSelected,
-  });
-
-  final Color accent;
-  final bool compact;
-  final String correctAnswer;
-  final _PatternGameVariant variant;
-  final ValueChanged<String> onAnswerSelected;
-
-  @override
-  State<_PatternSequenceGameStage> createState() =>
-      _PatternSequenceGameStageState();
-}
-
-class _PatternSequenceGameStageState extends State<_PatternSequenceGameStage> {
-  _PatternShape? _placedShape;
-  _PatternShape? _wrongShape;
-
-  void _choose(_PatternShape shape) {
-    if (shape == _PatternShape.circle) {
-      setState(() {
-        _placedShape = shape;
-        _wrongShape = null;
-      });
-      widget.onAnswerSelected(widget.correctAnswer);
-      return;
-    }
-
-    setState(() => _wrongShape = shape);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = widget.compact ? 286.0 : 328.0;
-    final height = widget.compact ? 112.0 : 130.0;
-    final cellSize = widget.compact ? 38.0 : 44.0;
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: width,
-          height: height,
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: widget.variant == _PatternGameVariant.path
-                  ? const [Color(0xFFE5FFF7), Color(0xFFFFF1CC)]
-                  : const [Color(0xFFDFF6FF), Color(0xFFFFE8EE)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(
-                        painter: _PatternRailPainter(
-                          widget.accent,
-                          pathMode: widget.variant == _PatternGameVariant.path,
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _PatternGameCell(
-                          shape: _PatternShape.circle,
-                          color: AppPalette.teal,
-                          size: cellSize,
-                        ),
-                        _PatternGameConnector(color: widget.accent),
-                        _PatternGameCell(
-                          shape: _PatternShape.square,
-                          color: const Color(0xFF5F8BEF),
-                          size: cellSize,
-                        ),
-                        _PatternGameConnector(color: widget.accent),
-                        _PatternGameCell(
-                          shape: _PatternShape.circle,
-                          color: AppPalette.teal,
-                          size: cellSize,
-                        ),
-                        _PatternGameConnector(color: widget.accent),
-                        _PatternGameCell(
-                          shape: _PatternShape.square,
-                          color: const Color(0xFF5F8BEF),
-                          size: cellSize,
-                        ),
-                        _PatternGameConnector(color: widget.accent),
-                        DragTarget<_PatternShape>(
-                          onWillAcceptWithDetails: (_) => true,
-                          onAcceptWithDetails: (details) =>
-                              _choose(details.data),
-                          builder: (context, candidateData, rejectedData) {
-                            return _PatternGameCell(
-                              shape: _placedShape,
-                              color: AppPalette.teal,
-                              size: cellSize + 4,
-                              question: _placedShape == null,
-                              active: candidateData.isNotEmpty,
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _PatternShapeDraggable(
-                    shape: _PatternShape.triangle,
-                    color: AppPalette.mango,
-                    wrong: _wrongShape == _PatternShape.triangle,
-                    onTap: () => _choose(_PatternShape.triangle),
-                  ),
-                  const SizedBox(width: 10),
-                  _PatternShapeDraggable(
-                    shape: _PatternShape.circle,
-                    color: AppPalette.teal,
-                    selected: _placedShape == _PatternShape.circle,
-                    onTap: () => _choose(_PatternShape.circle),
-                  ),
-                  const SizedBox(width: 10),
-                  _PatternShapeDraggable(
-                    shape: _PatternShape.square,
-                    color: const Color(0xFF5F8BEF),
-                    wrong: _wrongShape == _PatternShape.square,
-                    onTap: () => _choose(_PatternShape.square),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PatternRailPainter extends CustomPainter {
-  const _PatternRailPainter(this.accent, {required this.pathMode});
-
-  final Color accent;
-  final bool pathMode;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = accent.withValues(alpha: 0.16)
-      ..strokeWidth = pathMode ? 8 : 6
-      ..strokeCap = StrokeCap.round;
-    final y = size.height * 0.45;
-
-    if (pathMode) {
-      final path = Path()
-        ..moveTo(size.width * 0.08, y)
-        ..cubicTo(size.width * 0.22, y - 16, size.width * 0.36, y + 16,
-            size.width * 0.50, y)
-        ..cubicTo(size.width * 0.64, y - 16, size.width * 0.78, y + 16,
-            size.width * 0.92, y);
-      canvas.drawPath(path, paint);
-      return;
-    }
-
-    canvas.drawLine(
-      Offset(size.width * 0.08, y + 20),
-      Offset(size.width * 0.92, y + 20),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _PatternRailPainter oldDelegate) =>
-      oldDelegate.accent != accent || oldDelegate.pathMode != pathMode;
-}
-
-class _PatternGameConnector extends StatelessWidget {
-  const _PatternGameConnector({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 16,
-      height: 5,
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.24),
-        borderRadius: BorderRadius.circular(99),
-      ),
-    );
-  }
-}
-
-class _PatternGameCell extends StatelessWidget {
-  const _PatternGameCell({
-    required this.shape,
-    required this.color,
-    required this.size,
-    this.question = false,
-    this.active = false,
-  });
-
-  final _PatternShape? shape;
-  final Color color;
-  final double size;
-  final bool question;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedScale(
-      duration: const Duration(milliseconds: 150),
-      scale: active ? 1.08 : 1,
-      child: Container(
-        width: size,
-        height: size,
-        decoration: BoxDecoration(
-          color: question
-              ? const Color(0xFFFFE89A)
-              : active
-                  ? color.withValues(alpha: 0.18)
-                  : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: active ? color : Colors.white,
-            width: active ? 2 : 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.12),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        alignment: Alignment.center,
-        child: question
-            ? const Text(
-                '?',
-                style: TextStyle(
-                  color: Color(0xFFFF9F2E),
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                ),
-              )
-            : _PatternShapeMini(
-                shape: shape ?? _PatternShape.circle,
-                color: color,
-                size: size * 0.62,
-              ),
-      ),
-    );
-  }
-}
-
-class _PatternShapeDraggable extends StatelessWidget {
-  const _PatternShapeDraggable({
-    required this.shape,
-    required this.color,
-    required this.onTap,
-    this.selected = false,
-    this.wrong = false,
-  });
-
-  final _PatternShape shape;
-  final Color color;
-  final VoidCallback onTap;
-  final bool selected;
-  final bool wrong;
-
-  @override
-  Widget build(BuildContext context) {
-    final visual = _PatternChoiceVisual(
-      shape: shape,
-      color: wrong ? AppPalette.coral : color,
-      selected: selected,
-      wrong: wrong,
-    );
-
-    return Draggable<_PatternShape>(
-      data: shape,
-      feedback: Material(
-        color: Colors.transparent,
-        child: _PatternChoiceVisual(
-          shape: shape,
-          color: color,
-          selected: true,
-          lifted: true,
-        ),
-      ),
-      childWhenDragging: Opacity(opacity: 0.36, child: visual),
-      child: BouncyTap(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: visual,
-      ),
-    );
-  }
-}
-
-class _PatternChoiceVisual extends StatelessWidget {
-  const _PatternChoiceVisual({
-    required this.shape,
-    required this.color,
-    required this.selected,
-    this.lifted = false,
-    this.wrong = false,
-  });
-
-  final _PatternShape shape;
-  final Color color;
-  final bool selected;
-  final bool lifted;
-  final bool wrong;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      width: lifted ? 48 : 42,
-      height: lifted ? 48 : 42,
-      decoration: BoxDecoration(
-        color: selected ? color : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: wrong ? AppPalette.coral : color.withValues(alpha: 0.48),
-          width: selected ? 2.4 : 1.4,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: lifted || selected ? 0.26 : 0.10),
-            blurRadius: lifted || selected ? 14 : 8,
-            offset: Offset(0, lifted ? 8 : 5),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: _PatternShapeMini(
-        shape: shape,
-        color: selected ? Colors.white : color,
-        size: 23,
-      ),
-    );
-  }
-}
-
-class _PatternShapeMini extends StatelessWidget {
-  const _PatternShapeMini({
-    required this.shape,
-    required this.color,
-    required this.size,
-  });
-
-  final _PatternShape shape;
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    if (shape == _PatternShape.triangle) {
-      return CustomPaint(
-        size: Size.square(size),
-        painter: _TriangleMiniPainter(color),
-      );
-    }
-
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: shape == _PatternShape.circle
-            ? BoxShape.circle
-            : BoxShape.rectangle,
-        borderRadius:
-            shape == _PatternShape.square ? BorderRadius.circular(6) : null,
-      ),
-    );
-  }
-}
-
-class _TriangleMiniPainter extends CustomPainter {
-  const _TriangleMiniPainter(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = Path()
-      ..moveTo(size.width / 2, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-    canvas.drawPath(path, Paint()..color = color);
-  }
-
-  @override
-  bool shouldRepaint(covariant _TriangleMiniPainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
 class _QuestionBubble extends StatelessWidget {
   const _QuestionBubble({
     required this.prompt,
@@ -13259,10 +8300,7 @@ class _QuestionBubble extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            accent.withValues(alpha: 0.12),
-            AppPalette.surfaceBlue,
-          ],
+          colors: [accent.withValues(alpha: 0.12), AppPalette.surfaceBlue],
         ),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: accent.withValues(alpha: 0.14)),
@@ -13344,167 +8382,23 @@ List<_AnswerOptionData> _answerOptionsFor(
 }
 
 IconData _iconForAnswer(String label) {
-  if (label.contains('РљР°СЂС‚РёРЅРєР° 1')) {
-    return Icons.filter_1_rounded;
-  }
-
-  if (label.contains('РљР°СЂС‚РёРЅРєР° 2')) {
-    return Icons.filter_2_rounded;
-  }
-
-  if (label.contains('РљР°СЂС‚РёРЅРєР° 3')) {
-    return Icons.filter_3_rounded;
-  }
-
-  if (label.contains('РЎР»РµРґ 1')) {
-    return Icons.eco_rounded;
-  }
-
-  if (label.contains('РЎР»РµРґ 2')) {
-    return Icons.pets_rounded;
-  }
-
-  if (label.contains('РЎР»РµРґ 3')) {
-    return Icons.star_rounded;
-  }
-
   if (RegExp(r'^\d').hasMatch(label)) {
     return Icons.looks_one_rounded;
   }
 
-  if (label.contains('РљСЂСѓРі')) {
-    return Icons.circle_rounded;
-  }
-
-  if (label.contains('РљРІР°РґСЂР°С‚') || label.contains('РљСѓР±РёРє')) {
-    return Icons.square_rounded;
-  }
-
-  if (label.contains('РўСЂРµСѓРіРѕР»СЊРЅРёРє')) {
-    return Icons.change_history_rounded;
-  }
-
-  if (label.contains('Р—РІРµР·РґР°')) {
-    return Icons.star_rounded;
-  }
-
-  if (label == 'STAR') {
-    return Icons.star_rounded;
-  }
-
-  if (label == 'word_star') {
-    return Icons.star_rounded;
-  }
-
-  if (label == 'word_moon') {
-    return Icons.nightlight_round;
-  }
-
-  if (label == 'word_sun') {
-    return Icons.wb_sunny_rounded;
-  }
-
-  if (label == 'shape_star') {
-    return Icons.star_rounded;
-  }
-
-  if (label == 'shape_moon') {
-    return Icons.nightlight_round;
-  }
-
-  if (label == 'shape_rocket') {
-    return Icons.rocket_launch_rounded;
-  }
-
-  if (label == 'house_blue' ||
-      label == 'house_green' ||
-      label == 'house_yellow') {
-    return Icons.home_rounded;
-  }
-
-  if (label == 'piece_triangle') {
-    return Icons.change_history_rounded;
-  }
-
-  if (label == 'piece_square') {
-    return Icons.square_rounded;
-  }
-
-  if (label == 'piece_circle') {
-    return Icons.circle_rounded;
-  }
-
-  if (label == 'path_A' || label == 'path_B' || label == 'path_C') {
-    return Icons.alt_route_rounded;
-  }
-
-  if (label == 'DOG' || label == 'CAT' || label == 'FOX') {
-    return Icons.pets_rounded;
-  }
-
-  if (label.contains('РљРѕСЃС‚РµСЂ')) {
-    return Icons.local_fire_department_rounded;
-  }
-
-  if (label.contains('РџР°Р»Р°С‚РєР°')) {
-    return Icons.festival_rounded;
-  }
-
-  if (label.contains('РџРѕРґСѓС€РєР°')) {
-    return Icons.bed_rounded;
-  }
-
-  if (label.contains('РЎРµСЂРґС†Рµ')) {
-    return Icons.favorite_rounded;
-  }
-
-  if (label.contains('РћР±Р»Р°РєРѕ')) {
-    return Icons.cloud_rounded;
-  }
-
-  if (label.contains('Р’РІРµСЂС…') || label.contains('РЎРІРµСЂС…Сѓ')) {
-    return Icons.arrow_upward_rounded;
-  }
-
-  if (label.contains('Р’РЅРёР·') || label.contains('РЎРЅРёР·Сѓ')) {
-    return Icons.arrow_downward_rounded;
-  }
-
-  if (label.contains('РЎР»РµРІР°') || label.contains('Р’Р»РµРІРѕ')) {
-    return Icons.arrow_back_rounded;
-  }
-
-  if (label.contains('РЎРїСЂР°РІР°') ||
-      label.contains('Р’РїСЂР°РІРѕ') ||
-      label.contains('Р’РїРµСЂС‘Рґ')) {
-    return Icons.arrow_forward_rounded;
-  }
-
-  if (label.contains('С†РµРЅС‚СЂ')) {
-    return Icons.center_focus_strong_rounded;
-  }
-
-  if (label.contains('РўРµРЅСЊ')) {
-    return Icons.contrast_rounded;
-  }
-
-  if (label.contains('РљР»РµС‚РєР°') || label.contains('Р¤РёРЅРёС€')) {
-    return Icons.grid_view_rounded;
-  }
-
-  if (label.contains('РћСЂР±РёС‚Р°')) {
-    return Icons.public_rounded;
-  }
-
-  if (label.contains('Р”РµС‚Р°Р»Рё')) {
-    return Icons.extension_rounded;
-  }
-
-  if (label.contains('РЅР°РєР»РµР№РєРё')) {
-    return Icons.auto_awesome_rounded;
-  }
-
-  return Icons.touch_app_rounded;
+  return switch (label) {
+    'STAR' || 'word_star' || 'shape_star' => Icons.star_rounded,
+    'word_moon' || 'shape_moon' => Icons.nightlight_round,
+    'word_sun' => Icons.wb_sunny_rounded,
+    'shape_rocket' => Icons.rocket_launch_rounded,
+    'house_blue' || 'house_green' || 'house_yellow' => Icons.home_rounded,
+    'piece_triangle' => Icons.change_history_rounded,
+    'piece_square' => Icons.square_rounded,
+    'piece_circle' => Icons.circle_rounded,
+    'path_A' || 'path_B' || 'path_C' => Icons.alt_route_rounded,
+    'DOG' || 'CAT' || 'FOX' => Icons.pets_rounded,
+    _ => Icons.touch_app_rounded,
+  };
 }
 
 Color _colorForAnswerIndex(int index) {

@@ -210,5 +210,34 @@ First conversion order:
 Acceptance criteria:
 - Converted puzzles feel like mini-games, not button rows.
 - Each scene has visible motion or interaction before the answer is chosen.
+- The child's actions inside the scene determine correctness. A decorative
+  animation followed by the shared three-answer picker does not count as a
+  converted puzzle.
+- Every puzzle family has its own primary interaction: tracing, dragging,
+  sorting, assembling, timing, matching, drawing, balancing, routing, or
+  manipulating a simulated object. Reusing the same interaction requires a
+  meaningfully different rule and play rhythm.
+- Wrong actions produce immediate visual feedback inside the scene without
+  ending the attempt or shaming the child.
+- Game state and answer keys remain locale-independent. Text-heavy puzzles use
+  locale-specific board data for all 12 supported locales, including RTL.
 - Puzzle answer rules stay deterministic and covered by existing rule tests.
 - The locked soft 3D/cartoon visual direction remains intact.
+
+Current audit baseline:
+- 60 puzzle ids in the catalog.
+- 28 currently submit an answer from their scene.
+- 32 still depend on the shared answer picker and require conversion or a
+  scene-state integration pass.
+
+Priority conversion backlog:
+1. `memory-pairs`: flip and match all pairs on a real card grid.
+2. `sound-order`: replay a Simon-style light and sound sequence.
+3. `beacon-signal`: react when a moving beam reaches the requested sector.
+4. `story-order`: drag illustrated events into the correct timeline.
+5. `route-maze`: navigate to the goal and finish from the board state.
+6. `shape-tangram`: drag, rotate, and snap pieces into a silhouette.
+7. `two-differences`: mark differences directly on paired illustrations.
+8. `word-grid`: trace adjacent locale-specific letters or symbols.
+9. `what-changed`: restore a changed object in an animated scene.
+10. `final-orbit`: rotate route tiles and launch the rocket through them.

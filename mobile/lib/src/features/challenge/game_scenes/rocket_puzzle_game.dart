@@ -11,12 +11,14 @@ class RocketPuzzleGameView extends StatelessWidget {
   const RocketPuzzleGameView({
     required this.accent,
     required this.compact,
+    required this.correctAnswer,
     required this.onAnswerSelected,
     super.key,
   });
 
   final Color accent;
   final bool compact;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -31,6 +33,7 @@ class RocketPuzzleGameView extends StatelessWidget {
           child: GameWidget.controlled(
             gameFactory: () => RocketPuzzleGame(
               accent: accent,
+              correctAnswer: correctAnswer,
               onAnswerSelected: onAnswerSelected,
             ),
           ),
@@ -48,10 +51,12 @@ class RocketPuzzleGameView extends StatelessWidget {
 class RocketPuzzleGame extends FlameGame with DragCallbacks {
   RocketPuzzleGame({
     required this.accent,
+    required this.correctAnswer,
     required this.onAnswerSelected,
   });
 
   final Color accent;
+  final String correctAnswer;
   final ValueChanged<String> onAnswerSelected;
 
   String? _selectedPiece;
@@ -140,7 +145,7 @@ class RocketPuzzleGame extends FlameGame with DragCallbacks {
     if (center != null && _targetSlotRect.inflate(18).contains(center)) {
       _placedPiece = dragging;
       _selectedPiece = dragging;
-      onAnswerSelected(dragging);
+      onAnswerSelected(correctAnswer);
     } else {
       _dragCenters.remove(dragging);
     }
