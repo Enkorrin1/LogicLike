@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'LogicLoka';
+  String get appTitle => 'Logic Loka';
 
   @override
   String get loadingMission => 'Preparing the mission...';
@@ -761,7 +761,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'LogicLoka will invite the child back to one short mission.';
+      'Logic Loka will invite the child back to one short mission.';
 
   @override
   String get parentReminderToggleOff =>
@@ -931,4 +931,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountResetDialogAction => 'Got it';
+
+  @override
+  String get puzzleListenPrompt => 'Listen to the task';
+
+  @override
+  String get puzzleStopNarration => 'Stop narration';
 }

@@ -9,7 +9,7 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
-  String get appTitle => 'LogicLoka';
+  String get appTitle => 'Logic Loka';
 
   @override
   String get loadingMission => 'Preparando a missão...';
@@ -271,10 +271,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get parentSubscriptionLaunchBadge => 'preço inicial';
 
   @override
-  String get parentSubscriptionCurrentFree => 'Free';
+  String get parentSubscriptionCurrentFree => 'Grátis';
 
   @override
-  String get parentSubscriptionFreeTitle => 'Free';
+  String get parentSubscriptionFreeTitle => 'Grátis';
 
   @override
   String get parentSubscriptionFreePrice => '\$0';
@@ -297,7 +297,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get parentSubscriptionFreeCta => 'Acesso atual';
 
   @override
-  String get parentSubscriptionPremiumTitle => 'Premium Family';
+  String get parentSubscriptionPremiumTitle => 'Família Premium';
 
   @override
   String get parentSubscriptionPremiumPrice => '\$5.99/mês';
@@ -324,7 +324,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get parentSubscriptionPremiumCta => 'Escolher mensal';
 
   @override
-  String get parentSubscriptionAnnualTitle => 'Annual';
+  String get parentSubscriptionAnnualTitle => 'Anual';
 
   @override
   String get parentSubscriptionAnnualPrice => '\$39.99/ano';
@@ -764,46 +764,46 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'O LogicLoka chamará a criança para uma missão curta.';
+      'O Logic Loka chamará a criança para uma missão curta.';
 
   @override
   String get parentReminderToggleOff =>
       'Os lembretes estão desligados. O app ficará silencioso.';
 
   @override
-  String get parentAccountTitle => 'Account';
+  String get parentAccountTitle => 'Conta';
 
   @override
   String get parentAccountBody =>
-      'Sign in to sync progress, unlock subscriptions and restore purchases on another device.';
+      'Entre para sincronizar o progresso, liberar assinaturas e restaurar compras em outro dispositivo.';
 
   @override
-  String get parentAccountStatusGuest => 'guest';
+  String get parentAccountStatusGuest => 'convidado';
 
   @override
-  String get parentAccountAction => 'Sign in';
+  String get parentAccountAction => 'Entrar';
 
   @override
-  String get accountTitle => 'Account sign in';
+  String get accountTitle => 'Entrar na conta';
 
   @override
-  String get accountHeroTitle => 'Keep the family profile close';
+  String get accountHeroTitle => 'Mantenha o perfil da família por perto';
 
   @override
   String get accountHeroBody =>
-      'Use Google, Apple or email to prepare cloud sync, purchases and safe parent access.';
+      'Use Google, Apple ou e-mail para preparar a sincronização na nuvem, compras e acesso seguro para responsáveis.';
 
   @override
-  String get accountStatusGuest => 'guest mode';
+  String get accountStatusGuest => 'modo convidado';
 
   @override
-  String get accountAppleButton => 'Continue with Apple';
+  String get accountAppleButton => 'Continuar com Apple';
 
   @override
-  String get accountGoogleButton => 'Continue with Google';
+  String get accountGoogleButton => 'Continuar com Google';
 
   @override
-  String get accountAuthLoading => 'Checking...';
+  String get accountAuthLoading => 'Verificando...';
 
   @override
   String get accountProviderGoogle => 'Google';
@@ -815,123 +815,129 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountProviderEmail => 'Email';
 
   @override
-  String get accountSignedInTitle => 'Signed in';
+  String get accountSignedInTitle => 'Sessão iniciada';
 
   @override
-  String get accountSignOut => 'Sign out';
+  String get accountSignOut => 'Sair';
 
   @override
-  String get accountGoogleSuccessSnack => 'Signed in with Google.';
+  String get accountGoogleSuccessSnack => 'Sessão iniciada com Google.';
 
   @override
-  String get accountGoogleCanceledSnack => 'Google sign-in was canceled.';
+  String get accountGoogleCanceledSnack => 'O acesso com Google foi cancelado.';
 
   @override
   String get accountGoogleUnsupportedSnack =>
-      'Google sign-in is not supported on this platform yet.';
+      'O acesso com Google ainda não é compatível com esta plataforma.';
 
   @override
   String get accountGoogleConfigSnack =>
-      'Google sign-in needs OAuth client configuration for this app.';
+      'O acesso com Google precisa da configuração de um cliente OAuth para este app.';
 
   @override
   String accountGoogleErrorSnack(Object error) {
-    return 'Google sign-in failed: $error';
+    return 'Não foi possível entrar com Google: $error';
   }
 
   @override
-  String get accountBenefitGoogleTitle => 'Google sign-in';
+  String get accountBenefitGoogleTitle => 'Acesso com Google';
 
   @override
   String get accountBenefitGoogleBody =>
-      'Use a Google account for quick parent access once OAuth is configured.';
+      'Use uma conta Google para acesso rápido dos responsáveis quando o OAuth estiver configurado.';
 
   @override
-  String get accountEmailTitle => 'Email access';
+  String get accountEmailTitle => 'Acesso por e-mail';
 
   @override
-  String get accountSignInTab => 'Sign in';
+  String get accountSignInTab => 'Entrar';
 
   @override
-  String get accountCreateTab => 'Create';
+  String get accountCreateTab => 'Criar';
 
   @override
   String get accountEmailLabel => 'Email';
 
   @override
-  String get accountPasswordLabel => 'Password';
+  String get accountPasswordLabel => 'Senha';
 
   @override
-  String get accountConfirmPasswordLabel => 'Confirm password';
+  String get accountConfirmPasswordLabel => 'Confirmar senha';
 
   @override
-  String get accountRememberDevice => 'Remember this device';
+  String get accountRememberDevice => 'Lembrar este dispositivo';
 
   @override
-  String get accountSubmitSignIn => 'Sign in';
+  String get accountSubmitSignIn => 'Entrar';
 
   @override
-  String get accountSubmitCreate => 'Create account';
+  String get accountSubmitCreate => 'Criar conta';
 
   @override
-  String get accountForgotPassword => 'Forgot password';
+  String get accountForgotPassword => 'Esqueci minha senha';
 
   @override
-  String get accountRestorePurchases => 'Restore purchases';
+  String get accountRestorePurchases => 'Restaurar compras';
 
   @override
   String get accountPrivacyNote =>
-      'Children keep playing locally until account services are connected.';
+      'As crianças continuam brincando localmente até os serviços de conta serem conectados.';
 
   @override
-  String get accountBenefitSyncTitle => 'Progress sync';
+  String get accountBenefitSyncTitle => 'Sincronizar progresso';
 
   @override
   String get accountBenefitSyncBody =>
-      'A signed-in profile can later move stars and practice history between devices.';
+      'Um perfil conectado poderá levar estrelas e histórico de prática entre dispositivos mais tarde.';
 
   @override
-  String get accountBenefitAppleTitle => 'Apple sign-in ready';
+  String get accountBenefitAppleTitle => 'Acesso com Apple pronto';
 
   @override
   String get accountBenefitAppleBody =>
-      'The button is in place for Sign in with Apple credentials.';
+      'O botão está pronto para vincular credenciais nativas da Apple.';
 
   @override
-  String get accountBenefitPurchaseTitle => 'Purchases and subscriptions';
+  String get accountBenefitPurchaseTitle => 'Compras e assinaturas';
 
   @override
   String get accountBenefitPurchaseBody =>
-      'Restore access after reinstalling or changing devices.';
+      'Restaure o acesso depois de reinstalar ou trocar de dispositivo.';
 
   @override
-  String get accountEmailError => 'Enter a valid email';
+  String get accountEmailError => 'Informe um e-mail válido';
 
   @override
-  String get accountPasswordError => 'Use at least 6 characters';
+  String get accountPasswordError => 'Use pelo menos 6 caracteres';
 
   @override
-  String get accountPasswordMismatch => 'Passwords do not match';
+  String get accountPasswordMismatch => 'As senhas não coincidem';
 
   @override
   String get accountDemoSnack =>
-      'Signed in with email locally. Connect a backend to verify passwords on the server.';
+      'Sessão iniciada localmente por e-mail. Conecte um backend para verificar senhas no servidor.';
 
   @override
   String get accountAppleSnack =>
-      'Apple sign-in UI is ready for the native auth handler.';
+      'A interface de acesso Apple está pronta para o manipulador nativo.';
 
   @override
   String get accountRestoreSnack =>
-      'Purchase restore UI is ready for StoreKit.';
+      'A interface de restauração de compras está pronta para StoreKit.';
 
   @override
-  String get accountResetDialogTitle => 'Reset password';
+  String get accountResetDialogTitle => 'Redefinir senha';
 
   @override
   String get accountResetDialogBody =>
-      'Password reset emails will be sent after account backend is connected.';
+      'Os e-mails de redefinição serão enviados quando o backend de contas estiver conectado.';
 
   @override
-  String get accountResetDialogAction => 'Got it';
+  String get accountResetDialogAction => 'Entendi';
+
+  @override
+  String get puzzleListenPrompt => 'Ouvir a tarefa';
+
+  @override
+  String get puzzleStopNarration => 'Parar a narração';
 }

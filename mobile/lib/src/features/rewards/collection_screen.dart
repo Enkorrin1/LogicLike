@@ -93,27 +93,32 @@ class CollectionScreen extends StatelessWidget {
               const _NewPrizeBanner(),
               const SizedBox(height: 16),
             ],
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _items.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 0.80,
-              ),
-              itemBuilder: (context, index) {
-                final item = _items[index];
-                final unlocked = progress >= item.unlockAfterLevels;
-                final justOpened = highlightDailyPrize &&
-                    item.unlockAfterLevels == 1 &&
-                    unlocked;
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 370;
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: _items.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: isCompact ? 0.73 : 0.80,
+                  ),
+                  itemBuilder: (context, index) {
+                    final item = _items[index];
+                    final unlocked = progress >= item.unlockAfterLevels;
+                    final justOpened = highlightDailyPrize &&
+                        item.unlockAfterLevels == 1 &&
+                        unlocked;
 
-                return _CollectionPrizeCard(
-                  item: item,
-                  unlocked: unlocked,
-                  justOpened: justOpened,
+                    return _CollectionPrizeCard(
+                      item: item,
+                      unlocked: unlocked,
+                      justOpened: justOpened,
+                    );
+                  },
                 );
               },
             ),
@@ -164,103 +169,122 @@ class _CollectionHero extends StatelessWidget {
           ),
         ],
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            right: -20,
-            top: -28,
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: Colors.white.withValues(alpha: 0.38),
-              size: 128,
-            ),
-          ),
-          Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 360;
+          final portraitSize = compact ? 70.0 : 92.0;
+          final counterWidth = compact ? 54.0 : 68.0;
+
+          return Stack(
             children: [
-              Container(
-                width: 92,
-                height: 92,
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppPalette.teal.withValues(alpha: 0.18),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipOval(
+              PositionedDirectional(
+                end: -25,
+                bottom: -39,
+                child: Opacity(
+                  opacity: 0.28,
                   child: Image.asset(
-                    'assets/images/avatar_lion.png',
-                    fit: BoxFit.cover,
+                    'assets/images/home_hero_astronaut.png',
+                    width: compact ? 118 : 145,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      highlightDailyPrize
-                          ? context.l10n.collectionDayPrize
-                          : context.l10n.collectionCosmoPrizes,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+              Row(
+                children: [
+                  Container(
+                    width: portraitSize,
+                    height: portraitSize,
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppPalette.teal.withValues(alpha: 0.18),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/images/avatar_lion.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: compact ? 9 : 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          highlightDailyPrize
+                              ? context.l10n.collectionDayPrize
+                              : context.l10n.collectionCosmoPrizes,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
                                 color: const Color(0xFF075D5A),
                                 fontWeight: FontWeight.w900,
+                                fontSize: compact ? 19 : null,
                               ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      context.l10n.collectionUnlocked(
-                        unlockedCount,
-                        totalCount,
-                      ),
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppPalette.ink,
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                    const SizedBox(height: 9),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        minHeight: 10,
-                        value: progress.clamp(0, 1).toDouble(),
-                        backgroundColor: Colors.white.withValues(alpha: 0.62),
-                        valueColor: const AlwaysStoppedAnimation(
-                          AppPalette.teal,
                         ),
-                      ),
+                        const SizedBox(height: 5),
+                        Text(
+                          context.l10n.collectionUnlocked(
+                            unlockedCount,
+                            totalCount,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppPalette.ink,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                        ),
+                        const SizedBox(height: 9),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: LinearProgressIndicator(
+                            minHeight: 10,
+                            value: progress.clamp(0, 1).toDouble(),
+                            backgroundColor:
+                                Colors.white.withValues(alpha: 0.62),
+                            valueColor: const AlwaysStoppedAnimation(
+                              AppPalette.teal,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: compact ? 6 : 10),
+                  _StarCounter(stars: stars, width: counterWidth),
+                ],
               ),
-              const SizedBox(width: 10),
-              _StarCounter(stars: stars),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 }
 
 class _StarCounter extends StatelessWidget {
-  const _StarCounter({required this.stars});
+  const _StarCounter({required this.stars, required this.width});
 
   final int stars;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(minWidth: 68),
+      constraints: BoxConstraints.tightFor(width: width),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.86),
@@ -312,14 +336,15 @@ class _NewPrizeBanner extends StatelessWidget {
             Container(
               width: 58,
               height: 58,
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(22),
               ),
-              child: const Icon(
-                Icons.card_giftcard_rounded,
-                color: AppPalette.coral,
-                size: 32,
+              child: Image.asset(
+                'assets/images/home_astronaut_cutout.png',
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
               ),
             ),
             const SizedBox(width: 12),
@@ -391,129 +416,161 @@ class _CollectionPrizeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardColor = unlocked ? item.color : const Color(0xFFC8D7DD);
 
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(28),
-      onTap: () => _showTapFeedback(context),
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 220),
-        opacity: unlocked ? 1 : 0.70,
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                cardColor.withValues(alpha: unlocked ? 0.92 : 0.42),
-                cardColor.withValues(alpha: unlocked ? 0.62 : 0.28),
+    return Semantics(
+      button: true,
+      label: context.l10n.collectionItemTitle(item.id),
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(28),
+        onTap: () => _showTapFeedback(context),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 220),
+          opacity: unlocked ? 1 : 0.70,
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  cardColor.withValues(alpha: unlocked ? 0.92 : 0.42),
+                  cardColor.withValues(alpha: unlocked ? 0.62 : 0.28),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: Colors.white, width: 3),
+              boxShadow: [
+                BoxShadow(
+                  color: cardColor.withValues(alpha: unlocked ? 0.18 : 0.08),
+                  blurRadius: 18,
+                  offset: const Offset(0, 9),
+                ),
               ],
             ),
-            borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white, width: 3),
-            boxShadow: [
-              BoxShadow(
-                color: cardColor.withValues(alpha: unlocked ? 0.18 : 0.08),
-                blurRadius: 18,
-                offset: const Offset(0, 9),
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              if (justOpened)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.92),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      context.l10n.collectionNewBadge,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppPalette.coral,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w900,
-                          ),
-                    ),
-                  ),
-                ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
-                            width: 110,
-                            height: 110,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.72),
-                              shape: BoxShape.circle,
+            child: Stack(
+              children: [
+                if (justOpened)
+                  PositionedDirectional(
+                    end: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.92),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        context.l10n.collectionNewBadge,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: AppPalette.coral,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Image.asset(
-                              item.assetPath,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.high,
-                            ),
-                          ),
-                          if (!unlocked)
-                            Container(
-                              width: 52,
-                              height: 52,
-                              decoration: BoxDecoration(
-                                color: AppPalette.ink.withValues(alpha: 0.64),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.lock_rounded,
-                                color: Colors.white,
-                                size: 27,
-                              ),
-                            ),
-                        ],
                       ),
                     ),
                   ),
-                  Text(
-                    context.l10n.collectionItemTitle(item.id),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            _PrizePedestal(color: cardColor),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Image.asset(
+                                item.assetPath,
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.high,
+                              ),
+                            ),
+                            if (!unlocked)
+                              Container(
+                                width: 52,
+                                height: 52,
+                                decoration: BoxDecoration(
+                                  color: AppPalette.ink.withValues(alpha: 0.64),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.lock_rounded,
+                                  color: Colors.white,
+                                  size: 27,
+                                ),
+                              ),
+                          ],
                         ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    unlocked
-                        ? context.l10n.collectionItemSubtitle(item.id)
-                        : context.l10n.collectionLockedLevel(
-                            item.unlockAfterLevels,
+                      ),
+                    ),
+                    Text(
+                      context.l10n.collectionItemTitle(item.id),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
                           ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.92),
-                          fontWeight: FontWeight.w900,
-                        ),
-                  ),
-                ],
-              ),
-            ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      unlocked
+                          ? context.l10n.collectionItemSubtitle(item.id)
+                          : context.l10n.collectionLockedLevel(
+                              item.unlockAfterLevels,
+                            ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.92),
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _PrizePedestal extends StatelessWidget {
+  const _PrizePedestal({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: 110,
+          height: 110,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.74),
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 4),
+          ),
+        ),
+        Positioned(
+          bottom: 4,
+          child: Container(
+            width: 78,
+            height: 15,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.34),
+              borderRadius: BorderRadius.circular(999),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

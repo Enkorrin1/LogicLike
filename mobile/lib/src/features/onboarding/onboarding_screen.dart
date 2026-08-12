@@ -180,18 +180,16 @@ class _HeroPassport extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          const Positioned(
-            right: -34,
-            top: -28,
-            child: _HeroPlanet(size: 128, color: Color(0x55FFFFFF)),
-          ),
-          Positioned(
-            right: 14,
-            bottom: 14,
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: Colors.white.withValues(alpha: 0.70),
-              size: 48,
+          PositionedDirectional(
+            end: -18,
+            top: -10,
+            child: Opacity(
+              opacity: 0.42,
+              child: Image.asset(
+                'assets/images/home_hero_astronaut.png',
+                width: 142,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           Padding(
@@ -306,25 +304,32 @@ class _MissionPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.86),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.stars_rounded, color: AppPalette.mango, size: 18),
-          const SizedBox(width: 5),
-          Text(
-            context.l10n.onboardingMissionPill,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppPalette.ink,
-                  fontWeight: FontWeight.w900,
-                ),
-          ),
-        ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 138),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.86),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.stars_rounded, color: AppPalette.mango, size: 18),
+            const SizedBox(width: 5),
+            Flexible(
+              child: Text(
+                context.l10n.onboardingMissionPill,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppPalette.ink,
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -470,7 +475,7 @@ class _HeroUnlockRow extends StatelessWidget {
       children: [
         Expanded(
           child: _UnlockBadge(
-            icon: Icons.local_fire_department_rounded,
+            assetPath: 'assets/images/home_astronaut_cutout.png',
             color: AppPalette.coral,
             label: l10n.unlockMission,
           ),
@@ -478,7 +483,7 @@ class _HeroUnlockRow extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _UnlockBadge(
-            icon: Icons.extension_rounded,
+            assetPath: 'assets/images/areas/area_logic_lynx.png',
             color: AppPalette.lavender,
             label: l10n.unlockGames,
           ),
@@ -486,7 +491,7 @@ class _HeroUnlockRow extends StatelessWidget {
         const SizedBox(width: 8),
         Expanded(
           child: _UnlockBadge(
-            icon: Icons.star_rounded,
+            assetPath: 'assets/images/areas/area_math_robot.png',
             color: AppPalette.mango,
             label: l10n.unlockPrizes,
           ),
@@ -498,12 +503,12 @@ class _HeroUnlockRow extends StatelessWidget {
 
 class _UnlockBadge extends StatelessWidget {
   const _UnlockBadge({
-    required this.icon,
+    required this.assetPath,
     required this.color,
     required this.label,
   });
 
-  final IconData icon;
+  final String assetPath;
   final Color color;
   final String label;
 
@@ -520,7 +525,15 @@ class _UnlockBadge extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: color, size: 24),
+          SizedBox(
+            width: 28,
+            height: 28,
+            child: Image.asset(
+              assetPath,
+              fit: BoxFit.contain,
+              filterQuality: FilterQuality.high,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             label,
@@ -533,28 +546,6 @@ class _UnlockBadge extends StatelessWidget {
                 ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _HeroPlanet extends StatelessWidget {
-  const _HeroPlanet({
-    required this.size,
-    required this.color,
-  });
-
-  final double size;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
       ),
     );
   }

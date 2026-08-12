@@ -1,23 +1,23 @@
-# LogicLoka Project Spec
+# Logic Loka Project Spec
 
 ## Product
 
-LogicLoka is a family-edtech mobile product for children aged 4-8.
+Logic Loka is a family-edtech mobile product for children aged 4-8.
 
 Product goal:
 
-- Build a Duolingo-style learning engine for logic and math skills: short lessons,
-  frequent repetition loops, adaptive difficulty, and visible progression.
-- Combine game motivation (XP, streaks, hearts, stickers) with one main
-  level-by-level map that parents can track and understand.
-- Do not expose separate child-facing learning categories like Logic, Math,
-  Memory, or Attention as independent tracks. These can exist internally as
-  analytics tags, but the child progresses through one ordered map.
+- Build a rich library of short logic, math, memory, attention, spatial, and
+  language mini-games for children, with daily missions, free play, levels,
+  rewards, collections, and parent-visible progress.
+- Make every puzzle feel like a small game with its own scene, manipulation,
+  feedback, and learning objective instead of a generic multiple-choice card.
+- Let children enter both a guided daily mission and clearly labeled free-play
+  areas without forcing all development into one linear track.
 
 Current product slice:
 
-- Duolingo-like learning loop: one child-facing lesson map, ordered level
-  progression, mixed task types inside levels, and a reward loop for the child.
+- Child-facing home with a daily mission, free-play areas, level progression,
+  rewards, and a collection loop.
 - Separate parent-facing area for family profile, progress summary, and weekly
   recommendations.
 - Onboarding with child age selection limited to 4-8.
@@ -43,6 +43,44 @@ feature or content work.
   is needed.
 - Any proposed visual redesign must be explicitly approved by the user before
   implementation.
+
+## Active Design Goal
+
+Bring every user-facing surface to one premium Logic Loka art direction without
+replacing the approved characters or flattening the product into generic UI.
+
+Visual thesis:
+
+- A bright, tactile 3D/2.5D learning world with volumetric characters, toy-like
+  interactive objects, clean typography, calm depth, and purposeful motion.
+- Child screens feel like playable scenes; parent screens use the same brand
+  materials with quieter, denser information hierarchy.
+
+Interaction thesis:
+
+- Objects visibly respond to touch, drag, sorting, tracing, rotation, matching,
+  and construction; routine answer-button grids are not the default mechanic.
+- Motion explains cause and effect: anticipation on touch, physical feedback on
+  mistakes, and a short character-led reward after success.
+- Every primary action remains at least 44x44 logical pixels and usable through
+  accessibility semantics and a non-drag fallback.
+- Spoken puzzle prompts are optional, never auto-play; they use the best
+  available voice for the selected locale at a calm child-friendly pace and
+  can always be stopped immediately.
+
+Completion criteria:
+
+- Every child, challenge, collection, onboarding, account, and parent screen is
+  audited and aligned to the shared palette, spacing, type, shape, illustration,
+  and motion system.
+- Key puzzle families use visually distinct game scenes and do not read as a
+  sequence of rectangular answer buttons.
+- All 12 locales render without clipping or broken directionality, including
+  Arabic RTL; compact and tall Android layouts have no overflow or overlap.
+- Main flows are built, tested, and viewed on the Android emulator at multiple
+  sizes. iPhone/iPad compatibility remains part of the macOS/Xcode handoff.
+- The visible name is `Logic Loka`; existing Android/iOS technical identifiers
+  are never renamed as part of design work.
 
 ## Stack
 

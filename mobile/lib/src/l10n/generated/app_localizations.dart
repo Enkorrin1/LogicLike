@@ -121,7 +121,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'LogicLoka'**
+  /// **'Logic Loka'**
   String get appTitle;
 
   /// No description provided for @loadingMission.
@@ -1435,7 +1435,7 @@ abstract class AppLocalizations {
   /// No description provided for @parentReminderToggleOn.
   ///
   /// In en, this message translates to:
-  /// **'LogicLoka will invite the child back to one short mission.'**
+  /// **'Logic Loka will invite the child back to one short mission.'**
   String get parentReminderToggleOn;
 
   /// No description provided for @parentReminderToggleOff.
@@ -1743,6 +1743,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it'**
   String get accountResetDialogAction;
+
+  /// No description provided for @puzzleListenPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen to the task'**
+  String get puzzleListenPrompt;
+
+  /// No description provided for @puzzleStopNarration.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop narration'**
+  String get puzzleStopNarration;
 }
 
 class _AppLocalizationsDelegate

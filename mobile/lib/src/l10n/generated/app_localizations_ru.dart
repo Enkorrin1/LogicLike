@@ -9,7 +9,7 @@ class AppLocalizationsRu extends AppLocalizations {
   AppLocalizationsRu([String locale = 'ru']) : super(locale);
 
   @override
-  String get appTitle => 'LogicLoka';
+  String get appTitle => 'Logic Loka';
 
   @override
   String get loadingMission => 'Готовим миссию...';
@@ -271,10 +271,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get parentSubscriptionLaunchBadge => 'ранняя цена';
 
   @override
-  String get parentSubscriptionCurrentFree => 'Free';
+  String get parentSubscriptionCurrentFree => 'Бесплатный';
 
   @override
-  String get parentSubscriptionFreeTitle => 'Free';
+  String get parentSubscriptionFreeTitle => 'Бесплатный';
 
   @override
   String get parentSubscriptionFreePrice => '\$0';
@@ -297,7 +297,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get parentSubscriptionFreeCta => 'Текущий доступ';
 
   @override
-  String get parentSubscriptionPremiumTitle => 'Premium Family';
+  String get parentSubscriptionPremiumTitle => 'Премиум для семьи';
 
   @override
   String get parentSubscriptionPremiumPrice => '\$5.99/мес';
@@ -323,7 +323,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get parentSubscriptionPremiumCta => 'Выбрать месяц';
 
   @override
-  String get parentSubscriptionAnnualTitle => 'Annual';
+  String get parentSubscriptionAnnualTitle => 'Годовой';
 
   @override
   String get parentSubscriptionAnnualPrice => '\$39.99/год';
@@ -761,7 +761,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'LogicLoka позовет ребенка на одну короткую миссию.';
+      'Logic Loka позовет ребенка на одну короткую миссию.';
 
   @override
   String get parentReminderToggleOff =>
@@ -931,4 +931,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get accountResetDialogAction => 'Понятно';
+
+  @override
+  String get puzzleListenPrompt => 'Прослушать задание';
+
+  @override
+  String get puzzleStopNarration => 'Остановить озвучку';
 }

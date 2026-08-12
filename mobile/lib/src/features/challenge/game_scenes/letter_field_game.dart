@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 Set<String> get letterFieldSupportedLanguageCodes =>
@@ -28,21 +29,49 @@ class LocaleLetterFieldGameView extends StatefulWidget {
       _LocaleLetterFieldGameViewState();
 }
 
-class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
+class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView>
+    with SingleTickerProviderStateMixin {
   final Set<int> _selected = <int>{};
   final Set<_FieldEdge> _edges = <_FieldEdge>{};
   Timer? _roundTimer;
+  late final AnimationController _celebration;
   int _round = 0;
   int _matched = 0;
   int? _cursor;
   int? _errorCell;
+  String? _languageCode;
   bool _roundComplete = false;
   bool _answerSent = false;
 
   @override
+  void initState() {
+    super.initState();
+    _celebration = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 780),
+    );
+  }
+
+  @override
   void dispose() {
     _roundTimer?.cancel();
+    _celebration.dispose();
     super.dispose();
+  }
+
+  void _ensureLocale(String languageCode) {
+    if (_languageCode == languageCode) return;
+    _languageCode = languageCode;
+    _roundTimer?.cancel();
+    _round = 0;
+    _matched = 0;
+    _cursor = null;
+    _errorCell = null;
+    _roundComplete = false;
+    _answerSent = false;
+    _celebration.reset();
+    _selected.clear();
+    _edges.clear();
   }
 
   void _start(Offset position, _LetterFieldLayout layout, _FieldRound data) {
@@ -55,9 +84,7 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
       return;
     }
 
-    if (_matched == 0) {
-      _tryAdd(cell, data);
-    }
+    _tryAdd(cell, data);
   }
 
   void _drag(Offset position, _LetterFieldLayout layout, _FieldRound data) {
@@ -79,8 +106,15 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
     if (data.grid[cell] != data.target[_matched]) {
       HapticFeedback.lightImpact();
       setState(() => _errorCell = cell);
-      Future<void>.delayed(const Duration(milliseconds: 180), () {
-        if (mounted && _errorCell == cell) setState(() => _errorCell = null);
+      Future<void>.delayed(const Duration(milliseconds: 360), () {
+        if (!mounted || _errorCell != cell) return;
+        setState(() {
+          _errorCell = null;
+          _matched = 0;
+          _cursor = null;
+          _selected.clear();
+          _edges.clear();
+        });
       });
       return;
     }
@@ -105,7 +139,8 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
   void _completeRound() {
     setState(() => _roundComplete = true);
     HapticFeedback.mediumImpact();
-    _roundTimer = Timer(const Duration(milliseconds: 650), () {
+    _celebration.forward(from: 0);
+    _roundTimer = Timer(const Duration(milliseconds: 820), () {
       if (!mounted) return;
       if (_round == 0) {
         setState(() {
@@ -126,8 +161,9 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
 
   @override
   Widget build(BuildContext context) {
-    final localeData =
-        _LetterFieldData.forLocale(Localizations.localeOf(context));
+    final locale = Localizations.localeOf(context);
+    final localeData = _LetterFieldData.forLocale(locale);
+    _ensureLocale(locale.languageCode);
     final roundData = localeData.rounds[_round];
     return Semantics(
       container: true,
@@ -147,6 +183,8 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
                 );
                 return GestureDetector(
                   behavior: HitTestBehavior.opaque,
+                  onTapUp: (details) =>
+                      _start(details.localPosition, layout, roundData),
                   onPanStart: (details) =>
                       _start(details.localPosition, layout, roundData),
                   onPanUpdate: (details) =>
@@ -161,7 +199,11 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
                       matched: _matched,
                       errorCell: _errorCell,
                       complete: _roundComplete,
+                      completedRounds: _round,
+                      totalRounds: localeData.rounds.length,
+                      celebration: _celebration,
                       rtl: localeData.rtl,
+                      onCellTapped: (cell) => _startAtCell(cell, roundData),
                     ),
                   ),
                 );
@@ -171,6 +213,15 @@ class _LocaleLetterFieldGameViewState extends State<LocaleLetterFieldGameView> {
         ),
       ),
     );
+  }
+
+  void _startAtCell(int cell, _FieldRound data) {
+    if (_roundComplete) return;
+    if (_selected.contains(cell)) {
+      setState(() => _cursor = cell);
+      return;
+    }
+    _tryAdd(cell, data);
   }
 }
 
@@ -222,7 +273,11 @@ class _LetterFieldPainter extends CustomPainter {
     required this.matched,
     required this.errorCell,
     required this.complete,
+    required this.completedRounds,
+    required this.totalRounds,
+    required this.celebration,
     required this.rtl,
+    required this.onCellTapped,
   });
 
   final Color accent;
@@ -233,7 +288,11 @@ class _LetterFieldPainter extends CustomPainter {
   final int matched;
   final int? errorCell;
   final bool complete;
+  final int completedRounds;
+  final int totalRounds;
+  final Animation<double> celebration;
   final bool rtl;
+  final ValueChanged<int> onCellTapped;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -242,6 +301,7 @@ class _LetterFieldPainter extends CustomPainter {
       Paint()..color = const Color(0xFFF7FAFC),
     );
     _paintTarget(canvas, size);
+    _paintCollectibles(canvas, size);
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         layout.board.inflate(4),
@@ -294,6 +354,7 @@ class _LetterFieldPainter extends CustomPainter {
         isSelected ? Colors.white : const Color(0xFF243443),
       );
     }
+    if (complete) _paintCelebration(canvas);
   }
 
   void _paintTarget(Canvas canvas, Size size) {
@@ -326,6 +387,57 @@ class _LetterFieldPainter extends CustomPainter {
         2.2,
         Paint()..color = i < matched ? accent : const Color(0xFFD4DCE3),
       );
+    }
+  }
+
+  void _paintCollectibles(Canvas canvas, Size size) {
+    final radius = layout.compact ? 11.0 : 13.0;
+    final centers = <Offset>[
+      Offset(25, layout.compact ? 29 : 34),
+      Offset(size.width - 25, layout.compact ? 29 : 34),
+    ];
+    for (var index = 0; index < totalRounds; index++) {
+      final claimed =
+          index < completedRounds || (index == completedRounds && complete);
+      final center = centers[index];
+      canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..color = claimed
+              ? Color.lerp(accent, Colors.white, .16)!
+              : const Color(0xFFE7EDF2),
+      );
+      canvas.drawCircle(
+        center,
+        radius,
+        Paint()
+          ..color = claimed ? accent : const Color(0xFFC9D4DD)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.5,
+      );
+      if (claimed)
+        _paintText(canvas, '\u2605', center, radius + 3, Colors.white);
+    }
+  }
+
+  void _paintCelebration(Canvas canvas) {
+    final progress = Curves.easeOut.transform(celebration.value);
+    final center = layout.board.center;
+    final paint = Paint()
+      ..color = accent.withValues(alpha: (1 - progress) * .34)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    canvas.drawCircle(center, layout.boardSize * (.16 + progress * .55), paint);
+    for (var index = 0; index < 8; index++) {
+      final angle = math.pi * 2 * index / 8 + progress * .5;
+      final from = center +
+          Offset(math.cos(angle), math.sin(angle)) * layout.boardSize * .17;
+      final to = center +
+          Offset(math.cos(angle), math.sin(angle)) *
+              layout.boardSize *
+              (.22 + progress * .28);
+      canvas.drawLine(from, to, paint);
     }
   }
 
@@ -363,7 +475,27 @@ class _LetterFieldPainter extends CustomPainter {
       oldDelegate.matched != matched ||
       oldDelegate.errorCell != errorCell ||
       oldDelegate.complete != complete ||
+      oldDelegate.completedRounds != completedRounds ||
+      oldDelegate.celebration.value != celebration.value ||
       oldDelegate.accent != accent;
+
+  @override
+  SemanticsBuilderCallback get semanticsBuilder =>
+      (size) => List<CustomPainterSemantics>.generate(
+          16,
+          (index) => CustomPainterSemantics(
+                rect: layout.cellRect(index),
+                properties: SemanticsProperties(
+                  label: data.grid[index],
+                  textDirection: rtl ? TextDirection.rtl : TextDirection.ltr,
+                  button: true,
+                  onTap: () => onCellTapped(index),
+                ),
+              ));
+
+  @override
+  bool shouldRebuildSemantics(covariant _LetterFieldPainter oldDelegate) =>
+      oldDelegate.data != data || oldDelegate.complete != complete;
 }
 
 class _FieldEdge {
@@ -400,8 +532,50 @@ class _LetterFieldData {
   final String semanticHint;
   final bool rtl;
 
-  static _LetterFieldData forLocale(Locale locale) =>
-      localized[locale.languageCode] ?? localized['en']!;
+  static _LetterFieldData forLocale(Locale locale) {
+    final code =
+        localized.containsKey(locale.languageCode) ? locale.languageCode : 'en';
+    final source = localized[code]!;
+    final routes = _routes[code]!;
+    return _LetterFieldData(
+      rounds: [
+        _relocate(source.rounds[0], routes.first),
+        _relocate(source.rounds[1], routes.second),
+      ],
+      semanticHint: source.semanticHint,
+      rtl: source.rtl,
+    );
+  }
+
+  static _FieldRound _relocate(_FieldRound source, List<int> route) {
+    final filler = source.grid.firstWhere(
+      (value) => !source.target.contains(value),
+      orElse: () => '?',
+    );
+    final grid = List<String>.of(source.grid);
+    for (var index = 0; index < grid.length; index++) {
+      if (source.target.contains(grid[index])) grid[index] = filler;
+    }
+    for (var index = 0; index < route.length; index++) {
+      grid[route[index]] = source.target[index];
+    }
+    return _FieldRound(target: source.target, grid: grid);
+  }
+
+  static const Map<String, ({List<int> first, List<int> second})> _routes = {
+    'ar': (first: [0, 1, 5, 4], second: [10, 11, 15]),
+    'de': (first: [1, 2, 6, 10, 9], second: [4, 8, 9, 13]),
+    'en': (first: [2, 3, 7, 6], second: [12, 8, 9]),
+    'es': (first: [5, 1, 2, 6], second: [14, 10, 11]),
+    'fr': (first: [15, 14, 10, 6, 7], second: [0, 4, 5, 9]),
+    'hi': (first: [3, 7], second: [8, 12]),
+    'it': (first: [4, 5, 1, 2, 6], second: [11, 10, 14, 13]),
+    'ja': (first: [6, 10], second: [9, 5]),
+    'ko': (first: [13, 14], second: [7]),
+    'pt': (first: [8, 4, 0, 1, 5], second: [3, 2, 6]),
+    'ru': (first: [9, 10, 6, 5], second: [0, 4, 8]),
+    'zh': (first: [11, 15], second: [2]),
+  };
 
   static final Map<String, _LetterFieldData> localized = {
     'ar': _data(

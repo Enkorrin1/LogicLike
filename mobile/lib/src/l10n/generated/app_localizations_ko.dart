@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appTitle => 'LogicLoka';
+  String get appTitle => 'Logic Loka';
 
   @override
   String get loadingMission => '미션 준비중..';
@@ -266,10 +266,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentSubscriptionLaunchBadge => '초기 가격';
 
   @override
-  String get parentSubscriptionCurrentFree => 'Free';
+  String get parentSubscriptionCurrentFree => '무료';
 
   @override
-  String get parentSubscriptionFreeTitle => 'Free';
+  String get parentSubscriptionFreeTitle => '무료';
 
   @override
   String get parentSubscriptionFreePrice => '\$0';
@@ -290,7 +290,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentSubscriptionFreeCta => '현재 이용';
 
   @override
-  String get parentSubscriptionPremiumTitle => 'Premium Family';
+  String get parentSubscriptionPremiumTitle => '프리미엄 가족';
 
   @override
   String get parentSubscriptionPremiumPrice => '\$5.99/월';
@@ -314,7 +314,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentSubscriptionPremiumCta => '월간 선택';
 
   @override
-  String get parentSubscriptionAnnualTitle => 'Annual';
+  String get parentSubscriptionAnnualTitle => '연간';
 
   @override
   String get parentSubscriptionAnnualPrice => '\$39.99/년';
@@ -736,45 +736,45 @@ class AppLocalizationsKo extends AppLocalizations {
   String get parentReminderToggleLabel => '돌아오기 알림';
 
   @override
-  String get parentReminderToggleOn => 'LogicLoka이 짧은 미션으로 아이를 초대해요.';
+  String get parentReminderToggleOn => 'Logic Loka가 짧은 미션으로 아이를 초대해요.';
 
   @override
   String get parentReminderToggleOff => '알림이 꺼져 있어요. 앱은 조용히 있을게요.';
 
   @override
-  String get parentAccountTitle => 'Account';
+  String get parentAccountTitle => '계정';
 
   @override
   String get parentAccountBody =>
-      'Sign in to sync progress, unlock subscriptions and restore purchases on another device.';
+      '로그인하면 진행 상황을 동기화하고 구독을 이용하며 다른 기기에서 구매를 복원할 수 있습니다.';
 
   @override
-  String get parentAccountStatusGuest => 'guest';
+  String get parentAccountStatusGuest => '게스트';
 
   @override
-  String get parentAccountAction => 'Sign in';
+  String get parentAccountAction => '로그인';
 
   @override
-  String get accountTitle => 'Account sign in';
+  String get accountTitle => '계정 로그인';
 
   @override
-  String get accountHeroTitle => 'Keep the family profile close';
+  String get accountHeroTitle => '가족 프로필을 가까이에 두세요';
 
   @override
   String get accountHeroBody =>
-      'Use Google, Apple or email to prepare cloud sync, purchases and safe parent access.';
+      'Google, Apple 또는 이메일로 클라우드 동기화, 구매, 안전한 보호자 접근을 준비할 수 있습니다.';
 
   @override
-  String get accountStatusGuest => 'guest mode';
+  String get accountStatusGuest => '게스트 모드';
 
   @override
-  String get accountAppleButton => 'Continue with Apple';
+  String get accountAppleButton => 'Apple로 계속';
 
   @override
-  String get accountGoogleButton => 'Continue with Google';
+  String get accountGoogleButton => 'Google로 계속';
 
   @override
-  String get accountAuthLoading => 'Checking...';
+  String get accountAuthLoading => '확인 중...';
 
   @override
   String get accountProviderGoogle => 'Google';
@@ -786,123 +786,123 @@ class AppLocalizationsKo extends AppLocalizations {
   String get accountProviderEmail => 'Email';
 
   @override
-  String get accountSignedInTitle => 'Signed in';
+  String get accountSignedInTitle => '로그인됨';
 
   @override
-  String get accountSignOut => 'Sign out';
+  String get accountSignOut => '로그아웃';
 
   @override
-  String get accountGoogleSuccessSnack => 'Signed in with Google.';
+  String get accountGoogleSuccessSnack => 'Google로 로그인했습니다.';
 
   @override
-  String get accountGoogleCanceledSnack => 'Google sign-in was canceled.';
+  String get accountGoogleCanceledSnack => 'Google 로그인이 취소되었습니다.';
 
   @override
   String get accountGoogleUnsupportedSnack =>
-      'Google sign-in is not supported on this platform yet.';
+      '이 플랫폼에서는 아직 Google 로그인을 지원하지 않습니다.';
 
   @override
   String get accountGoogleConfigSnack =>
-      'Google sign-in needs OAuth client configuration for this app.';
+      'Google 로그인에는 이 앱의 OAuth 클라이언트 설정이 필요합니다.';
 
   @override
   String accountGoogleErrorSnack(Object error) {
-    return 'Google sign-in failed: $error';
+    return 'Google 로그인에 실패했습니다: $error';
   }
 
   @override
-  String get accountBenefitGoogleTitle => 'Google sign-in';
+  String get accountBenefitGoogleTitle => 'Google 로그인';
 
   @override
   String get accountBenefitGoogleBody =>
-      'Use a Google account for quick parent access once OAuth is configured.';
+      'OAuth를 설정한 뒤 Google 계정으로 보호자 화면에 빠르게 들어갈 수 있습니다.';
 
   @override
-  String get accountEmailTitle => 'Email access';
+  String get accountEmailTitle => '이메일로 로그인';
 
   @override
-  String get accountSignInTab => 'Sign in';
+  String get accountSignInTab => '로그인';
 
   @override
-  String get accountCreateTab => 'Create';
+  String get accountCreateTab => '만들기';
 
   @override
   String get accountEmailLabel => 'Email';
 
   @override
-  String get accountPasswordLabel => 'Password';
+  String get accountPasswordLabel => '비밀번호';
 
   @override
-  String get accountConfirmPasswordLabel => 'Confirm password';
+  String get accountConfirmPasswordLabel => '비밀번호 확인';
 
   @override
-  String get accountRememberDevice => 'Remember this device';
+  String get accountRememberDevice => '이 기기 기억하기';
 
   @override
-  String get accountSubmitSignIn => 'Sign in';
+  String get accountSubmitSignIn => '로그인';
 
   @override
-  String get accountSubmitCreate => 'Create account';
+  String get accountSubmitCreate => '계정 만들기';
 
   @override
-  String get accountForgotPassword => 'Forgot password';
+  String get accountForgotPassword => '비밀번호를 잊으셨나요?';
 
   @override
-  String get accountRestorePurchases => 'Restore purchases';
+  String get accountRestorePurchases => '구매 복원';
 
   @override
-  String get accountPrivacyNote =>
-      'Children keep playing locally until account services are connected.';
+  String get accountPrivacyNote => '계정 서비스가 연결될 때까지 아이는 이 기기에서 계속 플레이할 수 있습니다.';
 
   @override
-  String get accountBenefitSyncTitle => 'Progress sync';
+  String get accountBenefitSyncTitle => '진행 상황 동기화';
 
   @override
   String get accountBenefitSyncBody =>
-      'A signed-in profile can later move stars and practice history between devices.';
+      '로그인한 프로필은 나중에 별과 연습 기록을 기기 간에 옮길 수 있습니다.';
 
   @override
-  String get accountBenefitAppleTitle => 'Apple sign-in ready';
+  String get accountBenefitAppleTitle => 'Apple 로그인 준비됨';
 
   @override
-  String get accountBenefitAppleBody =>
-      'The button is in place for Sign in with Apple credentials.';
+  String get accountBenefitAppleBody => 'Apple 기본 인증 정보를 연결할 버튼을 준비했습니다.';
 
   @override
-  String get accountBenefitPurchaseTitle => 'Purchases and subscriptions';
+  String get accountBenefitPurchaseTitle => '구매 및 구독';
 
   @override
-  String get accountBenefitPurchaseBody =>
-      'Restore access after reinstalling or changing devices.';
+  String get accountBenefitPurchaseBody => '재설치하거나 기기를 바꾼 뒤에도 접근 권한을 복원하세요.';
 
   @override
-  String get accountEmailError => 'Enter a valid email';
+  String get accountEmailError => '올바른 이메일을 입력하세요';
 
   @override
-  String get accountPasswordError => 'Use at least 6 characters';
+  String get accountPasswordError => '6자 이상 입력하세요';
 
   @override
-  String get accountPasswordMismatch => 'Passwords do not match';
+  String get accountPasswordMismatch => '비밀번호가 일치하지 않습니다';
 
   @override
   String get accountDemoSnack =>
-      'Signed in with email locally. Connect a backend to verify passwords on the server.';
+      '이메일로 기기 내 로그인을 했습니다. 서버에서 비밀번호를 확인하려면 백엔드를 연결하세요.';
 
   @override
-  String get accountAppleSnack =>
-      'Apple sign-in UI is ready for the native auth handler.';
+  String get accountAppleSnack => 'Apple 로그인 화면은 기본 핸들러에 연결할 준비가 되었습니다.';
 
   @override
-  String get accountRestoreSnack =>
-      'Purchase restore UI is ready for StoreKit.';
+  String get accountRestoreSnack => '구매 복원 화면은 StoreKit에 연결할 준비가 되었습니다.';
 
   @override
-  String get accountResetDialogTitle => 'Reset password';
+  String get accountResetDialogTitle => '비밀번호 재설정';
 
   @override
-  String get accountResetDialogBody =>
-      'Password reset emails will be sent after account backend is connected.';
+  String get accountResetDialogBody => '계정 백엔드가 연결되면 비밀번호 재설정 메일을 보냅니다.';
 
   @override
-  String get accountResetDialogAction => 'Got it';
+  String get accountResetDialogAction => '확인';
+
+  @override
+  String get puzzleListenPrompt => '문제 듣기';
+
+  @override
+  String get puzzleStopNarration => '읽어주기 멈추기';
 }

@@ -19,7 +19,7 @@ class AppNotificationService implements ReminderScheduler {
   }) : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   static const _channelId = 'logicloka_reminders';
-  static const _channelName = 'LogicLoka reminders';
+  static const _channelName = 'Logic Loka reminders';
   static const _channelDescription =
       'Daily mission and calm practice reminders';
   static const _notificationIcon = 'ic_stat_logicloka';

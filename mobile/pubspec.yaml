@@ -16,6 +16,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_timezone: ^5.1.0
+  flutter_tts: ^4.2.5
   google_sign_in: ^7.2.0
   intl: any
   shared_preferences: ^2.2.3
@@ -25,6 +26,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+
+# path_provider_android 2.3.x introduces a native jni build that is currently
+# blocked by Android Gradle/CMake file locking on this Windows environment.
+# Keep the compatible, non-native implementation until that upstream issue is resolved.
+dependency_overrides:
+  path_provider_android: 2.2.23
 
 flutter:
   generate: true

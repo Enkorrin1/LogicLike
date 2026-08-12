@@ -9,7 +9,7 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
-  String get appTitle => 'LogicLoka';
+  String get appTitle => 'Logic Loka';
 
   @override
   String get loadingMission => 'मिशन की तैयारी...';
@@ -271,10 +271,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get parentSubscriptionLaunchBadge => 'शुरुआती कीमत';
 
   @override
-  String get parentSubscriptionCurrentFree => 'Free';
+  String get parentSubscriptionCurrentFree => 'निःशुल्क';
 
   @override
-  String get parentSubscriptionFreeTitle => 'Free';
+  String get parentSubscriptionFreeTitle => 'निःशुल्क';
 
   @override
   String get parentSubscriptionFreePrice => '\$0';
@@ -297,7 +297,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get parentSubscriptionFreeCta => 'मौजूदा एक्सेस';
 
   @override
-  String get parentSubscriptionPremiumTitle => 'Premium Family';
+  String get parentSubscriptionPremiumTitle => 'प्रीमियम परिवार';
 
   @override
   String get parentSubscriptionPremiumPrice => '\$5.99/माह';
@@ -323,7 +323,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get parentSubscriptionPremiumCta => 'मासिक चुनें';
 
   @override
-  String get parentSubscriptionAnnualTitle => 'Annual';
+  String get parentSubscriptionAnnualTitle => 'वार्षिक';
 
   @override
   String get parentSubscriptionAnnualPrice => '\$39.99/वर्ष';
@@ -760,45 +760,45 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get parentReminderToggleOn =>
-      'LogicLoka बच्चे को एक छोटे मिशन के लिए बुलाएगा।';
+      'Logic Loka बच्चे को एक छोटे मिशन के लिए बुलाएगा।';
 
   @override
   String get parentReminderToggleOff => 'रिमाइंडर बंद हैं। ऐप शांत रहेगा।';
 
   @override
-  String get parentAccountTitle => 'Account';
+  String get parentAccountTitle => 'खाता';
 
   @override
   String get parentAccountBody =>
-      'Sign in to sync progress, unlock subscriptions and restore purchases on another device.';
+      'प्रगति सिंक करने, सदस्यताएँ खोलने और दूसरे डिवाइस पर खरीदारी बहाल करने के लिए साइन इन करें।';
 
   @override
-  String get parentAccountStatusGuest => 'guest';
+  String get parentAccountStatusGuest => 'अतिथि';
 
   @override
-  String get parentAccountAction => 'Sign in';
+  String get parentAccountAction => 'साइन इन करें';
 
   @override
-  String get accountTitle => 'Account sign in';
+  String get accountTitle => 'खाते में साइन इन';
 
   @override
-  String get accountHeroTitle => 'Keep the family profile close';
+  String get accountHeroTitle => 'परिवार प्रोफ़ाइल को पास रखें';
 
   @override
   String get accountHeroBody =>
-      'Use Google, Apple or email to prepare cloud sync, purchases and safe parent access.';
+      'क्लाउड सिंक, खरीदारी और सुरक्षित अभिभावक पहुँच तैयार करने के लिए Google, Apple या ईमेल का उपयोग करें।';
 
   @override
-  String get accountStatusGuest => 'guest mode';
+  String get accountStatusGuest => 'अतिथि मोड';
 
   @override
-  String get accountAppleButton => 'Continue with Apple';
+  String get accountAppleButton => 'Apple से जारी रखें';
 
   @override
-  String get accountGoogleButton => 'Continue with Google';
+  String get accountGoogleButton => 'Google से जारी रखें';
 
   @override
-  String get accountAuthLoading => 'Checking...';
+  String get accountAuthLoading => 'जाँच रहे हैं...';
 
   @override
   String get accountProviderGoogle => 'Google';
@@ -810,123 +810,129 @@ class AppLocalizationsHi extends AppLocalizations {
   String get accountProviderEmail => 'Email';
 
   @override
-  String get accountSignedInTitle => 'Signed in';
+  String get accountSignedInTitle => 'साइन इन हो गया';
 
   @override
-  String get accountSignOut => 'Sign out';
+  String get accountSignOut => 'साइन आउट';
 
   @override
-  String get accountGoogleSuccessSnack => 'Signed in with Google.';
+  String get accountGoogleSuccessSnack => 'Google से साइन इन हो गया।';
 
   @override
-  String get accountGoogleCanceledSnack => 'Google sign-in was canceled.';
+  String get accountGoogleCanceledSnack => 'Google साइन इन रद्द कर दिया गया।';
 
   @override
   String get accountGoogleUnsupportedSnack =>
-      'Google sign-in is not supported on this platform yet.';
+      'इस प्लेटफ़ॉर्म पर Google साइन इन अभी उपलब्ध नहीं है।';
 
   @override
   String get accountGoogleConfigSnack =>
-      'Google sign-in needs OAuth client configuration for this app.';
+      'Google साइन इन के लिए इस ऐप का OAuth क्लाइंट कॉन्फ़िगर करना होगा।';
 
   @override
   String accountGoogleErrorSnack(Object error) {
-    return 'Google sign-in failed: $error';
+    return 'Google से साइन इन नहीं हो सका: $error';
   }
 
   @override
-  String get accountBenefitGoogleTitle => 'Google sign-in';
+  String get accountBenefitGoogleTitle => 'Google से साइन इन';
 
   @override
   String get accountBenefitGoogleBody =>
-      'Use a Google account for quick parent access once OAuth is configured.';
+      'OAuth कॉन्फ़िगर होने पर Google खाते से अभिभावक क्षेत्र में जल्दी पहुँचें।';
 
   @override
-  String get accountEmailTitle => 'Email access';
+  String get accountEmailTitle => 'ईमेल से पहुँच';
 
   @override
-  String get accountSignInTab => 'Sign in';
+  String get accountSignInTab => 'साइन इन';
 
   @override
-  String get accountCreateTab => 'Create';
+  String get accountCreateTab => 'बनाएँ';
 
   @override
   String get accountEmailLabel => 'Email';
 
   @override
-  String get accountPasswordLabel => 'Password';
+  String get accountPasswordLabel => 'पासवर्ड';
 
   @override
-  String get accountConfirmPasswordLabel => 'Confirm password';
+  String get accountConfirmPasswordLabel => 'पासवर्ड की पुष्टि करें';
 
   @override
-  String get accountRememberDevice => 'Remember this device';
+  String get accountRememberDevice => 'इस डिवाइस को याद रखें';
 
   @override
-  String get accountSubmitSignIn => 'Sign in';
+  String get accountSubmitSignIn => 'साइन इन';
 
   @override
-  String get accountSubmitCreate => 'Create account';
+  String get accountSubmitCreate => 'खाता बनाएँ';
 
   @override
-  String get accountForgotPassword => 'Forgot password';
+  String get accountForgotPassword => 'पासवर्ड भूल गए?';
 
   @override
-  String get accountRestorePurchases => 'Restore purchases';
+  String get accountRestorePurchases => 'खरीदारी बहाल करें';
 
   @override
   String get accountPrivacyNote =>
-      'Children keep playing locally until account services are connected.';
+      'खाता सेवाएँ जुड़ने तक बच्चे इस डिवाइस पर खेलते रह सकते हैं।';
 
   @override
-  String get accountBenefitSyncTitle => 'Progress sync';
+  String get accountBenefitSyncTitle => 'प्रगति सिंक';
 
   @override
   String get accountBenefitSyncBody =>
-      'A signed-in profile can later move stars and practice history between devices.';
+      'साइन इन किया हुआ प्रोफ़ाइल बाद में सितारों और अभ्यास इतिहास को डिवाइसों के बीच ले जा सकता है।';
 
   @override
-  String get accountBenefitAppleTitle => 'Apple sign-in ready';
+  String get accountBenefitAppleTitle => 'Apple साइन इन तैयार है';
 
   @override
   String get accountBenefitAppleBody =>
-      'The button is in place for Sign in with Apple credentials.';
+      'बटन Apple की मूल साइन-इन जानकारी जोड़ने के लिए तैयार है।';
 
   @override
-  String get accountBenefitPurchaseTitle => 'Purchases and subscriptions';
+  String get accountBenefitPurchaseTitle => 'खरीदारी और सदस्यताएँ';
 
   @override
   String get accountBenefitPurchaseBody =>
-      'Restore access after reinstalling or changing devices.';
+      'दोबारा इंस्टॉल करने या डिवाइस बदलने के बाद पहुँच बहाल करें।';
 
   @override
-  String get accountEmailError => 'Enter a valid email';
+  String get accountEmailError => 'मान्य ईमेल डालें';
 
   @override
-  String get accountPasswordError => 'Use at least 6 characters';
+  String get accountPasswordError => 'कम से कम 6 अक्षर लिखें';
 
   @override
-  String get accountPasswordMismatch => 'Passwords do not match';
+  String get accountPasswordMismatch => 'पासवर्ड मेल नहीं खाते';
 
   @override
   String get accountDemoSnack =>
-      'Signed in with email locally. Connect a backend to verify passwords on the server.';
+      'ईमेल से इस डिवाइस पर साइन इन हो गया। सर्वर पर पासवर्ड जाँचने के लिए बैकएंड जोड़ें।';
 
   @override
   String get accountAppleSnack =>
-      'Apple sign-in UI is ready for the native auth handler.';
+      'Apple साइन-इन स्क्रीन मूल हैंडलर के लिए तैयार है।';
 
   @override
   String get accountRestoreSnack =>
-      'Purchase restore UI is ready for StoreKit.';
+      'खरीदारी बहाली स्क्रीन StoreKit के लिए तैयार है।';
 
   @override
-  String get accountResetDialogTitle => 'Reset password';
+  String get accountResetDialogTitle => 'पासवर्ड रीसेट करें';
 
   @override
   String get accountResetDialogBody =>
-      'Password reset emails will be sent after account backend is connected.';
+      'खाता बैकएंड जुड़ने पर पासवर्ड रीसेट ईमेल भेजे जाएँगे।';
 
   @override
-  String get accountResetDialogAction => 'Got it';
+  String get accountResetDialogAction => 'समझ गया';
+
+  @override
+  String get puzzleListenPrompt => 'निर्देश सुनें';
+
+  @override
+  String get puzzleStopNarration => 'आवाज़ बंद करें';
 }

@@ -31,8 +31,12 @@ extension LocalizedContent on AppLocalizations {
   String puzzleTitle(LearningPuzzle puzzle) =>
       _puzzleCopy(puzzle.id)?.title ?? puzzle.title;
 
-  String puzzlePrompt(LearningPuzzle puzzle) =>
-      _puzzleCopy(puzzle.id)?.prompt ?? puzzle.prompt;
+  String puzzlePrompt(LearningPuzzle puzzle) {
+    final language = localeName.split('_').first;
+    return _activePuzzlePromptOverrides[language]?[puzzle.id] ??
+        _puzzleCopy(puzzle.id)?.prompt ??
+        puzzle.prompt;
+  }
 
   String puzzleSkill(LearningPuzzle puzzle) =>
       _puzzleCopy(puzzle.id)?.skill ?? puzzle.skill;
@@ -118,6 +122,11 @@ extension LocalizedContent on AppLocalizations {
   }
 }
 
+bool hasLocalizedPuzzleCopy(String languageCode, String puzzleId) {
+  return (_newPuzzles[languageCode]?.containsKey(puzzleId) ?? false) ||
+      (_puzzles[languageCode]?.containsKey(puzzleId) ?? false);
+}
+
 bool _containsCyrillic(String value) {
   return value.runes.any(
     (rune) =>
@@ -135,6 +144,235 @@ class _PuzzleCopy {
   final String prompt;
   final String skill;
 }
+
+const Map<String, Map<String, String>> _activePuzzlePromptOverrides = {
+  'en': {
+    'camp-story':
+        'Restore the three missing camp items in the right order. Ignore the decoy.',
+    'word-grid':
+        'Find three crossing words. Trace each path without reusing a cell.',
+    'odd-card': 'Gather the clues, choose the rule, then sort all four cards.',
+    'secret-code': 'Use the clues and feedback to crack three number codes.',
+    'code-grid': 'Trace three number chains, then enter the code they reveal.',
+    'shadow-match': 'Match the hero to the correct shadow in all three rounds.',
+    'what-changed':
+        'Remember each scene and fix the changed object in all three rounds.',
+    'moon-clock': 'Move the minute hand to the shown time in all three rounds.',
+    'constellation-route':
+        'Follow each branch rule and trace all three constellations.',
+    'mirror-path':
+        'Turn all three mirrors, launch the beam, then trace it to the goal.',
+    'code-lock':
+        'Apply each number rule to the dials and open all three locks.',
+  },
+  'ru': {
+    'camp-story':
+        'Верни три пропавших предмета в правильном порядке. Лишний не трогай.',
+    'word-grid':
+        'Найди три пересекающихся слова. Проведи по каждому без повтора клеток.',
+    'odd-card': 'Собери улики, выбери правило и разложи все четыре карточки.',
+    'secret-code':
+        'Используй подсказки и ответы системы, чтобы разгадать три числовых кода.',
+    'code-grid': 'Пройди три числовые цепочки, затем введи найденный код.',
+    'shadow-match':
+        'В каждом из трех раундов перетащи героя к подходящей тени.',
+    'what-changed':
+        'Запомни каждую сцену и исправь изменившийся предмет в трех раундах.',
+    'moon-clock':
+        'В каждом из трех раундов поставь минутную стрелку на указанное время.',
+    'constellation-route':
+        'Следуй правилу на каждой развилке и пройди три созвездия.',
+    'mirror-path': 'Поверни три зеркала, запусти луч и проведи его до цели.',
+    'code-lock': 'Примени числовое правило к дискам и открой три замка.',
+  },
+  'de': {
+    'camp-story':
+        'Lege die drei fehlenden Campsachen in der richtigen Reihenfolge zurück. Lass den falschen Gegenstand liegen.',
+    'word-grid':
+        'Finde drei Wörter, die sich kreuzen. Ziehe jedes nach, ohne ein Feld doppelt zu nutzen.',
+    'odd-card':
+        'Sammle Hinweise, wähle die Regel und sortiere dann alle vier Karten.',
+    'secret-code':
+        'Nutze die Hinweise und Rückmeldungen, um drei Zahlencodes zu knacken.',
+    'code-grid':
+        'Ziehe drei Zahlenketten nach und gib danach den gefundenen Code ein.',
+    'shadow-match':
+        'Ordne den Helden in allen drei Runden dem richtigen Schatten zu.',
+    'what-changed':
+        'Merke dir jede Szene und bringe den veränderten Gegenstand in drei Runden in Ordnung.',
+    'moon-clock':
+        'Stelle den Minutenzeiger in allen drei Runden auf die gezeigte Zeit.',
+    'constellation-route':
+        'Beachte an jeder Abzweigung die Regel und zeichne alle drei Sternbilder nach.',
+    'mirror-path':
+        'Drehe alle drei Spiegel, starte den Lichtstrahl und ziehe seinen Weg bis zum Ziel nach.',
+    'code-lock':
+        'Wende jede Zahlenregel auf die Scheiben an und öffne alle drei Schlösser.',
+  },
+  'es': {
+    'camp-story':
+        'Devuelve los tres objetos perdidos al campamento en el orden correcto. Deja el objeto trampa.',
+    'word-grid':
+        'Encuentra tres palabras cruzadas. Traza cada camino sin repetir casillas.',
+    'odd-card': 'Reúne pistas, elige la regla y clasifica las cuatro tarjetas.',
+    'secret-code':
+        'Usa las pistas y las respuestas para descifrar tres códigos numéricos.',
+    'code-grid':
+        'Traza tres cadenas numéricas y escribe el código que revelan.',
+    'shadow-match': 'Une al héroe con la sombra correcta en las tres rondas.',
+    'what-changed':
+        'Recuerda cada escena y corrige el objeto que cambió en las tres rondas.',
+    'moon-clock':
+        'Mueve el minutero hasta la hora indicada en las tres rondas.',
+    'constellation-route':
+        'Sigue la regla de cada cruce y traza las tres constelaciones.',
+    'mirror-path':
+        'Gira los tres espejos, lanza el rayo y traza su camino hasta la meta.',
+    'code-lock':
+        'Aplica cada regla numérica a los discos y abre las tres cerraduras.',
+  },
+  'fr': {
+    'camp-story':
+        'Remets les trois objets disparus au camp dans le bon ordre. Laisse l’intrus de côté.',
+    'word-grid':
+        'Trouve trois mots croisés. Trace chaque chemin sans réutiliser de case.',
+    'odd-card':
+        'Rassemble les indices, choisis la règle, puis classe les quatre cartes.',
+    'secret-code':
+        'Utilise les indices et les retours pour trouver trois codes numériques.',
+    'code-grid':
+        'Trace trois chaînes de nombres, puis saisis le code qu’elles révèlent.',
+    'shadow-match':
+        'Associe le héros à la bonne ombre pendant les trois manches.',
+    'what-changed':
+        'Mémorise chaque scène et répare l’objet modifié pendant les trois manches.',
+    'moon-clock':
+        'Place la grande aiguille sur l’heure indiquée pendant les trois manches.',
+    'constellation-route':
+        'Suis la règle à chaque embranchement et trace les trois constellations.',
+    'mirror-path':
+        'Tourne les trois miroirs, lance le rayon, puis trace son chemin jusqu’au but.',
+    'code-lock':
+        'Applique chaque règle de nombres aux cadrans et ouvre les trois serrures.',
+  },
+  'hi': {
+    'camp-story':
+        'गायब हुई तीन चीजों को सही क्रम में शिविर में वापस रखो। नकली चीज छोड़ दो।',
+    'word-grid':
+        'एक-दूसरे को काटते तीन शब्द खोजो। किसी खाने को दोबारा छुए बिना रास्ता बनाओ।',
+    'odd-card': 'सुराग जुटाओ, नियम चुनो और फिर चारों कार्ड सही जगह रखो।',
+    'secret-code': 'सुराग और मिले जवाबों से तीन संख्या कोड हल करो।',
+    'code-grid':
+        'तीन संख्या श्रृंखलाओं पर रास्ता बनाओ, फिर उनसे मिला कोड लिखो।',
+    'shadow-match': 'तीनों दौर में हीरो को उसकी सही परछाईं से मिलाओ।',
+    'what-changed': 'हर दृश्य याद करो और तीनों दौर में बदली हुई चीज ठीक करो।',
+    'moon-clock': 'तीनों दौर में मिनट की सुई को दिखाए गए समय पर ले जाओ।',
+    'constellation-route':
+        'हर मोड़ का नियम मानो और तीनों तारामंडलों का रास्ता बनाओ।',
+    'mirror-path': 'तीनों आईने घुमाओ, किरण चलाओ और उसका रास्ता लक्ष्य तक बनाओ।',
+    'code-lock': 'हर संख्या नियम को चक्रों पर लगाओ और तीनों ताले खोलो।',
+  },
+  'it': {
+    'camp-story':
+        'Rimetti i tre oggetti mancanti nel campo nell’ordine giusto. Lascia stare l’intruso.',
+    'word-grid':
+        'Trova tre parole incrociate. Traccia ogni percorso senza riusare una casella.',
+    'odd-card':
+        'Raccogli gli indizi, scegli la regola e poi sistema tutte e quattro le carte.',
+    'secret-code':
+        'Usa gli indizi e i risultati per scoprire tre codici numerici.',
+    'code-grid':
+        'Traccia tre catene di numeri, poi inserisci il codice che rivelano.',
+    'shadow-match': 'Abbina l’eroe all’ombra giusta in tutti e tre i turni.',
+    'what-changed':
+        'Ricorda ogni scena e sistema l’oggetto cambiato in tutti e tre i turni.',
+    'moon-clock':
+        'Porta la lancetta dei minuti sull’ora indicata in tutti e tre i turni.',
+    'constellation-route':
+        'Segui la regola a ogni bivio e traccia tutte e tre le costellazioni.',
+    'mirror-path':
+        'Ruota i tre specchi, avvia il raggio e traccialo fino al traguardo.',
+    'code-lock':
+        'Applica ogni regola numerica ai dischi e apri tutte e tre le serrature.',
+  },
+  'ja': {
+    'camp-story': 'なくなった3つの道具を正しい順番でキャンプに戻そう。まぎらわしい道具にはさわらないでね。',
+    'word-grid': '交わっている3つの言葉を見つけよう。同じマスを2回通らずになぞってね。',
+    'odd-card': '手がかりを集めてルールを選び、4枚のカードをすべて分けよう。',
+    'secret-code': '手がかりと結果を使って、3つの数字コードを解こう。',
+    'code-grid': '3つの数字の道をなぞり、見つかったコードを入力しよう。',
+    'shadow-match': '3回とも、ヒーローを正しい影に合わせよう。',
+    'what-changed': 'それぞれの場面を覚えて、3回とも変わった物を元に戻そう。',
+    'moon-clock': '3回とも、長い針を表示された時刻に合わせよう。',
+    'constellation-route': '分かれ道のルールに従って、3つの星座をすべてなぞろう。',
+    'mirror-path': '3枚の鏡を回し、光を出して、ゴールまでの道をなぞろう。',
+    'code-lock': '数字のルールをダイヤルに使って、3つの鍵をすべて開けよう。',
+  },
+  'ko': {
+    'camp-story': '사라진 물건 세 개를 알맞은 순서로 캠프에 돌려놓으세요. 가짜 물건은 그대로 두세요.',
+    'word-grid': '서로 겹치는 단어 세 개를 찾으세요. 같은 칸을 두 번 지나지 않게 그으세요.',
+    'odd-card': '단서를 모아 규칙을 고른 뒤 카드 네 장을 모두 분류하세요.',
+    'secret-code': '단서와 결과를 이용해 숫자 코드 세 개를 푸세요.',
+    'code-grid': '숫자 길 세 개를 따라간 뒤 나타난 코드를 입력하세요.',
+    'shadow-match': '세 라운드 모두 영웅을 알맞은 그림자와 짝지으세요.',
+    'what-changed': '각 장면을 기억하고 세 라운드에서 바뀐 물건을 바로잡으세요.',
+    'moon-clock': '세 라운드 모두 분침을 표시된 시각에 맞추세요.',
+    'constellation-route': '갈림길마다 규칙을 지키며 별자리 세 개를 모두 그으세요.',
+    'mirror-path': '거울 세 개를 돌리고 빛을 쏜 뒤 목표까지 길을 그으세요.',
+    'code-lock': '숫자 규칙을 다이얼에 적용해 자물쇠 세 개를 모두 여세요.',
+  },
+  'pt': {
+    'camp-story':
+        'Devolva os três objetos perdidos ao acampamento na ordem certa. Deixe o objeto intruso de lado.',
+    'word-grid':
+        'Encontre três palavras cruzadas. Trace cada caminho sem repetir uma casa.',
+    'odd-card':
+        'Junte as pistas, escolha a regra e depois separe as quatro cartas.',
+    'secret-code':
+        'Use as pistas e os resultados para desvendar três códigos numéricos.',
+    'code-grid':
+        'Trace três cadeias de números e digite o código que elas revelam.',
+    'shadow-match': 'Ligue o herói à sombra certa nas três rodadas.',
+    'what-changed':
+        'Memorize cada cena e arrume o objeto alterado nas três rodadas.',
+    'moon-clock':
+        'Leve o ponteiro dos minutos até a hora indicada nas três rodadas.',
+    'constellation-route':
+        'Siga a regra em cada bifurcação e trace as três constelações.',
+    'mirror-path':
+        'Gire os três espelhos, lance o raio e trace o caminho dele até o destino.',
+    'code-lock':
+        'Aplique cada regra numérica aos discos e abra as três fechaduras.',
+  },
+  'ar': {
+    'camp-story':
+        'أعد الأشياء الثلاثة المفقودة إلى المخيم بالترتيب الصحيح، واترك الشيء الدخيل.',
+    'word-grid':
+        'اعثر على ثلاث كلمات متقاطعة، وارسم كل مسار دون تكرار أي خانة.',
+    'odd-card': 'اجمع الأدلة، واختر القاعدة، ثم صنف البطاقات الأربع كلها.',
+    'secret-code': 'استخدم الأدلة والنتائج لفك ثلاثة رموز رقمية.',
+    'code-grid': 'تتبع ثلاث سلاسل رقمية، ثم أدخل الرمز الذي تكشفه.',
+    'shadow-match': 'طابق البطل مع الظل الصحيح في الجولات الثلاث.',
+    'what-changed': 'تذكر كل مشهد، وأصلح الشيء المتغير في الجولات الثلاث.',
+    'moon-clock': 'حرك عقرب الدقائق إلى الوقت المعروض في الجولات الثلاث.',
+    'constellation-route': 'اتبع القاعدة عند كل تفرع، وتتبع الكوكبات الثلاثة.',
+    'mirror-path': 'أدر المرايا الثلاث، وأطلق الشعاع، ثم تتبع مساره إلى الهدف.',
+    'code-lock': 'طبق كل قاعدة رقمية على الأقراص وافتح الأقفال الثلاثة.',
+  },
+  'zh': {
+    'camp-story': '按正确顺序把三件丢失的物品放回营地，不要碰干扰物品。',
+    'word-grid': '找出三个交叉的词。每条路线都不能重复经过同一格。',
+    'odd-card': '收集线索，选出规则，再把四张卡片全部分类。',
+    'secret-code': '根据线索和反馈破解三个数字密码。',
+    'code-grid': '沿着三条数字链前进，再输入它们揭示的密码。',
+    'shadow-match': '在三轮中都把英雄与正确的影子配对。',
+    'what-changed': '记住每个场景，并在三轮中把变化的物品恢复原样。',
+    'moon-clock': '在三轮中都把分针拨到显示的时间。',
+    'constellation-route': '按照每个岔路的规则，画完三个星座。',
+    'mirror-path': '转动三面镜子，发射光线，再沿着光路到达目标。',
+    'code-lock': '把数字规则应用到转盘上，打开三个锁。',
+  },
+};
 
 const Map<String, Map<String, String>> _newAnswerLabels = {
   'en': {

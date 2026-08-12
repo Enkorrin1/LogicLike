@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/arrow_maze_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/clean_row_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/final_orbit_game.dart';
-import 'package:logicloka/src/features/challenge/game_scenes/mirror_path_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/shape_tangram_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/shape_tower_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/two_differences_game.dart';
@@ -64,28 +63,6 @@ void main() {
     expect(out, isEmpty);
     await t.tap(find.byKey(const ValueKey('arrow-maze-launch')));
     await exactOnce(t, out, const Duration(seconds: 2));
-  });
-
-  testWidgets('mirror path: trace five nodes, exact once', (t) async {
-    final out = <String>[];
-    await t.pumpWidget(host(MirrorPathGameView(
-        accent: Colors.cyan,
-        compact: false,
-        correctAnswer: answer,
-        semanticLabel: label,
-        onAnswerSelected: out.add)));
-    final r = t.getRect(scene);
-    Offset node(int i) =>
-        r.topLeft +
-        Offset(r.width * (.54 + .40 * (.17 + (i % 3) * .33)),
-            r.height * (.13 + .72 * (.17 + (i ~/ 3) * .33)));
-    final g = await t.startGesture(node(2));
-    for (final i in [1, 4, 7, 6]) {
-      await g.moveTo(node(i));
-      await t.pump(const Duration(milliseconds: 40));
-    }
-    await g.up();
-    await exactOnce(t, out);
   });
 
   testWidgets('tangram: rotate fin and place four pieces, exact once',

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/balloon_order_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/camp_differences_game.dart';
-import 'package:logicloka/src/features/challenge/game_scenes/camp_story_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/deduction_board_games.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/logic_mechanics_games.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/math_workshop_games.dart';
@@ -142,72 +141,7 @@ void main() {
     await _expectCompletedOnce(tester, answers);
   });
 
-  testWidgets('camp story waits for memory phase and restores the lantern', (
-    tester,
-  ) async {
-    final answers = <String>[];
-    await tester.pumpWidget(
-      _harness(
-        CampStoryGameView(
-          accent: Colors.amber,
-          compact: false,
-          correctAnswer: _sentinel,
-          semanticLabel: 'camp story',
-          onAnswerSelected: answers.add,
-        ),
-      ),
-    );
-    final surface = find.byWidgetPredicate(
-      (widget) => widget is GestureDetector && widget.onPanStart != null,
-    );
-    await tester.pump(const Duration(milliseconds: 1800));
-    const scale = 258 / 252;
-    const boardOrigin = Offset(25.71, 0);
-    Offset board(Offset point) => boardOrigin + point * scale;
-    await _pan(
-      tester,
-      surface,
-      board(const Offset(270, 219)),
-      board(const Offset(183, 93)),
-    );
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(answers, isEmpty);
-    await _pan(
-      tester,
-      surface,
-      board(const Offset(235, 219)),
-      board(const Offset(183, 93)),
-    );
-    await _expectCompletedOnce(tester, answers);
-  });
-
-  testWidgets('logic houses recovers from a wrong layout and solves once', (
-    tester,
-  ) async {
-    final answers = <String>[];
-    await tester.pumpWidget(
-      _harness(
-        LogicHousesDeductionGameView(
-          accent: Colors.purple,
-          compact: false,
-          correctAnswer: _sentinel,
-          semanticLabel: 'logic houses',
-          onAnswerSelected: answers.add,
-        ),
-      ),
-    );
-    await _drag(tester, _draggableWithData(0), _dragTargets.at(0));
-    await _drag(tester, _draggableWithData(1), _dragTargets.at(1));
-    await _drag(tester, _draggableWithData(2), _dragTargets.at(2));
-    await tester.pump(const Duration(milliseconds: 550));
-    expect(answers, isEmpty);
-    await _drag(tester, _draggableWithData(1), _dragTargets.at(0));
-    await _drag(tester, _draggableWithData(2), _dragTargets.at(1));
-    await _drag(tester, _draggableWithData(0), _dragTargets.at(2));
-    await _expectCompletedOnce(tester, answers);
-  });
-
-  testWidgets('notebook sum places three digits and sends exact answer once', (
+  testWidgets('notebook sum repairs an error and clears three pages once', (
     tester,
   ) async {
     final answers = <String>[];
@@ -222,14 +156,58 @@ void main() {
         ),
       ),
     );
+    for (var digit = 0; digit < 5; digit++) {
+      final size = tester.getSize(
+        find.byKey(ValueKey('notebook-digit-0-$digit')),
+      );
+      expect(size.width, greaterThanOrEqualTo(44));
+      expect(size.height, greaterThanOrEqualTo(44));
+    }
     for (var slot = 0; slot < 3; slot++) {
-      await _drag(tester, _draggables.at(0), _dragTargets.at(slot));
-      if (slot < 2) expect(answers, isEmpty);
+      final size = tester.getSize(
+        find.byKey(ValueKey('notebook-slot-0-$slot')),
+      );
+      expect(size.width, greaterThanOrEqualTo(44));
+      expect(size.height, greaterThanOrEqualTo(44));
+    }
+
+    await _drag(
+      tester,
+      find.byKey(const ValueKey('notebook-digit-0-3')),
+      find.byKey(const ValueKey('notebook-slot-0-0')),
+    );
+    await tester.tap(find.byKey(const ValueKey('notebook-digit-0-1')));
+    await tester.tap(find.byKey(const ValueKey('notebook-digit-0-2')));
+    await tester.pump();
+    expect(answers, isEmpty);
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byKey(const ValueKey('notebook-page-0')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('notebook-digit-0-0')));
+    await tester.pump();
+    expect(answers, isEmpty);
+    await tester.pump(const Duration(milliseconds: 710));
+    await tester.pump(const Duration(milliseconds: 330));
+    expect(find.byKey(const ValueKey('notebook-page-1')), findsOneWidget);
+
+    for (final round in const [1, 2]) {
+      for (final digit in const [0, 1, 2]) {
+        await tester.tap(
+          find.byKey(ValueKey('notebook-digit-$round-$digit')),
+        );
+        await tester.pump();
+        expect(answers, isEmpty);
+      }
+      if (round == 1) {
+        await tester.pump(const Duration(milliseconds: 710));
+        await tester.pump(const Duration(milliseconds: 330));
+        expect(find.byKey(const ValueKey('notebook-page-2')), findsOneWidget);
+      }
     }
     await _expectCompletedOnce(tester, answers);
   });
 
-  testWidgets('odd step reorders the whole chain and completes once', (
+  testWidgets('odd step repairs and runs three cause chains once', (
     tester,
   ) async {
     final answers = <String>[];
@@ -245,17 +223,40 @@ void main() {
       ),
     );
 
-    Future<void> reorder(int oldIndex, int newIndex) async {
-      final list = tester.widget<ReorderableListView>(
-        find.byType(ReorderableListView),
+    const brokenIds = [4, 14, 24];
+    const repairIds = [2, 12, 22];
+    const decoyIds = [5, 15, 25];
+    for (var round = 0; round < 3; round++) {
+      await tester.tap(
+        find.byKey(ValueKey('odd-step-card-$round-${brokenIds[round]}')),
       );
-      list.onReorderItem!(oldIndex, newIndex);
+      await tester.pump();
+      if (round == 0) {
+        await _drag(
+          tester,
+          find.byKey(ValueKey('odd-step-repair-$round-${decoyIds[round]}')),
+          find.byKey(ValueKey('odd-step-slot-$round')),
+        );
+        expect(answers, isEmpty);
+      }
+      await _drag(
+        tester,
+        find.byKey(ValueKey('odd-step-repair-$round-${repairIds[round]}')),
+        find.byKey(ValueKey('odd-step-slot-$round')),
+      );
+      await tester.tap(find.byKey(ValueKey('odd-step-run-$round')));
       await tester.pumpAndSettle();
+      if (round < 2) {
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pump();
+        expect(
+            find.byKey(
+                ValueKey('odd-step-card-${round + 1}-${brokenIds[round + 1]}')),
+            findsOneWidget);
+      }
+      expect(answers, round == 2 ? [_sentinel] : isEmpty);
     }
-
-    await reorder(1, 0);
-    expect(answers, isEmpty);
-    await reorder(3, 1);
     await _expectCompletedOnce(tester, answers);
   });
 

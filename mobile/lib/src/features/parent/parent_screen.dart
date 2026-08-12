@@ -300,11 +300,12 @@ class _ProgressSummaryCard extends StatelessWidget {
     final contentProgress =
         totalPuzzleCount == 0 ? 0.0 : completedPuzzleCount / totalPuzzleCount;
 
-    return PlayfulCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: SectionTitle(
             title: context.l10n.parentProgressTitle,
             trailing: InfoPill(
               icon: Icons.insights_rounded,
@@ -312,59 +313,59 @@ class _ProgressSummaryCard extends StatelessWidget {
               color: AppPalette.surfaceBlue,
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: _StatTile(
-                  icon: Icons.route_rounded,
-                  color: AppPalette.teal,
-                  label: context.l10n.parentLevelsLabel,
-                  value: context.l10n.parentLevelsValue(completedLevels, 8),
-                  progress: levelProgress,
-                ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _StatTile(
+                icon: Icons.route_rounded,
+                color: AppPalette.teal,
+                label: context.l10n.parentLevelsLabel,
+                value: context.l10n.parentLevelsValue(completedLevels, 8),
+                progress: levelProgress,
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _StatTile(
-                  icon: Icons.today_rounded,
-                  color: AppPalette.lavender,
-                  label: context.l10n.parentTodayLabel,
-                  value: context.l10n.parentTodayValue(todayDone, todayTotal),
-                  progress: todayTotal == 0 ? 0 : todayDone / todayTotal,
-                ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _StatTile(
+                icon: Icons.today_rounded,
+                color: AppPalette.lavender,
+                label: context.l10n.parentTodayLabel,
+                value: context.l10n.parentTodayValue(todayDone, todayTotal),
+                progress: todayTotal == 0 ? 0 : todayDone / todayTotal,
               ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: _StatTile(
-                  icon: Icons.auto_awesome_rounded,
-                  color: AppPalette.mango,
-                  label: context.l10n.parentStarsLabel,
-                  value: '$totalStars',
-                  progress: math.min(1, totalStars / 160),
-                ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _StatTile(
+                icon: Icons.auto_awesome_rounded,
+                color: AppPalette.mango,
+                label: context.l10n.parentStarsLabel,
+                value: '$totalStars',
+                progress: math.min(1, totalStars / 160),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _StatTile(
-                  icon: Icons.extension_rounded,
-                  color: AppPalette.coral,
-                  label: context.l10n.parentContentLabel,
-                  value: context.l10n.parentContentValue(
-                    completedPuzzleCount,
-                    totalPuzzleCount,
-                  ),
-                  progress: contentProgress,
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _StatTile(
+                icon: Icons.extension_rounded,
+                color: AppPalette.coral,
+                label: context.l10n.parentContentLabel,
+                value: context.l10n.parentContentValue(
+                  completedPuzzleCount,
+                  totalPuzzleCount,
                 ),
+                progress: contentProgress,
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -387,11 +388,10 @@ class _StatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.fromLTRB(14, 13, 14, 12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.white, width: 1.5),
+        color: color.withValues(alpha: 0.13),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -402,7 +402,7 @@ class _StatTile extends StatelessWidget {
             iconColor: color,
             size: 38,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Text(
             value,
             maxLines: 1,
@@ -418,7 +418,7 @@ class _StatTile extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           ClipRRect(
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
@@ -445,33 +445,31 @@ class _TodayPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlayfulCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle(
-            title: context.l10n.parentTodayPlanTitle,
-            trailing: InfoPill(
-              icon: Icons.event_available_rounded,
-              label: '${completedIds.length}/${puzzles.length}',
-              color: AppPalette.mint,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionTitle(
+          title: context.l10n.parentTodayPlanTitle,
+          trailing: InfoPill(
+            icon: Icons.event_available_rounded,
+            label: '${completedIds.length}/${puzzles.length}',
+            color: AppPalette.mint,
           ),
-          const SizedBox(height: 6),
-          Text(
-            context.l10n.parentTodayPlanBody,
-            style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          context.l10n.parentTodayPlanBody,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 14),
+        for (final puzzle in puzzles) ...[
+          _TodayPuzzleRow(
+            puzzle: puzzle,
+            completed: completedIds.contains(puzzle.id),
           ),
-          const SizedBox(height: 14),
-          for (final puzzle in puzzles) ...[
-            _TodayPuzzleRow(
-              puzzle: puzzle,
-              completed: completedIds.contains(puzzle.id),
-            ),
-            if (puzzle != puzzles.last) const SizedBox(height: 10),
-          ],
+          if (puzzle != puzzles.last) const SizedBox(height: 10),
         ],
-      ),
+      ],
     );
   }
 }
@@ -682,46 +680,42 @@ class _ParentRecommendationCard extends StatelessWidget {
               )
             : context.l10n.parentRecommendationStart;
 
-    return PlayfulCard(
-      color: const Color(0xFFFFFAEF),
-      borderColor: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle(
-            title: context.l10n.parentRecommendationsTitle,
-            trailing: InfoPill(
-              icon: Icons.tips_and_updates_rounded,
-              label: context.l10n.parentHomeBadge,
-              color: Colors.white,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionTitle(
+          title: context.l10n.parentRecommendationsTitle,
+          trailing: InfoPill(
+            icon: Icons.tips_and_updates_rounded,
+            label: context.l10n.parentHomeBadge,
+            color: Colors.white,
           ),
-          const SizedBox(height: 14),
-          _AdviceTile(
-            icon: Icons.favorite_rounded,
-            color: AppPalette.coral,
-            title: context.l10n.parentPaceLabel,
-            body: statusText,
+        ),
+        const SizedBox(height: 14),
+        _AdviceTile(
+          icon: Icons.favorite_rounded,
+          color: AppPalette.coral,
+          title: context.l10n.parentPaceLabel,
+          body: statusText,
+        ),
+        const SizedBox(height: 10),
+        _AdviceTile(
+          icon: Icons.explore_rounded,
+          color: _areaColor(recommendedArea.id),
+          title: context.l10n.parentWeekFocusLabel,
+          body: context.l10n.parentFocusArea(
+            context.l10n.areaTitle(recommendedArea.id),
+            context.l10n.areaSubtitle(recommendedArea.id).toLowerCase(),
           ),
-          const SizedBox(height: 10),
-          _AdviceTile(
-            icon: Icons.explore_rounded,
-            color: _areaColor(recommendedArea.id),
-            title: context.l10n.parentWeekFocusLabel,
-            body: context.l10n.parentFocusArea(
-              context.l10n.areaTitle(recommendedArea.id),
-              context.l10n.areaSubtitle(recommendedArea.id).toLowerCase(),
-            ),
-          ),
-          const SizedBox(height: 10),
-          _AdviceTile(
-            icon: Icons.chat_bubble_rounded,
-            color: AppPalette.lavender,
-            title: context.l10n.parentDiscussLabel,
-            body: context.l10n.parentDiscussBody,
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 10),
+        _AdviceTile(
+          icon: Icons.chat_bubble_rounded,
+          color: AppPalette.lavender,
+          title: context.l10n.parentDiscussLabel,
+          body: context.l10n.parentDiscussBody,
+        ),
+      ],
     );
   }
 }
@@ -793,46 +787,42 @@ class _AccountSettingsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
 
-    return PlayfulCard(
-      color: const Color(0xFFFFFAEF),
-      borderColor: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle(
-            title: l10n.parentAccountTitle,
-            trailing: InfoPill(
-              icon: Icons.cloud_off_rounded,
-              label: l10n.parentAccountStatusGuest,
-              color: const Color(0xFFFFE7A8),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionTitle(
+          title: l10n.parentAccountTitle,
+          trailing: InfoPill(
+            icon: Icons.cloud_off_rounded,
+            label: l10n.parentAccountStatusGuest,
+            color: const Color(0xFFFFE7A8),
           ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.parentAccountBody,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 14),
-          _InfoRow(
-            icon: Icons.child_care_rounded,
-            color: AppPalette.mint,
-            label: l10n.parentChildLabel,
-            value: profile.childName,
-          ),
-          _InfoRow(
-            icon: Icons.workspace_premium_rounded,
-            color: AppPalette.surfaceBlue,
-            label: l10n.parentSubscriptionTitle,
-            value: l10n.parentSubscriptionCurrentFree,
-          ),
-          const SizedBox(height: 2),
-          FilledButton.icon(
-            onPressed: onOpenAccount,
-            icon: const Icon(Icons.account_circle_rounded),
-            label: Text(l10n.parentAccountAction),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n.parentAccountBody,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 14),
+        _InfoRow(
+          icon: Icons.child_care_rounded,
+          color: AppPalette.mint,
+          label: l10n.parentChildLabel,
+          value: profile.childName,
+        ),
+        _InfoRow(
+          icon: Icons.workspace_premium_rounded,
+          color: AppPalette.surfaceBlue,
+          label: l10n.parentSubscriptionTitle,
+          value: l10n.parentSubscriptionCurrentFree,
+        ),
+        const SizedBox(height: 2),
+        FilledButton.icon(
+          onPressed: onOpenAccount,
+          icon: const Icon(Icons.account_circle_rounded),
+          label: Text(l10n.parentAccountAction),
+        ),
+      ],
     );
   }
 }
@@ -889,62 +879,58 @@ class _SubscriptionPlansCard extends StatelessWidget {
       ),
     ];
 
-    return PlayfulCard(
-      color: const Color(0xFFFFFAEF),
-      borderColor: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SectionTitle(
-            title: l10n.parentSubscriptionTitle,
-            trailing: InfoPill(
-              icon: Icons.local_offer_rounded,
-              label: l10n.parentSubscriptionLaunchBadge,
-              color: const Color(0xFFFFE7A8),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionTitle(
+          title: l10n.parentSubscriptionTitle,
+          trailing: InfoPill(
+            icon: Icons.local_offer_rounded,
+            label: l10n.parentSubscriptionLaunchBadge,
+            color: const Color(0xFFFFE7A8),
           ),
-          const SizedBox(height: 6),
-          Text(
-            l10n.parentSubscriptionBody,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 14),
-          for (final plan in plans) ...[
-            _SubscriptionPlanTile(plan: plan),
-            if (plan != plans.last) const SizedBox(height: 10),
-          ],
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AppPalette.surfaceBlue.withValues(alpha: 0.58),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white, width: 1.4),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const IconBadge(
-                  icon: Icons.trending_up_rounded,
-                  color: Colors.white,
-                  iconColor: AppPalette.teal,
-                  size: 36,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    l10n.parentSubscriptionFuturePriceNote,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppPalette.ink,
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n.parentSubscriptionBody,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 14),
+        for (final plan in plans) ...[
+          _SubscriptionPlanTile(plan: plan),
+          if (plan != plans.last) const SizedBox(height: 10),
         ],
-      ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppPalette.surfaceBlue.withValues(alpha: 0.58),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white, width: 1.4),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const IconBadge(
+                icon: Icons.trending_up_rounded,
+                color: Colors.white,
+                iconColor: AppPalette.teal,
+                size: 36,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.parentSubscriptionFuturePriceNote,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppPalette.ink,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

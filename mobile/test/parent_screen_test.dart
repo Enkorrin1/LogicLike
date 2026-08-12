@@ -326,4 +326,51 @@ void main() {
     expect(find.text(l10n.accountSignedInTitle), findsOneWidget);
     expect(find.textContaining('parent@example.com'), findsWidgets);
   });
+
+  testWidgets('keeps the parent dashboard stable in compact Arabic RTL',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final l10n = lookupAppLocalizations(const Locale('ar'));
+    final profile = FamilyProfile(
+      childName: 'Alexandra Konstantinovna',
+      childAge: ChildAge.eight,
+      createdAt: DateTime.now(),
+      completedChallenges: 5,
+      completedLevels: 4,
+      dailyProgressDate: DateTime.now(),
+      dailyCompletedPuzzleIds: const ['logic-train'],
+      completedPracticePuzzleIds: const ['memory-pairs', 'rocket-route'],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: const Locale('ar'),
+        home: ParentScreen(
+          profile: profile,
+          onResetProfile: () async {},
+          onLanguageChanged: (_) async {},
+          onReminderPreferenceChanged: (_) async {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.parentOverviewTitle), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await tester.scrollUntilVisible(
+      find.text(l10n.parentResetProfile),
+      420,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.text(l10n.parentResetProfile), findsOneWidget);
+  });
 }

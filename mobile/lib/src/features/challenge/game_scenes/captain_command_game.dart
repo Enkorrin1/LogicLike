@@ -28,7 +28,11 @@ enum _CaptainPhase { demonstrating, input, wrong, success }
 
 class _CaptainCommandGameViewState extends State<CaptainCommandGameView>
     with TickerProviderStateMixin {
-  static const _sequence = [0, 2, 1];
+  static const _rounds = <List<int>>[
+    [0, 2, 1],
+    [1, 0, 2, 1],
+    [2, 1, 0, 2, 1],
+  ];
 
   late final AnimationController _ambient;
   late final AnimationController _motion;
@@ -37,8 +41,11 @@ class _CaptainCommandGameViewState extends State<CaptainCommandGameView>
   _CaptainPhase _phase = _CaptainPhase.demonstrating;
   int? _activeCommand;
   int _progress = 0;
+  int _round = 0;
   int _run = 0;
   bool _answerSent = false;
+
+  List<int> get _sequence => _rounds[_round];
 
   @override
   void initState() {
@@ -127,6 +134,11 @@ class _CaptainCommandGameViewState extends State<CaptainCommandGameView>
     HapticFeedback.heavyImpact();
     _success.forward(from: 0).whenComplete(() {
       if (!mounted || _answerSent) return;
+      if (_round < _rounds.length - 1) {
+        setState(() => _round++);
+        _demonstrate();
+        return;
+      }
       _answerSent = true;
       widget.onAnswerSelected(widget.correctAnswer);
     });
@@ -174,6 +186,7 @@ class _CaptainCommandGameViewState extends State<CaptainCommandGameView>
                           phase: _phase,
                           activeCommand: _activeCommand,
                           progress: _progress,
+                          round: _round,
                         ),
                       ),
                     ),
@@ -189,7 +202,10 @@ class _CaptainCommandGameViewState extends State<CaptainCommandGameView>
                               : null,
                           child: GestureDetector(
                             behavior: HitTestBehavior.opaque,
-                            onTap: () => _choose(i),
+                            onTap: i == 0 ? () => _choose(i) : null,
+                            onLongPress: i == 2 ? () => _choose(i) : null,
+                            onHorizontalDragEnd:
+                                i == 1 ? (_) => _choose(i) : null,
                           ),
                         ),
                       ),
@@ -205,18 +221,23 @@ class _CaptainCommandGameViewState extends State<CaptainCommandGameView>
 }
 
 const Map<String, List<String>> _labels = {
+  'ar': ['أمر التحية', 'أمر الدوران', 'أمر الانطلاق'],
   'en': ['Salute command', 'Turn command', 'Boost command'],
   'ru': ['Команда честь', 'Команда поворот', 'Команда прыжок'],
   'be': ['Каманда гонар', 'Каманда паварот', 'Каманда скачок'],
   'de': ['Grußbefehl', 'Drehbefehl', 'Sprungbefehl'],
   'es': ['Orden de saludo', 'Orden de giro', 'Orden de salto'],
   'fr': ['Commande salut', 'Commande rotation', 'Commande saut'],
+  'hi': ['सलामी आदेश', 'मुड़ने का आदेश', 'तेज़ी का आदेश'],
   'it': ['Comando saluto', 'Comando giro', 'Comando salto'],
+  'ja': ['敬礼の指令', '回転の指令', '加速の指令'],
+  'ko': ['경례 명령', '회전 명령', '가속 명령'],
   'pt': ['Comando saudar', 'Comando girar', 'Comando saltar'],
   'pl': ['Rozkaz salut', 'Rozkaz obrót', 'Rozkaz skok'],
   'uk': ['Команда честь', 'Команда поворот', 'Команда стрибок'],
   'tr': ['Selam komutu', 'Dönüş komutu', 'Zıplama komutu'],
   'kk': ['Сәлем беру пәрмені', 'Бұрылу пәрмені', 'Секіру пәрмені'],
+  'zh': ['敬礼指令', '转向指令', '加速指令'],
 };
 
 class _CaptainLayout {
@@ -253,6 +274,7 @@ class _CaptainPainter extends CustomPainter {
     required this.phase,
     required this.activeCommand,
     required this.progress,
+    required this.round,
   });
 
   final Color accent;
@@ -263,6 +285,7 @@ class _CaptainPainter extends CustomPainter {
   final _CaptainPhase phase;
   final int? activeCommand;
   final int progress;
+  final int round;
 
   static const _panelColors = [
     Color(0xFFFFC857),
@@ -469,7 +492,7 @@ class _CaptainPainter extends CustomPainter {
 
   void _drawProgress(Canvas canvas, Size size, double unit) {
     for (var i = 0; i < 3; i++) {
-      final done = phase == _CaptainPhase.success || i < progress;
+      final done = i < round || (i == round && phase == _CaptainPhase.success);
       canvas.drawCircle(
         Offset(size.width / 2 + (i - 1) * 19 * unit, 13 * unit),
         done ? 5 * unit : 4 * unit,
@@ -503,5 +526,6 @@ class _CaptainPainter extends CustomPainter {
       oldDelegate.success != success ||
       oldDelegate.phase != phase ||
       oldDelegate.activeCommand != activeCommand ||
-      oldDelegate.progress != progress;
+      oldDelegate.progress != progress ||
+      oldDelegate.round != round;
 }

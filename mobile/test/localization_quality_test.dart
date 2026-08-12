@@ -85,6 +85,33 @@ void main() {
 
     expect(issues, isEmpty);
   });
+
+  test('account and subscription surface is translated for every locale', () {
+    const keys = <String>{
+      'parentAccountTitle',
+      'accountHeroTitle',
+      'accountGoogleSuccessSnack',
+      'parentSubscriptionCurrentFree',
+      'parentSubscriptionFreeTitle',
+      'parentSubscriptionPremiumTitle',
+      'parentSubscriptionAnnualTitle',
+    };
+    final english = locales['en']!;
+    final issues = <String>[];
+
+    for (final entry in locales.entries) {
+      if (entry.key == 'en') {
+        continue;
+      }
+      for (final key in keys) {
+        if (entry.value[key] == english[key]) {
+          issues.add('${entry.key}.$key is still English');
+        }
+      }
+    }
+
+    expect(issues, isEmpty);
+  });
 }
 
 Map<String, Object?> _loadArb(String path) {

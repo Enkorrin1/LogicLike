@@ -87,25 +87,108 @@ class _LogicLokaAppState extends State<LogicLokaApp> {
   }
 }
 
-class _LoadingScreen extends StatelessWidget {
+class _LoadingScreen extends StatefulWidget {
   const _LoadingScreen();
+
+  @override
+  State<_LoadingScreen> createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<_LoadingScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: PlayfulBackground(
-        child: Center(
-          child: PlayfulCard(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const AppMark(size: 56),
-                const SizedBox(height: 18),
-                const CircularProgressIndicator(),
-                const SizedBox(height: 14),
-                Text(context.l10n.loadingMission),
-              ],
+        child: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, child) => Transform.translate(
+                      offset: Offset(0, -4 * _controller.value),
+                      child: Transform.scale(
+                        scale: 0.98 + _controller.value * 0.04,
+                        child: child,
+                      ),
+                    ),
+                    child: Container(
+                      width: 154,
+                      height: 154,
+                      padding: const EdgeInsets.all(7),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppPalette.teal.withValues(alpha: 0.22),
+                            blurRadius: 34,
+                            offset: const Offset(0, 18),
+                          ),
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          'assets/images/avatar_lion.png',
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.high,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    context.l10n.appTitle,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          color: const Color(0xFF075D5A),
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    context.l10n.loadingMission,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppPalette.muted,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 22),
+                  SizedBox(
+                    width: 168,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: const LinearProgressIndicator(
+                        minHeight: 8,
+                        backgroundColor: Colors.white,
+                        color: AppPalette.teal,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

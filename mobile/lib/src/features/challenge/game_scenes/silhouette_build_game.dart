@@ -261,6 +261,7 @@ class _SilhouetteBuildGameViewState extends State<SilhouetteBuildGameView>
 }
 
 const _semanticInstructions = <String, String>{
+  'ar': 'اسحب الأجزاء الأربعة إلى المخلوق. اضغط على الذيل الجانبي لتدويره.',
   'en':
       'Drag the four parts onto the creature. Tap the sideways tail to turn it.',
   'ru':
@@ -275,8 +276,12 @@ const _semanticInstructions = <String, String>{
       'Arrastra las cuatro piezas a la criatura. Toca la cola girada para rotarla.',
   'fr':
       'Fais glisser les quatre pièces sur la créature. Touche la queue tournée pour la faire pivoter.',
+  'hi':
+      'चारों हिस्सों को प्राणी पर खींचें। तिरछी पूँछ को घुमाने के लिए उस पर टैप करें।',
   'it':
       'Trascina i quattro pezzi sulla creatura. Tocca la coda girata per ruotarla.',
+  'ja': '4つのパーツを生き物の上へ動かします。横向きのしっぽをタップして回転させましょう。',
+  'ko': '네 개의 조각을 캐릭터 위로 옮기세요. 옆으로 누운 꼬리를 탭해 돌리세요.',
   'pt':
       'Arraste as quatro peças para a criatura. Toque na cauda virada para girá-la.',
   'pl':
@@ -285,6 +290,7 @@ const _semanticInstructions = <String, String>{
       'Dört parçayı yaratığın üzerine sürükle. Yan duran kuyruğu çevirmek için dokun.',
   'kk':
       'Төрт бөлшекті кейіпкерге сүйреп апарыңыз. Қиғаш құйрықты бұру үшін түртіңіз.',
+  'zh': '把四个部件拖到小动物身上。点击横着的尾巴将它旋转到正确方向。',
 };
 
 enum _PieceKind { ears, eyes, paws, tail }

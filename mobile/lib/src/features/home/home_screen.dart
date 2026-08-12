@@ -758,10 +758,10 @@ class _MissionHeroCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(32),
       onTap: onStart,
       child: Container(
-        height: 142,
+        height: 164,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
+          borderRadius: BorderRadius.circular(28),
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -792,8 +792,8 @@ class _MissionHeroCard extends StatelessWidget {
               ),
             ),
             Positioned(
-              right: -18,
-              bottom: -22,
+              right: -12,
+              bottom: -10,
               child: AnimatedBuilder(
                 animation: animation,
                 builder: (context, child) {
@@ -807,8 +807,8 @@ class _MissionHeroCard extends StatelessWidget {
                   );
                 },
                 child: SizedBox(
-                  width: 130,
-                  height: 142,
+                  width: 154,
+                  height: 164,
                   child: Image.asset(
                     'assets/images/home_astronaut_cutout.png',
                     fit: BoxFit.contain,
@@ -823,66 +823,65 @@ class _MissionHeroCard extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      const Color(0xFF071B72).withValues(alpha: 0.92),
-                      const Color(0xFF0B42B6).withValues(alpha: 0.68),
-                      const Color(0xFF071B72).withValues(alpha: 0.22),
+                      const Color(0xFF071B72).withValues(alpha: 0.95),
+                      const Color(0xFF0B42B6).withValues(alpha: 0.72),
+                      const Color(0xFF071B72).withValues(alpha: 0.05),
                     ],
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+            Positioned(
+              left: 16,
+              top: 14,
+              width: 184,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const _MissionTag(),
-                        const SizedBox(height: 8),
-                        Text(
-                          completedToday
-                              ? context.l10n.homeMissionFreePlay
-                              : context.l10n.homeMissionDaily,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w900,
-                                    height: 1,
-                                  ),
+                  const _MissionTag(),
+                  const SizedBox(height: 8),
+                  Text(
+                    completedToday
+                        ? context.l10n.homeMissionFreePlay
+                        : context.l10n.homeMissionDaily,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          height: 1,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          completedToday
-                              ? context.l10n.homeTrainingOpen
-                              : context.l10n.homeLevel(level),
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.86),
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                        ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: 150,
-                          child: _AnimatedProgressBar(value: progressValue),
-                        ),
-                      ],
-                    ),
                   ),
-                  const SizedBox(width: 8),
-                  _StartMissionButton(
-                    animation: animation,
-                    label: completedToday
-                        ? context.l10n.homeMissionChoose
-                        : context.l10n.homeMissionStart,
+                  const SizedBox(height: 4),
+                  Text(
+                    completedToday
+                        ? context.l10n.homeTrainingOpen
+                        : context.l10n.homeLevel(level),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.86),
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  SizedBox(
+                    width: 142,
+                    child: _AnimatedProgressBar(value: progressValue),
                   ),
                 ],
+              ),
+            ),
+            Positioned(
+              left: 16,
+              bottom: 14,
+              child: _StartMissionButton(
+                animation: animation,
+                width: 142,
+                label: completedToday
+                    ? context.l10n.homeMissionChoose
+                    : context.l10n.homeMissionStart,
               ),
             ),
           ],
@@ -1153,16 +1152,18 @@ class _StartMissionButton extends StatelessWidget {
   const _StartMissionButton({
     required this.animation,
     required this.label,
+    this.width = 116,
   });
 
   final Animation<double> animation;
   final String label;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 50,
-      width: 116,
+      height: 46,
+      width: width,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -1548,12 +1549,24 @@ class _CollectionTile extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            const Positioned(
+            Positioned(
               right: 0,
-              top: 0,
-              child: _SmallRoundIcon(
-                icon: Icons.rocket_launch_rounded,
-                color: AppPalette.lavender,
+              top: -4,
+              child: Container(
+                width: 42,
+                height: 42,
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/images/home_astronaut_cutout.png',
+                    fit: BoxFit.cover,
+                    alignment: const Alignment(0, -0.25),
+                  ),
+                ),
               ),
             ),
             Column(
@@ -1578,10 +1591,13 @@ class _CollectionTile extends StatelessWidget {
                         child: child,
                       );
                     },
-                    child: const Icon(
-                      Icons.rocket_launch_rounded,
-                      color: AppPalette.coral,
-                      size: 62,
+                    child: SizedBox(
+                      width: 90,
+                      height: 78,
+                      child: Image.asset(
+                        'assets/images/home_astronaut_cutout.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ),

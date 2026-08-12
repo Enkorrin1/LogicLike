@@ -25,7 +25,11 @@ class MemoryPairsGameView extends StatefulWidget {
 
 class _MemoryPairsGameViewState extends State<MemoryPairsGameView>
     with TickerProviderStateMixin {
-  static const _pairs = <int>[0, 1, 2, 1, 2, 0];
+  static const _rounds = <List<int>>[
+    [0, 1, 2, 1, 2, 0],
+    [2, 0, 1, 2, 0, 1],
+    [1, 2, 0, 0, 1, 2],
+  ];
 
   late final List<AnimationController> _flips;
   late final AnimationController _success;
@@ -34,9 +38,12 @@ class _MemoryPairsGameViewState extends State<MemoryPairsGameView>
   Timer? _previewTimer;
   Timer? _mismatchTimer;
   Timer? _completionTimer;
+  int _round = 0;
   bool _previewing = true;
   bool _checking = false;
   bool _answerSent = false;
+
+  List<int> get _pairs => _rounds[_round];
 
   @override
   void initState() {
@@ -105,6 +112,22 @@ class _MemoryPairsGameViewState extends State<MemoryPairsGameView>
   void _completeGame() {
     _completionTimer = Timer(const Duration(milliseconds: 900), () {
       if (!mounted || _answerSent) return;
+      if (_round < _rounds.length - 1) {
+        setState(() {
+          _round++;
+          _matched.clear();
+          _selected.clear();
+          _checking = false;
+          _previewing = true;
+          for (final controller in _flips) {
+            controller.value = 1;
+          }
+          _success.reset();
+        });
+        _previewTimer?.cancel();
+        _previewTimer = Timer(const Duration(milliseconds: 1200), _hidePreview);
+        return;
+      }
       _answerSent = true;
       widget.onAnswerSelected(widget.correctAnswer);
     });
@@ -144,6 +167,8 @@ class _MemoryPairsGameViewState extends State<MemoryPairsGameView>
                   matched: _matched,
                   success: _success.value,
                   allMatched: _matched.length == _pairs.length,
+                  round: _round,
+                  roundCount: _rounds.length,
                 ),
                 child: _MemoryPairsHitGrid(onTap: _selectCard),
               ),
@@ -205,6 +230,8 @@ class _MemoryPairsPainter extends CustomPainter {
     required this.matched,
     required this.success,
     required this.allMatched,
+    required this.round,
+    required this.roundCount,
   });
 
   final Color accent;
@@ -213,6 +240,8 @@ class _MemoryPairsPainter extends CustomPainter {
   final Set<int> matched;
   final double success;
   final bool allMatched;
+  final int round;
+  final int roundCount;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -227,6 +256,7 @@ class _MemoryPairsPainter extends CustomPainter {
         ).createShader(bounds),
     );
     _drawBackdrop(canvas, size);
+    _drawRoundProgress(canvas, size);
 
     const horizontalPadding = 24.0;
     const verticalPadding = 20.0;
@@ -246,6 +276,20 @@ class _MemoryPairsPainter extends CustomPainter {
     }
 
     if (allMatched) _drawCelebration(canvas, size);
+  }
+
+  void _drawRoundProgress(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height - 8);
+    for (var index = 0; index < roundCount; index++) {
+      final active = index <= round;
+      canvas.drawCircle(
+        center + Offset((index - (roundCount - 1) / 2) * 18, 0),
+        index == round ? 4.5 : 3.5,
+        Paint()
+          ..color =
+              active ? accent : const Color(0xFF26384A).withValues(alpha: 0.16),
+      );
+    }
   }
 
   void _drawBackdrop(Canvas canvas, Size size) {

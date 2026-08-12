@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:logicloka/src/app/logic_loka_app.dart';
@@ -10,6 +12,51 @@ import 'package:logicloka/src/l10n/localized_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  testWidgets('renders the branded loading scene without a generic card',
+      (tester) async {
+    tester.view
+      ..physicalSize = const Size(390, 844)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final store = _PendingFamilyProfileStore();
+    final l10n = lookupAppLocalizations(const Locale('ru'));
+    await tester.pumpWidget(
+      LogicLokaApp(
+        familyProfileStore: store,
+        locale: const Locale('ru'),
+      ),
+    );
+    await tester.runAsync(
+      () => precacheImage(
+        const AssetImage('assets/images/avatar_lion.png'),
+        tester.element(find.byType(LogicLokaApp)),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Logic Loka'), findsOneWidget);
+    expect(find.text(l10n.loadingMission), findsOneWidget);
+    expect(find.byType(Card), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.image is AssetImage &&
+            (widget.image as AssetImage).assetName ==
+                'assets/images/avatar_lion.png',
+      ),
+      findsOneWidget,
+    );
+    await expectLater(
+      find.byType(LogicLokaApp),
+      matchesGoldenFile('goldens/loading_screen_ru.png'),
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
   testWidgets('shows onboarding when family profile is empty', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final preferences = await SharedPreferences.getInstance();
@@ -28,6 +75,7 @@ void main() {
 
   testWidgets('renders free play puzzle content in the selected locale',
       (tester) async {
+    final semantics = tester.ensureSemantics();
     final profile = FamilyProfile(
       childName: 'Leo',
       childAge: ChildAge.six,
@@ -69,11 +117,26 @@ void main() {
     expect(find.text(l10n.puzzleSkill(puzzle)), findsOneWidget);
     expect(find.text(l10n.puzzlePrompt(puzzle)), findsOneWidget);
     expect(find.text(l10n.challengeShowHint), findsOneWidget);
+    expect(find.bySemanticsLabel(l10n.puzzleListenPrompt), findsOneWidget);
 
     expect(find.text('Free play'), findsNothing);
     expect(find.text('Step 8 of 1'), findsNothing);
     expect(find.text('Logic train'), findsNothing);
     expect(find.text('Sequences'), findsNothing);
     expect(find.text('Place the cars so the rule stays true.'), findsNothing);
+    semantics.dispose();
   });
+}
+
+class _PendingFamilyProfileStore implements FamilyProfileStore {
+  final Completer<FamilyProfile?> _load = Completer<FamilyProfile?>();
+
+  @override
+  Future<void> clear() async {}
+
+  @override
+  Future<FamilyProfile?> load() => _load.future;
+
+  @override
+  Future<void> save(FamilyProfile profile) async {}
 }

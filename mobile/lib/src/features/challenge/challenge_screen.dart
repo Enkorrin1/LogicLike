@@ -1,10 +1,12 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../domain/daily_challenge.dart';
 import '../../domain/family_profile.dart';
 import '../../domain/puzzle_answer_rules.dart';
 import '../../domain/puzzle_interaction_catalog.dart';
+import '../../audio/puzzle_narration_service.dart';
 import '../../l10n/generated/app_localizations.dart';
 import '../../l10n/l10n.dart';
 import '../../l10n/localized_content.dart';
@@ -334,13 +336,12 @@ class _DailyQuestPanel extends StatelessWidget {
             Color(0xFFA8F3E6),
           ],
         ),
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: Colors.white, width: 3),
+        borderRadius: BorderRadius.circular(28),
         boxShadow: [
           BoxShadow(
-            color: AppPalette.coral.withValues(alpha: 0.18),
-            blurRadius: 26,
-            offset: const Offset(0, 14),
+            color: AppPalette.coral.withValues(alpha: 0.14),
+            blurRadius: 22,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -370,14 +371,19 @@ class _DailyQuestPanel extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconBadge(
-                    icon: allCompleted
-                        ? Icons.verified_rounded
-                        : Icons.rocket_launch_rounded,
-                    color: Colors.white,
-                    iconColor:
-                        allCompleted ? AppPalette.teal : AppPalette.coral,
-                    size: 58,
+                  Container(
+                    width: 62,
+                    height: 62,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.88),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Image.asset(
+                      'assets/images/home_astronaut_cutout.png',
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -508,60 +514,52 @@ class _DailyMissionProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.70),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.74)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  context.l10n.challengeMissionProgress,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppPalette.ink,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-              ),
-              Text(
-                context.l10n.countOfTotal(completed, total),
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                context.l10n.challengeMissionProgress,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: AppPalette.ink,
                       fontWeight: FontWeight.w900,
                     ),
               ),
-            ],
-          ),
-          const SizedBox(height: 9),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              minHeight: 12,
-              value: progress.clamp(0, 1).toDouble(),
-              backgroundColor: Colors.white.withValues(alpha: 0.68),
-              valueColor: const AlwaysStoppedAnimation(AppPalette.teal),
             ),
+            Text(
+              context.l10n.countOfTotal(completed, total),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: AppPalette.ink,
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 9),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: LinearProgressIndicator(
+            minHeight: 12,
+            value: progress.clamp(0, 1).toDouble(),
+            backgroundColor: Colors.white.withValues(alpha: 0.68),
+            valueColor: const AlwaysStoppedAnimation(AppPalette.teal),
           ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              for (var i = 0; i < total; i++) ...[
-                Expanded(
-                  child: _DailyStepDot(index: i, completed: i < completed),
-                ),
-                if (i != total - 1) const SizedBox(width: 8),
-              ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            for (var i = 0; i < total; i++) ...[
+              Expanded(
+                child: _DailyStepDot(index: i, completed: i < completed),
+              ),
+              if (i != total - 1) const SizedBox(width: 8),
             ],
-          ),
-        ],
-      ),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -692,28 +690,48 @@ class _DailyQuestRow extends StatelessWidget {
     return BouncyTap(
       borderRadius: BorderRadius.circular(24),
       onTap: onTap,
-      child: Material(
-        color: Colors.white.withValues(alpha: completed ? 0.88 : 0.78),
-        borderRadius: BorderRadius.circular(24),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: completed ? 0.82 : 0.70),
+          borderRadius: BorderRadius.circular(22),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: completed
-                      ? AppPalette.mint.withValues(alpha: 0.84)
-                      : accent.withValues(alpha: 0.22),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                alignment: Alignment.center,
-                child: Icon(
-                  completed ? Icons.check_circle_rounded : _dailyIcon(index),
-                  color: completed ? AppPalette.teal : accent,
-                  size: 28,
+              SizedBox(
+                width: 56,
+                height: 56,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AreaCharacterBadge(
+                      areaId: puzzle.areaId,
+                      color: completed
+                          ? AppPalette.mint.withValues(alpha: 0.90)
+                          : accent.withValues(alpha: 0.46),
+                      size: 56,
+                      padding: 3,
+                    ),
+                    if (completed)
+                      Positioned(
+                        right: -2,
+                        bottom: -2,
+                        child: Container(
+                          width: 23,
+                          height: 23,
+                          decoration: const BoxDecoration(
+                            color: AppPalette.teal,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.check_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               const SizedBox(width: 12),
@@ -1033,35 +1051,28 @@ class _PuzzleAreaScreenState extends State<_PuzzleAreaScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.areaTitle(area.id))),
       body: PlayfulBackground(
-        child: ListView.separated(
-          padding: const EdgeInsets.fromLTRB(18, 8, 18, 24),
-          itemCount: area.puzzles.length + 1,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            if (index == 0) {
-              return _AreaHero(
-                area: area,
-                color: color,
-                completedCount: completedCount,
-              );
-            }
-
-            final puzzleIndex = index - 1;
-            final puzzle = area.puzzles[puzzleIndex];
-            final completed = _completedPracticeIds.contains(puzzle.id);
-            final current = nextIndex == -1
-                ? puzzleIndex == area.puzzles.length - 1
-                : puzzleIndex == nextIndex;
-            return _FreePuzzleCard(
-              puzzle: puzzle,
-              levelNumber: puzzleIndex + 1,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(18, 8, 18, 28),
+          children: [
+            _AreaHero(
+              area: area,
               color: color,
-              completed: completed,
-              current: current,
-              onTap: () =>
-                  widget.onStart(context, puzzle, puzzleIndex, _markSolved),
-            );
-          },
+              completedCount: completedCount,
+            ),
+            const SizedBox(height: 20),
+            _PuzzleJourney(
+              puzzles: area.puzzles,
+              color: color,
+              completedPracticeIds: _completedPracticeIds,
+              nextIndex: nextIndex,
+              onStart: (puzzle, puzzleIndex) => widget.onStart(
+                context,
+                puzzle,
+                puzzleIndex,
+                _markSolved,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1121,32 +1132,29 @@ class _AreaHero extends StatelessWidget {
                       ),
                 ),
                 const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 7,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.22),
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.30),
-                        ),
-                      ),
-                      child: Text(
-                        context.l10n.challengeAreaCompleted(
-                          completedCount,
-                          total,
-                        ),
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                      ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.22),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.30),
                     ),
-                  ],
+                  ),
+                  child: Text(
+                    context.l10n.challengeAreaCompleted(
+                      completedCount,
+                      total,
+                    ),
+                    softWrap: true,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
                 ),
                 const SizedBox(height: 9),
                 ClipRRect(
@@ -1168,13 +1176,62 @@ class _AreaHero extends StatelessWidget {
   }
 }
 
-class _FreePuzzleCard extends StatelessWidget {
-  const _FreePuzzleCard({
+class _PuzzleJourney extends StatelessWidget {
+  const _PuzzleJourney({
+    required this.puzzles,
+    required this.color,
+    required this.completedPracticeIds,
+    required this.nextIndex,
+    required this.onStart,
+  });
+
+  final List<DailyChallenge> puzzles;
+  final Color color;
+  final Set<String> completedPracticeIds;
+  final int nextIndex;
+  final void Function(DailyChallenge puzzle, int index) onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsetsDirectional.only(start: 4),
+          child: Text(
+            context.l10n.challengeFreePlay,
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppPalette.ink,
+                  fontWeight: FontWeight.w900,
+                ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        for (var index = 0; index < puzzles.length; index++)
+          _PuzzleRouteTile(
+            puzzle: puzzles[index],
+            levelNumber: index + 1,
+            color: color,
+            completed: completedPracticeIds.contains(puzzles[index].id),
+            current: nextIndex == -1
+                ? index == puzzles.length - 1
+                : index == nextIndex,
+            isLast: index == puzzles.length - 1,
+            onTap: () => onStart(puzzles[index], index),
+          ),
+      ],
+    );
+  }
+}
+
+class _PuzzleRouteTile extends StatelessWidget {
+  const _PuzzleRouteTile({
     required this.puzzle,
     required this.levelNumber,
     required this.color,
     required this.completed,
     required this.current,
+    required this.isLast,
     required this.onTap,
   });
 
@@ -1183,6 +1240,7 @@ class _FreePuzzleCard extends StatelessWidget {
   final Color color;
   final bool completed;
   final bool current;
+  final bool isLast;
   final VoidCallback onTap;
 
   @override
@@ -1197,149 +1255,262 @@ class _FreePuzzleCard extends StatelessWidget {
         : current
             ? context.l10n.challengeStateNext
             : context.l10n.challengeStatePlay;
-    final stateIcon = completed
-        ? Icons.check_circle_rounded
-        : current
-            ? Icons.play_circle_fill_rounded
-            : Icons.arrow_forward_rounded;
     final actionIcon = completed
         ? Icons.check_rounded
         : current
             ? Icons.play_arrow_rounded
             : Icons.arrow_forward_rounded;
 
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(24),
-      onTap: onTap,
-      child: PlayfulCard(
-        color: completed
-            ? AppPalette.mint.withValues(alpha: 0.46)
-            : current
-                ? Colors.white
-                : Colors.white.withValues(alpha: 0.88),
-        borderColor: completed
-            ? AppPalette.teal.withValues(alpha: 0.38)
-            : current
-                ? color.withValues(alpha: 0.50)
-                : AppPalette.border,
-        child: Row(
-          children: [
-            AreaCharacterBadge(
-              areaId: puzzle.areaId,
-              color: completed
-                  ? Colors.white.withValues(alpha: 0.88)
-                  : color.withValues(alpha: current ? 0.24 : 0.16),
-              size: 58,
-              padding: 3,
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
+    return Semantics(
+      button: true,
+      child: BouncyTap(
+        borderRadius: BorderRadius.circular(26),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsetsDirectional.only(bottom: isLast ? 0 : 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 64,
+                height: isLast ? 108 : 122,
+                child: Column(
+                  children: [
+                    _PuzzleRouteMarker(
+                      levelNumber: levelNumber,
+                      color: stateColor,
+                      completed: completed,
+                      current: current,
+                    ),
+                    if (!isLast)
                       Expanded(
-                        child: Text(
-                          context.l10n.challengeLevelNumber(levelNumber),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                        child: Container(
+                          width: 4,
+                          margin: const EdgeInsets.symmetric(vertical: 5),
+                          decoration: BoxDecoration(
+                            color: stateColor.withValues(alpha: 0.26),
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  constraints: const BoxConstraints(minHeight: 108),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: completed
+                        ? AppPalette.mint.withValues(alpha: 0.44)
+                        : Colors.white.withValues(alpha: current ? 0.98 : 0.82),
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: completed
+                          ? AppPalette.teal.withValues(alpha: 0.34)
+                          : current
+                              ? color.withValues(alpha: 0.56)
+                              : Colors.white,
+                      width: current ? 2 : 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color:
+                            stateColor.withValues(alpha: current ? 0.18 : 0.08),
+                        blurRadius: current ? 18 : 12,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      _PuzzleRoutePreview(
+                        puzzleId: puzzle.id,
+                        color: color,
+                        isActive: current,
+                      ),
+                      const SizedBox(width: 11),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.l10n.challengeLevelNumber(levelNumber),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
                                     color: color,
                                     fontWeight: FontWeight.w900,
                                   ),
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 9,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: stateColor.withValues(alpha: 0.13),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: stateColor.withValues(alpha: 0.16),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(stateIcon, color: stateColor, size: 15),
-                            const SizedBox(width: 4),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              context.l10n.puzzleTitle(puzzle),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    color: AppPalette.ink,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                            ),
+                            const SizedBox(height: 3),
                             Text(
                               stateLabel,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
                                   ?.copyWith(
                                     color: stateColor,
                                     fontWeight: FontWeight.w900,
-                                    height: 1,
                                   ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 6),
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: completed || current
+                              ? stateColor
+                              : AppPalette.surfaceBlue,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Icon(
+                          actionIcon,
+                          color: completed || current
+                              ? Colors.white
+                              : AppPalette.ink,
+                          size: 24,
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    context.l10n.puzzleTitle(puzzle),
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    context.l10n.puzzlePrompt(puzzle),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: completed || current ? null : AppPalette.surfaceBlue,
-                gradient: completed || current
-                    ? LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: completed
-                            ? const [
-                                AppPalette.teal,
-                                Color(0xFF5EDBC9),
-                              ]
-                            : [
-                                color,
-                                color.withValues(alpha: 0.72),
-                              ],
-                      )
-                    : null,
-                shape: BoxShape.circle,
-                border: completed || current
-                    ? null
-                    : Border.all(color: AppPalette.border),
-                boxShadow: [
-                  BoxShadow(
-                    color: stateColor.withValues(alpha: 0.18),
-                    blurRadius: 14,
-                    offset: const Offset(0, 7),
-                  ),
-                ],
-              ),
-              child: Icon(
-                actionIcon,
-                color: completed || current ? Colors.white : AppPalette.ink,
-                size: 27,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _PuzzleRouteMarker extends StatelessWidget {
+  const _PuzzleRouteMarker({
+    required this.levelNumber,
+    required this.color,
+    required this.completed,
+    required this.current,
+  });
+
+  final int levelNumber;
+  final Color color;
+  final bool completed;
+  final bool current;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      width: 52,
+      height: 52,
+      decoration: BoxDecoration(
+        color: completed || current ? color : Colors.white,
+        shape: BoxShape.circle,
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: current ? 0.32 : 0.16),
+            blurRadius: current ? 16 : 10,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      alignment: Alignment.center,
+      child: completed
+          ? const Icon(Icons.check_rounded, color: Colors.white, size: 28)
+          : Text(
+              '$levelNumber',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: current ? Colors.white : AppPalette.ink,
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+    );
+  }
+}
+
+class _PuzzleRoutePreview extends StatelessWidget {
+  const _PuzzleRoutePreview({
+    required this.puzzleId,
+    required this.color,
+    required this.isActive,
+  });
+
+  final String puzzleId;
+  final Color color;
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) {
+    final seed = puzzleId.codeUnits.fold<int>(0, (sum, value) => sum + value);
+    final palette = <Color>[
+      color,
+      AppPalette.mango,
+      AppPalette.coral,
+      AppPalette.lavender,
+    ];
+
+    return Container(
+      width: 64,
+      height: 64,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          for (var index = 0; index < 3; index++)
+            PositionedDirectional(
+              start: 9.0 + ((seed + index * 13) % 18),
+              top: 10.0 + ((seed + index * 7) % 24),
+              child: Transform.rotate(
+                angle: ((seed + index) % 3 - 1) * 0.18,
+                child: Container(
+                  width: index == 1 ? 28 : 20,
+                  height: index == 1 ? 28 : 20,
+                  decoration: BoxDecoration(
+                    color: palette[(seed + index) % palette.length].withValues(
+                        alpha: isActive || index == 1 ? 0.95 : 0.62),
+                    borderRadius: BorderRadius.circular(index == 0 ? 999 : 8),
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppPalette.ink.withValues(alpha: 0.10),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -1373,11 +1544,35 @@ class _PuzzlePlayScreen extends StatefulWidget {
 }
 
 class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
+  final _narration = PuzzleNarrationService();
   String? _selectedAnswer;
   _AnswerCheckState _answerState = _AnswerCheckState.idle;
   bool _showHint = false;
   bool _isSubmitting = false;
   bool _showSuccessBurst = false;
+  bool _isNarrating = false;
+
+  @override
+  void dispose() {
+    _narration.stop();
+    super.dispose();
+  }
+
+  Future<void> _toggleNarration(String prompt) async {
+    if (_isNarrating) {
+      await _narration.stop();
+      if (mounted) {
+        setState(() => _isNarrating = false);
+      }
+      return;
+    }
+
+    setState(() => _isNarrating = true);
+    await _narration.speak(prompt, Localizations.localeOf(context));
+    if (mounted) {
+      setState(() => _isNarrating = false);
+    }
+  }
 
   void _selectAnswer(String answer) {
     if (_isSubmitting) {
@@ -1485,7 +1680,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     final answerOptions = _answerOptionsFor(answerRule, l10n);
     final correctAnswer = answerRule.correctAnswer;
     final compact = MediaQuery.sizeOf(context).height < 700;
-    final sceneAnswerPicker = _usesSceneAnswerPicker(widget.puzzle.id);
+    final sceneAnswerPicker = usesInteractivePuzzleScene(widget.puzzle.id);
     final canSubmit =
         _selectedAnswer != null && _answerState != _AnswerCheckState.wrong;
     final hintButton = OutlinedButton.icon(
@@ -1550,7 +1745,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                         compact: compact,
                       ),
                       SizedBox(height: compact ? 9 : 12),
-                      _PuzzleStage(
+                      buildPuzzleScene(
                         puzzle: widget.puzzle,
                         accent: accent,
                         compact: compact,
@@ -1563,6 +1758,12 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                         prompt: l10n.puzzlePrompt(widget.puzzle),
                         accent: accent,
                         compact: compact,
+                        isNarrating: _isNarrating,
+                        listenLabel: l10n.puzzleListenPrompt,
+                        stopLabel: l10n.puzzleStopNarration,
+                        onNarrate: () => _toggleNarration(
+                          l10n.puzzlePrompt(widget.puzzle),
+                        ),
                       ),
                       SizedBox(height: compact ? 8 : 10),
                       if (sceneAnswerPicker)
@@ -1618,7 +1819,7 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
                       ],
                       SizedBox(height: compact ? 4 : 0),
                       Align(
-                        alignment: Alignment.centerLeft,
+                        alignment: AlignmentDirectional.centerStart,
                         child: hintButton,
                       ),
                       if (_showHint) ...[
@@ -1895,7 +2096,7 @@ class _DailyMissionCompleteScreen extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(18, compact ? 8 : 14, 18, 24),
             children: [
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: IconButton.filledTonal(
                   onPressed: () => _close(context),
                   icon: const Icon(Icons.close_rounded),
@@ -2279,8 +2480,6 @@ class _TaskIntro extends StatelessWidget {
             children: [
               Text(
                 context.l10n.puzzleTitle(puzzle),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 style: compact
                     ? Theme.of(context).textTheme.titleMedium
                     : Theme.of(context).textTheme.titleLarge,
@@ -2288,8 +2487,6 @@ class _TaskIntro extends StatelessWidget {
               SizedBox(height: compact ? 2 : 4),
               Text(
                 context.l10n.puzzleSkill(puzzle),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: accent,
                       fontWeight: FontWeight.w900,
@@ -2301,6 +2498,27 @@ class _TaskIntro extends StatelessWidget {
       ],
     );
   }
+}
+
+const genericPuzzleSceneFallbackKey =
+    ValueKey<String>('generic-puzzle-scene-fallback');
+
+Widget buildPuzzleScene({
+  required DailyChallenge puzzle,
+  required Color accent,
+  required bool compact,
+  required ValueChanged<String> onAnswerSelected,
+}) {
+  return _PuzzleStage(
+    puzzle: puzzle,
+    accent: accent,
+    compact: compact,
+    onAnswerSelected: onAnswerSelected,
+  );
+}
+
+bool usesInteractivePuzzleScene(String puzzleId) {
+  return isSceneDrivenPuzzle(puzzleId);
 }
 
 class _PuzzleStage extends StatelessWidget {
@@ -2372,15 +2590,12 @@ class _PuzzleStage extends StatelessWidget {
   }
 }
 
-bool _usesSceneAnswerPicker(String puzzleId) {
-  return isSceneDrivenPuzzle(puzzleId);
-}
-
 class _StageShell extends StatelessWidget {
   const _StageShell({
     required this.accent,
     required this.child,
     required this.compact,
+    super.key,
   });
 
   final Color accent;
@@ -2582,6 +2797,7 @@ class _MemoryStage extends StatelessWidget {
     final spec = _memoryStageSpecFor(puzzle.id, accent);
 
     return _StageShell(
+      key: genericPuzzleSceneFallbackKey,
       accent: accent,
       compact: compact,
       child: Row(
@@ -3225,6 +3441,7 @@ class _AttentionStage extends StatelessWidget {
     final items = _attentionStageItemsFor(puzzle.id, accent, compact);
 
     return _StageShell(
+      key: genericPuzzleSceneFallbackKey,
       accent: accent,
       compact: compact,
       child: Row(
@@ -3442,153 +3659,406 @@ List<Widget> _attentionStageItemsFor(
   };
 }
 
+class _CodeLockA11yCopy {
+  const _CodeLockA11yCopy({
+    required this.dial,
+    required this.increase,
+    required this.decrease,
+    required this.check,
+    required this.adjustHint,
+    required this.checkHint,
+    required this.round,
+    required this.solved,
+  });
+
+  final String dial;
+  final String increase;
+  final String decrease;
+  final String check;
+  final String adjustHint;
+  final String checkHint;
+  final String round;
+  final String solved;
+
+  String dialLabel(int index) => '$dial ${index + 1}';
+  String increaseLabel(int index) => '$increase ${dialLabel(index)}';
+  String decreaseLabel(int index) => '$decrease ${dialLabel(index)}';
+  String progress(int current, int total) => '$round $current / $total';
+
+  static _CodeLockA11yCopy of(BuildContext context) =>
+      _copies[Localizations.localeOf(context).languageCode] ?? _copies['en']!;
+
+  static const _copies = <String, _CodeLockA11yCopy>{
+    'ar': _CodeLockA11yCopy(
+        dial: 'قرص',
+        increase: 'زيادة',
+        decrease: 'إنقاص',
+        check: 'تحقق من القفل',
+        adjustHint: 'غيّر الرقم على هذا القرص',
+        checkHint: 'تحقق من الأرقام الثلاثة',
+        round: 'الجولة',
+        solved: 'تم فتح القفل'),
+    'de': _CodeLockA11yCopy(
+        dial: 'Drehrad',
+        increase: 'Erhöhe',
+        decrease: 'Verringere',
+        check: 'Schloss prüfen',
+        adjustHint: 'Ändere die Zahl auf diesem Drehrad',
+        checkHint: 'Prüfe alle drei Zahlen',
+        round: 'Runde',
+        solved: 'Schloss geöffnet'),
+    'en': _CodeLockA11yCopy(
+        dial: 'Dial',
+        increase: 'Increase',
+        decrease: 'Decrease',
+        check: 'Check lock',
+        adjustHint: 'Change the number on this dial',
+        checkHint: 'Check all three numbers',
+        round: 'Round',
+        solved: 'Lock opened'),
+    'es': _CodeLockA11yCopy(
+        dial: 'Disco',
+        increase: 'Aumentar',
+        decrease: 'Disminuir',
+        check: 'Comprobar cerradura',
+        adjustHint: 'Cambia el número de este disco',
+        checkHint: 'Comprueba los tres números',
+        round: 'Ronda',
+        solved: 'Cerradura abierta'),
+    'fr': _CodeLockA11yCopy(
+        dial: 'Molette',
+        increase: 'Augmenter',
+        decrease: 'Diminuer',
+        check: 'Vérifier le cadenas',
+        adjustHint: 'Change le chiffre de cette molette',
+        checkHint: 'Vérifie les trois chiffres',
+        round: 'Manche',
+        solved: 'Cadenas ouvert'),
+    'hi': _CodeLockA11yCopy(
+        dial: 'डायल',
+        increase: 'बढ़ाएँ',
+        decrease: 'घटाएँ',
+        check: 'ताला जाँचें',
+        adjustHint: 'इस डायल का अंक बदलें',
+        checkHint: 'तीनों अंकों की जाँच करें',
+        round: 'चरण',
+        solved: 'ताला खुल गया'),
+    'it': _CodeLockA11yCopy(
+        dial: 'Rotella',
+        increase: 'Aumenta',
+        decrease: 'Diminuisci',
+        check: 'Controlla lucchetto',
+        adjustHint: 'Cambia il numero su questa rotella',
+        checkHint: 'Controlla tutti e tre i numeri',
+        round: 'Turno',
+        solved: 'Lucchetto aperto'),
+    'ja': _CodeLockA11yCopy(
+        dial: 'ダイヤル',
+        increase: '増やす',
+        decrease: '減らす',
+        check: '鍵を確認',
+        adjustHint: 'このダイヤルの数字を変えます',
+        checkHint: '3つの数字を確認します',
+        round: 'ラウンド',
+        solved: '鍵が開きました'),
+    'ko': _CodeLockA11yCopy(
+        dial: '다이얼',
+        increase: '올리기',
+        decrease: '내리기',
+        check: '자물쇠 확인',
+        adjustHint: '이 다이얼의 숫자를 바꿉니다',
+        checkHint: '숫자 세 개를 확인합니다',
+        round: '라운드',
+        solved: '자물쇠가 열렸습니다'),
+    'pt': _CodeLockA11yCopy(
+        dial: 'Disco',
+        increase: 'Aumentar',
+        decrease: 'Diminuir',
+        check: 'Verificar fechadura',
+        adjustHint: 'Mude o número deste disco',
+        checkHint: 'Verifique os três números',
+        round: 'Rodada',
+        solved: 'Fechadura aberta'),
+    'ru': _CodeLockA11yCopy(
+        dial: 'Диск',
+        increase: 'Увеличить',
+        decrease: 'Уменьшить',
+        check: 'Проверить замок',
+        adjustHint: 'Измените цифру на этом диске',
+        checkHint: 'Проверьте все три цифры',
+        round: 'Раунд',
+        solved: 'Замок открыт'),
+    'zh': _CodeLockA11yCopy(
+        dial: '转盘',
+        increase: '增大',
+        decrease: '减小',
+        check: '检查密码锁',
+        adjustHint: '更改此转盘上的数字',
+        checkHint: '检查三个数字',
+        round: '回合',
+        solved: '密码锁已打开'),
+  };
+}
+
 class _CodeLockStage extends StatefulWidget {
   const _CodeLockStage({
     required this.accent,
     required this.compact,
     required this.correctAnswer,
+    required this.semanticLabel,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
   final String correctAnswer;
+  final String semanticLabel;
   final ValueChanged<String> onAnswerSelected;
 
   @override
   State<_CodeLockStage> createState() => _CodeLockStageState();
 }
 
-class _CodeLockStageState extends State<_CodeLockStage> {
-  final List<String> _digits = [];
+class _CodeLockStageState extends State<_CodeLockStage>
+    with TickerProviderStateMixin {
+  static const _starts = <List<int>>[
+    [0, 2, 4],
+    [3, 3, 7],
+    [4, 6, 1],
+  ];
+  static const _targets = <List<int>>[
+    [1, 3, 6],
+    [2, 4, 8],
+    [3, 5, 0],
+  ];
 
-  bool get _solved => _digits.join() == '248';
+  late final AnimationController _error;
+  late final AnimationController _success;
+  late List<int> _values;
+  int _round = 0;
+  bool _wrong = false;
+  bool _solved = false;
+  bool _answerSent = false;
 
-  void _press(String digit) {
-    if (_digits.length == 3) {
-      return;
-    }
-    setState(() => _digits.add(digit));
-    if (_digits.join() == '248') {
-      widget.onAnswerSelected(widget.correctAnswer);
-    }
+  @override
+  void initState() {
+    super.initState();
+    _values = List<int>.of(_starts.first);
+    _error = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+    _success = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 620),
+    );
   }
 
-  void _backspace() {
-    if (_digits.isEmpty) {
+  @override
+  void dispose() {
+    _error.dispose();
+    _success.dispose();
+    super.dispose();
+  }
+
+  void _turn(int index, int delta) {
+    if (_solved) return;
+    HapticFeedback.selectionClick();
+    setState(() {
+      _wrong = false;
+      _values[index] = (_values[index] + delta + 10) % 10;
+    });
+  }
+
+  void _check() {
+    if (_solved) return;
+    final target = _targets[_round];
+    final correct = List.generate(3, (index) => _values[index] == target[index])
+        .every((value) => value);
+    if (!correct) {
+      HapticFeedback.lightImpact();
+      setState(() => _wrong = true);
+      _error.forward(from: 0);
       return;
     }
-    setState(() => _digits.removeLast());
+
+    HapticFeedback.mediumImpact();
+    _success.forward(from: 0);
+    if (_round < _targets.length - 1) {
+      setState(() {
+        _round++;
+        _values = List<int>.of(_starts[_round]);
+        _wrong = false;
+      });
+      return;
+    }
+
+    setState(() {
+      _solved = true;
+      _wrong = false;
+    });
+    _success.forward(from: 0);
+    Future<void>.delayed(const Duration(milliseconds: 620), () {
+      if (!mounted || _answerSent) return;
+      _answerSent = true;
+      widget.onAnswerSelected(widget.correctAnswer);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final keypad = ['2', '4', '6', '8'];
-
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Container(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 116 : 134,
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFFE8F8FF), Color(0xFFFFF4CF)],
-            ),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 6,
-                child: Container(
-                  height: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.84),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: (_solved ? AppPalette.mint : widget.accent)
-                          .withValues(alpha: 0.32),
-                      width: _solved ? 2.4 : 1.2,
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final copy = _CodeLockA11yCopy.of(context);
+    final textDirection = Directionality.of(context);
+    return Semantics(
+      key: const ValueKey('code-lock-semantics'),
+      container: true,
+      explicitChildNodes: true,
+      label: widget.semanticLabel,
+      value: _solved ? copy.solved : copy.progress(_round + 1, _targets.length),
+      textDirection: textDirection,
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: AnimatedBuilder(
+            animation: Listenable.merge([_error, _success]),
+            builder: (context, child) {
+              final shake =
+                  math.sin(_error.value * math.pi * 7) * (1 - _error.value) * 6;
+              return Transform.translate(
+                  offset: Offset(shake, 0), child: child);
+            },
+            child: Container(
+              key: const ValueKey('code-lock-board'),
+              width: 328,
+              height: widget.compact ? 176 : 192,
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFE8F8FF), Color(0xFFFFF0C8)],
+                ),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: (_wrong
+                          ? AppPalette.coral
+                          : _solved
+                              ? AppPalette.mint
+                              : widget.accent)
+                      .withValues(alpha: 0.55),
+                  width: _wrong || _solved ? 2.4 : 1.2,
+                ),
+              ),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _CodeHintPill(label: '2', color: AppPalette.sky),
-                          _CodeHintPill(label: '+2', color: AppPalette.teal),
-                          _CodeHintPill(label: 'x2', color: AppPalette.coral),
-                        ],
-                      ),
                       Icon(
                         _solved ? Icons.lock_open_rounded : Icons.lock_rounded,
                         color: _solved ? AppPalette.mint : widget.accent,
-                        size: widget.compact ? 24 : 30,
+                        size: 25,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          for (var index = 0; index < 3; index++)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: _CodeDigitSlot(
-                                value: index < _digits.length
-                                    ? _digits[index]
-                                    : null,
-                                solved: _solved,
-                                accent: widget.accent,
-                              ),
-                            ),
-                        ],
-                      ),
+                      const Spacer(),
+                      for (var index = 0; index < _targets.length; index++)
+                        Container(
+                          width: 30,
+                          height: 8,
+                          margin: const EdgeInsetsDirectional.only(start: 6),
+                          decoration: BoxDecoration(
+                            color: index < _round || _solved
+                                ? AppPalette.mint
+                                : index == _round
+                                    ? widget.accent
+                                    : Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                flex: 4,
-                child: GridView.count(
-                  padding: EdgeInsets.zero,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 8,
-                  crossAxisSpacing: 8,
-                  childAspectRatio: 1.32,
-                  children: [
-                    for (final digit in keypad)
-                      _CodePadButton(
-                        label: digit,
-                        color: widget.accent,
-                        selected: _digits.contains(digit),
-                        onTap: () => _press(digit),
+                  const SizedBox(height: 4),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _CodeHintPill(label: '=', color: AppPalette.sky),
+                      SizedBox(width: 29),
+                      _CodeHintPill(label: '+2', color: AppPalette.teal),
+                      SizedBox(width: 29),
+                      _CodeHintPill(label: 'x2', color: AppPalette.coral),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var index = 0; index < 3; index++) ...[
+                        _CodeDial(
+                          index: index,
+                          value: _values[index],
+                          copy: copy,
+                          textDirection: textDirection,
+                          accent: index == 0
+                              ? AppPalette.sky
+                              : index == 1
+                                  ? AppPalette.teal
+                                  : AppPalette.coral,
+                          solved: _solved,
+                          onUp: () => _turn(index, 1),
+                          onDown: () => _turn(index, -1),
+                        ),
+                        if (index < 2)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8),
+                            child: Icon(
+                              Icons.arrow_forward_rounded,
+                              color: Color(0xFF7890A7),
+                              size: 18,
+                            ),
+                          ),
+                      ],
+                    ],
+                  ),
+                  const Spacer(),
+                  Semantics(
+                    button: true,
+                    enabled: !_solved,
+                    label: copy.check,
+                    hint: copy.checkHint,
+                    textDirection: textDirection,
+                    onTap: _solved ? null : _check,
+                    child: ExcludeSemantics(
+                      child: GestureDetector(
+                        key: const ValueKey('code-lock-check'),
+                        onTap: _check,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: 82,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: _solved ? AppPalette.mint : widget.accent,
+                            borderRadius: BorderRadius.circular(14),
+                            boxShadow: [
+                              BoxShadow(
+                                color: widget.accent.withValues(alpha: 0.24),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            _solved
+                                ? Icons.lock_open_rounded
+                                : Icons.key_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
                       ),
-                    _CodePadButton(
-                      icon: Icons.backspace_rounded,
-                      color: AppPalette.coral,
-                      selected: false,
-                      onTap: _backspace,
                     ),
-                    _CodePadButton(
-                      icon: _solved
-                          ? Icons.check_rounded
-                          : Icons.auto_awesome_rounded,
-                      color: _solved ? AppPalette.mint : AppPalette.mango,
-                      selected: _solved,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -3625,95 +4095,126 @@ class _CodeHintPill extends StatelessWidget {
   }
 }
 
-class _CodeDigitSlot extends StatelessWidget {
-  const _CodeDigitSlot({
+class _CodeDial extends StatelessWidget {
+  const _CodeDial({
+    required this.index,
     required this.value,
-    required this.solved,
+    required this.copy,
+    required this.textDirection,
     required this.accent,
+    required this.solved,
+    required this.onUp,
+    required this.onDown,
   });
 
-  final String? value;
-  final bool solved;
+  final int index;
+  final int value;
+  final _CodeLockA11yCopy copy;
+  final TextDirection textDirection;
   final Color accent;
+  final bool solved;
+  final VoidCallback onUp;
+  final VoidCallback onDown;
 
   @override
   Widget build(BuildContext context) {
     final color = solved ? AppPalette.mint : accent;
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      width: 34,
-      height: 34,
-      decoration: BoxDecoration(
-        color: value == null ? Colors.white : color,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: color.withValues(alpha: 0.42), width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: value == null ? 0.08 : 0.24),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        value ?? '?',
-        style: TextStyle(
-          color: value == null ? color : Colors.white,
-          fontSize: 17,
-          fontWeight: FontWeight.w900,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _CodeDialButton(
+          key: ValueKey('code-lock-dial-$index-up'),
+          icon: Icons.keyboard_arrow_up_rounded,
+          color: color,
+          semanticLabel: copy.increaseLabel(index),
+          semanticHint: copy.adjustHint,
+          textDirection: textDirection,
+          onTap: onUp,
         ),
-      ),
+        Semantics(
+          label: copy.dialLabel(index),
+          value: '$value',
+          textDirection: textDirection,
+          child: ExcludeSemantics(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              width: 48,
+              height: 38,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.28),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                key: ValueKey('code-lock-dial-$index-value'),
+                '$value',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+          ),
+        ),
+        _CodeDialButton(
+          key: ValueKey('code-lock-dial-$index-down'),
+          icon: Icons.keyboard_arrow_down_rounded,
+          color: color,
+          semanticLabel: copy.decreaseLabel(index),
+          semanticHint: copy.adjustHint,
+          textDirection: textDirection,
+          onTap: onDown,
+        ),
+      ],
     );
   }
 }
 
-class _CodePadButton extends StatelessWidget {
-  const _CodePadButton({
+class _CodeDialButton extends StatelessWidget {
+  const _CodeDialButton({
+    required this.icon,
     required this.color,
-    required this.selected,
-    this.label,
-    this.icon,
-    this.onTap,
+    required this.semanticLabel,
+    required this.semanticHint,
+    required this.textDirection,
+    required this.onTap,
+    super.key,
   });
 
-  final String? label;
-  final IconData? icon;
+  final IconData icon;
   final Color color;
-  final bool selected;
-  final VoidCallback? onTap;
+  final String semanticLabel;
+  final String semanticHint;
+  final TextDirection textDirection;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return BouncyTap(
-      borderRadius: BorderRadius.circular(16),
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      hint: semanticHint,
+      textDirection: textDirection,
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        decoration: BoxDecoration(
-          color: selected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.42)),
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: selected ? 0.24 : 0.10),
-              blurRadius: 9,
-              offset: const Offset(0, 5),
-            ),
-          ],
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: SizedBox(
+            width: 42,
+            height: 16,
+            child: Icon(icon, color: color, size: 21),
+          ),
         ),
-        alignment: Alignment.center,
-        child: icon == null
-            ? Text(
-                label ?? '',
-                style: TextStyle(
-                  color: selected ? Colors.white : color,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                ),
-              )
-            : Icon(icon, color: selected ? Colors.white : color, size: 20),
       ),
     );
   }
@@ -4267,6 +4768,7 @@ class _MathStage extends StatelessWidget {
     final children = _mathStageItemsFor(puzzle.id, accent, compact);
 
     return _StageShell(
+      key: genericPuzzleSceneFallbackKey,
       accent: accent,
       compact: compact,
       child: FittedBox(
@@ -4405,16 +4907,33 @@ class _FruitFizzStage extends StatefulWidget {
 }
 
 class _FruitFizzStageState extends State<_FruitFizzStage> {
-  int _added = 0;
+  static const _rounds =
+      <({int first, int second, int total, List<int> options})>[
+    (first: 3, second: 2, total: 8, options: [2, 3, 4]),
+    (first: 2, second: 4, total: 7, options: [1, 2, 3]),
+    (first: 4, second: 1, total: 9, options: [3, 4, 5]),
+  ];
+
+  int _round = 0;
+  int? _wrongValue;
   bool _submitted = false;
 
-  void _addFruit() {
-    if (_added >= 3) {
+  void _choose(int value) {
+    if (_submitted) return;
+    final task = _rounds[_round];
+    if (value != task.total - task.first - task.second) {
+      HapticFeedback.lightImpact();
+      setState(() => _wrongValue = value);
       return;
     }
 
-    setState(() => _added += 1);
-    if (!_submitted && _added == 3) {
+    HapticFeedback.selectionClick();
+    if (_round < _rounds.length - 1) {
+      setState(() {
+        _round++;
+        _wrongValue = null;
+      });
+    } else {
       _submitted = true;
       widget.onAnswerSelected(widget.correctAnswer);
     }
@@ -4422,56 +4941,78 @@ class _FruitFizzStageState extends State<_FruitFizzStage> {
 
   @override
   Widget build(BuildContext context) {
+    final task = _rounds[_round];
     return Directionality(
       textDirection: TextDirection.ltr,
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: SizedBox(
           width: widget.compact ? 286 : 328,
-          height: widget.compact ? 98 : 116,
-          child: Row(
+          height: widget.compact ? 118 : 136,
+          child: Column(
             children: [
-              _RecipeCard(accent: widget.accent),
-              const SizedBox(width: 12),
+              Row(
+                children: [
+                  _RoundProgressDots(
+                    current: _round,
+                    total: _rounds.length,
+                    color: widget.accent,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${task.first} + ${task.second} + ? = ${task.total}',
+                    key: const ValueKey('fruit-fizz-equation'),
+                    style: const TextStyle(
+                      color: AppPalette.ink,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 18,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
               Expanded(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned.fill(
-                      child: DragTarget<int>(
-                        onWillAcceptWithDetails: (_) => true,
-                        onAcceptWithDetails: (_) => _addFruit(),
-                        builder: (context, candidateData, rejectedData) {
-                          return AnimatedScale(
-                            duration: const Duration(milliseconds: 140),
-                            scale: candidateData.isNotEmpty ? 1.03 : 1,
-                            child: CustomPaint(
-                              painter: _BlenderPainter(
-                                widget.accent,
-                                addedMango: _added,
-                                active: candidateData.isNotEmpty,
-                              ),
-                              child: const SizedBox.expand(),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFFF4D9), Color(0xFFE5F8F4)],
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 92,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            const _FruitDot(color: AppPalette.teal),
+                            Transform.translate(
+                              offset: const Offset(-24, 18),
+                              child:
+                                  const _FruitDot(color: AppPalette.lavender),
                             ),
-                          );
-                        },
+                            Transform.translate(
+                              offset: const Offset(24, 18),
+                              child: const _FruitDot(color: AppPalette.mango),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: _FruitDropCounter(
-                        value: _added,
-                        target: 3,
-                        color: widget.accent,
-                      ),
-                    ),
-                    Positioned(
-                      right: 8,
-                      bottom: 5,
-                      child: _FruitFizzDraggable(onTap: _addFruit),
-                    ),
-                  ],
+                      const Spacer(),
+                      for (final value in task.options) ...[
+                        _MathChoiceToken(
+                          key: ValueKey('fruit-fizz-choice-$_round-$value'),
+                          value: value,
+                          color: AppPalette.mango,
+                          wrong: _wrongValue == value,
+                          onTap: () => _choose(value),
+                        ),
+                        const SizedBox(width: 7),
+                      ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -4482,6 +5023,93 @@ class _FruitFizzStageState extends State<_FruitFizzStage> {
   }
 }
 
+class _RoundProgressDots extends StatelessWidget {
+  const _RoundProgressDots({
+    required this.current,
+    required this.total,
+    required this.color,
+  });
+
+  final int current;
+  final int total;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(
+          total,
+          (index) => AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            width: index == current ? 18 : 7,
+            height: 7,
+            margin: const EdgeInsetsDirectional.only(end: 4),
+            decoration: BoxDecoration(
+              color: index <= current ? color : color.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(99),
+            ),
+          ),
+        ),
+      );
+}
+
+class _MathChoiceToken extends StatelessWidget {
+  const _MathChoiceToken({
+    required this.value,
+    required this.color,
+    required this.wrong,
+    required this.onTap,
+    super.key,
+  });
+
+  final int value;
+  final Color color;
+  final bool wrong;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        button: true,
+        label: '$value',
+        child: BouncyTap(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            width: 48,
+            height: 48,
+            alignment: Alignment.center,
+            transform: Matrix4.translationValues(wrong ? 4 : 0, 0, 0),
+            decoration: BoxDecoration(
+              color: wrong ? AppPalette.coral : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: wrong ? AppPalette.coral : color.withValues(alpha: .5),
+                width: 2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withValues(alpha: .16),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              '$value',
+              style: TextStyle(
+                color: wrong ? Colors.white : AppPalette.ink,
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
+// Retained as visual building blocks for future recipe variants.
+// ignore: unused_element
 class _FruitFizzDraggable extends StatelessWidget {
   const _FruitFizzDraggable({required this.onTap});
 
@@ -4547,6 +5175,7 @@ class _FruitFizzToken extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _FruitDropCounter extends StatelessWidget {
   const _FruitDropCounter({
     required this.value,
@@ -4584,6 +5213,7 @@ class _FruitDropCounter extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _RecipeCard extends StatelessWidget {
   const _RecipeCard({required this.accent});
 
@@ -4711,11 +5341,12 @@ class _FruitDot extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _BlenderPainter extends CustomPainter {
   const _BlenderPainter(
     this.accent, {
-    this.addedMango = 0,
-    this.active = false,
+    required this.addedMango,
+    required this.active,
   });
 
   final Color accent;
@@ -4816,18 +5447,31 @@ class _CookieShareStage extends StatefulWidget {
 }
 
 class _CookieShareStageState extends State<_CookieShareStage> {
-  final List<int> _plates = [0, 0, 0];
+  static const _rounds = <({int cookies, int plates, List<int> options})>[
+    (cookies: 6, plates: 3, options: [1, 2, 3]),
+    (cookies: 8, plates: 4, options: [2, 3, 4]),
+    (cookies: 9, plates: 3, options: [2, 3, 4]),
+  ];
+
+  int _round = 0;
+  int? _wrongValue;
   bool _submitted = false;
 
-  int get _remaining => 6 - _plates.fold<int>(0, (sum, value) => sum + value);
-
-  void _addToPlate(int index) {
-    if (index < 0 || _remaining <= 0 || _plates[index] >= 2) {
+  void _choose(int value) {
+    if (_submitted) return;
+    final task = _rounds[_round];
+    if (value != task.cookies ~/ task.plates) {
+      HapticFeedback.lightImpact();
+      setState(() => _wrongValue = value);
       return;
     }
-
-    setState(() => _plates[index] += 1);
-    if (!_submitted && _plates.every((count) => count == 2)) {
+    HapticFeedback.selectionClick();
+    if (_round < _rounds.length - 1) {
+      setState(() {
+        _round++;
+        _wrongValue = null;
+      });
+    } else {
       _submitted = true;
       widget.onAnswerSelected(widget.correctAnswer);
     }
@@ -4835,13 +5479,14 @@ class _CookieShareStageState extends State<_CookieShareStage> {
 
   @override
   Widget build(BuildContext context) {
+    final task = _rounds[_round];
     return Directionality(
       textDirection: TextDirection.ltr,
       child: FittedBox(
         fit: BoxFit.scaleDown,
         child: Container(
           width: widget.compact ? 286 : 328,
-          height: widget.compact ? 98 : 116,
+          height: widget.compact ? 118 : 136,
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -4851,58 +5496,83 @@ class _CookieShareStageState extends State<_CookieShareStage> {
             ),
             borderRadius: BorderRadius.circular(22),
           ),
-          child: Row(
+          child: Column(
             children: [
-              SizedBox(
-                width: 122,
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  alignment: WrapAlignment.center,
+              Row(
+                children: [
+                  _RoundProgressDots(
+                    current: _round,
+                    total: _rounds.length,
+                    color: widget.accent,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${task.cookies} / ${task.plates} = ?',
+                    key: const ValueKey('cookie-share-equation'),
+                    style: const TextStyle(
+                      color: AppPalette.ink,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: Row(
                   children: [
-                    for (var index = 0; index < _remaining; index++)
-                      _CookieDraggable(
-                        onTap: () => _addToPlate(
-                          _plates.indexWhere((count) => count < 2),
+                    Expanded(
+                      child: Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        alignment: WrapAlignment.center,
+                        children: List.generate(
+                          task.cookies,
+                          (_) => Transform.scale(
+                            scale: .72,
+                            child: const _CookieDot(),
+                          ),
                         ),
                       ),
-                    for (var index = _remaining; index < 6; index++)
-                      const Opacity(opacity: 0.22, child: _CookieDot()),
-                  ],
-                ),
-              ),
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: widget.accent,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  '/',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var index = 0; index < 3; index++) ...[
-                    _CookieDropPlate(
-                      count: _plates[index],
-                      target: 2,
-                      color: widget.accent,
-                      onAccept: () => _addToPlate(index),
                     ),
-                    if (index != 2) const SizedBox(height: 6),
+                    Icon(
+                      Icons.arrow_forward_rounded,
+                      color: widget.accent,
+                      size: 24,
+                    ),
+                    SizedBox(
+                      width: 70,
+                      child: Wrap(
+                        spacing: 3,
+                        runSpacing: 3,
+                        alignment: WrapAlignment.center,
+                        children: List.generate(
+                          task.plates,
+                          (_) => Container(
+                            width: 29,
+                            height: 14,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(99),
+                              border: Border.all(color: AppPalette.teal),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    for (final value in task.options) ...[
+                      _MathChoiceToken(
+                        key: ValueKey('cookie-share-choice-$_round-$value'),
+                        value: value,
+                        color: AppPalette.teal,
+                        wrong: _wrongValue == value,
+                        onTap: () => _choose(value),
+                      ),
+                      const SizedBox(width: 5),
+                    ],
                   ],
-                ],
+                ),
               ),
             ],
           ),
@@ -4912,6 +5582,8 @@ class _CookieShareStageState extends State<_CookieShareStage> {
   }
 }
 
+// Retained for drag-based sharing variants.
+// ignore: unused_element
 class _CookieDraggable extends StatelessWidget {
   const _CookieDraggable({required this.onTap});
 
@@ -4991,6 +5663,7 @@ class _CookieChip extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _CookieDropPlate extends StatelessWidget {
   const _CookieDropPlate({
     required this.count,
@@ -5114,6 +5787,7 @@ class _CountRocketsGameStageState extends State<_CountRocketsGameStage> {
                   children: [
                     for (var index = 0; index < 6; index++)
                       _RocketCounterToken(
+                        key: ValueKey('count-rockets-token-$index'),
                         counted: _counted.contains(index),
                         color:
                             index.isEven ? AppPalette.coral : AppPalette.mango,
@@ -5181,6 +5855,7 @@ class _RocketCounterToken extends StatelessWidget {
     required this.counted,
     required this.color,
     required this.onTap,
+    super.key,
   });
 
   final bool counted;
@@ -5307,16 +5982,31 @@ class _PlanetSumGameStage extends StatefulWidget {
 }
 
 class _PlanetSumGameStageState extends State<_PlanetSumGameStage> {
-  int _added = 0;
+  static const _rounds = <({int left, int right, List<int> options})>[
+    (left: 2, right: 3, options: [4, 5, 6]),
+    (left: 4, right: 2, options: [5, 6, 7]),
+    (left: 3, right: 5, options: [7, 8, 9]),
+  ];
+
+  int _round = 0;
+  int? _wrongValue;
   bool _submitted = false;
 
-  void _addPlanet() {
-    if (_added >= 2) {
+  void _choose(int value) {
+    if (_submitted) return;
+    final task = _rounds[_round];
+    if (value != task.left + task.right) {
+      HapticFeedback.lightImpact();
+      setState(() => _wrongValue = value);
       return;
     }
-
-    setState(() => _added += 1);
-    if (!_submitted && _added == 2) {
+    HapticFeedback.selectionClick();
+    if (_round < _rounds.length - 1) {
+      setState(() {
+        _round++;
+        _wrongValue = null;
+      });
+    } else {
       _submitted = true;
       widget.onAnswerSelected(widget.correctAnswer);
     }
@@ -5324,6 +6014,7 @@ class _PlanetSumGameStageState extends State<_PlanetSumGameStage> {
 
   @override
   Widget build(BuildContext context) {
+    final task = _rounds[_round];
     return Directionality(
       textDirection: TextDirection.ltr,
       child: FittedBox(
@@ -5340,118 +6031,61 @@ class _PlanetSumGameStageState extends State<_PlanetSumGameStage> {
             ),
             borderRadius: BorderRadius.circular(24),
           ),
-          child: Row(
+          child: Column(
             children: [
-              SizedBox(
-                width: 102,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: const [
-                    _OrbitPlanet(
+              Row(
+                children: [
+                  _RoundProgressDots(
+                    current: _round,
+                    total: _rounds.length,
+                    color: widget.accent,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${task.left} + ${task.right} = ?',
+                    key: const ValueKey('planet-sum-equation'),
+                    style: const TextStyle(
+                      color: AppPalette.ink,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: Row(
+                  children: [
+                    const _OrbitPlanet(
                       color: AppPalette.coral,
-                      x: -28,
-                      y: -10,
-                      size: 32,
+                      x: 0,
+                      y: 0,
+                      size: 42,
                     ),
-                    _OrbitPlanet(
-                      color: AppPalette.mango,
-                      x: 16,
-                      y: -18,
-                      size: 28,
+                    Container(
+                      width: 26,
+                      height: 2,
+                      color: widget.accent.withValues(alpha: .35),
                     ),
-                    _OrbitPlanet(
+                    const _OrbitPlanet(
                       color: AppPalette.sky,
-                      x: 5,
-                      y: 20,
+                      x: 0,
+                      y: 0,
                       size: 34,
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: widget.accent,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
-                child: const Icon(
-                  Icons.add_rounded,
-                  color: Colors.white,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: DragTarget<int>(
-                  onWillAcceptWithDetails: (_) => _added < 2,
-                  onAcceptWithDetails: (_) => _addPlanet(),
-                  builder: (context, candidateData, rejectedData) {
-                    final active = candidateData.isNotEmpty;
-
-                    return AnimatedScale(
-                      duration: const Duration(milliseconds: 150),
-                      scale: active ? 1.04 : 1,
-                      child: Container(
-                        height: 82,
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.72),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                            color:
-                                (_added == 2 ? AppPalette.mint : widget.accent)
-                                    .withValues(alpha: active ? 0.68 : 0.32),
-                            width: active || _added == 2 ? 2 : 1.2,
-                          ),
-                        ),
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            for (var index = 0; index < _added; index++)
-                              Positioned(
-                                left: 20.0 + index * 34,
-                                top: index.isEven ? 8 : 26,
-                                child: const _OrbitPlanet(
-                                  color: AppPalette.teal,
-                                  x: 0,
-                                  y: 0,
-                                  size: 30,
-                                ),
-                              ),
-                            Positioned(
-                              right: 8,
-                              child: Text(
-                                '${3 + _added}',
-                                style: TextStyle(
-                                  color: _added == 2
-                                      ? AppPalette.teal
-                                      : widget.accent,
-                                  fontSize: 34,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    const Spacer(),
+                    for (final value in task.options) ...[
+                      _MathChoiceToken(
+                        key: ValueKey('planet-sum-choice-$_round-$value'),
+                        value: value,
+                        color: AppPalette.sky,
+                        wrong: _wrongValue == value,
+                        onTap: () => _choose(value),
                       ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var index = 0; index < 2; index++) ...[
-                    _PlanetDraggable(
-                      hidden: index < _added,
-                      onTap: _addPlanet,
-                    ),
-                    if (index != 1) const SizedBox(height: 8),
+                      const SizedBox(width: 6),
+                    ],
                   ],
-                ],
+                ),
               ),
             ],
           ),
@@ -5501,6 +6135,7 @@ class _OrbitPlanet extends StatelessWidget {
   }
 }
 
+// ignore: unused_element
 class _PlanetDraggable extends StatelessWidget {
   const _PlanetDraggable({required this.hidden, required this.onTap});
 
@@ -5526,7 +6161,7 @@ class _PlanetDraggable extends StatelessWidget {
         color: Colors.transparent,
         child: Transform.scale(scale: 1.12, child: planet),
       ),
-      childWhenDragging: Opacity(opacity: 0.24, child: planet),
+      childWhenDragging: const Opacity(opacity: 0.24, child: planet),
       child: BouncyTap(
         borderRadius: BorderRadius.circular(16),
         onTap: onTap,
@@ -5570,62 +6205,77 @@ class _CubeGroupsGameStageState extends State<_CubeGroupsGameStage> {
   @override
   Widget build(BuildContext context) {
     final cubeSize = widget.compact ? 34.0 : 40.0;
-    return SizedBox(
-      height: widget.compact ? 132 : 150,
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(
-                    child: _CubeBasket(color: AppPalette.sky, cubes: _left)),
-                const SizedBox(width: 10),
-                Expanded(
-                    child:
-                        _CubeBasket(color: AppPalette.lavender, cubes: _right)),
-              ],
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: SizedBox(
+        height: widget.compact ? 132 : 150,
+        child: Column(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                      child: _CubeBasket(
+                    key: const ValueKey('cube-groups-left'),
+                    color: AppPalette.sky,
+                    cubes: _left,
+                  )),
+                  const SizedBox(width: 10),
+                  Expanded(
+                      child: _CubeBasket(
+                    key: const ValueKey('cube-groups-right'),
+                    color: AppPalette.lavender,
+                    cubes: _right,
+                  )),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 9),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(4, (index) {
-              final placed = _left.contains(index) || _right.contains(index);
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Opacity(
-                  opacity: placed ? 0.15 : 1,
-                  child: Draggable<int>(
-                    data: index,
-                    maxSimultaneousDrags: placed ? 0 : 1,
-                    feedback: Material(
-                      color: Colors.transparent,
+            const SizedBox(height: 9),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(4, (index) {
+                final placed = _left.contains(index) || _right.contains(index);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Opacity(
+                    opacity: placed ? 0.15 : 1,
+                    child: Draggable<int>(
+                      key: ValueKey('cube-groups-cube-$index'),
+                      data: index,
+                      maxSimultaneousDrags: placed ? 0 : 1,
+                      feedback: Material(
+                        color: Colors.transparent,
+                        child: _ToyCube(
+                            size: cubeSize + 4,
+                            color: index.isEven
+                                ? AppPalette.sky
+                                : AppPalette.lavender),
+                      ),
+                      childWhenDragging:
+                          SizedBox(width: cubeSize, height: cubeSize),
                       child: _ToyCube(
-                          size: cubeSize + 4,
+                          size: cubeSize,
                           color: index.isEven
                               ? AppPalette.sky
                               : AppPalette.lavender),
                     ),
-                    childWhenDragging:
-                        SizedBox(width: cubeSize, height: cubeSize),
-                    child: _ToyCube(
-                        size: cubeSize,
-                        color: index.isEven
-                            ? AppPalette.sky
-                            : AppPalette.lavender),
                   ),
-                ),
-              );
-            }),
-          ),
-        ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _CubeBasket extends StatelessWidget {
-  const _CubeBasket({required this.color, required this.cubes});
+  const _CubeBasket({
+    required this.color,
+    required this.cubes,
+    super.key,
+  });
 
   final Color color;
   final List<int> cubes;
@@ -5769,6 +6419,7 @@ class _MoreLessGameStageState extends State<_MoreLessGameStage> {
                 );
                 if (extra) {
                   return BouncyTap(
+                    key: const ValueKey('more-less-finish'),
                     borderRadius: BorderRadius.circular(22),
                     onTap: ready ? _finish : null,
                     child: token,
@@ -5777,6 +6428,7 @@ class _MoreLessGameStageState extends State<_MoreLessGameStage> {
                 return Opacity(
                   opacity: paired ? 0.2 : 1,
                   child: Draggable<int>(
+                    key: ValueKey('more-less-item-$index'),
                     data: index,
                     maxSimultaneousDrags: paired ? 0 : 1,
                     feedback: Material(
@@ -5802,6 +6454,7 @@ class _MoreLessGameStageState extends State<_MoreLessGameStage> {
               runSpacing: 8,
               children: List.generate(3, (index) {
                 return DragTarget<int>(
+                  key: ValueKey('more-less-target-$index'),
                   onWillAcceptWithDetails: (details) =>
                       details.data == index && !_paired.contains(index),
                   onAcceptWithDetails: (details) => _pair(details.data, index),
@@ -5905,13 +6558,31 @@ class _StickerShopGameStage extends StatefulWidget {
 }
 
 class _StickerShopGameStageState extends State<_StickerShopGameStage> {
-  int _bought = 0;
+  static const _rounds = <({int coins, int price, List<int> options})>[
+    (coins: 6, price: 2, options: [2, 3, 4]),
+    (coins: 8, price: 2, options: [3, 4, 5]),
+    (coins: 9, price: 3, options: [2, 3, 4]),
+  ];
+
+  int _round = 0;
+  int? _wrongValue;
   bool _submitted = false;
 
-  void _buy() {
-    if (_bought >= 3) return;
-    setState(() => _bought++);
-    if (_bought == 3 && !_submitted) {
+  void _choose(int value) {
+    if (_submitted) return;
+    final task = _rounds[_round];
+    if (value != task.coins ~/ task.price) {
+      HapticFeedback.lightImpact();
+      setState(() => _wrongValue = value);
+      return;
+    }
+    HapticFeedback.selectionClick();
+    if (_round < _rounds.length - 1) {
+      setState(() {
+        _round++;
+        _wrongValue = null;
+      });
+    } else {
       _submitted = true;
       widget.onAnswerSelected(widget.correctAnswer);
     }
@@ -5919,88 +6590,80 @@ class _StickerShopGameStageState extends State<_StickerShopGameStage> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: widget.compact ? 132 : 150,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-                6,
-                (index) => AnimatedOpacity(
-                      duration: const Duration(milliseconds: 220),
-                      opacity: index < _bought * 2 ? 0.18 : 1,
-                      child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 2),
-                          child: Icon(Icons.star_rounded,
-                              color: AppPalette.mango, size: 22)),
-                    )),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: Row(
+    final task = _rounds[_round];
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: SizedBox(
+        height: widget.compact ? 132 : 150,
+        child: Column(
+          children: [
+            Row(
               children: [
-                Expanded(
-                  child: BouncyTap(
-                    borderRadius: BorderRadius.circular(22),
-                    onTap: _buy,
-                    child: Draggable<int>(
-                      data: 1,
-                      maxSimultaneousDrags: _bought < 3 ? 1 : 0,
-                      feedback: const Material(
-                          color: Colors.transparent,
-                          child: _StickerPack(size: 62)),
-                      childWhenDragging: const Opacity(
-                          opacity: 0.3, child: _StickerPack(size: 58)),
-                      child: const _StickerPack(size: 58),
-                    ),
-                  ),
+                _RoundProgressDots(
+                  current: _round,
+                  total: _rounds.length,
+                  color: widget.accent,
                 ),
-                Icon(Icons.arrow_forward_rounded,
-                    color: widget.accent, size: 30),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: DragTarget<int>(
-                    onAcceptWithDetails: (_) => _buy(),
-                    builder: (context, candidates, rejected) =>
-                        AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      decoration: BoxDecoration(
-                          color: candidates.isNotEmpty
-                              ? AppPalette.teal.withValues(alpha: 0.2)
-                              : Colors.white.withValues(alpha: 0.8),
-                          borderRadius: BorderRadius.circular(22),
-                          border: Border.all(
-                              color: AppPalette.teal.withValues(alpha: 0.45),
-                              width: candidates.isNotEmpty ? 3 : 2)),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          const Icon(Icons.shopping_basket_rounded,
-                              color: AppPalette.teal, size: 52),
-                          Positioned(
-                              top: 6,
-                              right: 8,
-                              child: Container(
-                                  width: 26,
-                                  height: 26,
-                                  alignment: Alignment.center,
-                                  decoration: const BoxDecoration(
-                                      color: AppPalette.coral,
-                                      shape: BoxShape.circle),
-                                  child: Text('$_bought',
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w900)))),
-                        ],
-                      ),
-                    ),
+                const Spacer(),
+                Text(
+                  '${task.coins} / ${task.price} = ?',
+                  key: const ValueKey('sticker-shop-equation'),
+                  style: const TextStyle(
+                    color: AppPalette.ink,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
                   ),
                 ),
               ],
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 3,
+                      runSpacing: 3,
+                      children: List.generate(
+                        task.coins,
+                        (index) => Container(
+                          width: 23,
+                          height: 23,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            color: AppPalette.mango,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.star_rounded,
+                            color: Colors.white,
+                            size: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_rounded,
+                      color: widget.accent, size: 30),
+                  const SizedBox(width: 8),
+                  const _StickerPack(size: 58),
+                  const SizedBox(width: 8),
+                  for (final value in task.options) ...[
+                    _MathChoiceToken(
+                      key: ValueKey('sticker-shop-choice-$_round-$value'),
+                      value: value,
+                      color: AppPalette.coral,
+                      wrong: _wrongValue == value,
+                      onTap: () => _choose(value),
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -6235,17 +6898,125 @@ class _MathSign extends StatelessWidget {
   }
 }
 
+class _ConstellationA11yCopy {
+  const _ConstellationA11yCopy({
+    required this.star,
+    required this.map,
+    required this.routeProgress,
+    required this.hint,
+    required this.solved,
+  });
+
+  final String star;
+  final String map;
+  final String routeProgress;
+  final String hint;
+  final String solved;
+
+  String value(int starIndex, int round, int progress, int routeLength) =>
+      '$star ${starIndex + 1}. $map ${round + 1} / 3. '
+      '$routeProgress ${math.max(0, progress + 1)} / $routeLength';
+
+  static _ConstellationA11yCopy of(BuildContext context) =>
+      _copies[Localizations.localeOf(context).languageCode] ?? _copies['en']!;
+
+  static const _copies = <String, _ConstellationA11yCopy>{
+    'ar': _ConstellationA11yCopy(
+        star: 'نجمة',
+        map: 'خريطة',
+        routeProgress: 'تقدم المسار',
+        hint: 'اسحب لأعلى أو لأسفل لاختيار نجمة، ثم انقر لإضافتها إلى المسار',
+        solved: 'اكتملت الخرائط الثلاث'),
+    'de': _ConstellationA11yCopy(
+        star: 'Stern',
+        map: 'Karte',
+        routeProgress: 'Routenfortschritt',
+        hint:
+            'Wische nach oben oder unten, um einen Stern zu wählen, und tippe zum Hinzufügen',
+        solved: 'Alle drei Karten abgeschlossen'),
+    'en': _ConstellationA11yCopy(
+        star: 'Star',
+        map: 'Map',
+        routeProgress: 'Route progress',
+        hint:
+            'Swipe up or down to choose a star, then tap to add it to the route',
+        solved: 'All three maps completed'),
+    'es': _ConstellationA11yCopy(
+        star: 'Estrella',
+        map: 'Mapa',
+        routeProgress: 'Progreso de la ruta',
+        hint:
+            'Desliza arriba o abajo para elegir una estrella y toca para añadirla',
+        solved: 'Se completaron los tres mapas'),
+    'fr': _ConstellationA11yCopy(
+        star: 'Étoile',
+        map: 'Carte',
+        routeProgress: 'Progression du trajet',
+        hint:
+            'Balaye vers le haut ou le bas pour choisir une étoile, puis touche pour l’ajouter',
+        solved: 'Les trois cartes sont terminées'),
+    'hi': _ConstellationA11yCopy(
+        star: 'तारा',
+        map: 'मानचित्र',
+        routeProgress: 'मार्ग की प्रगति',
+        hint:
+            'तारा चुनने के लिए ऊपर या नीचे स्वाइप करें, फिर मार्ग में जोड़ने के लिए टैप करें',
+        solved: 'तीनों मानचित्र पूरे हुए'),
+    'it': _ConstellationA11yCopy(
+        star: 'Stella',
+        map: 'Mappa',
+        routeProgress: 'Avanzamento percorso',
+        hint:
+            'Scorri su o giù per scegliere una stella, poi tocca per aggiungerla',
+        solved: 'Tutte e tre le mappe completate'),
+    'ja': _ConstellationA11yCopy(
+        star: '星',
+        map: 'マップ',
+        routeProgress: 'ルートの進み具合',
+        hint: '上下にスワイプして星を選び、タップしてルートに追加します',
+        solved: '3つのマップを完了しました'),
+    'ko': _ConstellationA11yCopy(
+        star: '별',
+        map: '지도',
+        routeProgress: '경로 진행',
+        hint: '위아래로 밀어 별을 고른 뒤 탭하여 경로에 추가하세요',
+        solved: '지도 세 개를 모두 완료했습니다'),
+    'pt': _ConstellationA11yCopy(
+        star: 'Estrela',
+        map: 'Mapa',
+        routeProgress: 'Progresso da rota',
+        hint:
+            'Deslize para cima ou para baixo, escolha uma estrela e toque para adicioná-la',
+        solved: 'Os três mapas foram concluídos'),
+    'ru': _ConstellationA11yCopy(
+        star: 'Звезда',
+        map: 'Карта',
+        routeProgress: 'Прогресс маршрута',
+        hint:
+            'Смахните вверх или вниз, выберите звезду и нажмите, чтобы добавить её в маршрут',
+        solved: 'Все три карты пройдены'),
+    'zh': _ConstellationA11yCopy(
+        star: '星星',
+        map: '地图',
+        routeProgress: '路线进度',
+        hint: '上下轻扫选择星星，然后点按将它加入路线',
+        solved: '三张地图均已完成'),
+  };
+}
+
 class _ConstellationRouteStage extends StatefulWidget {
   const _ConstellationRouteStage({
     required this.accent,
     required this.compact,
     required this.correctAnswer,
+    required this.semanticLabel,
     required this.onAnswerSelected,
   });
 
   final Color accent;
   final bool compact;
   final String correctAnswer;
+  final String semanticLabel;
   final ValueChanged<String> onAnswerSelected;
 
   @override
@@ -6253,80 +7024,240 @@ class _ConstellationRouteStage extends StatefulWidget {
       _ConstellationRouteStageState();
 }
 
-class _ConstellationRouteStageState extends State<_ConstellationRouteStage> {
+class _ConstellationRouteStageState extends State<_ConstellationRouteStage>
+    with SingleTickerProviderStateMixin {
+  static const _rounds = <_ConstellationRound>[
+    _ConstellationRound(
+      route: [0, 1, 3, 6, 8],
+      glyphs: [0, 1, 4, 2, 3, 5, 4, 0, 5],
+    ),
+    _ConstellationRound(
+      route: [0, 2, 4, 6, 8],
+      glyphs: [0, 3, 1, 5, 2, 4, 3, 5, 0],
+    ),
+    _ConstellationRound(
+      route: [0, 2, 5, 7, 8],
+      glyphs: [0, 2, 1, 4, 3, 5, 1, 2, 0],
+    ),
+  ];
+
+  late final AnimationController _error;
+  int _round = 0;
   int _progress = -1;
   bool _dragging = false;
   bool _submitted = false;
+  bool _transitioning = false;
+  bool _answerSent = false;
+  int _semanticStar = 0;
+
+  _ConstellationRound get _spec => _rounds[_round];
+
+  @override
+  void initState() {
+    super.initState();
+    _error = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+  }
+
+  @override
+  void dispose() {
+    _error.dispose();
+    super.dispose();
+  }
 
   List<Offset> _stars(Size size) => [
-        Offset(size.width * 0.12, size.height * 0.68),
-        Offset(size.width * 0.30, size.height * 0.42),
-        Offset(size.width * 0.48, size.height * 0.56),
-        Offset(size.width * 0.66, size.height * 0.30),
-        Offset(size.width * 0.84, size.height * 0.52),
+        Offset(size.width * 0.10, size.height * 0.68),
+        Offset(size.width * 0.27, size.height * 0.43),
+        Offset(size.width * 0.27, size.height * 0.79),
+        Offset(size.width * 0.45, size.height * 0.28),
+        Offset(size.width * 0.48, size.height * 0.59),
+        Offset(size.width * 0.49, size.height * 0.84),
+        Offset(size.width * 0.68, size.height * 0.38),
+        Offset(size.width * 0.72, size.height * 0.72),
+        Offset(size.width * 0.90, size.height * 0.52),
       ];
 
+  int _hitStar(Offset point, Size size) =>
+      _stars(size).indexWhere((star) => (point - star).distance <= 25);
+
   void _start(DragStartDetails details, Size size) {
-    if (_submitted) return;
-    if ((details.localPosition - _stars(size).first).distance <= 28) {
-      setState(() {
-        _dragging = true;
-        _progress = 0;
-      });
+    if (_submitted || _transitioning) return;
+    if (_hitStar(details.localPosition, size) != _spec.route.first) {
+      _fail();
+      return;
     }
+    setState(() {
+      _dragging = true;
+      _progress = 0;
+    });
   }
 
   void _trace(DragUpdateDetails details, Size size) {
-    if (!_dragging || _submitted) return;
-    final stars = _stars(size);
+    if (!_dragging || _submitted || _transitioning) return;
+    final hit = _hitStar(details.localPosition, size);
+    if (hit < 0 || hit == _spec.route[_progress]) return;
     final next = _progress + 1;
-    if (next < stars.length &&
-        (details.localPosition - stars[next]).distance <= 27) {
+    if (next < _spec.route.length && hit == _spec.route[next]) {
+      HapticFeedback.selectionClick();
       setState(() => _progress = next);
-      if (next == stars.length - 1) {
-        _dragging = false;
-        _submitted = true;
-        Future<void>.delayed(const Duration(milliseconds: 520), () {
-          if (mounted) widget.onAnswerSelected(widget.correctAnswer);
-        });
-      }
+      if (next == _spec.route.length - 1) _completeRound();
+      return;
     }
+    _fail();
   }
 
   void _end(DragEndDetails details) {
-    if (_submitted) return;
+    if (_submitted || _transitioning) return;
+    if (_dragging && _progress != _spec.route.length - 1) _fail();
+  }
+
+  void _moveSemanticStar(int delta) {
+    if (_submitted || _transitioning) return;
+    HapticFeedback.selectionClick();
+    setState(() => _semanticStar = (_semanticStar + delta + 9) % 9);
+  }
+
+  void _selectSemanticStar() {
+    if (_submitted || _transitioning) return;
+    final selected = _semanticStar;
+    if (_progress < 0) {
+      if (selected != _spec.route.first) {
+        _fail();
+        return;
+      }
+      setState(() => _progress = 0);
+      return;
+    }
+
+    final next = _progress + 1;
+    if (next < _spec.route.length && selected == _spec.route[next]) {
+      HapticFeedback.selectionClick();
+      setState(() => _progress = next);
+      if (next == _spec.route.length - 1) _completeRound();
+      return;
+    }
+    _fail();
+  }
+
+  void _fail() {
+    HapticFeedback.lightImpact();
     setState(() {
       _dragging = false;
       _progress = -1;
+      _semanticStar = 0;
+    });
+    _error.forward(from: 0);
+  }
+
+  void _completeRound() {
+    HapticFeedback.mediumImpact();
+    setState(() {
+      _dragging = false;
+      _transitioning = true;
+    });
+    if (_round < _rounds.length - 1) {
+      Future<void>.delayed(const Duration(milliseconds: 420), () {
+        if (!mounted) return;
+        setState(() {
+          _round++;
+          _progress = -1;
+          _semanticStar = 0;
+          _transitioning = false;
+        });
+      });
+      return;
+    }
+    setState(() => _submitted = true);
+    Future<void>.delayed(const Duration(milliseconds: 620), () {
+      if (!mounted || _answerSent) return;
+      _answerSent = true;
+      widget.onAnswerSelected(widget.correctAnswer);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: SizedBox(
-          width: widget.compact ? 286 : 328,
-          height: widget.compact ? 94 : 112,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final size = constraints.biggest;
-              return GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onPanStart: (details) => _start(details, size),
-                onPanUpdate: (details) => _trace(details, size),
-                onPanEnd: _end,
-                child: CustomPaint(
-                  painter: _ConstellationPainter(
-                    widget.accent,
-                    progress: _progress,
-                    solved: _submitted,
+    final copy = _ConstellationA11yCopy.of(context);
+    final textDirection = Directionality.of(context);
+    return Semantics(
+      key: const ValueKey('constellation-route-semantics'),
+      container: true,
+      excludeSemantics: true,
+      label: widget.semanticLabel,
+      value: _submitted
+          ? copy.solved
+          : copy.value(
+              _semanticStar,
+              _round,
+              _progress,
+              _spec.route.length,
+            ),
+      hint: copy.hint,
+      textDirection: textDirection,
+      increasedValue: _submitted || _transitioning
+          ? null
+          : copy.value(
+              (_semanticStar + 1) % 9,
+              _round,
+              _progress,
+              _spec.route.length,
+            ),
+      decreasedValue: _submitted || _transitioning
+          ? null
+          : copy.value(
+              (_semanticStar + 8) % 9,
+              _round,
+              _progress,
+              _spec.route.length,
+            ),
+      onIncrease:
+          _submitted || _transitioning ? null : () => _moveSemanticStar(1),
+      onDecrease:
+          _submitted || _transitioning ? null : () => _moveSemanticStar(-1),
+      onTap: _submitted || _transitioning ? null : _selectSemanticStar,
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: SizedBox(
+            key: const ValueKey('constellation-route-board'),
+            width: 328,
+            height: widget.compact ? 166 : 184,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final size = constraints.biggest;
+                return AnimatedBuilder(
+                  animation: _error,
+                  builder: (context, child) {
+                    final shake = math.sin(_error.value * math.pi * 7) *
+                        (1 - _error.value) *
+                        5;
+                    return Transform.translate(
+                      offset: Offset(shake, 0),
+                      child: child,
+                    );
+                  },
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onPanStart: (details) => _start(details, size),
+                    onPanUpdate: (details) => _trace(details, size),
+                    onPanEnd: _end,
+                    child: CustomPaint(
+                      painter: _ConstellationPainter(
+                        widget.accent,
+                        round: _round,
+                        spec: _spec,
+                        progress: _progress,
+                        solved: _submitted,
+                        transitioning: _transitioning,
+                      ),
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -6337,13 +7268,46 @@ class _ConstellationRouteStageState extends State<_ConstellationRouteStage> {
 class _ConstellationPainter extends CustomPainter {
   const _ConstellationPainter(
     this.accent, {
+    required this.round,
+    required this.spec,
     required this.progress,
     required this.solved,
+    required this.transitioning,
   });
 
   final Color accent;
+  final int round;
+  final _ConstellationRound spec;
   final int progress;
   final bool solved;
+  final bool transitioning;
+
+  static const _edges = <List<int>>[
+    [0, 1],
+    [0, 2],
+    [1, 3],
+    [1, 4],
+    [2, 4],
+    [2, 5],
+    [3, 6],
+    [4, 6],
+    [4, 7],
+    [5, 7],
+    [6, 8],
+    [7, 8],
+  ];
+
+  List<Offset> _stars(Size size) => [
+        Offset(size.width * 0.10, size.height * 0.68),
+        Offset(size.width * 0.27, size.height * 0.43),
+        Offset(size.width * 0.27, size.height * 0.79),
+        Offset(size.width * 0.45, size.height * 0.28),
+        Offset(size.width * 0.48, size.height * 0.59),
+        Offset(size.width * 0.49, size.height * 0.84),
+        Offset(size.width * 0.68, size.height * 0.38),
+        Offset(size.width * 0.72, size.height * 0.72),
+        Offset(size.width * 0.90, size.height * 0.52),
+      ];
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -6358,57 +7322,83 @@ class _ConstellationPainter extends CustomPainter {
         ).createShader(rect),
     );
 
-    final stars = [
-      Offset(size.width * 0.12, size.height * 0.68),
-      Offset(size.width * 0.30, size.height * 0.42),
-      Offset(size.width * 0.48, size.height * 0.56),
-      Offset(size.width * 0.66, size.height * 0.30),
-      Offset(size.width * 0.84, size.height * 0.52),
-    ];
+    final stars = _stars(size);
     final guidePaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.18)
-      ..strokeWidth = 3
+      ..strokeWidth = 2.4
       ..strokeCap = StrokeCap.round;
     final pathPaint = Paint()
       ..color = solved ? AppPalette.mango : AppPalette.mint
-      ..strokeWidth = 4
+      ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
 
-    for (var index = 0; index < stars.length - 1; index++) {
-      canvas.drawLine(stars[index], stars[index + 1], guidePaint);
-      if (index < progress) {
-        canvas.drawLine(stars[index], stars[index + 1], pathPaint);
-      }
+    for (final edge in _edges) {
+      canvas.drawLine(stars[edge[0]], stars[edge[1]], guidePaint);
     }
-
-    for (var index = 0; index < stars.length; index++) {
-      final isFinish = index == stars.length - 1;
-      _drawStar(
-        canvas,
-        stars[index],
-        isFinish ? size.height * 0.11 : size.height * 0.075,
-        index <= progress
-            ? (isFinish ? AppPalette.mango : AppPalette.mint)
-            : Colors.white,
-        glow: index <= progress,
+    for (var index = 0; index < progress; index++) {
+      canvas.drawLine(
+        stars[spec.route[index]],
+        stars[spec.route[index + 1]],
+        pathPaint,
       );
     }
 
-    _drawFinishLabel(canvas, 'A', Offset(size.width * 0.74, size.height * 0.78),
-        AppPalette.lavender);
-    _drawFinishLabel(
-        canvas, 'B', Offset(size.width * 0.88, size.height * 0.52), accent,
-        highlighted: true);
-    _drawFinishLabel(canvas, 'C', Offset(size.width * 0.92, size.height * 0.20),
-        AppPalette.mango);
+    for (var index = 0; index < stars.length; index++) {
+      final active = spec.route.take(progress + 1).contains(index);
+      _drawGlyph(
+        canvas,
+        stars[index],
+        spec.glyphs[index],
+        active
+            ? (index == spec.route.last ? AppPalette.mango : AppPalette.mint)
+            : Colors.white,
+        glow: active,
+      );
+    }
+
+    final tokenY = size.height * 0.105;
+    final routeGlyphs = [for (final index in spec.route) spec.glyphs[index]];
+    final tokenStart = size.width / 2 - (routeGlyphs.length - 1) * 15.0;
+    for (var index = 0; index < routeGlyphs.length; index++) {
+      if (index > 0) {
+        canvas.drawLine(
+          Offset(tokenStart + (index - 1) * 30 + 9, tokenY),
+          Offset(tokenStart + index * 30 - 9, tokenY),
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.36)
+            ..strokeWidth = 2,
+        );
+      }
+      _drawGlyph(
+        canvas,
+        Offset(tokenStart + index * 30, tokenY),
+        routeGlyphs[index],
+        index <= progress ? AppPalette.mint : Colors.white,
+        radius: 8,
+      );
+    }
+
+    for (var index = 0; index < 3; index++) {
+      canvas.drawCircle(
+        Offset(size.width * 0.44 + index * 20, size.height * 0.94),
+        5,
+        Paint()
+          ..color = index < round || solved
+              ? AppPalette.mint
+              : index == round
+                  ? (transitioning ? AppPalette.mango : accent)
+                  : Colors.white.withValues(alpha: 0.24),
+      );
+    }
   }
 
-  void _drawStar(
+  void _drawGlyph(
     Canvas canvas,
     Offset center,
-    double radius,
+    int glyph,
     Color color, {
     bool glow = false,
+    double radius = 10,
   }) {
     if (glow) {
       canvas.drawCircle(
@@ -6418,71 +7408,87 @@ class _ConstellationPainter extends CustomPainter {
       );
     }
 
-    final path = Path();
-    for (var point = 0; point < 10; point++) {
-      final currentRadius = point.isEven ? radius : radius * 0.46;
-      final angle = -math.pi / 2 + point * math.pi / 5;
-      final offset = Offset(
-        center.dx + math.cos(angle) * currentRadius,
-        center.dy + math.sin(angle) * currentRadius,
-      );
-      if (point == 0) {
-        path.moveTo(offset.dx, offset.dy);
-      } else {
-        path.lineTo(offset.dx, offset.dy);
-      }
-    }
-    path.close();
-    canvas.drawPath(path, Paint()..color = color);
-  }
-
-  void _drawFinishLabel(
-    Canvas canvas,
-    String label,
-    Offset center,
-    Color color, {
-    bool highlighted = false,
-  }) {
-    final radius = highlighted ? 16.0 : 13.0;
     canvas.drawCircle(
       center,
-      radius,
-      Paint()
-        ..color = highlighted ? color : Colors.white.withValues(alpha: 0.86),
+      radius + 4,
+      Paint()..color = color.withValues(alpha: 0.22),
     );
-    if (highlighted) {
-      canvas.drawCircle(
-        center,
-        radius,
-        Paint()
-          ..color = Colors.white
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2,
-      );
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+    switch (glyph) {
+      case 0:
+        canvas.drawCircle(center, radius * 0.62, paint);
+      case 1:
+        canvas.drawRect(
+          Rect.fromCenter(
+            center: center,
+            width: radius * 1.15,
+            height: radius * 1.15,
+          ),
+          paint,
+        );
+      case 2:
+        final path = Path()
+          ..moveTo(center.dx, center.dy - radius * 0.72)
+          ..lineTo(center.dx + radius * 0.68, center.dy + radius * 0.55)
+          ..lineTo(center.dx - radius * 0.68, center.dy + radius * 0.55)
+          ..close();
+        canvas.drawPath(path, paint);
+      case 3:
+        canvas.drawLine(
+          center - Offset(radius * 0.65, 0),
+          center + Offset(radius * 0.65, 0),
+          paint,
+        );
+        canvas.drawLine(
+          center - Offset(0, radius * 0.65),
+          center + Offset(0, radius * 0.65),
+          paint,
+        );
+      case 4:
+        final path = Path();
+        for (var point = 0; point < 10; point++) {
+          final r = point.isEven ? radius * 0.72 : radius * 0.32;
+          final angle = -math.pi / 2 + point * math.pi / 5;
+          final p = center + Offset(math.cos(angle), math.sin(angle)) * r;
+          if (point == 0) {
+            path.moveTo(p.dx, p.dy);
+          } else {
+            path.lineTo(p.dx, p.dy);
+          }
+        }
+        path.close();
+        canvas.drawPath(path, paint);
+      case 5:
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius * 0.68),
+          -math.pi / 2,
+          math.pi * 1.55,
+          false,
+          paint,
+        );
     }
-
-    final painter = TextPainter(
-      text: TextSpan(
-        text: label,
-        style: TextStyle(
-          color: highlighted ? Colors.white : color,
-          fontSize: highlighted ? 17 : 14,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-    painter.paint(
-      canvas,
-      center - Offset(painter.width / 2, painter.height / 2),
-    );
   }
 
   @override
   bool shouldRepaint(covariant _ConstellationPainter oldDelegate) =>
       oldDelegate.accent != accent ||
+      oldDelegate.round != round ||
+      oldDelegate.spec != spec ||
       oldDelegate.progress != progress ||
-      oldDelegate.solved != solved;
+      oldDelegate.solved != solved ||
+      oldDelegate.transitioning != transitioning;
+}
+
+class _ConstellationRound {
+  const _ConstellationRound({required this.route, required this.glyphs});
+
+  final List<int> route;
+  final List<int> glyphs;
 }
 
 class _PicturePuzzleStage extends StatefulWidget {
@@ -6890,6 +7896,7 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
                     final star = index == _starCell;
                     final blocked = _obstacles.contains(index);
                     return _MazeCell(
+                      key: hero ? ValueKey('route-maze-hero-$index') : null,
                       hero: hero,
                       star: star,
                       blocked: blocked,
@@ -6905,6 +7912,7 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     _MazeArrowButton(
+                      key: const ValueKey('route-maze-up'),
                       icon: Icons.keyboard_arrow_up_rounded,
                       color: widget.accent,
                       onTap: () => _move(-1, 0),
@@ -6913,6 +7921,7 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _MazeArrowButton(
+                          key: const ValueKey('route-maze-left'),
                           icon: Icons.keyboard_arrow_left_rounded,
                           color: AppPalette.teal,
                           onTap: () => _move(0, -1),
@@ -6926,6 +7935,7 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
                         ),
                         const SizedBox(width: 10),
                         _MazeArrowButton(
+                          key: const ValueKey('route-maze-right'),
                           icon: Icons.keyboard_arrow_right_rounded,
                           color: AppPalette.coral,
                           onTap: () => _move(0, 1),
@@ -6933,6 +7943,7 @@ class _RouteMazeStageState extends State<_RouteMazeStage> {
                       ],
                     ),
                     _MazeArrowButton(
+                      key: const ValueKey('route-maze-down'),
                       icon: Icons.keyboard_arrow_down_rounded,
                       color: AppPalette.lavender,
                       onTap: () => _move(1, 0),
@@ -6955,6 +7966,7 @@ class _MazeCell extends StatelessWidget {
     required this.blocked,
     required this.solved,
     required this.accent,
+    super.key,
   });
 
   final bool hero;
@@ -7014,6 +8026,7 @@ class _MazeArrowButton extends StatelessWidget {
     required this.icon,
     required this.color,
     this.onTap,
+    super.key,
   });
 
   final IconData icon;
@@ -7496,6 +8509,7 @@ class _PathStage extends StatelessWidget {
           accent: accent,
           compact: compact,
           correctAnswer: answerRuleForPuzzle(puzzle).correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -7545,6 +8559,7 @@ class _PathStage extends StatelessWidget {
     final spec = _pathStageSpecFor(puzzle.id, accent, compact);
 
     return _StageShell(
+      key: genericPuzzleSceneFallbackKey,
       accent: accent,
       compact: compact,
       child: spec.linked
@@ -8067,6 +9082,7 @@ class _PatternStrip extends StatelessWidget {
           accent: accent,
           compact: compact,
           correctAnswer: correctAnswer,
+          semanticLabel: context.l10n.puzzleTitle(puzzle),
           onAnswerSelected: onAnswerSelected,
         ),
       );
@@ -8075,6 +9091,7 @@ class _PatternStrip extends StatelessWidget {
     final items = _logicStageItemsFor(puzzle.id, accent, compact);
 
     return _StageShell(
+      key: genericPuzzleSceneFallbackKey,
       accent: accent,
       compact: compact,
       child: FittedBox(
@@ -8285,11 +9302,19 @@ class _QuestionBubble extends StatelessWidget {
     required this.prompt,
     required this.accent,
     required this.compact,
+    required this.isNarrating,
+    required this.listenLabel,
+    required this.stopLabel,
+    required this.onNarrate,
   });
 
   final String prompt;
   final Color accent;
   final bool compact;
+  final bool isNarrating;
+  final String listenLabel;
+  final String stopLabel;
+  final VoidCallback onNarrate;
 
   @override
   Widget build(BuildContext context) {
@@ -8305,13 +9330,40 @@ class _QuestionBubble extends StatelessWidget {
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: accent.withValues(alpha: 0.14)),
       ),
-      child: Text(
-        prompt,
-        maxLines: compact ? 2 : 3,
-        overflow: TextOverflow.ellipsis,
-        style: compact
-            ? Theme.of(context).textTheme.titleMedium
-            : Theme.of(context).textTheme.titleLarge,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              prompt,
+              style: compact
+                  ? Theme.of(context).textTheme.titleMedium
+                  : Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Semantics(
+            container: true,
+            explicitChildNodes: true,
+            button: true,
+            label: isNarrating ? stopLabel : listenLabel,
+            child: Tooltip(
+              message: isNarrating ? stopLabel : listenLabel,
+              child: IconButton.filled(
+                onPressed: onNarrate,
+                icon: Icon(
+                  isNarrating ? Icons.stop_rounded : Icons.volume_up_rounded,
+                ),
+                style: IconButton.styleFrom(
+                  minimumSize: const Size(48, 48),
+                  backgroundColor: Colors.white,
+                  foregroundColor: accent,
+                  elevation: 2,
+                  shadowColor: accent.withValues(alpha: 0.22),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

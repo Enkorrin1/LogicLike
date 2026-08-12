@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class BridgeOrderGameView extends StatefulWidget {
   const BridgeOrderGameView({
@@ -22,40 +24,133 @@ class BridgeOrderGameView extends StatefulWidget {
   State<BridgeOrderGameView> createState() => _BridgeOrderGameViewState();
 }
 
-class _BridgeOrderGameViewState extends State<BridgeOrderGameView> {
-  static const _target = <int>[0, 1, 2, 3];
-  final List<int> _planks = <int>[2, 0, 3, 1];
-  int? _dragging;
+class _BridgeOrderGameViewState extends State<BridgeOrderGameView>
+    with TickerProviderStateMixin {
+  static const _pieces = <_BridgePiece>[
+    _BridgePiece(0, 0, Color(0xFF56C8B8), Icons.circle_rounded),
+    _BridgePiece(1, 1, Color(0xFFFFC85B), Icons.change_history_rounded),
+    _BridgePiece(2, 2, Color(0xFF65BDF0), Icons.square_rounded),
+    _BridgePiece(3, 3, Color(0xFFFF817B), Icons.star_rounded),
+  ];
+  static const _stages = <_BridgeStage>[
+    _BridgeStage(_BridgeRule.ramp, [0, 1, 2, 3]),
+    _BridgeStage(_BridgeRule.symbols, [2, 0, 3, 1]),
+    _BridgeStage(_BridgeRule.loads, [1, 3, 2, 0]),
+  ];
+
+  final List<int?> _slots = <int?>[null, null, null, null];
+  late final AnimationController _vehicleController;
+  late final AnimationController _errorController;
+  int _stage = 0;
+  int? _selectedPiece;
+  Set<int> _wrongSlots = <int>{};
+  bool _testing = false;
   bool _complete = false;
+  bool _sent = false;
 
-  void _move(int from, int to) {
-    if (_complete || from == to) return;
+  _BridgeStage get _currentStage => _stages[_stage];
+
+  bool get _locked => _testing || _complete || _wrongSlots.isNotEmpty;
+
+  @override
+  void initState() {
+    super.initState();
+    _vehicleController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1050),
+    );
+    _errorController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 430),
+    );
+  }
+
+  @override
+  void dispose() {
+    _vehicleController.dispose();
+    _errorController.dispose();
+    super.dispose();
+  }
+
+  void _selectPiece(int piece) {
+    if (_locked) return;
     setState(() {
-      final plank = _planks.removeAt(from);
-      _planks.insert(to, plank);
-      _dragging = null;
+      _selectedPiece = _selectedPiece == piece ? null : piece;
     });
-    if (_sameOrder(_planks, _target)) _finish();
   }
 
-  bool _sameOrder(List<int> a, List<int> b) {
-    for (var i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
+  void _placePiece(int piece, int slot) {
+    if (_locked) return;
+    final source = _slots.indexOf(piece);
+    if (source == slot) {
+      setState(() => _selectedPiece = null);
+      return;
     }
-    return true;
+    final displaced = _slots[slot];
+    setState(() {
+      if (source >= 0) _slots[source] = displaced;
+      _slots[slot] = piece;
+      _selectedPiece = null;
+    });
+    if (_slots.every((piece) => piece != null)) _checkBridge();
   }
 
-  void _finish() {
-    if (_complete) return;
-    setState(() => _complete = true);
-    Timer(const Duration(milliseconds: 650), () {
-      if (mounted) widget.onAnswerSelected(widget.correctAnswer);
+  void _activateSlot(int slot) {
+    if (_selectedPiece != null) _placePiece(_selectedPiece!, slot);
+  }
+
+  void _checkBridge() {
+    final wrong = <int>{};
+    for (var i = 0; i < _slots.length; i++) {
+      if (_slots[i] != _currentStage.target[i]) wrong.add(i);
+    }
+    if (wrong.isEmpty) {
+      _testBridge();
+      return;
+    }
+    HapticFeedback.heavyImpact();
+    setState(() => _wrongSlots = wrong);
+    _errorController.forward(from: 0);
+    Timer(const Duration(milliseconds: 720), () {
+      if (!mounted || _complete) return;
+      setState(() {
+        for (final slot in wrong) {
+          _slots[slot] = null;
+        }
+        _wrongSlots = <int>{};
+      });
+    });
+  }
+
+  Future<void> _testBridge() async {
+    if (_locked) return;
+    HapticFeedback.mediumImpact();
+    setState(() => _testing = true);
+    await _vehicleController.forward(from: 0);
+    if (!mounted || _complete) return;
+    if (_stage < _stages.length - 1) {
+      setState(() {
+        _stage++;
+        _slots.fillRange(0, _slots.length, null);
+        _testing = false;
+      });
+      _vehicleController.reset();
+      return;
+    }
+    setState(() {
+      _testing = false;
+      _complete = true;
+    });
+    Timer(const Duration(milliseconds: 420), () {
+      if (!mounted || _sent) return;
+      _sent = true;
+      widget.onAnswerSelected(widget.correctAnswer);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final height = widget.compact ? 218.0 : 260.0;
+    final height = widget.compact ? 276.0 : 320.0;
     return Semantics(
       label: widget.semanticLabel,
       container: true,
@@ -70,15 +165,13 @@ class _BridgeOrderGameViewState extends State<BridgeOrderGameView> {
               children: [
                 _RoundBadge(
                   color: widget.accent,
-                  icon: _complete
-                      ? Icons.check_rounded
-                      : Icons.swap_horiz_rounded,
+                  icon: _complete ? Icons.check_rounded : _currentStage.icon,
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _ProgressDots(
-                    count: _planks.length,
-                    active: _orderedPrefix(),
+                    count: _stages.length,
+                    active: _complete ? _stages.length : _stage + 1,
                     color: widget.accent,
                   ),
                 ),
@@ -86,81 +179,203 @@ class _BridgeOrderGameViewState extends State<BridgeOrderGameView> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Positioned.fill(
-                      child:
-                          CustomPaint(painter: _RiverPainter(widget.accent))),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: List.generate(_planks.length, (index) {
-                      final plank = _planks[index];
-                      return Expanded(
-                        child: DragTarget<int>(
-                          onWillAcceptWithDetails: (_) => !_complete,
-                          onAcceptWithDetails: (details) =>
-                              _move(details.data, index),
-                          builder: (context, candidates, rejected) {
-                            final highlighted = candidates.isNotEmpty;
-                            return LongPressDraggable<int>(
-                              data: index,
-                              maxSimultaneousDrags: _complete ? 0 : 1,
-                              onDragStarted: () =>
-                                  setState(() => _dragging = index),
-                              onDraggableCanceled: (_, __) =>
-                                  setState(() => _dragging = null),
-                              feedback: Material(
-                                color: Colors.transparent,
-                                child: _BridgePlank(
-                                  rank: plank,
-                                  color: widget.accent,
-                                  lifted: true,
-                                ),
-                              ),
-                              childWhenDragging: const SizedBox(height: 46),
-                              child: AnimatedScale(
-                                duration: const Duration(milliseconds: 180),
-                                scale: highlighted
-                                    ? 1.08
-                                    : (_dragging == index ? .94 : 1),
-                                child: _BridgePlank(
-                                    rank: plank, color: widget.accent),
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    }),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 380),
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                      begin: const Offset(.08, 0),
+                      end: Offset.zero,
+                    ).animate(animation),
+                    child: child,
                   ),
-                  Positioned(
-                    left: 0,
-                    bottom: 0,
-                    child: Icon(Icons.grass_rounded,
-                        color: Colors.green.shade500, size: 35),
-                  ),
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Icon(Icons.flag_rounded,
-                        color: widget.accent, size: 34),
-                  ),
-                ],
+                ),
+                child: _buildConstructionSite(),
               ),
             ),
+            const SizedBox(height: 7),
+            SizedBox(height: 52, child: _buildSupplyYard()),
           ],
         ),
       ),
     );
   }
 
-  int _orderedPrefix() {
-    var count = 0;
-    for (var i = 0; i < _planks.length; i++) {
-      if (_planks[i] != i) break;
-      count++;
-    }
-    return count;
+  Widget _buildConstructionSite() {
+    return Stack(
+      key: ValueKey('bridge-stage-$_stage'),
+      alignment: Alignment.bottomCenter,
+      children: [
+        Positioned.fill(
+          child: CustomPaint(
+            painter: _RiverPainter(widget.accent, _currentStage.rule),
+          ),
+        ),
+        Positioned(
+          top: 0,
+          left: 8,
+          right: 8,
+          child: _BridgeBlueprint(
+            stage: _currentStage,
+            pieces: _pieces,
+            accent: widget.accent,
+          ),
+        ),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 1,
+          child: AnimatedBuilder(
+            animation: _errorController,
+            builder: (context, child) => Transform.translate(
+              offset: Offset(
+                math.sin(_errorController.value * math.pi * 6) *
+                    (1 - _errorController.value) *
+                    8,
+                0,
+              ),
+              child: child,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(
+                _slots.length,
+                (slot) => Expanded(child: _buildSlot(slot)),
+              ),
+            ),
+          ),
+        ),
+        if (_testing || _complete)
+          Positioned.fill(
+            child: IgnorePointer(
+              child: AnimatedBuilder(
+                animation: _vehicleController,
+                builder: (context, child) => Align(
+                  alignment: Alignment(
+                    -1.18 + _vehicleController.value * 2.36,
+                    .58 - math.sin(_vehicleController.value * math.pi) * .05,
+                  ),
+                  child: child,
+                ),
+                child: Icon(
+                  _complete
+                      ? Icons.auto_awesome_rounded
+                      : Icons.local_shipping_rounded,
+                  color: _complete ? Colors.amber.shade600 : widget.accent,
+                  size: 34,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSlot(int slot) {
+    final pieceId = _slots[slot];
+    final wrong = _wrongSlots.contains(slot);
+    return Semantics(
+      key: ValueKey('bridge-slot-$_stage-$slot'),
+      button: true,
+      label: '${widget.semanticLabel} ${slot + 1}',
+      onTap: _locked ? null : () => _activateSlot(slot),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _locked ? null : () => _activateSlot(slot),
+        child: DragTarget<int>(
+          onWillAcceptWithDetails: (_) => !_locked,
+          onAcceptWithDetails: (details) => _placePiece(details.data, slot),
+          builder: (context, candidates, rejected) => AnimatedContainer(
+            key: wrong ? ValueKey('bridge-slot-error-$slot') : null,
+            duration: const Duration(milliseconds: 180),
+            height: 66,
+            margin: const EdgeInsets.symmetric(horizontal: 2),
+            alignment: Alignment.bottomCenter,
+            decoration: BoxDecoration(
+              color: wrong
+                  ? const Color(0xFFFFD9D7)
+                  : candidates.isNotEmpty
+                      ? widget.accent.withValues(alpha: .18)
+                      : Colors.white.withValues(alpha: .2),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: wrong
+                    ? const Color(0xFFFF625F)
+                    : widget.accent.withValues(alpha: .28),
+                width: wrong || candidates.isNotEmpty ? 2.5 : 1.5,
+              ),
+            ),
+            child: pieceId == null
+                ? _BridgeSlotGuide(
+                    rule: _currentStage.rule,
+                    piece: _pieces[_currentStage.target[slot]],
+                    accent: widget.accent,
+                  )
+                : ExcludeSemantics(
+                    child: LongPressDraggable<int>(
+                      key: ValueKey('bridge-installed-$_stage-$pieceId'),
+                      data: pieceId,
+                      maxSimultaneousDrags: _locked ? 0 : 1,
+                      feedback: Material(
+                        color: Colors.transparent,
+                        child: _BridgePlank(
+                          piece: _pieces[pieceId],
+                          lifted: true,
+                        ),
+                      ),
+                      childWhenDragging: const SizedBox(width: 52, height: 48),
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: _locked ? null : () => _selectPiece(pieceId),
+                        child: AnimatedScale(
+                          duration: const Duration(milliseconds: 160),
+                          scale: _selectedPiece == pieceId ? 1.08 : 1,
+                          child: _BridgePlank(piece: _pieces[pieceId]),
+                        ),
+                      ),
+                    ),
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSupplyYard() {
+    final available = _pieces.where((piece) => !_slots.contains(piece.id));
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: available.map((piece) {
+        return Semantics(
+          key: ValueKey('bridge-piece-$_stage-${piece.id}'),
+          button: true,
+          selected: _selectedPiece == piece.id,
+          label: '${widget.semanticLabel} ${piece.id + 1}',
+          onTap: _locked ? null : () => _selectPiece(piece.id),
+          child: ExcludeSemantics(
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: _locked ? null : () => _selectPiece(piece.id),
+              child: LongPressDraggable<int>(
+                data: piece.id,
+                maxSimultaneousDrags: _locked ? 0 : 1,
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: _BridgePlank(piece: piece, lifted: true),
+                ),
+                childWhenDragging: const SizedBox(width: 54, height: 48),
+                child: AnimatedScale(
+                  duration: const Duration(milliseconds: 160),
+                  scale: _selectedPiece == piece.id ? 1.08 : 1,
+                  child: _BridgePlank(piece: piece),
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
   }
 }
 
@@ -190,12 +405,20 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
     _TowerPiece(1, 70, Color(0xFFFFC85B), Icons.star_rounded),
     _TowerPiece(2, 52, Color(0xFFFF7E79), Icons.change_history_rounded),
   ];
+  static const _rounds = <List<int>>[
+    [0, 1, 2],
+    [2, 1, 0],
+    [1, 0, 2],
+  ];
   final List<int?> _slots = <int?>[null, null, null];
+  int _round = 0;
+  bool _checking = false;
   bool _complete = false;
+  bool _sent = false;
   int? _wrongSlot;
 
   void _place(int pieceId, int slot) {
-    if (_complete) return;
+    if (_complete || _checking) return;
     final previous = _slots.indexOf(pieceId);
     setState(() {
       if (previous >= 0) _slots[previous] = null;
@@ -203,9 +426,10 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
       _wrongSlot = null;
     });
     if (_slots.every((value) => value != null)) {
-      final valid = _slots[0] == 0 && _slots[1] == 1 && _slots[2] == 2;
+      final valid = List.generate(3, (index) => index)
+          .every((index) => _slots[index] == _rounds[_round][index]);
       if (valid) {
-        _finish();
+        _checkTower();
       } else {
         setState(() => _wrongSlot = _firstWrongSlot());
         Timer(const Duration(milliseconds: 550), () {
@@ -221,16 +445,34 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
 
   int _firstWrongSlot() {
     for (var i = 0; i < _slots.length; i++) {
-      if (_slots[i] != i) return i;
+      if (_slots[i] != _rounds[_round][i]) return i;
     }
     return 0;
   }
 
-  void _finish() {
-    if (_complete) return;
-    setState(() => _complete = true);
-    Timer(const Duration(milliseconds: 700), () {
-      if (mounted) widget.onAnswerSelected(widget.correctAnswer);
+  void _checkTower() {
+    if (_checking || _complete) return;
+    HapticFeedback.mediumImpact();
+    setState(() => _checking = true);
+    Timer(const Duration(milliseconds: 720), () {
+      if (!mounted || _complete) return;
+      if (_round < _rounds.length - 1) {
+        setState(() {
+          _round++;
+          _slots.fillRange(0, _slots.length, null);
+          _checking = false;
+        });
+        return;
+      }
+      setState(() {
+        _checking = false;
+        _complete = true;
+      });
+      Timer(const Duration(milliseconds: 480), () {
+        if (!mounted || _sent) return;
+        _sent = true;
+        widget.onAnswerSelected(widget.correctAnswer);
+      });
     });
   }
 
@@ -261,12 +503,33 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
       children: [
         _RoundBadge(color: widget.accent, icon: Icons.architecture_rounded),
         const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            _rounds.length,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: index == _round ? 24 : 9,
+              height: 9,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              decoration: BoxDecoration(
+                color: index < _round
+                    ? const Color(0xFFFFCF54)
+                    : index == _round
+                        ? widget.accent
+                        : Colors.white.withValues(alpha: .62),
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 5),
         ...available.map(
           (piece) => Expanded(
             child: Center(
               child: LongPressDraggable<int>(
                 data: piece.id,
-                maxSimultaneousDrags: _complete ? 0 : 1,
+                maxSimultaneousDrags: _complete || _checking ? 0 : 1,
                 feedback: Material(
                   color: Colors.transparent,
                   child: _TowerBlock(piece: piece, scale: .8),
@@ -318,7 +581,7 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
               final slot = 2 - visualIndex;
               final pieceId = _slots[slot];
               return DragTarget<int>(
-                onWillAcceptWithDetails: (_) => !_complete,
+                onWillAcceptWithDetails: (_) => !_complete && !_checking,
                 onAcceptWithDetails: (details) => _place(details.data, slot),
                 builder: (context, candidates, rejected) => AnimatedContainer(
                   duration: const Duration(milliseconds: 220),
@@ -340,7 +603,11 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
                       ? Icon(Icons.add_rounded,
                           color: widget.accent.withValues(alpha: .5))
                       : AnimatedRotation(
-                          turns: _wrongSlot == slot ? .025 : 0,
+                          turns: _wrongSlot == slot
+                              ? .025
+                              : _checking
+                                  ? (slot.isEven ? .012 : -.012)
+                                  : 0,
                           duration: const Duration(milliseconds: 90),
                           child:
                               _TowerBlock(piece: _pieces[pieceId], scale: .9),
@@ -350,11 +617,14 @@ class _TowerRuleGameViewState extends State<TowerRuleGameView> {
             }),
           ),
         ),
-        if (_complete)
+        if (_checking || _complete)
           Positioned(
             top: 4,
-            child: Icon(Icons.auto_awesome_rounded,
-                color: Colors.amber.shade600, size: 34),
+            child: Icon(
+              _complete ? Icons.auto_awesome_rounded : Icons.bolt_rounded,
+              color: Colors.amber.shade600,
+              size: 34,
+            ),
           ),
       ],
     );
@@ -514,25 +784,176 @@ class _HomeCluesGameViewState extends State<HomeCluesGameView> {
   }
 }
 
-class _BridgePlank extends StatelessWidget {
-  const _BridgePlank(
-      {required this.rank, required this.color, this.lifted = false});
+enum _BridgeRule { ramp, symbols, loads }
 
+class _BridgePiece {
+  const _BridgePiece(this.id, this.rank, this.color, this.icon);
+
+  final int id;
   final int rank;
   final Color color;
+  final IconData icon;
+}
+
+class _BridgeStage {
+  const _BridgeStage(this.rule, this.target);
+
+  final _BridgeRule rule;
+  final List<int> target;
+
+  IconData get icon => switch (rule) {
+        _BridgeRule.ramp => Icons.trending_up_rounded,
+        _BridgeRule.symbols => Icons.extension_rounded,
+        _BridgeRule.loads => Icons.balance_rounded,
+      };
+}
+
+class _BridgeBlueprint extends StatelessWidget {
+  const _BridgeBlueprint({
+    required this.stage,
+    required this.pieces,
+    required this.accent,
+  });
+
+  final _BridgeStage stage;
+  final List<_BridgePiece> pieces;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        height: 34,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .82),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: accent.withValues(alpha: .24)),
+        ),
+        child: Row(
+          children: [
+            Icon(stage.icon, color: accent, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: List.generate(stage.target.length, (index) {
+                  final piece = pieces[stage.target[index]];
+                  return switch (stage.rule) {
+                    _BridgeRule.ramp => Container(
+                        width: 17 + piece.rank * 4,
+                        height: 7 + piece.rank * 3,
+                        decoration: BoxDecoration(
+                          color: piece.color.withValues(alpha: .76),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    _BridgeRule.symbols => Icon(
+                        piece.icon,
+                        color: piece.color,
+                        size: 19,
+                      ),
+                    _BridgeRule.loads => Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(
+                          piece.rank + 1,
+                          (_) => Container(
+                            width: 5,
+                            height: 9,
+                            margin: const EdgeInsets.symmetric(horizontal: 1),
+                            decoration: BoxDecoration(
+                              color: piece.color,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                        ),
+                      ),
+                  };
+                }),
+              ),
+            ),
+          ],
+        ),
+      );
+}
+
+class _BridgeSlotGuide extends StatelessWidget {
+  const _BridgeSlotGuide({
+    required this.rule,
+    required this.piece,
+    required this.accent,
+  });
+
+  final _BridgeRule rule;
+  final _BridgePiece piece;
+  final Color accent;
+
+  @override
+  Widget build(BuildContext context) => Center(
+        child: switch (rule) {
+          _BridgeRule.ramp => Container(
+              width: 27 + piece.rank * 6,
+              height: 8 + piece.rank * 4,
+              decoration: BoxDecoration(
+                color: piece.color.withValues(alpha: .22),
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: piece.color.withValues(alpha: .5)),
+              ),
+            ),
+          _BridgeRule.symbols => Icon(
+              piece.icon,
+              color: piece.color.withValues(alpha: .5),
+              size: 28,
+            ),
+          _BridgeRule.loads => Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.scale_rounded,
+                    color: accent.withValues(alpha: .45), size: 18),
+                const SizedBox(height: 2),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    piece.rank + 1,
+                    (_) => Container(
+                      width: 6,
+                      height: 8,
+                      margin: const EdgeInsets.symmetric(horizontal: 1),
+                      decoration: BoxDecoration(
+                        color: piece.color.withValues(alpha: .46),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        },
+      );
+}
+
+class _BridgePlank extends StatelessWidget {
+  const _BridgePlank({required this.piece, this.lifted = false});
+
+  final _BridgePiece piece;
   final bool lifted;
 
   @override
   Widget build(BuildContext context) {
-    final width = 48.0 + rank * 10;
+    final width = 46.0 + piece.rank * 7;
     return Container(
       width: width,
-      height: 42,
+      height: 48,
       margin: const EdgeInsets.symmetric(horizontal: 2),
       decoration: BoxDecoration(
-        color: Color.lerp(const Color(0xFFFFD277), color, rank * .08),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.lerp(piece.color, Colors.white, .22)!,
+            piece.color,
+          ],
+        ),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFC98742), width: 2),
+        border: Border.all(color: Colors.white, width: 2),
         boxShadow: [
           BoxShadow(
             color: const Color(0x33000000),
@@ -541,9 +962,20 @@ class _BridgePlank extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(2 + rank, (_) => const _WoodNail()),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Icon(piece.icon, color: Colors.white, size: 23),
+          Positioned(
+            left: 5,
+            right: 5,
+            bottom: 5,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: const [_WoodNail(), _WoodNail()],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -562,8 +994,9 @@ class _WoodNail extends StatelessWidget {
 }
 
 class _RiverPainter extends CustomPainter {
-  const _RiverPainter(this.accent);
+  const _RiverPainter(this.accent, this.rule);
   final Color accent;
+  final _BridgeRule rule;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -586,11 +1019,58 @@ class _RiverPainter extends CustomPainter {
         Rect.fromLTWH(18, size.height * .72, 46, 12), 0, 3.14, false, ripple);
     canvas.drawArc(Rect.fromLTWH(size.width - 78, size.height * .77, 52, 12), 0,
         3.14, false, ripple);
+
+    final bank = Paint()..color = const Color(0xFF73C98B);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, size.height * .78, 28, size.height * .22),
+        const Radius.circular(8),
+      ),
+      bank,
+    );
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(
+          size.width - 28,
+          size.height * .78,
+          28,
+          size.height * .22,
+        ),
+        const Radius.circular(8),
+      ),
+      bank,
+    );
+
+    if (rule == _BridgeRule.loads) {
+      final support = Paint()..color = accent.withValues(alpha: .34);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: Offset(size.width * .38, size.height * .81),
+            width: 12,
+            height: 38,
+          ),
+          const Radius.circular(4),
+        ),
+        support,
+      );
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromCenter(
+            center: Offset(size.width * .62, size.height * .81),
+            width: 12,
+            height: 38,
+          ),
+          const Radius.circular(4),
+        ),
+        support,
+      );
+    }
   }
 
   @override
   bool shouldRepaint(covariant _RiverPainter oldDelegate) =>
-      oldDelegate.accent != accent;
+      oldDelegate.accent != accent || oldDelegate.rule != rule;
 }
 
 class _TowerPiece {

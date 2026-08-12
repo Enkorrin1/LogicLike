@@ -1,5 +1,5 @@
 {
-  "appTitle": "LogicLoka",
+  "appTitle": "Logic Loka",
   "loadingMission": "Preparing the mission...",
   "navHome": "Home",
   "navChallenge": "Task",
@@ -458,7 +458,7 @@
   "parentReminderFollowUpLabel": "Evening follow-up",
   "parentReminderFollowUpValue": "20:15 if the mission is waiting",
   "parentReminderToggleLabel": "Return reminders",
-  "parentReminderToggleOn": "LogicLoka will invite the child back to one short mission.",
+  "parentReminderToggleOn": "Logic Loka will invite the child back to one short mission.",
   "parentReminderToggleOff": "Reminders are off. The app will stay quiet.",
   "parentAccountTitle": "Account",
   "parentAccountBody": "Sign in to sync progress, unlock subscriptions and restore purchases on another device.",
@@ -514,5 +514,7 @@
   "accountRestoreSnack": "Purchase restore UI is ready for StoreKit.",
   "accountResetDialogTitle": "Reset password",
   "accountResetDialogBody": "Password reset emails will be sent after account backend is connected.",
-  "accountResetDialogAction": "Got it"
+  "accountResetDialogAction": "Got it",
+  "puzzleListenPrompt": "Listen to the task",
+  "puzzleStopNarration": "Stop narration"
 }

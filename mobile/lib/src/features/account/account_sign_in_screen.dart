@@ -313,252 +313,348 @@ class _SignInCard extends StatelessWidget {
     final l10n = context.l10n;
     final creatingAccount = mode == _AccountMode.createAccount;
 
-    return PlayfulCard(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _AccountHero(
+          childName: profile.childName,
+          status: session?.providerLabel ?? l10n.accountStatusGuest,
+          isSignedIn: session != null,
+        ),
+        const SizedBox(height: 18),
+        Text(
+          l10n.accountEmailTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: AppPalette.ink,
+                fontWeight: FontWeight.w900,
+              ),
+        ),
+        const SizedBox(height: 10),
+        _ProviderButtons(
+          isSubmitting: isSubmitting,
+          googleLabel: l10n.accountProviderGoogle,
+          appleLabel: l10n.accountProviderApple,
+          onGooglePressed: onGooglePressed,
+          onApplePressed: onApplePressed,
+        ),
+        const SizedBox(height: 18),
+        PlayfulCard(
+          padding: const EdgeInsets.all(16),
+          color: Colors.white.withValues(alpha: 0.94),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const AppMark(size: 44),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.accountEmailTitle,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      profile.childName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodySmall,
-                    ),
-                  ],
+              SegmentedButton<_AccountMode>(
+                style: ButtonStyle(
+                  minimumSize:
+                      const WidgetStatePropertyAll(Size.fromHeight(48)),
+                  visualDensity: VisualDensity.standard,
                 ),
-              ),
-              InfoPill(
-                icon: session == null
-                    ? Icons.lock_rounded
-                    : Icons.verified_user_rounded,
-                label: session?.providerLabel ?? l10n.accountStatusGuest,
-                color:
-                    session == null ? AppPalette.surfaceBlue : AppPalette.mint,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: isSubmitting ? null : () => onGooglePressed(),
-                  icon: const Icon(Icons.g_mobiledata_rounded),
-                  label: Text(l10n.accountProviderGoogle),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton.icon(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppPalette.ink,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(52),
+                segments: [
+                  ButtonSegment(
+                    value: _AccountMode.signIn,
+                    label: Text(l10n.accountSignInTab),
+                    icon: const Icon(Icons.login_rounded),
                   ),
-                  onPressed: isSubmitting ? null : onApplePressed,
-                  icon: const Icon(Icons.apple),
-                  label: Text(l10n.accountProviderApple),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SegmentedButton<_AccountMode>(
-            segments: [
-              ButtonSegment(
-                value: _AccountMode.signIn,
-                label: Text(l10n.accountSignInTab),
-                icon: const Icon(Icons.login_rounded),
-              ),
-              ButtonSegment(
-                value: _AccountMode.createAccount,
-                label: Text(l10n.accountCreateTab),
-                icon: const Icon(Icons.person_add_alt_1_rounded),
-              ),
-            ],
-            selected: {mode},
-            onSelectionChanged: (selection) {
-              onModeChanged(selection.first);
-            },
-          ),
-          const SizedBox(height: 12),
-          if (session != null) ...[
-            _SignedInBanner(
-              session: session!,
-              onSignOutPressed: onSignOutPressed,
-            ),
-            const SizedBox(height: 12),
-          ],
-          AutofillGroup(
-            child: Form(
-              key: formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    controller: emailController,
-                    autofillHints: const [AutofillHints.email],
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: l10n.accountEmailLabel,
-                      prefixIcon: const Icon(Icons.alternate_email_rounded),
-                    ),
-                    validator: (value) {
-                      final email = value?.trim() ?? '';
-                      if (!email.contains('@') || !email.contains('.')) {
-                        return l10n.accountEmailError;
-                      }
-                      return null;
-                    },
+                  ButtonSegment(
+                    value: _AccountMode.createAccount,
+                    label: Text(l10n.accountCreateTab),
+                    icon: const Icon(Icons.person_add_alt_1_rounded),
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: passwordController,
-                    autofillHints: const [AutofillHints.password],
-                    obscureText: obscurePassword,
-                    textInputAction: creatingAccount
-                        ? TextInputAction.next
-                        : TextInputAction.done,
-                    decoration: InputDecoration(
-                      labelText: l10n.accountPasswordLabel,
-                      prefixIcon: const Icon(Icons.password_rounded),
-                      suffixIcon: IconButton(
-                        onPressed: onPasswordVisibilityChanged,
-                        icon: Icon(
-                          obscurePassword
-                              ? Icons.visibility_rounded
-                              : Icons.visibility_off_rounded,
+                ],
+                selected: {mode},
+                onSelectionChanged: (selection) {
+                  onModeChanged(selection.first);
+                },
+              ),
+              const SizedBox(height: 12),
+              if (session != null) ...[
+                _SignedInBanner(
+                  session: session!,
+                  onSignOutPressed: onSignOutPressed,
+                ),
+                const SizedBox(height: 12),
+              ],
+              AutofillGroup(
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: emailController,
+                        autofillHints: const [AutofillHints.email],
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: l10n.accountEmailLabel,
+                          prefixIcon: const Icon(Icons.alternate_email_rounded),
                         ),
+                        validator: (value) {
+                          final email = value?.trim() ?? '';
+                          if (!email.contains('@') || !email.contains('.')) {
+                            return l10n.accountEmailError;
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                    onFieldSubmitted: (_) {
-                      if (!creatingAccount) {
-                        onSubmit();
-                      }
-                    },
-                    validator: (value) {
-                      if ((value ?? '').length < 6) {
-                        return l10n.accountPasswordError;
-                      }
-                      return null;
-                    },
-                  ),
-                  if (creatingAccount) ...[
-                    const SizedBox(height: 10),
-                    TextFormField(
-                      controller: confirmPasswordController,
-                      autofillHints: const [AutofillHints.newPassword],
-                      obscureText: obscureConfirmPassword,
-                      textInputAction: TextInputAction.done,
-                      decoration: InputDecoration(
-                        labelText: l10n.accountConfirmPasswordLabel,
-                        prefixIcon: const Icon(Icons.verified_user_rounded),
-                        suffixIcon: IconButton(
-                          onPressed: onConfirmPasswordVisibilityChanged,
-                          icon: Icon(
-                            obscureConfirmPassword
-                                ? Icons.visibility_rounded
-                                : Icons.visibility_off_rounded,
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        controller: passwordController,
+                        autofillHints: const [AutofillHints.password],
+                        obscureText: obscurePassword,
+                        textInputAction: creatingAccount
+                            ? TextInputAction.next
+                            : TextInputAction.done,
+                        decoration: InputDecoration(
+                          labelText: l10n.accountPasswordLabel,
+                          prefixIcon: const Icon(Icons.password_rounded),
+                          suffixIcon: IconButton(
+                            onPressed: onPasswordVisibilityChanged,
+                            icon: Icon(
+                              obscurePassword
+                                  ? Icons.visibility_rounded
+                                  : Icons.visibility_off_rounded,
+                            ),
                           ),
                         ),
+                        onFieldSubmitted: (_) {
+                          if (!creatingAccount) {
+                            onSubmit();
+                          }
+                        },
+                        validator: (value) {
+                          if ((value ?? '').length < 6) {
+                            return l10n.accountPasswordError;
+                          }
+                          return null;
+                        },
                       ),
-                      onFieldSubmitted: (_) => onSubmit(),
-                      validator: (value) {
-                        if (value != passwordController.text) {
-                          return l10n.accountPasswordMismatch;
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ],
+                      if (creatingAccount) ...[
+                        const SizedBox(height: 10),
+                        TextFormField(
+                          controller: confirmPasswordController,
+                          autofillHints: const [AutofillHints.newPassword],
+                          obscureText: obscureConfirmPassword,
+                          textInputAction: TextInputAction.done,
+                          decoration: InputDecoration(
+                            labelText: l10n.accountConfirmPasswordLabel,
+                            prefixIcon: const Icon(Icons.verified_user_rounded),
+                            suffixIcon: IconButton(
+                              onPressed: onConfirmPasswordVisibilityChanged,
+                              icon: Icon(
+                                obscureConfirmPassword
+                                    ? Icons.visibility_rounded
+                                    : Icons.visibility_off_rounded,
+                              ),
+                            ),
+                          ),
+                          onFieldSubmitted: (_) => onSubmit(),
+                          validator: (value) {
+                            if (value != passwordController.text) {
+                              return l10n.accountPasswordMismatch;
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: () => onRememberDeviceChanged(!rememberDevice),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 2),
-              child: Row(
+              const SizedBox(height: 8),
+              InkWell(
+                borderRadius: BorderRadius.circular(14),
+                onTap: () => onRememberDeviceChanged(!rememberDevice),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: rememberDevice,
+                        activeColor: AppPalette.teal,
+                        visualDensity: VisualDensity.compact,
+                        onChanged: (value) =>
+                            onRememberDeviceChanged(value ?? false),
+                      ),
+                      Expanded(
+                        child: Text(
+                          l10n.accountRememberDevice,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppPalette.ink,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              FilledButton.icon(
+                onPressed: isSubmitting ? null : () => onSubmit(),
+                icon: isSubmitting
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Icon(
+                        creatingAccount
+                            ? Icons.person_add_alt_1_rounded
+                            : Icons.login_rounded,
+                      ),
+                label: Text(
+                  isSubmitting
+                      ? l10n.accountAuthLoading
+                      : creatingAccount
+                          ? l10n.accountSubmitCreate
+                          : l10n.accountSubmitSignIn,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
                 children: [
-                  Checkbox(
-                    value: rememberDevice,
-                    activeColor: AppPalette.teal,
-                    visualDensity: VisualDensity.compact,
-                    onChanged: (value) =>
-                        onRememberDeviceChanged(value ?? false),
+                  Expanded(
+                    child: TextButton(
+                      onPressed: onForgotPasswordPressed,
+                      child: Text(l10n.accountForgotPassword),
+                    ),
                   ),
                   Expanded(
-                    child: Text(
-                      l10n.accountRememberDevice,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppPalette.ink,
-                            fontWeight: FontWeight.w800,
-                          ),
+                    child: TextButton(
+                      onPressed: onRestorePurchasesPressed,
+                      child: Text(l10n.accountRestorePurchases),
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          FilledButton.icon(
-            onPressed: isSubmitting ? null : () => onSubmit(),
-            icon: isSubmitting
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Icon(
-                    creatingAccount
-                        ? Icons.person_add_alt_1_rounded
-                        : Icons.login_rounded,
-                  ),
-            label: Text(
-              isSubmitting
-                  ? l10n.accountAuthLoading
-                  : creatingAccount
-                      ? l10n.accountSubmitCreate
-                      : l10n.accountSubmitSignIn,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: onForgotPasswordPressed,
-                  child: Text(l10n.accountForgotPassword),
-                ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: onRestorePurchasesPressed,
-                  child: Text(l10n.accountRestorePurchases),
-                ),
-              ),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AccountHero extends StatelessWidget {
+  const _AccountHero({
+    required this.childName,
+    required this.status,
+    required this.isSignedIn,
+  });
+
+  final String childName;
+  final String status;
+  final bool isSignedIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 15, 16, 16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFE5F9FF), Color(0xFFFFF7D8)],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: AppPalette.sky.withValues(alpha: 0.16),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
+      child: Row(
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/avatar_lion.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              childName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: AppPalette.ink,
+                    fontWeight: FontWeight.w900,
+                  ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          InfoPill(
+            icon: isSignedIn ? Icons.verified_user_rounded : Icons.lock_rounded,
+            label: status,
+            color: isSignedIn ? AppPalette.mint : Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProviderButtons extends StatelessWidget {
+  const _ProviderButtons({
+    required this.isSubmitting,
+    required this.googleLabel,
+    required this.appleLabel,
+    required this.onGooglePressed,
+    required this.onApplePressed,
+  });
+
+  final bool isSubmitting;
+  final String googleLabel;
+  final String appleLabel;
+  final Future<void> Function() onGooglePressed;
+  final VoidCallback onApplePressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(52),
+              backgroundColor: Colors.white,
+            ),
+            onPressed: isSubmitting ? null : () => onGooglePressed(),
+            icon: const Icon(Icons.g_mobiledata_rounded),
+            label: Text(googleLabel),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: AppPalette.ink,
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(52),
+            ),
+            onPressed: isSubmitting ? null : onApplePressed,
+            icon: const Icon(Icons.apple),
+            label: Text(appleLabel),
+          ),
+        ),
+      ],
     );
   }
 }

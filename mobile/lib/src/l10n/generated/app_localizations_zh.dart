@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appTitle => 'LogicLoka';
+  String get appTitle => 'Logic Loka';
 
   @override
   String get loadingMission => '准备任务...';
@@ -266,10 +266,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentSubscriptionLaunchBadge => '早期价格';
 
   @override
-  String get parentSubscriptionCurrentFree => 'Free';
+  String get parentSubscriptionCurrentFree => '免费';
 
   @override
-  String get parentSubscriptionFreeTitle => 'Free';
+  String get parentSubscriptionFreeTitle => '免费';
 
   @override
   String get parentSubscriptionFreePrice => '\$0';
@@ -290,7 +290,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentSubscriptionFreeCta => '当前访问';
 
   @override
-  String get parentSubscriptionPremiumTitle => 'Premium Family';
+  String get parentSubscriptionPremiumTitle => '高级家庭版';
 
   @override
   String get parentSubscriptionPremiumPrice => '\$5.99/月';
@@ -314,7 +314,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentSubscriptionPremiumCta => '选择月付';
 
   @override
-  String get parentSubscriptionAnnualTitle => 'Annual';
+  String get parentSubscriptionAnnualTitle => '年度';
 
   @override
   String get parentSubscriptionAnnualPrice => '\$39.99/年';
@@ -731,45 +731,43 @@ class AppLocalizationsZh extends AppLocalizations {
   String get parentReminderToggleLabel => '提醒回来';
 
   @override
-  String get parentReminderToggleOn => 'LogicLoka 会邀请孩子完成一个短任务。';
+  String get parentReminderToggleOn => 'Logic Loka 会邀请孩子完成一个短任务。';
 
   @override
   String get parentReminderToggleOff => '提醒已关闭。应用会保持安静。';
 
   @override
-  String get parentAccountTitle => 'Account';
+  String get parentAccountTitle => '账户';
 
   @override
-  String get parentAccountBody =>
-      'Sign in to sync progress, unlock subscriptions and restore purchases on another device.';
+  String get parentAccountBody => '登录后可同步进度、解锁订阅，并在其他设备上恢复购买内容。';
 
   @override
-  String get parentAccountStatusGuest => 'guest';
+  String get parentAccountStatusGuest => '访客';
 
   @override
-  String get parentAccountAction => 'Sign in';
+  String get parentAccountAction => '登录';
 
   @override
-  String get accountTitle => 'Account sign in';
+  String get accountTitle => '登录账户';
 
   @override
-  String get accountHeroTitle => 'Keep the family profile close';
+  String get accountHeroTitle => '把家庭档案留在身边';
 
   @override
-  String get accountHeroBody =>
-      'Use Google, Apple or email to prepare cloud sync, purchases and safe parent access.';
+  String get accountHeroBody => '使用 Google、Apple 或电子邮箱，为云同步、购买和安全的家长访问做好准备。';
 
   @override
-  String get accountStatusGuest => 'guest mode';
+  String get accountStatusGuest => '访客模式';
 
   @override
-  String get accountAppleButton => 'Continue with Apple';
+  String get accountAppleButton => '使用 Apple 继续';
 
   @override
-  String get accountGoogleButton => 'Continue with Google';
+  String get accountGoogleButton => '使用 Google 继续';
 
   @override
-  String get accountAuthLoading => 'Checking...';
+  String get accountAuthLoading => '正在检查...';
 
   @override
   String get accountProviderGoogle => 'Google';
@@ -781,123 +779,118 @@ class AppLocalizationsZh extends AppLocalizations {
   String get accountProviderEmail => 'Email';
 
   @override
-  String get accountSignedInTitle => 'Signed in';
+  String get accountSignedInTitle => '已登录';
 
   @override
-  String get accountSignOut => 'Sign out';
+  String get accountSignOut => '退出登录';
 
   @override
-  String get accountGoogleSuccessSnack => 'Signed in with Google.';
+  String get accountGoogleSuccessSnack => '已使用 Google 登录。';
 
   @override
-  String get accountGoogleCanceledSnack => 'Google sign-in was canceled.';
+  String get accountGoogleCanceledSnack => '已取消 Google 登录。';
 
   @override
-  String get accountGoogleUnsupportedSnack =>
-      'Google sign-in is not supported on this platform yet.';
+  String get accountGoogleUnsupportedSnack => '此平台暂不支持 Google 登录。';
 
   @override
-  String get accountGoogleConfigSnack =>
-      'Google sign-in needs OAuth client configuration for this app.';
+  String get accountGoogleConfigSnack => 'Google 登录需要为此应用配置 OAuth 客户端。';
 
   @override
   String accountGoogleErrorSnack(Object error) {
-    return 'Google sign-in failed: $error';
+    return 'Google 登录失败：$error';
   }
 
   @override
-  String get accountBenefitGoogleTitle => 'Google sign-in';
+  String get accountBenefitGoogleTitle => 'Google 登录';
 
   @override
-  String get accountBenefitGoogleBody =>
-      'Use a Google account for quick parent access once OAuth is configured.';
+  String get accountBenefitGoogleBody => '配置 OAuth 后，可用 Google 账户快速进入家长区域。';
 
   @override
-  String get accountEmailTitle => 'Email access';
+  String get accountEmailTitle => '电子邮箱登录';
 
   @override
-  String get accountSignInTab => 'Sign in';
+  String get accountSignInTab => '登录';
 
   @override
-  String get accountCreateTab => 'Create';
+  String get accountCreateTab => '创建';
 
   @override
   String get accountEmailLabel => 'Email';
 
   @override
-  String get accountPasswordLabel => 'Password';
+  String get accountPasswordLabel => '密码';
 
   @override
-  String get accountConfirmPasswordLabel => 'Confirm password';
+  String get accountConfirmPasswordLabel => '确认密码';
 
   @override
-  String get accountRememberDevice => 'Remember this device';
+  String get accountRememberDevice => '记住此设备';
 
   @override
-  String get accountSubmitSignIn => 'Sign in';
+  String get accountSubmitSignIn => '登录';
 
   @override
-  String get accountSubmitCreate => 'Create account';
+  String get accountSubmitCreate => '创建账户';
 
   @override
-  String get accountForgotPassword => 'Forgot password';
+  String get accountForgotPassword => '忘记密码';
 
   @override
-  String get accountRestorePurchases => 'Restore purchases';
+  String get accountRestorePurchases => '恢复购买';
 
   @override
-  String get accountPrivacyNote =>
-      'Children keep playing locally until account services are connected.';
+  String get accountPrivacyNote => '在账户服务连接前，孩子仍可在本机继续游戏。';
 
   @override
-  String get accountBenefitSyncTitle => 'Progress sync';
+  String get accountBenefitSyncTitle => '同步进度';
 
   @override
-  String get accountBenefitSyncBody =>
-      'A signed-in profile can later move stars and practice history between devices.';
+  String get accountBenefitSyncBody => '登录后的档案以后可以在设备间转移星星和练习记录。';
 
   @override
-  String get accountBenefitAppleTitle => 'Apple sign-in ready';
+  String get accountBenefitAppleTitle => 'Apple 登录已就绪';
 
   @override
-  String get accountBenefitAppleBody =>
-      'The button is in place for Sign in with Apple credentials.';
+  String get accountBenefitAppleBody => '按钮已准备好连接 Apple 原生登录凭据。';
 
   @override
-  String get accountBenefitPurchaseTitle => 'Purchases and subscriptions';
+  String get accountBenefitPurchaseTitle => '购买与订阅';
 
   @override
-  String get accountBenefitPurchaseBody =>
-      'Restore access after reinstalling or changing devices.';
+  String get accountBenefitPurchaseBody => '重新安装或更换设备后可恢复访问权限。';
 
   @override
-  String get accountEmailError => 'Enter a valid email';
+  String get accountEmailError => '请输入有效的电子邮箱';
 
   @override
-  String get accountPasswordError => 'Use at least 6 characters';
+  String get accountPasswordError => '请至少输入 6 个字符';
 
   @override
-  String get accountPasswordMismatch => 'Passwords do not match';
+  String get accountPasswordMismatch => '两次密码不一致';
 
   @override
-  String get accountDemoSnack =>
-      'Signed in with email locally. Connect a backend to verify passwords on the server.';
+  String get accountDemoSnack => '已在本机使用电子邮箱登录。请连接后端，以便在服务器验证密码。';
 
   @override
-  String get accountAppleSnack =>
-      'Apple sign-in UI is ready for the native auth handler.';
+  String get accountAppleSnack => 'Apple 登录界面已为原生处理程序准备就绪。';
 
   @override
-  String get accountRestoreSnack =>
-      'Purchase restore UI is ready for StoreKit.';
+  String get accountRestoreSnack => '购买恢复界面已为 StoreKit 准备就绪。';
 
   @override
-  String get accountResetDialogTitle => 'Reset password';
+  String get accountResetDialogTitle => '重置密码';
 
   @override
-  String get accountResetDialogBody =>
-      'Password reset emails will be sent after account backend is connected.';
+  String get accountResetDialogBody => '账户后端连接后，将发送重置密码的邮件。';
 
   @override
-  String get accountResetDialogAction => 'Got it';
+  String get accountResetDialogAction => '知道了';
+
+  @override
+  String get puzzleListenPrompt => '听题目';
+
+  @override
+  String get puzzleStopNarration => '停止朗读';
 }

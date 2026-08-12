@@ -13,6 +13,73 @@ import 'package:logicloka/src/features/challenge/game_scenes/word_grid_game.dart
 import 'package:logicloka/src/l10n/generated/app_localizations.dart';
 
 const _sentinel = 'word-logic-sentinel';
+const _localeCases = <String,
+    ({
+  List<int> wordTiles,
+  List<int> firstRoute,
+  List<int> secondRoute,
+})>{
+  'ar': (
+    wordTiles: [2, 0, 1],
+    firstRoute: [0, 1, 5, 4],
+    secondRoute: [10, 11, 15],
+  ),
+  'de': (
+    wordTiles: [2, 3, 0, 1],
+    firstRoute: [1, 2, 6, 10, 9],
+    secondRoute: [4, 8, 9, 13],
+  ),
+  'en': (
+    wordTiles: [2, 3, 0, 1],
+    firstRoute: [2, 3, 7, 6],
+    secondRoute: [12, 8, 9],
+  ),
+  'es': (
+    wordTiles: [2, 3, 0, 1],
+    firstRoute: [5, 1, 2, 6],
+    secondRoute: [14, 10, 11],
+  ),
+  'fr': (
+    wordTiles: [2, 3, 0, 1],
+    firstRoute: [15, 14, 10, 6, 7],
+    secondRoute: [0, 4, 5, 9],
+  ),
+  'hi': (
+    wordTiles: [1, 0],
+    firstRoute: [3, 7],
+    secondRoute: [8, 12],
+  ),
+  'it': (
+    wordTiles: [2, 3, 0, 1],
+    firstRoute: [4, 5, 1, 2, 6],
+    secondRoute: [11, 10, 14, 13],
+  ),
+  'ja': (
+    wordTiles: [1, 0],
+    firstRoute: [6, 10],
+    secondRoute: [9, 5],
+  ),
+  'ko': (
+    wordTiles: [1, 0],
+    firstRoute: [13, 14],
+    secondRoute: [7],
+  ),
+  'pt': (
+    wordTiles: [1, 2, 0],
+    firstRoute: [8, 4, 0, 1, 5],
+    secondRoute: [3, 2, 6],
+  ),
+  'ru': (
+    wordTiles: [2, 3, 0, 1],
+    firstRoute: [9, 10, 6, 5],
+    secondRoute: [0, 4, 8],
+  ),
+  'zh': (
+    wordTiles: [1, 0],
+    firstRoute: [11, 15],
+    secondRoute: [2],
+  ),
+};
 
 Widget _harness(Widget child, {String languageCode = 'en'}) => MaterialApp(
       locale: Locale(languageCode),
@@ -44,6 +111,11 @@ Future<void> _dragPoints(
 ) async {
   final origin = tester.getTopLeft(surface);
   final gesture = await tester.startGesture(origin + localPoints.first);
+  await gesture.moveTo(
+    origin + localPoints.first + const Offset(20, 0),
+    timeStamp: const Duration(milliseconds: 40),
+  );
+  await tester.pump(const Duration(milliseconds: 40));
   for (final point in localPoints.skip(1)) {
     await gesture.moveTo(
       origin + point,
@@ -55,11 +127,78 @@ Future<void> _dragPoints(
   await tester.pump();
 }
 
+Future<void> _traceCodeRoute(
+  WidgetTester tester,
+  Finder surface,
+  List<Offset> points,
+  double cellSize,
+) async {
+  final origin = tester.getTopLeft(surface);
+  final direction =
+      (points[1] - points.first) / (points[1] - points.first).distance;
+  final gesture = await tester.startGesture(
+    origin + points.first - direction * cellSize * .42,
+  );
+  await gesture.moveTo(
+    origin + points.first + direction * cellSize * .10,
+  );
+  await tester.pump(const Duration(milliseconds: 40));
+  for (final point in points.skip(1)) {
+    await gesture.moveTo(origin + point);
+    await tester.pump(const Duration(milliseconds: 45));
+  }
+  await gesture.up();
+  await tester.pump();
+}
+
 Offset _gridCenter(int index, {required double top, double size = 220}) {
   final cell = size / 4;
   return Offset(
     (420 - size) / 2 + (index % 4 + 0.5) * cell,
     top + (index ~/ 4 + 0.5) * cell,
+  );
+}
+
+Offset _wordGridCenter(Size sceneSize, int index) {
+  const headerHeight = 68.0;
+  final available = math.min(
+    sceneSize.width - 26,
+    sceneSize.height - headerHeight - 14,
+  );
+  final boardSize = math.min(available, 224.0);
+  final cell = boardSize / 5;
+  return Offset(
+    (sceneSize.width - boardSize) / 2 + (index % 5 + .5) * cell,
+    headerHeight + 5 + (index ~/ 5 + .5) * cell,
+  );
+}
+
+Offset _codeGridCenter(Size sceneSize, math.Point<int> point) {
+  final boardHeight = sceneSize.height * .68;
+  final cell = math.min(
+    (sceneSize.width - 60) / 6,
+    (boardHeight - 20) / 5,
+  );
+  return Offset(
+    (sceneSize.width - cell * 6) / 2 + (point.x + .5) * cell,
+    14 + (point.y + .5) * cell,
+  );
+}
+
+Offset _codeGridKeyCenter(Size sceneSize, int keyIndex) {
+  final boardHeight = sceneSize.height * .68;
+  final cell = math.min(
+    (sceneSize.width - 60) / 6,
+    (boardHeight - 20) / 5,
+  );
+  final boardBottom = 14 + cell * 5;
+  final codeTop = boardBottom + 9;
+  final codeHeight = sceneSize.height - boardBottom - 15;
+  const gap = 6.0;
+  final keyWidth = (sceneSize.width - 40 - gap * 4) / 5;
+  return Offset(
+    20 + keyIndex * (keyWidth + gap) + keyWidth / 2,
+    codeTop + codeHeight / 2,
   );
 }
 
@@ -76,7 +215,14 @@ Future<void> _expectOnce(
 }
 
 void main() {
-  for (final locale in const ['ru', 'ar']) {
+  test('word games expose exactly the 12 product locales', () {
+    expect(wordBuilderSupportedLanguageCodes, _localeCases.keys.toSet());
+    expect(letterFieldSupportedLanguageCodes, _localeCases.keys.toSet());
+  });
+
+  for (final entry in _localeCases.entries) {
+    final locale = entry.key;
+    final localeCase = entry.value;
     testWidgets('word builder $locale completes through ordered tile taps once',
         (tester) async {
       final answers = <String>[];
@@ -90,14 +236,27 @@ void main() {
         ),
         languageCode: locale,
       ));
-      final tileOrder = locale == 'ru' ? const [2, 3, 0, 1] : const [2, 0, 1];
-      for (var slot = 0; slot < tileOrder.length; slot++) {
+      final expectedDirection =
+          locale == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+      expect(
+        find.descendant(
+          of: find.byType(LocaleWordBuilderGameView),
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Directionality &&
+                widget.textDirection == expectedDirection,
+          ),
+        ),
+        findsWidgets,
+      );
+      for (var slot = 0; slot < localeCase.wordTiles.length; slot++) {
         final source = find.byWidgetPredicate(
           (widget) =>
-              widget is Draggable<int> && widget.data == tileOrder[slot],
+              widget is Draggable<int> &&
+              widget.data == localeCase.wordTiles[slot],
         );
         await _drag(tester, source, _dragTargets.at(slot));
-        if (slot < tileOrder.length - 1) expect(answers, isEmpty);
+        if (slot < localeCase.wordTiles.length - 1) expect(answers, isEmpty);
       }
       await _expectOnce(tester, answers);
     });
@@ -118,23 +277,107 @@ void main() {
       final surface = find.byWidgetPredicate(
         (widget) => widget is GestureDetector && widget.onPanStart != null,
       );
+      expect(tester.getSize(surface), const Size(420, 316));
+      final expectedDirection =
+          locale == 'ar' ? TextDirection.rtl : TextDirection.ltr;
+      expect(
+        find.descendant(
+          of: find.byType(LocaleLetterFieldGameView),
+          matching: find.byWidgetPredicate(
+            (widget) =>
+                widget is Directionality &&
+                widget.textDirection == expectedDirection,
+          ),
+        ),
+        findsWidgets,
+      );
+      final initialPaint = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(LocaleLetterFieldGameView),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      final initialPainter = initialPaint.painter as dynamic;
+      expect(
+        localeCase.firstRoute
+            .map((cell) => initialPainter.data.grid[cell])
+            .toList(),
+        initialPainter.data.target,
+      );
       await _dragPoints(
         tester,
         surface,
-        [5, 6, 10, 9].map((cell) => _gridCenter(cell, top: 75)).toList(),
+        localeCase.firstRoute
+            .map((cell) => _gridCenter(cell, top: 75))
+            .toList(),
       );
+      final firstRoundPaint = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(LocaleLetterFieldGameView),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      expect(
+        (firstRoundPaint.painter as dynamic).matched,
+        localeCase.firstRoute.length,
+      );
+      expect((firstRoundPaint.painter as dynamic).complete, isTrue);
       expect(answers, isEmpty);
-      await tester.pump(const Duration(milliseconds: 651));
+      await tester.pump(const Duration(milliseconds: 821));
       await _dragPoints(
         tester,
         surface,
-        [5, 6, 10].map((cell) => _gridCenter(cell, top: 75)).toList(),
+        localeCase.secondRoute
+            .map((cell) => _gridCenter(cell, top: 75))
+            .toList(),
       );
+      final secondRoundPaint = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(LocaleLetterFieldGameView),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      expect((secondRoundPaint.painter as dynamic).complete, isTrue);
       await _expectOnce(tester, answers);
     });
   }
 
-  testWidgets('word grid traces adjacent CAT cells and completes once',
+  testWidgets('letter field resets a wrong trail and exposes letter actions',
+      (tester) async {
+    final answers = <String>[];
+    await tester.pumpWidget(_harness(LocaleLetterFieldGameView(
+      accent: Colors.indigo,
+      compact: false,
+      correctAnswer: _sentinel,
+      semanticLabel: 'letter field',
+      onAnswerSelected: answers.add,
+    )));
+    final surface = find.byWidgetPredicate(
+      (widget) => widget is GestureDetector && widget.onPanStart != null,
+    );
+    final paint = tester.widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(LocaleLetterFieldGameView),
+        matching: find.byType(CustomPaint),
+      ),
+    );
+    final painter = paint.painter as dynamic;
+    expect(painter.semanticsBuilder(const Size(420, 316)), hasLength(16));
+
+    await tester.tapAt(
+      tester.getTopLeft(surface) + _gridCenter(0, top: 75),
+    );
+    await tester.pump(const Duration(milliseconds: 361));
+    final afterError = tester.widget<CustomPaint>(
+      find.descendant(
+        of: find.byType(LocaleLetterFieldGameView),
+        matching: find.byType(CustomPaint),
+      ),
+    );
+    expect((afterError.painter as dynamic).matched, 0);
+    expect(answers, isEmpty);
+  });
+  testWidgets('word grid keeps three found routes and completes once',
       (tester) async {
     final answers = <String>[];
     await tester.pumpWidget(_harness(WordGridGameView(
@@ -147,11 +390,23 @@ void main() {
     final surface = find.byWidgetPredicate(
       (widget) => widget is GestureDetector && widget.onPanStart != null,
     );
-    await _dragPoints(
-      tester,
-      surface,
-      [0, 1, 5].map((cell) => _gridCenter(cell, top: 81)).toList(),
-    );
+    final sceneSize = tester.getSize(surface);
+    final routes = wordGridRoutesForLanguageCode('en');
+    for (var index = 0; index < routes.length; index++) {
+      await _dragPoints(
+        tester,
+        surface,
+        routes[index].map((cell) => _wordGridCenter(sceneSize, cell)).toList(),
+      );
+      final paint = tester.widget<CustomPaint>(
+        find.descendant(
+          of: find.byType(WordGridGameView),
+          matching: find.byType(CustomPaint),
+        ),
+      );
+      expect((paint.painter as dynamic).foundWords.length, index + 1);
+      if (index < routes.length - 1) expect(answers, isEmpty);
+    }
     await _expectOnce(tester, answers);
   });
 
@@ -173,7 +428,7 @@ void main() {
     await _expectOnce(tester, answers);
   });
 
-  testWidgets('code grid traces full circuit route and completes once',
+  testWidgets('code grid solves three chains then extracts code once',
       (tester) async {
     final answers = <String>[];
     const routeGestureKey = ValueKey('code-grid-route-gesture');
@@ -189,28 +444,29 @@ void main() {
 
     final surface = find.byKey(routeGestureKey);
     final sceneSize = tester.getSize(surface);
-    final cell = math.min(
-      (sceneSize.width - 68) / 6,
-      (sceneSize.height - 24) / 5,
+    final cellSize = math.min(
+      (sceneSize.width - 60) / 6,
+      (sceneSize.height * .68 - 20) / 5,
     );
-    final left = (sceneSize.width - cell * 6) / 2;
-    final top = sceneSize.height / 2 + 2 - cell * 5 / 2;
-    const route = [(0, 4), (1, 4), (1, 3), (2, 3), (2, 2), (3, 2), (3, 1)];
-    final centers = route
-        .map((point) => Offset(
-              left + (point.$1 + 0.5) * cell,
-              top + (point.$2 + 0.5) * cell,
-            ))
-        .toList();
-    final denseRoute = <Offset>[centers.first];
-    for (var index = 1; index < centers.length; index++) {
-      final from = centers[index - 1];
-      final to = centers[index];
-      for (var step = 1; step <= 5; step++) {
-        denseRoute.add(Offset.lerp(from, to, step / 5)!);
-      }
+    for (var index = 0; index < codeGridRoutes.length; index++) {
+      await _traceCodeRoute(
+        tester,
+        surface,
+        codeGridRoutes[index]
+            .map((cell) => _codeGridCenter(sceneSize, cell))
+            .toList(),
+        cellSize,
+      );
+      expect(answers, isEmpty);
     }
-    await _dragPoints(tester, surface, denseRoute);
+    const keypad = [3, 6, 8, 1, 5];
+    for (final digit in codeGridExtractedCode) {
+      await tester.tapAt(
+        tester.getTopLeft(surface) +
+            _codeGridKeyCenter(sceneSize, keypad.indexOf(digit)),
+      );
+      await tester.pump();
+    }
     await _expectOnce(tester, answers);
   });
 

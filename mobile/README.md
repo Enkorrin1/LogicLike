@@ -1,6 +1,6 @@
-# LogicLoka Mobile
+# Logic Loka Mobile
 
-Flutter implementation of the LogicLoka family-edtech app.
+Flutter implementation of the Logic Loka family-edtech app.
 
 ## First product slice
 

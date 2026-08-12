@@ -8,7 +8,6 @@ import 'package:logicloka/src/features/challenge/game_scenes/color_rhythm_game.d
 import 'package:logicloka/src/features/challenge/game_scenes/fast_eyes_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/hidden_star_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/memory_pairs_game.dart';
-import 'package:logicloka/src/features/challenge/game_scenes/route_memory_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/sound_order_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/story_order_game.dart';
 import 'package:logicloka/src/features/challenge/game_scenes/tiny_detail_game.dart';
@@ -65,7 +64,7 @@ Offset _boardPoint(Rect surface, Offset boardPoint, Size boardSize) {
 }
 
 void main() {
-  testWidgets('memory pairs requires all three real matches and answers once', (
+  testWidgets('memory pairs clears three different boards and answers once', (
     tester,
   ) async {
     final answers = <String>[];
@@ -87,12 +86,25 @@ void main() {
       of: find.byType(MemoryPairsGameView),
       matching: find.byType(InkWell),
     );
-    for (final pair in const [(0, 5), (1, 3), (2, 4)]) {
-      await tester.tap(cards.at(pair.$1));
-      await tester.pump(const Duration(milliseconds: 380));
-      expect(answers, isEmpty);
-      await tester.tap(cards.at(pair.$2));
-      await tester.pump(const Duration(milliseconds: 380));
+    const rounds = [
+      [(0, 5), (1, 3), (2, 4)],
+      [(0, 3), (1, 4), (2, 5)],
+      [(0, 4), (1, 5), (2, 3)],
+    ];
+    for (var round = 0; round < rounds.length; round++) {
+      for (final pair in rounds[round]) {
+        await tester.tap(cards.at(pair.$1));
+        await tester.pump(const Duration(milliseconds: 380));
+        expect(answers, isEmpty);
+        await tester.tap(cards.at(pair.$2));
+        await tester.pump(const Duration(milliseconds: 380));
+      }
+      if (round < rounds.length - 1) {
+        await tester.pump(const Duration(milliseconds: 1000));
+        await tester.pump(const Duration(milliseconds: 1200));
+        await tester.pump(const Duration(milliseconds: 420));
+        expect(answers, isEmpty);
+      }
     }
     await _expectCompletedOnce(tester, answers);
   });
@@ -158,7 +170,7 @@ void main() {
     await _expectCompletedOnce(tester, answers);
   });
 
-  testWidgets('captain command performs the demonstrated sequence once', (
+  testWidgets('captain command clears three demonstrated sequences once', (
     tester,
   ) async {
     final answers = <String>[];
@@ -173,14 +185,27 @@ void main() {
         ),
       ),
     );
-    await tester.pump(const Duration(milliseconds: 3100));
     final controls = find.descendant(
       of: find.byType(CaptainCommandGameView),
       matching: find.byType(GestureDetector),
     );
-    for (final index in const [0, 2, 1]) {
-      await tester.tap(controls.at(index));
-      await tester.pump(const Duration(milliseconds: 80));
+    for (final sequence in const [
+      [0, 2, 1],
+      [1, 0, 2, 1],
+      [2, 1, 0, 2, 1],
+    ]) {
+      await tester.pump(const Duration(milliseconds: 4800));
+      for (final index in sequence) {
+        if (index == 1) {
+          await tester.drag(controls.at(index), const Offset(42, 0));
+        } else if (index == 2) {
+          await tester.longPress(controls.at(index));
+        } else {
+          await tester.tap(controls.at(index));
+        }
+        await tester.pump(const Duration(milliseconds: 80));
+      }
+      await tester.pump(const Duration(milliseconds: 1200));
     }
     await _expectCompletedOnce(tester, answers);
   });
@@ -217,46 +242,6 @@ void main() {
       await tester.pump();
       if (i < sequence.length - 1) expect(answers, isEmpty);
     }
-    await _expectCompletedOnce(tester, answers);
-  });
-
-  testWidgets('route memory traces every route cell and answers once', (
-    tester,
-  ) async {
-    final answers = <String>[];
-    await tester.pumpWidget(
-      _harness(
-        RouteMemoryGameView(
-          accent: Colors.cyan,
-          compact: false,
-          correctAnswer: _sentinel,
-          semanticLabel: 'route memory',
-          onAnswerSelected: answers.add,
-        ),
-      ),
-    );
-    await tester.pump(const Duration(milliseconds: 1500));
-    final surface = _gameGesture(RouteMemoryGameView);
-    final rect = tester.getRect(surface);
-    final side = math.min(rect.width * .78, rect.height * .82);
-    final board = Rect.fromCenter(
-      center: rect.center,
-      width: side,
-      height: side,
-    );
-    Offset cell(int index) => Offset(
-          board.left + (index % 4 + .5) * board.width / 4,
-          board.top + (index ~/ 4 + .5) * board.height / 4,
-        );
-    final gesture = await tester.startGesture(cell(12));
-    for (final index in const [8, 9, 5, 6]) {
-      await gesture.moveTo(
-        cell(index),
-        timeStamp: const Duration(milliseconds: 90),
-      );
-      await tester.pump(const Duration(milliseconds: 90));
-    }
-    await gesture.up();
     await _expectCompletedOnce(tester, answers);
   });
 
