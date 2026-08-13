@@ -118,6 +118,7 @@ void main() {
     expect(find.text(l10n.puzzlePrompt(puzzle)), findsOneWidget);
     expect(find.text(l10n.challengeShowHint), findsOneWidget);
     expect(find.bySemanticsLabel(l10n.puzzleListenPrompt), findsOneWidget);
+    expect(find.bySemanticsLabel(l10n.puzzleStopNarration), findsNothing);
 
     expect(find.text('Free play'), findsNothing);
     expect(find.text('Step 8 of 1'), findsNothing);

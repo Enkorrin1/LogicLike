@@ -1544,7 +1544,9 @@ class _PuzzlePlayScreen extends StatefulWidget {
 }
 
 class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
-  final _narration = PuzzleNarrationService();
+  // The device TTS engine is created only after the child asks to hear a task.
+  // Opening or moving between puzzles must remain silent by default.
+  PuzzleNarrationService? _narration;
   String? _selectedAnswer;
   _AnswerCheckState _answerState = _AnswerCheckState.idle;
   bool _showHint = false;
@@ -1554,13 +1556,13 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
 
   @override
   void dispose() {
-    _narration.stop();
+    _narration?.stop();
     super.dispose();
   }
 
   Future<void> _toggleNarration(String prompt) async {
     if (_isNarrating) {
-      await _narration.stop();
+      await _narration?.stop();
       if (mounted) {
         setState(() => _isNarrating = false);
       }
@@ -1568,7 +1570,8 @@ class _PuzzlePlayScreenState extends State<_PuzzlePlayScreen> {
     }
 
     setState(() => _isNarrating = true);
-    await _narration.speak(prompt, Localizations.localeOf(context));
+    final narration = _narration ??= PuzzleNarrationService();
+    await narration.speak(prompt, Localizations.localeOf(context));
     if (mounted) {
       setState(() => _isNarrating = false);
     }
